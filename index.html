@@ -87,6 +87,16 @@ body{background:#0b0b0d;color:#f7f3e8}
 .audience-match>p{font-size:12px;line-height:1.5;color:#d1c6ad;margin:13px 0 0;text-align:center}
 @media(max-width:560px){.audience-match{padding:13px}.audience-match-options{grid-template-columns:1fr}.audience-match-option{padding:10px}.audience-match-option strong{font-size:14px}}
 
+
+/* Keep massage choices prominent and prevent hidden service menu */
+#services,#add-ons,#booking{scroll-margin-top:100px}
+#serviceCards{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;visibility:visible;opacity:1}
+#addonCards{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;visibility:visible;opacity:1}
+.policy-actions{margin-top:15px;justify-content:center}
+.service .btn,.addon .btn{visibility:visible}
+@media(max-width:850px){#serviceCards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){#serviceCards,#addonCards{grid-template-columns:1fr}.policy-actions .btn{width:100%}}
+
 </style>
 </head>
 <body>
@@ -101,7 +111,7 @@ body{background:#0b0b0d;color:#f7f3e8}
 <div class="eyebrow">Expert hands. Better you.</div>
 <h1>Reset your body.<br><span>Reconnect with you.</span></h1>
 <p>Personalised massage sessions for relaxation, muscle comfort and recovery — delivered with care at our Kishangarh centre or at home, subject to availability.</p>
-<div class="hero-actions"><a class="btn" href="#booking">Choose Your Massage</a><a class="btn ghost" href="#services">Explore Treatments</a></div>
+<div class="hero-actions"><a class="btn" href="#services">View All Massage Services</a><a class="btn ghost" href="#booking">Book a Massage</a></div>
 <div class="trust"><span>✦ Professional care</span><span>✦ Personalised pressure</span><span>✦ Centre & home visits</span></div>
 </div>
 <div class="audience-match" role="note" aria-label="Therapist and customer matching policy">
@@ -110,7 +120,7 @@ body{background:#0b0b0d;color:#f7f3e8}
     <div class="audience-match-option"><span class="audience-icon">♂</span><span><strong>Male to Male</strong><small>Male therapist for male clients</small></span></div>
     <div class="audience-match-option"><span class="audience-icon">♀</span><span><strong>Female to Female</strong><small>Female therapist for female clients</small></span></div>
   </div>
-  <p>We respect your comfort and privacy. Please select the client gender while booking; therapist availability will be confirmed before your appointment.</p>
+  <p>We respect your comfort and privacy. Please select the client gender while booking; therapist availability will be confirmed before your appointment.</p><div class="hero-actions policy-actions"><a class="btn" href="#services">See Massage Menu & Prices</a><a class="btn ghost" href="#add-ons">View Add-ons</a></div>
 </div>
 </div></div></section>
 <section class="offer" id="first-booking-offer"><div class="wrap offer-box"><div><div class="offer-kicker">✦ FIRST BOOKING SPECIAL ✦</div><h2>Swedish Massage · 60 minutes <b>₹399</b></h2><p><span class="old">Regular price ₹699</span> &nbsp; First booking only. One offer per new customer.</p><p class="offer-note">No coupon can be combined with this offer. Female booking: ₹549.</p></div><a class="btn offer-cta" href="#booking" onclick="chooseOffer()">Claim ₹399 Offer</a></div></section>
@@ -149,10 +159,10 @@ const photo=(id,w=720)=>"https://images.unsplash.com/"+id+"?auto=format&fit=crop
 function renderServices(){document.getElementById("serviceCards").innerHTML=services.map((s,i)=>'<article class="service"><img loading="lazy" src="'+photo(s.img)+'" alt="'+s.name+' photo"><div class="service-body">'+(s.tag?'<div class="tag">'+s.tag+'</div>':'')+'<h3>'+s.name+'</h3><p>'+s.desc+'</p><div class="prices"><div class="price-choice"><span>60 minutes</span><b>'+money(s.p60)+'</b><button class="btn small" type="button" style="width:100%;margin-top:8px" onclick="addService('+i+',60)">Add 60 min</button></div><div class="price-choice"><span>90 minutes</span><b>'+money(s.p90)+'</b><button class="btn small" type="button" style="width:100%;margin-top:8px" onclick="addService('+i+',90)">Add 90 min</button></div></div></div></article>').join("");
 document.getElementById("addonCards").innerHTML=addons.map((a,i)=>'<article class="addon"><img loading="lazy" src="'+photo(a.img,600)+'" alt="'+a.name+' photo" style="width:100%;height:145px;object-fit:cover;border-radius:7px;margin-bottom:12px"><div class="tag">ADD-ON · '+a.minutes+' MIN</div><h3>'+a.name+'</h3><p>'+a.desc+'</p><div style="color:var(--gold2);font-size:21px;font-weight:900;margin-bottom:12px">'+money(a.price)+'</div><button class="btn small" type="button" onclick="addAddon('+i+')">Add to Cart</button></article>').join("")}
 function currentGender(){return document.getElementById("recipientGender")?.value||"Male"}
-function addService(i,duration){if(cart.some(x=>x.type==="offer")){document.getElementById("formStatus").textContent="The ₹399 first-booking offer must be booked on its own. Remove it before adding another service.";document.getElementById("booking").scrollIntoView({behavior:"smooth"});return}const s=services[i],base=duration===60?s.p60:s.p90;cart.push({name:s.name,duration:duration,basePrice:base,price:base+(currentGender()==="Female"?150:0),type:"service"});couponApplied=false;renderCart();showCartFeedback(s.name+" · "+duration+" min added to cart.");}
+function addService(i,duration){if(cart.some(x=>x.type==="offer")){document.getElementById("formStatus").textContent="The ₹399 first-booking offer is a standalone booking. Remove it from your cart first to book another massage.";document.getElementById("booking").scrollIntoView({behavior:"smooth"});return}const s=services[i],base=duration===60?s.p60:s.p90;cart.push({name:s.name,duration:duration,basePrice:base,price:base+(currentGender()==="Female"?150:0),type:"service"});couponApplied=false;renderCart();showCartFeedback(s.name+" · "+duration+" min added to cart.");}
 function addAddon(i){if(cart.some(x=>x.type==="offer")){document.getElementById("formStatus").textContent="The ₹399 first-booking offer must be booked on its own. Remove it before adding an add-on.";document.getElementById("booking").scrollIntoView({behavior:"smooth"});return}const a=addons[i];cart.push({name:a.name,duration:a.minutes,basePrice:a.price,price:a.price+(currentGender()==="Female"?150:0),type:"addon"});couponApplied=false;renderCart();showCartFeedback(a.name+" added to cart.");}
 function showCartFeedback(message){const box=document.getElementById("cartItems");box.scrollIntoView({behavior:"smooth",block:"center"});const old=document.getElementById("cartFeedback");if(old)old.remove();const note=document.createElement("p");note.id="cartFeedback";note.className="status";note.textContent=message;box.appendChild(note)}
-function chooseOffer(){if(document.getElementById("customerType").value==="Returning customer"){document.getElementById("formStatus").textContent="The ₹399 first-booking offer is for new customers only.";document.getElementById("booking").scrollIntoView({behavior:"smooth"});return}cart=[{name:"Swedish Massage — First Booking Offer",duration:60,basePrice:399,price:399+(currentGender()==="Female"?150:0),type:"offer"}];offerMode=true;couponApplied=false;appliedCoupon="";document.getElementById("coupon").value="";renderCart();updateCouponAvailability();document.getElementById("booking").scrollIntoView({behavior:"smooth"});}
+function chooseOffer(){if(document.getElementById("customerType").value==="Returning customer"){document.getElementById("formStatus").textContent="The ₹399 first-booking offer is for new customers only. You can still choose any regular massage from the Massage Menu.";document.getElementById("booking").scrollIntoView({behavior:"smooth"});return}cart=[{name:"Swedish Massage — First Booking Offer",duration:60,basePrice:399,price:399+(currentGender()==="Female"?150:0),type:"offer"}];offerMode=true;couponApplied=false;appliedCoupon="";document.getElementById("coupon").value="";renderCart();updateCouponAvailability();document.getElementById("booking").scrollIntoView({behavior:"smooth"});}
 function removeItem(i){if(cart[i]?.type==="offer")offerMode=false;cart.splice(i,1);couponApplied=false;appliedCoupon="";renderCart();updateCouponAvailability()}
 const coupons={RELAX10:{kind:"percent",value:10,min:800,label:"10% off"},WELCOME100:{kind:"flat",value:100,min:999,label:"₹100 off"},RECOVERY15:{kind:"percent",value:15,min:1500,label:"15% off"}};
 function updateGenderPricing(){const female=currentGender()==="Female";cart=cart.map(x=>({...x,price:(x.basePrice??x.price)+(female?150:0)}));couponApplied=false;appliedCoupon="";renderCart();updateCouponAvailability()}
