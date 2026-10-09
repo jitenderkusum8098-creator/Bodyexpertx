@@ -75,6 +75,18 @@ body{background:#0b0b0d;color:#f7f3e8}
 .skill-course-choice .btn{width:100%;margin-top:5px}
 @media(min-width:700px){.skill-course-choice{grid-template-columns:1fr 1fr}}
 
+
+/* Prominent same-gender therapist matching notice */
+.audience-match{margin-top:24px;padding:18px;border:1px solid #d9aa35;border-radius:16px;background:linear-gradient(135deg,#1c170c,#111);box-shadow:0 8px 26px #d9aa3518}
+.audience-match-label{text-align:center;color:#f2c75b;font-size:11px;letter-spacing:.14em;font-weight:900;margin-bottom:13px}
+.audience-match-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.audience-match-option{display:flex;align-items:center;gap:10px;padding:12px 10px;border:1px solid #70541c;border-radius:12px;background:#211a0d;min-width:0}
+.audience-icon{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border:1px solid #d9aa35;border-radius:50%;color:#f2c75b;font-size:23px}
+.audience-match-option strong{display:block;color:#ffe4a0;font-size:15px;line-height:1.25}
+.audience-match-option small{display:block;color:#d1c6ad;font-size:11px;line-height:1.4;margin-top:4px}
+.audience-match>p{font-size:12px;line-height:1.5;color:#d1c6ad;margin:13px 0 0;text-align:center}
+@media(max-width:560px){.audience-match{padding:13px}.audience-match-options{grid-template-columns:1fr}.audience-match-option{padding:10px}.audience-match-option strong{font-size:14px}}
+
 </style>
 </head>
 <body>
@@ -91,9 +103,15 @@ body{background:#0b0b0d;color:#f7f3e8}
 <p>Personalised massage sessions for relaxation, muscle comfort and recovery — delivered with care at our Kishangarh centre or at home, subject to availability.</p>
 <div class="hero-actions"><a class="btn" href="#booking">Choose Your Massage</a><a class="btn ghost" href="#services">Explore Treatments</a></div>
 <div class="trust"><span>✦ Professional care</span><span>✦ Personalised pressure</span><span>✦ Centre & home visits</span></div>
-</div><div class="hero-image">
-<img src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1100&q=85" alt="Massage therapist providing a professional massage" fetchpriority="high">
-
+</div>
+<div class="audience-match" role="note" aria-label="Therapist and customer matching policy">
+  <div class="audience-match-label">OUR COMFORT & PRIVACY POLICY</div>
+  <div class="audience-match-options">
+    <div class="audience-match-option"><span class="audience-icon">♂</span><span><strong>Male to Male</strong><small>Male therapist for male clients</small></span></div>
+    <div class="audience-match-option"><span class="audience-icon">♀</span><span><strong>Female to Female</strong><small>Female therapist for female clients</small></span></div>
+  </div>
+  <p>We respect your comfort and privacy. Please select the client gender while booking; therapist availability will be confirmed before your appointment.</p>
+</div>
 </div></div></section>
 <section class="offer" id="first-booking-offer"><div class="wrap offer-box"><div><div class="offer-kicker">✦ FIRST BOOKING SPECIAL ✦</div><h2>Swedish Massage · 60 minutes <b>₹399</b></h2><p><span class="old">Regular price ₹699</span> &nbsp; First booking only. One offer per new customer.</p><p class="offer-note">No coupon can be combined with this offer. Female booking: ₹549.</p></div><a class="btn offer-cta" href="#booking" onclick="chooseOffer()">Claim ₹399 Offer</a></div></section>
 <section class="section" id="services"><div class="wrap"><div class="section-head"><div class="eyebrow">Find your session</div><h2>Massage Menu</h2><p>Choose your treatment and session length. Select any service to add it to your booking.</p></div>
