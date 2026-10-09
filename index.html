@@ -181,8 +181,29 @@ const addons=[{name:"Head Massage",desc:"A short session focused on head and sca
 let cart=[],couponApplied=false,offerMode=false,appliedCoupon="";
 const money=n=>"₹"+n.toLocaleString("en-IN");
 const photo=(id,w=720)=>"https://images.unsplash.com/"+id+"?auto=format&fit=crop&w="+w+"&q=80";
-function renderServices(){document.getElementById("serviceCards").innerHTML=services.map((s,i)=>'<article class="service"><img loading="lazy" src="'+photo(s.img)+'" alt="'+s.name+' photo"><div class="service-body">'+(s.tag?'<div class="tag">'+s.tag+'</div>':'')+'<h3>'+s.name+'</h3><p>'+s.desc+'</p><div class="prices"><div class="price-choice"><span>60 minutes</span><b>'+money(s.p60)+'</b><button class="btn small" type="button" style="width:100%;margin-top:8px" onclick="addService('+i+',60)">Add 60 min</button></div><div class="price-choice"><span>90 minutes</span><b>'+money(s.p90)+'</b><button class="btn small" type="button" style="width:100%;margin-top:8px" onclick="addService('+i+',90)">Add 90 min</button></div></div></div></article>').join("");
-document.getElementById("addonCards").innerHTML=addons.map((a,i)=>'<article class="addon"><img loading="lazy" src="'+photo(a.img,600)+'" alt="'+a.name+' photo" style="width:100%;height:145px;object-fit:cover;border-radius:7px;margin-bottom:12px"><div class="tag">ADD-ON · '+a.minutes+' MIN</div><h3>'+a.name+'</h3><p>'+a.desc+'</p><div style="color:var(--gold2);font-size:21px;font-weight:900;margin-bottom:12px">'+money(a.price)+'</div><button class="btn small" type="button" onclick="addAddon('+i+')">Add to Cart</button></article>').join("")}
+function renderServices(){
+ const serviceBox=document.getElementById("serviceCards");
+ const addonBox=document.getElementById("addonCards");
+ serviceBox.innerHTML=services.map((item,i)=>`
+  <article class="service">
+   <img loading="lazy" src="${photo(item.img)}" alt="${item.name}">
+   <div class="service-body">
+    ${item.tag?`<div class="tag">${item.tag}</div>`:""}
+    <h3>${item.name}</h3><p>${item.desc}</p>
+    <div class="prices">
+     <div class="price-choice"><span>60 minutes</span><b>${money(item.p60)}</b><button class="btn small" type="button" onclick="addService(${i},60)">Add 60 min</button></div>
+     <div class="price-choice"><span>90 minutes</span><b>${money(item.p90)}</b><button class="btn small" type="button" onclick="addService(${i},90)">Add 90 min</button></div>
+    </div>
+   </div>
+  </article>`).join("");
+ addonBox.innerHTML=addons.map((item,i)=>`
+  <article class="addon">
+   <img loading="lazy" src="${photo(item.img,600)}" alt="${item.name}" style="width:100%;height:145px;object-fit:cover;border-radius:7px;margin-bottom:12px">
+   <div class="tag">ADD-ON · ${item.minutes} MIN</div><h3>${item.name}</h3><p>${item.desc}</p>
+   <div style="color:var(--gold2);font-size:21px;font-weight:900;margin-bottom:12px">${money(item.price)}</div>
+   <button class="btn small" type="button" onclick="addAddon(${i})">Add to Cart</button>
+  </article>`).join("");
+}
 function currentGender(){return document.getElementById("recipientGender")?.value||"Male"}
 function addService(i,duration){if(!services[i])return;if(cart.some(x=>x.type==="offer")){document.getElementById("formStatus").textContent="The ₹399 first-booking offer is a standalone booking. Remove it from your cart first to book another massage.";document.getElementById("booking").scrollIntoView({behavior:"smooth"});return}const s=services[i],base=duration===60?s.p60:s.p90;cart.push({name:s.name,duration:duration,basePrice:base,price:base+(currentGender()==="Female"?150:0),type:"service"});couponApplied=false;renderCart();showCartFeedback(s.name+" · "+duration+" min added to cart.");}
 function addAddon(i){if(!addons[i])return;if(cart.some(x=>x.type==="offer")){document.getElementById("formStatus").textContent="The ₹399 first-booking offer must be booked on its own. Remove it before adding an add-on.";document.getElementById("booking").scrollIntoView({behavior:"smooth"});return}const a=addons[i];cart.push({name:a.name,duration:a.minutes,basePrice:a.price,price:a.price+(currentGender()==="Female"?150:0),type:"addon"});couponApplied=false;renderCart();showCartFeedback(a.name+" added to cart.");}
@@ -196,7 +217,19 @@ function applyCoupon(){const code=document.getElementById("coupon").value.trim()
 function totalPrice(){return cart.reduce((n,x)=>n+x.price,0)}
 function discountPrice(){if(!couponApplied||!coupons[appliedCoupon])return 0;const cp=coupons[appliedCoupon];return Math.min(totalPrice(),Math.round(cp.kind==="percent"?totalPrice()*cp.value/100:cp.value))}
 function finalPrice(){return Math.max(0,totalPrice()-discountPrice())}
-function renderCart(){const box=document.getElementById("cartItems");box.className=cart.length?"":"cart-empty";box.innerHTML=cart.length?cart.map((x,i)=>'<div class="cart-item"><span>'+x.name+' · '+x.duration+' min<br><b>'+money(x.price)+'</b>'+(currentGender()==="Female"?'<br><small>Female client pricing included</small>':'')+'</span><button type="button" aria-label="Remove '+x.name+'" onclick="removeItem('+i+')">Remove</button></div>').join(""):"Your booking is empty. Add a massage or add-on above.";document.getElementById("discount").textContent=money(discountPrice());document.getElementById("total").textContent=money(finalPrice());if(!couponApplied&&!cart.some(x=>x.type==="offer")){document.getElementById("couponStatus").textContent="Coupons are available for regular bookings, including first-time customers. Minimum spend applies.";document.getElementById("couponStatus").style.color="var(--gold2")}}
+function renderCart(){
+ const box=document.getElementById("cartItems");
+ box.className=cart.length?"":"cart-empty";
+ box.innerHTML=cart.length?cart.map((item,i)=>`
+  <div class="cart-item"><span>${item.name} · ${item.duration} min<br><b>${money(item.price)}</b>${currentGender()==="Female"?"<br><small>Female client pricing included</small>":""}</span><button type="button" aria-label="Remove item" onclick="removeItem(${i})">Remove</button></div>
+ `).join(""):"Your booking is empty. Add a massage or add-on above.";
+ document.getElementById("discount").textContent=money(discountPrice());
+ document.getElementById("total").textContent=money(finalPrice());
+ if(!couponApplied&&!cart.some(item=>item.type==="offer")){
+  document.getElementById("couponStatus").textContent="Coupons are available for regular bookings, including first-time customers. Minimum spend applies.";
+  document.getElementById("couponStatus").style.color="var(--gold2)";
+ }
+}
 function toggleAddress(){const on=document.getElementById("visit").value==="Home service";document.getElementById("addressField").hidden=!on;document.getElementById("address").required=on}
 document.getElementById("bookingForm").addEventListener("submit",function(e){e.preventDefault();const status=document.getElementById("formStatus");if(!cart.length){status.textContent="Please add a massage or add-on first.";return}const total=finalPrice();const isOffer=cart.length===1&&cart[0].type==="offer";if(total<400&&!isOffer){status.textContent="Minimum booking value is ₹400. The ₹399 first-booking offer is allowed when booked alone.";return}const date=document.getElementById("date").value;if(date<new Date().toISOString().slice(0,10)){status.textContent="Please choose today or a future date.";return}const details="Hello BodyExpertX, I would like to request an appointment.\n\n"+"Name: "+document.getElementById("name").value+"\nPhone: "+document.getElementById("phone").value+"\nAge: "+document.getElementById("age").value+"\nBooking for: "+document.getElementById("recipientGender").value+"\nCustomer type: "+document.getElementById("customerType").value+"\nLocation: "+document.getElementById("visit").value+(document.getElementById("visit").value==="Home service"?"\nAddress: "+document.getElementById("address").value:"")+"\nDate: "+date+"\nPreferred time: "+document.getElementById("time").value+"\nPreferred pressure: "+document.getElementById("pressure").value+"\nMain reason: "+document.getElementById("mainConcern").value+"\n\nSessions:\n"+cart.map(x=>"- "+x.name+" ("+x.duration+" min): "+money(x.price)).join("\n")+"\n\nSubtotal: "+money(totalPrice())+"\nDiscount: "+money(discountPrice())+"\nTotal: "+money(total)+"\nCoupon: "+(appliedCoupon||"None")+"\nNotes: "+(document.getElementById("notes").value.trim()||"None")+"\n\nPlease confirm availability and final booking.";window.open("https://wa.me/918860742376?text="+encodeURIComponent(details),"_blank","noopener");status.textContent="WhatsApp opened with your request. Press Send there, then wait for our confirmation."});
 function setMinDate(){document.getElementById("date").min=new Date().toISOString().slice(0,10)}
