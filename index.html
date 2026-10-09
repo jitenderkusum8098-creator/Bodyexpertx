@@ -233,7 +233,7 @@ async function sendPhoneOtp() {
   } catch (err) {
     console.error("OTP send failed", err);
     otpMessage((err && err.code === "auth/unauthorized-domain")
-      ? "Domain authorised nahi hai. Firebase Authentication → Settings → Authorized domains mein jitenderkusum8098.github.io add karein."
+      ? "Domain authorised nahi hai. Firebase Authentication → Settings → Authorized domains mein jitenderkusum8098-creator.github.io add karein."
       : "OTP nahi bheja ja saka: " + ((err && err.message) || "Firebase/phone settings check karein."), true);
     if (recaptchaVerifier) { try { await recaptchaVerifier.clear(); } catch (_) {} recaptchaVerifier = null; }
   } finally { button.disabled = false; button.textContent = "Resend / Send OTP"; }
