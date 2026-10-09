@@ -233,7 +233,24 @@ function renderCart(){
  }
 }
 function toggleAddress(){const on=document.getElementById("visit").value==="Home service";document.getElementById("addressField").hidden=!on;document.getElementById("address").required=on}
-document.getElementById("bookingForm").addEventListener("submit",function(e){e.preventDefault();const status=document.getElementById("formStatus");if(!cart.length){status.textContent="Please add a massage or add-on first.";return}const total=finalPrice();const hasOffer=cart.some(x=>x.type==="offer");if(hasOffer&&couponApplied){status.textContent="Coupons cannot be combined with the ₹399 first-booking offer. Remove the coupon to continue.";return}const isOffer=cart.some(x=>x.type==="offer");if(total<400&&!isOffer){status.textContent="Minimum booking value is ₹400. The ₹399 first-booking offer is allowed when booked alone.";return}const date=document.getElementById("date").value;if(date<new Date().toISOString().slice(0,10)){status.textContent="Please choose today or a future date.";return}const details="Hello BodyExpertX, I would like to request an appointment.\n\n"+"Name: "+document.getElementById("name").value+"\nPhone: "+document.getElementById("phone").value+"\nAge: "+document.getElementById("age").value+"\nBooking for: "+document.getElementById("recipientGender").value+"\nCustomer type: "+document.getElementById("customerType").value+"\nLocation: "+document.getElementById("visit").value+(document.getElementById("visit").value==="Home service"?"\nAddress: "+document.getElementById("address").value:"")+"\nDate: "+date+"\nPreferred time: "+document.getElementById("time").value+"\nPreferred pressure: "+document.getElementById("pressure").value+"\nMain reason: "+document.getElementById("mainConcern").value+"\n\nSessions:\n"+cart.map(x=>"- "+x.name+" ("+x.duration+" min): "+money(x.price)).join("\n")+"\n\nSubtotal: "+money(totalPrice())+"\nDiscount: "+money(discountPrice())+"\nTotal: "+money(total)+"\nCoupon: "+(appliedCoupon||"None")+"\nNotes: "+(document.getElementById("notes").value.trim()||"None")+"\n\nPlease confirm availability and final booking.";window.open("https://wa.me/918860742376?text="+encodeURIComponent(details),"_blank","noopener");status.textContent="WhatsApp opened with your request. Press Send there, then wait for our confirmation."});
+document.getElementById("bookingForm").addEventListener("submit",function(e){e.preventDefault();const status=document.getElementById("formStatus");if(!cart.length){status.textContent="Please add a massage or add-on first.";return}const total=finalPrice();const hasOffer=cart.some(x=>x.type==="offer");if(hasOffer&&couponApplied){status.textContent="Coupons cannot be combined with the ₹399 first-booking offer. Remove the coupon to continue.";return}const isOffer=cart.some(x=>x.type==="offer");if(total<400&&!isOffer){status.textContent="Minimum booking value is ₹400. The ₹399 first-booking offer is allowed when booked alone.";return}const date=document.getElementById("date").value;if(date<new Date().toISOString().slice(0,10)){status.textContent="Please choose today or a future date.";return}const details="✨ *NEW BOOKING — BODYEXPERTX* ✨\\n\\n"+
+"👤 *Name:* "+document.getElementById("name").value+"\\n"+
+"📱 *Phone:* "+document.getElementById("phone").value+"\\n"+
+"🎂 *Age:* "+document.getElementById("age").value+"\\n"+
+"🙋 *Booking for:* "+document.getElementById("recipientGender").value+"\\n"+
+"🆕 *Customer type:* "+document.getElementById("customerType").value+"\\n"+
+"📍 *Location:* "+document.getElementById("visit").value+(document.getElementById("visit").value==="Home service"?"\\n🏠 *Address:* "+document.getElementById("address").value:"")+"\\n"+
+"📅 *Date:* "+date+"\\n"+
+"🕒 *Preferred time:* "+document.getElementById("time").value+"\\n"+
+"💆 *Preferred pressure:* "+document.getElementById("pressure").value+"\\n"+
+"🎯 *Main reason:* "+document.getElementById("mainConcern").value+"\\n\\n"+
+"🧾 *BOOKING DETAILS*\\n"+cart.map(x=>"• "+x.name+" ("+x.duration+" min): "+money(x.price)).join("\\n")+"\\n\\n"+
+"💵 *Subtotal:* "+money(totalPrice())+"\\n"+
+"🎟️ *Discount:* "+money(discountPrice())+"\\n"+
+"💰 *TOTAL AMOUNT: "+money(total)+"*\\n"+
+"🏷️ *Coupon:* "+(appliedCoupon||"None")+"\\n"+
+"📝 *Notes:* "+(document.getElementById("notes").value.trim()||"None")+"\\n\\n"+
+"🙏 *Please confirm availability and booking.*\\nThank you!";;window.open("https://wa.me/918860742376?text="+encodeURIComponent(details),"_blank","noopener");status.textContent="WhatsApp opened with your request. Press Send there, then wait for our confirmation."});
 function setMinDate(){document.getElementById("date").min=new Date().toISOString().slice(0,10)}
 renderServices();renderCart();setMinDate();updateCouponAvailability();
 </script>
