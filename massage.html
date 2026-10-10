@@ -307,6 +307,37 @@ input,select,textarea{font-size:16px;line-height:1.5}
 #finalConfirmation .table-option-heading strong{font-size:17px}
 #finalConfirmation .table-option-heading small{font-size:14px}
 #finalConfirmation .final-submit{background:linear-gradient(135deg,#f3d06a,#c99728);color:#17130a}
+
+/* Premium Prime/Luxe massage service cards with four key benefits */
+.bx-massage-card{border:1px solid #59451f!important;border-radius:22px!important;overflow:hidden;background:linear-gradient(155deg,#19191b,#101012)!important;box-shadow:0 15px 38px #0004;min-width:0;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.bx-massage-card:hover{transform:translateY(-3px);border-color:#a27a2a!important;box-shadow:0 20px 45px #0006}
+.bx-massage-photo{height:205px;position:relative;overflow:hidden;background:#211a0c}
+.bx-massage-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#0808088c,transparent 55%);pointer-events:none}
+.bx-massage-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.bx-tier-badge,.bx-popular-badge{position:absolute;z-index:1;top:13px;border-radius:999px;padding:7px 10px;font-size:9px;font-weight:950;letter-spacing:.07em}
+.bx-tier-badge{left:12px;border:1px solid #e2bd5a;background:#101010e8;color:#f3d171}
+.bx-popular-badge{right:12px;border:1px solid #b18b36;background:#2b210ce8;color:#ffe5a0;text-transform:uppercase}
+.bx-massage-body{padding:20px!important;color:#f7f3e8}
+.bx-massage-body .tag{color:#e8c35c;letter-spacing:.13em;font-weight:900;margin-bottom:8px}
+.bx-massage-body h3{font-size:23px!important;line-height:1.2;margin:0 0 9px!important;color:#fff!important}
+.bx-massage-desc{font-size:13px!important;line-height:1.7!important;min-height:0!important;color:#c9c2b4!important;margin:0 0 17px!important}
+.bx-benefits-title{font-size:11px;font-weight:950;letter-spacing:.13em;color:#f1ce69;margin-bottom:10px}
+.bx-benefits-list{list-style:none;padding:0;margin:0 0 16px;display:grid;gap:9px}
+.bx-benefits-list li{display:grid;grid-template-columns:17px minmax(0,1fr);gap:8px;align-items:start;font-size:12px;line-height:1.55;color:#e3dccd}
+.bx-benefits-list li>span:first-child{display:grid;place-items:center;width:17px;height:17px;border:1px solid #846523;border-radius:50%;color:#f3d16c;font-size:10px;font-weight:900;margin-top:1px}
+.bx-duration-heading{font-size:12px;font-weight:850;color:#fff;margin:0 0 9px}
+.bx-massage-prices{gap:9px!important;margin:0 0 12px!important}
+.bx-massage-prices .price-choice{border:1px solid #51401f!important;border-radius:14px!important;padding:11px!important;background:linear-gradient(145deg,#241d0e,#171511)!important;color:#eee5d2!important;cursor:default}
+.bx-massage-prices .price-choice>span{font-size:12px;color:#e0d4b9}
+.bx-massage-prices .price-choice b{font-size:24px!important;line-height:1.25;color:#f2ca5d!important;margin:4px 0 10px}
+.bx-massage-prices .price-choice .btn{width:100%;margin:0;border-radius:999px;padding:10px 6px;font-size:12px;white-space:normal}
+.bx-benefit-note{font-size:10px!important;line-height:1.6!important;color:#a9a18f!important;margin:2px 0 0!important;min-height:0!important}
+#serviceMenuDescription{line-height:1.75}
+.gender-price-note{line-height:1.7}
+@media(max-width:850px){.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.bx-massage-photo{height:190px}.bx-massage-body{padding:16px!important}.bx-massage-body h3{font-size:21px!important}.bx-massage-prices .price-choice{padding:9px!important}.bx-massage-prices .price-choice b{font-size:21px!important}}
+@media(max-width:560px){.cards{grid-template-columns:1fr;gap:17px}.bx-massage-photo{height:clamp(205px,58vw,290px)}.bx-massage-body{padding:20px!important}.bx-massage-body h3{font-size:24px!important}.bx-benefits-list li{font-size:13px}.bx-massage-prices .price-choice{padding:12px!important}.bx-massage-prices .price-choice b{font-size:25px!important}.bx-massage-prices .price-choice .btn{font-size:13px;padding:12px 8px}}
+@media(prefers-reduced-motion:reduce){.bx-massage-card{transition:none}}
+
 </style>
 </head>
 <body>
@@ -378,13 +409,13 @@ input,select,textarea{font-size:16px;line-height:1.5}
 <a class="sticky-wa" href="https://wa.me/917838675115?text=Hello%20BodyExpertX%2C%20I%20want%20to%20book%20a%20massage." target="_blank" rel="noopener">WhatsApp Us ↗</a>
 <script>
 const services=[
-{name:"Swedish Massage",desc:"Relaxation-focused strokes to help you unwind.",p60:699,p90:1099,img:"photo-1519823551278-64ac92734fb1",tag:"Popular"},
-{name:"Deep Tissue Massage",desc:"Focused pressure for areas of muscle tightness, tailored to comfort.",p60:799,p90:1199,img:"photo-1544161515-4ab6ce6db874"},
-{name:"Sports Massage",desc:"A targeted session for active bodies and post-exercise muscle comfort.",p60:899,p90:1299,img:"photo-1518611012118-696072aa579a"},
-{name:"Cupping Massage",desc:"A cupping-based wellness session after a suitability discussion.",p60:799,p90:1099,img:"photo-1600334129128-685c5582fd35"},
-{name:"Hot Stone Massage",desc:"A warming, soothing session using heated stones when suitable.",p60:999,p90:1399,img:"photo-1544161515-4ab6ce6db874"},
-{name:"Lymphatic Drainage Massage",desc:"Gentle, specialised techniques; suitability should be discussed first.",p60:1199,p90:1699,img:"photo-1515377905703-c4788e51af15"},
-{name:"BodyExpertX Signature Gym Recovery",desc:"A recovery-focused massage for active people and gym-goers.",p60:899,p90:1299,img:"photo-1517836357463-d25dfeac3438"}
+{name:"Swedish Massage",desc:"Gentle, flowing strokes designed for relaxation and everyday unwinding.",benefits:["Helps ease everyday stress and promote relaxation","May temporarily relieve mild muscle tension","Can support a feeling of comfort and calm","May temporarily support local blood circulation"],p60:699,p90:1099,img:"photo-1519823551278-64ac92734fb1",tag:"Popular"},
+{name:"Deep Tissue Massage",desc:"Focused, slower pressure for areas of persistent muscle tightness, adjusted to your comfort.",benefits:["May help ease areas of muscle tightness","Can support comfortable movement when tension is present","May provide temporary relief after everyday physical strain","Encourages body awareness and relaxation"],p60:799,p90:1199,img:"photo-1544161515-4ab6ce6db874"},
+{name:"Sports Massage",desc:"A targeted wellness session for active people and exercise-related muscle comfort.",benefits:["May help ease exercise-related muscle tightness","Can be part of a balanced recovery routine","May support comfortable movement and flexibility","Helps active clients focus on areas feeling overworked"],p60:899,p90:1299,img:"photo-1518611012118-696072aa579a"},
+{name:"Cupping Massage",desc:"A cupping-based wellness session offered after suitability screening and a clear explanation of the technique.",benefits:["May help some clients feel temporary relief from muscle tension","Offers a focused relaxation experience","Can help clients pay attention to areas of tightness","Includes time to discuss comfort, skin response and aftercare"],p60:799,p90:1099,img:"photo-1600334129128-685c5582fd35"},
+{name:"Hot Stone Massage",desc:"A soothing massage using carefully temperature-checked warm stones when appropriate.",benefits:["Warmth may help muscles feel more relaxed","Can promote a soothing, restful experience","May help ease everyday tension temporarily","Supports relaxation and a calm spa experience"],p60:999,p90:1399,img:"photo-1544161515-4ab6ce6db874"},
+{name:"Lymphatic Drainage Massage",desc:"A gentle, specialised technique. Suitability should be checked first, especially after surgery or with medical conditions.",benefits:["Uses gentle, rhythmic touch rather than deep pressure","May support lymph flow when appropriately indicated","Can be part of swelling care for selected clients under suitable guidance","Provides a calm, light-touch treatment experience"],p60:1199,p90:1699,img:"photo-1515377905703-c4788e51af15"},
+{name:"BodyExpertX Signature Gym Recovery",desc:"A recovery-focused massage for gym-goers and active people, tailored to comfort and training needs.",benefits:["May help ease workout-related muscle tightness","Can support relaxation after physical activity","May help maintain comfortable movement as part of a recovery routine","Encourages attention to overworked muscle areas"],p60:899,p90:1299,img:"photo-1517836357463-d25dfeac3438"}
 ];
 const addons=[{name:"Head Massage",desc:"A short session focused on head and scalp comfort.",minutes:20,price:199,img:"photo-1599447421416-3414500d18a5"},{name:"Foot Massage",desc:"A relaxing session focused on tired feet.",minutes:20,price:199,img:"photo-1518611012118-696072aa579a"},{name:"Head & Shoulder Massage",desc:"Focused care for head, neck and shoulder tension.",minutes:40,price:449,img:"photo-1544161515-4ab6ce6db874"}];
 let cart=[],couponApplied=false,offerMode=false,appliedCoupon="",referralApplied=false,referrerPhone="",selectedCategory="PRIME",selectedDepartment="MASSAGE";
@@ -441,15 +472,19 @@ function renderServices(){
  const addonBox=document.getElementById("addonCards");
  if(selectedDepartment==="SALON"){document.querySelector(".gender-price-note").hidden=true;document.getElementById("add-ons").hidden=true;serviceBox.innerHTML=`<article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=720&q=80" alt="Barber giving a haircut"><div class="service-body"><div class="tag">${selectedCategory} · SALON</div><h3>Haircut</h3><p>A neat, fresh haircut. Please confirm availability and any specific styling requirements before your appointment.</p><div class="prices"><div class="price-choice" style="grid-column:1/-1"><span>${selectedCategory} price</span><b>${money(selectedCategory==="LUXE"?150:99)}</b><button class="btn small" type="button" onclick="addSalonService(${selectedCategory==="LUXE"?150:99})">Add Haircut</button></div></div></div></article>`;addonBox.innerHTML="";return;}document.querySelector(".gender-price-note").hidden=false;document.getElementById("add-ons").hidden=false;
  serviceBox.innerHTML=services.map((item,i)=>`
-  <article class="service">
-   <img loading="lazy" src="${photo(item.img)}" alt="${item.name}">
-   <div class="service-body">
-    ${item.tag?`<div class="tag">${item.tag}</div>`:""}
-    <h3>${item.name}</h3><p>${item.desc}</p>
-    <div class="prices">
-     <div class="price-choice"><span>60 minutes</span><b>${money(item.p60+(selectedCategory==="LUXE"?1300:0))}</b><button class="btn small" type="button" onclick="addService(${i},60)">Add 60 min</button></div>
-     <div class="price-choice"><span>90 minutes</span><b>${money(item.p90+(selectedCategory==="LUXE"?1300:0))}</b><button class="btn small" type="button" onclick="addService(${i},90)">Add 90 min</button></div>
+  <article class="service bx-massage-card">
+   <div class="bx-massage-photo"><img loading="lazy" src="${photo(item.img)}" alt="${item.name}"><span class="bx-tier-badge">${selectedCategory==="LUXE"?"✦ LUXE · PREMIUM CARE":"✓ PRIME · ESSENTIAL CARE"}</span>${item.tag?`<span class="bx-popular-badge">${item.tag}</span>`:""}</div>
+   <div class="service-body bx-massage-body">
+    <div class="tag">${selectedCategory} MASSAGE · ${selectedCategory==="LUXE"?"PERSONALISED EXPERIENCE":"PROFESSIONAL CARE"}</div>
+    <h3>${item.name}</h3><p class="bx-massage-desc">${item.desc}</p>
+    <div class="bx-benefits-title">4 KEY BENEFITS</div>
+    <ul class="bx-benefits-list">${item.benefits.map(benefit=>`<li><span aria-hidden="true">✓</span><span>${benefit}</span></li>`).join("")}</ul>
+    <div class="bx-duration-heading">Choose your session</div>
+    <div class="prices bx-massage-prices">
+     <div class="price-choice"><span>60 minutes</span><b>${money(item.p60+(selectedCategory==="LUXE"?1300:0)+(selectedCategory==="PRIME"&&currentGender()==="Female"?150:0))}</b><button class="btn small" type="button" onclick="addService(${i},60)">Add 60 min</button></div>
+     <div class="price-choice"><span>90 minutes</span><b>${money(item.p90+(selectedCategory==="LUXE"?1300:0)+(selectedCategory==="PRIME"&&currentGender()==="Female"?150:0))}</b><button class="btn small" type="button" onclick="addService(${i},90)">Add 90 min</button></div>
     </div>
+    <p class="bx-benefit-note">Benefits vary by person and are not a guarantee of treatment or cure. Tell us about relevant health conditions before booking.</p>
    </div>
   </article>`).join("");
  addonBox.innerHTML=addons.map((item,i)=>`
