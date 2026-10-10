@@ -295,18 +295,19 @@ function renderCart(){
  else {note.textContent="Minimum order met. Home service only — centre appointments are not available.";note.style.color="var(--gold2)"}
 }
 function toggleAddress(){}
-document.getElementById("bookingForm").addEventListener("submit",function(e){e.preventDefault();const status=document.getElementById("formStatus");if(!cart.length){status.textContent="Please add a salon service first.";return}if(totalPrice()<200){status.textContent="Minimum salon order value is ₹200. Please add another service to continue.";return}const date=document.getElementById("date").value;if(date<new Date().toISOString().slice(0,10)){status.textContent="Please choose today or a future date.";return}const details="✨ *NEW SALON HOME-SERVICE BOOKING — BODYEXPERTX* ✨\\n\\n"+
-"👤 *Name:* "+document.getElementById("name").value+"\\n"+
-"📱 *Phone:* "+document.getElementById("phone").value+"\\n"+
-"🏠 *Service type:* Home service only (no centre appointments)\\n"+
-"📍 *Home address:* "+document.getElementById("address").value+"\\n"+
-"📅 *Preferred date:* "+date+"\\n"+
-"🕒 *Preferred time:* "+document.getElementById("time").value+"\\n\\n"+
-"🧾 *SALON SERVICES*\\n"+cart.map(x=>"• "+x.name+": "+money(x.price)).join("\\n")+"\\n\\n"+
-"💵 *Subtotal:* "+money(totalPrice())+"\\n"+
-"💰 *TOTAL AMOUNT: "+money(totalPrice())+"*\\n\\n"+
-"🙏 *Please confirm home-service availability and booking.*\\nThank you!";
-window.open("https://wa.me/917838675115?text="+encodeURIComponent(details),"_blank","noopener");status.textContent="WhatsApp opened with your salon home-service request. Press Send there, then wait for confirmation."});
+document.getElementById("bookingForm").addEventListener("submit",function(e){e.preventDefault();const status=document.getElementById("formStatus");if(!cart.length){status.textContent="Please add a salon service first.";return}if(totalPrice()<200){status.textContent="Minimum salon order value is ₹200. Please add another service to continue.";return}const date=document.getElementById("date").value;if(date<new Date().toISOString().slice(0,10)){status.textContent="Please choose today or a future date.";return}const details="*NEW SALON HOME-SERVICE BOOKING — BODYEXPERTX*\n\n"+
+"*CUSTOMER DETAILS*\n"+
+"*Name:* "+document.getElementById("name").value+"\n"+
+"*Phone:* "+document.getElementById("phone").value+"\n\n"+
+"*SERVICE DETAILS*\n"+
+"*Service type:* Home service only (no centre appointments)\n"+
+"*Home address:* "+document.getElementById("address").value+"\n"+
+"*Preferred date:* "+date+"\n"+
+"*Preferred time:* "+document.getElementById("time").value+"\n\n"+
+"*SELECTED SALON SERVICES*\n"+cart.map(x=>"• "+x.name+": "+money(x.price)).join("\n")+"\n\n"+
+"*Subtotal:* "+money(totalPrice())+"\n"+
+"*TOTAL AMOUNT: "+money(totalPrice())+"*\n\n"+
+"*Please confirm home-service availability and booking.*\nThank you!";window.open("https://wa.me/917838675115?text="+encodeURIComponent(details),"_blank","noopener");status.textContent="WhatsApp opened with your salon home-service request. Press Send there, then wait for confirmation."});
 function setMinDate(){document.getElementById("date").min=new Date().toISOString().slice(0,10)}
 selectedDepartment="SALON";document.getElementById("tierEyebrow").textContent="SALON EXPERIENCE";document.getElementById("tierDescription").textContent="Choose PRIME or LUXE to view salon services and booking.";document.getElementById("primeDescription").textContent="Haircut ₹99 · Beard shaving ₹80.";document.getElementById("luxeDescription").textContent="Haircut ₹150 · Beard shaving ₹150.";document.getElementById("primePrice").textContent="Haircut ₹120 · Shaving ₹80 · Combo ₹180";document.getElementById("luxePrice").textContent="Haircut ₹160 · Shaving ₹120 · Combo ₹259";document.getElementById("tierNote").textContent="Pedicure: ₹399/₹599 · Manicure: ₹399/₹599 · Pedicure + Manicure: ₹699/₹999 (PRIME/LUXE).";document.getElementById("selectedCategoryLabel").textContent="SALON · PRIME";document.getElementById("serviceMenuTitle").textContent="PRIME Salon Menu";document.getElementById("services").style.display="none";document.getElementById("add-ons").style.display="none";document.getElementById("booking").style.display="none";renderServices();renderCart();setMinDate();updateCouponAvailability();
 </script>
