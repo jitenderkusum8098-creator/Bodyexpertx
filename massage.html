@@ -171,7 +171,7 @@ body{background:#0b0b0d;color:#f7f3e8}
 <button type="button" class="category-card active" id="primeCategory" onclick="selectCategory('PRIME')" aria-pressed="true"><span class="category-number">01 · PRIME</span><h2>PRIME</h2><p id="primeDescription"><strong>Therapist experience: 6 months–2 years</strong><br>Professional massage for relaxation and comfort.<br><strong>Without massage table/bed</strong><br><strong>Massage Report: Not included</strong></p><span class="category-price" id="primePrice">Starting at ₹699</span><span class="category-select">EXPLORE PRIME</span></button>
 <button type="button" class="category-card" id="luxeCategory" onclick="selectCategory('LUXE')" aria-pressed="false"><span class="category-number">02 · LUXE</span><h2>LUXE</h2><p id="luxeDescription"><strong>Therapist experience: 2+ years</strong><br>Personalized premium massage experience.<br><strong>With massage table/bed option</strong><br><strong>Detailed Massage Report included</strong></p><span class="category-price" id="luxePrice">Starting at ₹999</span><span class="category-select">EXPLORE LUXE</span></button>
 </div>
-<p class="category-caption" id="tierNote" style="margin-top:16px">LUXE costs ₹300 more than the corresponding PRIME massage and includes a Detailed Massage Report plus aftercare tips. The report is not a medical diagnosis.</p>
+<p class="category-caption" id="tierNote" style="margin-top:16px">LUXE costs ₹300 more than the corresponding PRIME massage, includes a Detailed Massage Report, and offers a massage table/bed. The report is not a medical diagnosis.</p>
 </div>
 </div></section>
 
@@ -299,10 +299,11 @@ function totalPrice(){return cart.reduce((n,x)=>n+x.price,0)}
 function discountPrice(){let d=0;if(couponApplied&&coupons[appliedCoupon]){const cp=coupons[appliedCoupon];d=Math.min(totalPrice(),Math.round(cp.kind==="percent"?totalPrice()*cp.value/100:cp.value))}return d+tableDiscount()}
 function finalPrice(){return Math.max(0,totalPrice()-discountPrice())}
 function renderCart(){
+ syncTableOption();
  const box=document.getElementById("cartItems");
  box.className=cart.length?"":"cart-empty";
  box.innerHTML=cart.length?cart.map((item,i)=>`
-  <div class="cart-item"><span>${item.name} · ${item.duration} min<br><b>${money(item.price)}</b>${currentGender()==="Female"?"<br><small>Female client pricing included</small>":""}</span><button type="button" aria-label="Remove item" onclick="removeItem(${i})">Remove</button></div>
+  <div class="cart-item"><span>${item.name} · ${item.duration} min<br><b>${money(item.price)}</b>${currentGender()==="Female"&&selectedCategory==="PRIME"?"<br><small>PRIME female pricing included</small>":""}</span><button type="button" aria-label="Remove item" onclick="removeItem(${i})">Remove</button></div>
  `).join(""):"Your booking is empty. Add a massage or add-on above.";
  document.getElementById("discount").textContent=money(discountPrice());
  document.getElementById("total").textContent=money(finalPrice());
