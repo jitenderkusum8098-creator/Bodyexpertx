@@ -245,9 +245,23 @@ input,select,textarea{font-size:16px;line-height:1.5}
 
 .bx-course-home{background:radial-gradient(ellipse at 50% 0,#211a0c,transparent 55%)}.bx-course-heading{max-width:760px;margin:0 auto 26px;text-align:center}.bx-course-heading h2 span{color:var(--gold2)}.bx-course-heading p{max-width:690px;margin:auto;color:#c9c2b4;line-height:1.8}.bx-course-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:stretch}.bx-course-card{display:flex;flex-direction:column;min-width:0;overflow:hidden;border:1px solid #685020;border-radius:22px;background:linear-gradient(155deg,#19191b,#101012);box-shadow:0 18px 45px #0004}.bx-course-image{height:220px;position:relative;overflow:hidden;background:#211a0c}.bx-course-image:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#090909b8,transparent 62%)}.bx-course-image img{width:100%;height:100%;object-fit:cover;display:block}.bx-course-ribbon{position:absolute;z-index:1;top:15px;left:15px;border:1px solid #f0cb66;border-radius:999px;padding:7px 11px;background:#0b0b0ddf;color:#f4d16e;font-size:10px;font-weight:900;letter-spacing:.1em}.bx-course-body{padding:clamp(19px,3vw,27px);display:flex;flex-direction:column;flex:1}.bx-course-meta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:13px}.bx-course-meta span{border:1px solid #55431e;border-radius:999px;padding:5px 8px;color:#e7d4a4;font-size:9px;font-weight:850;letter-spacing:.05em}.bx-course-body h3{font-size:clamp(22px,2.5vw,29px);line-height:1.18;color:#fff;margin:0 0 12px}.bx-course-lead{color:#d0c9bc;line-height:1.75;font-size:14px;margin:0 0 17px}.bx-course-price-row{display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;border-top:1px solid #39301c;border-bottom:1px solid #39301c;padding:14px 0;margin-bottom:15px}.bx-course-price-row strong{font-size:31px;color:#f4ce61;font-weight:950}.bx-course-price-row del,.bx-course-per{font-size:13px;color:#bcb4a3}.bx-course-saving{font-size:11px;font-weight:900;color:#f3d27b;border:1px solid #6b5423;background:#241c0c;border-radius:999px;padding:6px 9px}.bx-course-skill-list{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}.bx-course-skill-list span{border-radius:8px;background:#211a0d;border:1px solid #40341d;color:#eee0bd;padding:6px 9px;font-size:11px}.bx-course-extra{font-size:12px;line-height:1.7;color:#bdb5a6;margin:8px 0 20px}.bx-course-button{display:flex;width:100%;justify-content:center;margin-top:auto;border-radius:13px;padding:14px 16px}.bx-course-outline{background:transparent;color:#f2c75b!important}.bx-course-footnote{display:flex;gap:12px;align-items:flex-start;margin:22px auto 0;padding:15px 17px;border:1px solid #493a1c;border-radius:13px;background:#141310;color:#c7bfaf;font-size:12px;line-height:1.75}.bx-course-footnote strong{color:#f0d17b;white-space:nowrap}@media(max-width:760px){.bx-course-cards{grid-template-columns:1fr;gap:17px}.bx-course-image{height:clamp(190px,54vw,285px)}.bx-course-body{padding:20px}.bx-course-body h3{font-size:25px}}@media(max-width:390px){.bx-course-footnote{display:block}.bx-course-footnote strong{display:block;margin-bottom:5px}}
 </style>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+.bx-service-zone{background:#101012;border-block:1px solid #4b3918}
+.bx-service-zone .section-head h2{color:#f7f3e8}
+.bx-service-zone .section-head p{color:#c2bdb0}
+.bx-zone-card{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(220px,.7fr);gap:20px;border:1px solid #5c461d;background:#151517;border-radius:18px;padding:14px;overflow:hidden}
+#bxNarnaulMap{height:390px;min-height:300px;border-radius:12px;background:#252525;z-index:0}
+.bx-zone-details{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:13px;padding:12px;color:#e9dfc8;font-size:14px}
+.bx-zone-details strong{color:#f2c75b;font-size:17px}
+.bx-zone-details span{display:block}
+.bx-zone-footnote{font-size:12px;color:#b9b2a2;text-align:center;margin:14px auto 0;max-width:850px}
+@media(max-width:700px){.bx-zone-card{grid-template-columns:1fr;padding:10px}#bxNarnaulMap{height:330px}.bx-zone-details{padding:8px}}
+</style>
 </head>
 <body>
-<div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE AVAILABLE · MEHRAULI, NEW DELHI</div>
+<div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE · NARNAUL + 35 KM</div>
 <header class="header"><div class="wrap nav">
 <a class="brand" href="#home"><span class="brandmark" aria-hidden="true"><svg viewBox="0 0 100 100" width="30" height="30"><defs><linearGradient id="brandSilver" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#b9bdc1"/><stop offset="1" stop-color="#73777c"/></linearGradient></defs><path d="M15 14 L36 14 L85 77 L65 87 Z" fill="url(#brandSilver)"/><path d="M84 14 L64 14 L15 77 L35 87 Z" fill="url(#brandSilver)"/></svg></span><span>BODYEXPERT<em>X</em></span></a>
 <nav class="links"><a href="#categories">Massage &amp; Salon</a><a href="#courses">Courses</a><a href="#testimonials">Ratings</a><a href="#social">Social</a></nav>
@@ -264,7 +278,9 @@ input,select,textarea{font-size:16px;line-height:1.5}
       <div class="bx-hero-actions"><a class="btn bx-primary" href="./massage.html?v=hero-redesign">Book Massage <span>›</span></a><a class="btn bx-secondary" href="./salon.html?v=hero-redesign">Book Salon <span>›</span></a></div>
     </div>
     </div>
-  <div class="bx-benefits"><div><span>✦</span><section><b>Stress Relief</b><small>Relax your mind</small></section></div><div><span>◈</span><section><b>Wellness Care</b><small>Feel better every day</small></section></div><div><span>⚕</span><section><b>Male &amp; Female Therapists</b><small>Male to male · Female to female</small></section></div></div>
+  <div class="bx-benefits"><div><span>✦</span><section><b>Stress Relief</b><small>Relax your mind</small></section>
+<section class="section bx-service-zone" id="service-area"><div class="wrap"><div class="section-head"><div class="eyebrow">BODYEXPERTX HOME SERVICE AREA</div><h2>Service Zone: Narnaul + 35 KM</h2><p>Home massage and salon services are available within a 35 km radius of Narnaul, Haryana. The circle on the map shows the approximate service boundary.</p></div><div class="bx-zone-card"><div id="bxNarnaulMap" role="img" aria-label="Map showing a 35 kilometre service radius around Narnaul, Haryana"></div><div class="bx-zone-details"><strong>📍 Centre: Narnaul, Haryana</strong><span>Radius: 35 km in every direction</span><span>Service area: Narnaul and nearby locations inside the circle</span><a class="btn small" href="https://www.google.com/maps/dir/?api=1&origin=Narnaul%2C+Haryana&destination=Narnaul%2C+Haryana" target="_blank" rel="noopener">Open Narnaul in Google Maps</a></div></div><p class="bx-zone-footnote">The circle is a straight-line radius, not a 35 km road-travel distance. Final service availability is confirmed when the booking address is checked.</p></div></section>
+</div><div><span>◈</span><section><b>Wellness Care</b><small>Feel better every day</small></section></div><div><span>⚕</span><section><b>Male &amp; Female Therapists</b><small>Male to male · Female to female</small></section></div></div>
 </section>
 
 
@@ -449,5 +465,19 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
  window.open("https://wa.me/?text="+encodeURIComponent(message),"_blank","noopener");
  status.textContent="WhatsApp khul raha hai. Link apne dost ko bhej dein.";
 });
+</script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+ const el=document.getElementById("bxNarnaulMap"); if(!el||!window.L)return;
+ const center=[28.0444,76.1083];
+ const map=L.map(el,{scrollWheelZoom:false}).setView(center,9);
+ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+ L.circle(center,{radius:35000,color:"#f2c75b",weight:3,fillColor:"#d9aa35",fillOpacity:.2}).addTo(map);
+ L.marker(center).addTo(map).bindPopup("<b>BodyExpertX</b><br>Narnaul service centre point<br>35 km service radius").openPopup();
+ map.fitBounds(L.circle(center,{radius:35000}).getBounds(),{padding:[16,16]});
+ setTimeout(()=>map.invalidateSize(),250);
+})();
 </script>
 </body></html>
