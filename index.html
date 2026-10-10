@@ -436,12 +436,6 @@ document.getElementById("bookingForm").addEventListener("submit",function(e){e.p
 "💵 *Subtotal:* "+money(totalPrice())+"\n"+
 "🎟️ *Discount:* "+money(discountPrice())+"\n"+
 "💰 *TOTAL AMOUNT: "+money(total)+"*\n"+
-"💳 *PAYMENT DETAILS*\n"+
-"• Booking Advance (20%): "+money(Math.ceil(total*0.20))+"\n"+
-"• Remaining Amount (80%): "+money(total-Math.ceil(total*0.20))+"\n"+
-"• Advance Payment Status: ⏳ PENDING\n"+
-"• Booking Status: ⚠️ AWAITING PAYMENT\n"+
-"📌 *Booking confirmation will be sent on WhatsApp after advance payment is received and verified.*\n"+
 "🏷️ *Coupon:* "+(appliedCoupon||"None")+"\n"+
 "📝 *Notes:* "+(document.getElementById("notes").value.trim()||"None")+"\n\n"+
 "🙏 *Please confirm availability and booking.*\nThank you!";window.open("https://wa.me/917838675115?text="+encodeURIComponent(details),"_blank","noopener");status.textContent="WhatsApp opened with your request. Press Send there, then wait for our confirmation."});
