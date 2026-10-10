@@ -413,6 +413,7 @@ document.getElementById("bookingForm").addEventListener("submit",function(e){e.p
 "🎟️ *Discount:* "+money(discountPrice())+"\n"+
 "💰 *TOTAL AMOUNT: "+money(total)+"*\n"+
 "🏷️ *Coupon:* "+(appliedCoupon||"None")+"\n"+
+"🤝 *Referral:* "+(referralApplied?"₹100 discount applied; referrer mobile: "+referrerPhone:"None")+"\n"+
 "📝 *Notes:* "+(document.getElementById("notes").value.trim()||"None")+"\n\n"+
 "🙏 *Please confirm availability and booking.*\nThank you!";;window.open("https://wa.me/918860742376?text="+encodeURIComponent(details),"_blank","noopener");status.textContent="WhatsApp opened with your request. Press Send there, then wait for our confirmation."});
 function setMinDate(){document.getElementById("date").min=new Date().toISOString().slice(0,10)}
