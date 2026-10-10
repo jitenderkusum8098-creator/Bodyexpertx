@@ -631,7 +631,30 @@ h+='<h4>Wellness & goals</h4><div class="field"><label>19. Sleep quality *</labe
 h+=multiQuestion("massageGoal","20. What is your main goal for massage? Select all that apply.",["Relaxation","Muscle tightness relief","Post-workout recovery","Mobility support","Stress relief","General wellness","Other"]);
 }
 h+='</div>';box.innerHTML=h;box.querySelectorAll('input[type="checkbox"][name="medical"]').forEach(el=>el.addEventListener("change",()=>{const all=[...box.querySelectorAll('input[name="medical"]')],none=all.find(x=>x.value==="None of the above");if(el.value==="None of the above"&&el.checked)all.forEach(x=>{if(x!==el)x.checked=false});else if(el.checked&&none)none.checked=false;}));box.querySelectorAll('input[type="checkbox"][name="painAreas"]').forEach(el=>el.addEventListener("change",()=>{const all=[...box.querySelectorAll('input[name="painAreas"]')],none=all.find(x=>x.value==="No pain");if(el.value==="No pain"&&el.checked)all.forEach(x=>{if(x!==el)x.checked=false});else if(el.checked&&none)none.checked=false;}));}
-function collectIntake(){const box=document.getElementById("intakeQuestions");const out=[];box.querySelectorAll("select,input[type=radio],textarea").forEach(el=>{if(el.name&&el.value&&((el.type!=="radio")||el.checked))out.push(el.name+": "+el.value)});const groups={};box.querySelectorAll('input[type="checkbox"]:checked').forEach(el=>{(groups[el.name]||(groups[el.name]=[])).push(el.value)});Object.keys(groups).forEach(k=>out.push(k+": "+groups[k].join(", ")));return out.join("\n");}
+function collectIntake(){
+ const box=document.getElementById("intakeQuestions"),out=[];
+ const labels={
+  priorMassage:"Pehle massage karwaya hai",medical:"Medical conditions / health problems",medicalDetails:"Medical condition ya medicines ki details",
+  painAreas:"Dard ya jakdan kis hisse mein hai",workType:"Kaam ka type",activityLevel:"Physical activity level",painScale:"Abhi dard kitna hai (1–10)",
+  previousTypes:"Pehle kaun se massage karwaye",lastMassage:"Aakhri massage kab karwaya",previousExperience:"Pichhle massage ka experience",
+  medication:"Roz dawa lete hain",surgery:"Surgery ya badi chot ka history",swelling:"Sujan / aasani se nishaan / skin sensitivity",
+  numbness:"Sunnpan ya jhanjhanahat",painDuration:"Dard kab se hai",painType:"Dard kaisa mehsoos hota hai",
+  painFrequency:"Dard kitni baar hota hai",painMovement:"Movement se dard badhta hai",sittingHours:"Roz baithne ke ghante",
+  standingHours:"Roz khade rehne ke ghante",activityTypes:"Kaun si physical activities karte hain",sleepQuality:"Neend ki quality",
+  stressLevel:"Stress level",massageGoal:"Massage ka main goal"
+ };
+ box.querySelectorAll("select,input[type=radio],textarea").forEach(el=>{
+  if(el.name&&el.value&&((el.type!=="radio")||el.checked)){
+   const label=labels[el.name]||el.name;
+   const line=label+": "+el.value;
+   if(!out.includes(line))out.push(line);
+  }
+ });
+ const groups={};
+ box.querySelectorAll('input[type="checkbox"]:checked').forEach(el=>{(groups[el.name]||(groups[el.name]=[])).push(el.value)});
+ Object.keys(groups).forEach(k=>out.push((labels[k]||k)+": "+groups[k].join(", ")));
+ return out.length?out.map(x=>"• "+x).join("\n"):"Assessment details not provided.";
+}
 function selectCategory(category,scroll=true){selectedCategory=category==="LUXE"?"LUXE":"PRIME";updateFemalePriceNotice();document.getElementById("services").style.display="block";document.getElementById("add-ons").style.display=selectedDepartment==="MASSAGE"?"block":"none";document.getElementById("booking").style.display="block";document.getElementById("primeCategory").classList.toggle("active",selectedCategory==="PRIME");document.getElementById("luxeCategory").classList.toggle("active",selectedCategory==="LUXE");document.getElementById("primeCategory").setAttribute("aria-pressed",String(selectedCategory==="PRIME"));document.getElementById("luxeCategory").setAttribute("aria-pressed",String(selectedCategory==="LUXE"));document.getElementById("selectedCategoryLabel").textContent=selectedDepartment+" · "+selectedCategory;document.getElementById("serviceMenuTitle").textContent=selectedCategory+" "+(selectedDepartment==="MASSAGE"?"Massage Menu":"Salon Menu");document.getElementById("serviceMenuDescription").textContent=selectedDepartment==="MASSAGE"?(selectedCategory==="LUXE"?"Choose your premium massage treatment and session length.":"Choose your treatment and session length. Select any service to add it to your booking."):(selectedCategory==="LUXE"?"Choose salon services in the LUXE range. Haircut is ₹160.":"Choose salon services in the PRIME range. Haircut is ₹120.");renderServices();renderIntake();syncTableOption();if(scroll)document.getElementById("services").scrollIntoView({behavior:"smooth",block:"start"});}
 function renderServices(){
  const serviceBox=document.getElementById("serviceCards");
