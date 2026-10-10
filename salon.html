@@ -126,7 +126,19 @@ body{background:#0b0b0d;color:#f7f3e8}
 @media(max-width:560px){.category-grid{grid-template-columns:1fr}.category-card{min-height:160px;padding:20px}}
 
 
-.brand-banner,.hero{display:none!important}.category-section{padding:34px 0 10px}#tierChooser{display:block!important}#services,#add-ons,#booking{display:none}.header .links a[href="#services"],.header .links a[href="#add-ons"]{display:none}
+.brand-banner,.hero{display:none!important}
+.category-section{padding:18px 0 10px}
+#tierChooser{display:block!important}
+#services,#add-ons,#booking{display:none}
+.header .links a[href="#services"],.header .links a[href="#add-ons"]{display:none}
+.salon-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 auto 22px}
+.salon-gallery figure{margin:0;position:relative;min-width:0;height:clamp(145px,23vw,270px);overflow:hidden;border-radius:15px;border:1px solid #6b511d;background:#17130a}
+.salon-gallery img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.82);transition:transform .35s}
+.salon-gallery figure:hover img{transform:scale(1.04)}
+.salon-gallery figcaption{position:absolute;left:0;right:0;bottom:0;padding:28px 6px 11px;text-align:center;background:linear-gradient(transparent,#000d);color:#f2c75b;font-size:clamp(10px,1.3vw,13px);font-weight:900;letter-spacing:.12em}
+.category-grid{margin-top:0}
+.category-card p{line-height:1.55}
+@media(max-width:560px){.salon-gallery{gap:7px;margin-bottom:17px}.salon-gallery figure{height:145px;border-radius:10px}.salon-gallery figcaption{font-size:9px;letter-spacing:.04em;padding:24px 3px 8px}.category-section{padding-top:14px}}
 </style>
 </head>
 <body>
@@ -136,7 +148,8 @@ body{background:#0b0b0d;color:#f7f3e8}
 <nav class="links"><a href="./index.html">Home</a><a href="./courses.html">Courses</a></nav>
 <a class="btn small" href="./courses.html">Courses</a><a class="btn small" href="#services">Services</a>
 </div></header>
-<main id="home">\n<section class="brand-banner" aria-label="BodyExpertX branded massage room"><img src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1800&q=90" alt="Premium massage room"><div class="banner-overlay"><div class="banner-logo"><span class="banner-logo-mark"><svg viewBox="0 0 100 100" role="img" aria-label="BodyExpertX X symbol"><defs><linearGradient id="silverX" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".48" stop-color="#b9bdc1"/><stop offset="1" stop-color="#73777c"/></linearGradient></defs><path d="M15 14 L36 14 L85 77 L65 87 Z" fill="url(#silverX)"/><path d="M84 14 L64 14 L15 77 L35 87 Z" fill="url(#silverX)"/></svg></span><span class="banner-logo-word">BODYEXPERT<span>X</span></span></div><p>EXPERT HANDS. BETTER YOU.</p></div></section>
+<main id="home">
+<section class="brand-banner" aria-label="BodyExpertX branded massage room"><img src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1800&q=90" alt="Premium massage room"><div class="banner-overlay"><div class="banner-logo"><span class="banner-logo-mark"><svg viewBox="0 0 100 100" role="img" aria-label="BodyExpertX X symbol"><defs><linearGradient id="silverX" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".48" stop-color="#b9bdc1"/><stop offset="1" stop-color="#73777c"/></linearGradient></defs><path d="M15 14 L36 14 L85 77 L65 87 Z" fill="url(#silverX)"/><path d="M84 14 L64 14 L15 77 L35 87 Z" fill="url(#silverX)"/></svg></span><span class="banner-logo-word">BODYEXPERT<span>X</span></span></div><p>EXPERT HANDS. BETTER YOU.</p></div></section>
 <section class="hero"><div class="wrap hero-grid"><div>
 <div class="eyebrow">Expert hands. Better you.</div>
 <h1>Your Care.<br><span>Your Style.</span></h1>
@@ -148,15 +161,20 @@ body{background:#0b0b0d;color:#f7f3e8}
 </div></div></section>
 
 <section class="category-section" id="categories"><div class="wrap">
-<div class="section-head" style="margin-bottom:22px"><div class="eyebrow">Choose your service</div><h2>What would you like today?</h2><p>Choose PRIME or LUXE to view salon services and booking.</p></div>
-<div id="tierChooser" style="margin-top:24px"><div class="section-head" style="margin-bottom:18px"><div class="eyebrow" id="tierEyebrow">SALON EXPERIENCE</div><h2>Choose PRIME or LUXE</h2><p id="tierDescription">Choose the experience that suits you.</p></div>
+<div class="salon-gallery" aria-label="Salon service photos">
+  <figure><img src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?auto=format&fit=crop&w=900&q=85" alt="Pedicure and foot care treatment" fetchpriority="high"><figcaption>PEDICURE</figcaption></figure>
+  <figure><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=900&q=85" alt="Professional barber giving a haircut"><figcaption>HAIRCUT</figcaption></figure>
+  <figure><img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=900&q=85" alt="Barber performing a clean shave"><figcaption>SHAVING</figcaption></figure>
+</div>
+<div id="tierChooser" style="margin-top:20px">
+<div class="section-head" style="margin-bottom:18px"><div class="eyebrow" id="tierEyebrow">SALON EXPERIENCE</div><h2>Choose your salon experience</h2><p id="tierDescription">Choose PRIME or LUXE to view salon services and booking.</p></div>
 <div class="category-grid">
-<button type="button" class="category-card active" id="primeCategory" onclick="selectCategory('PRIME')" aria-pressed="true"><span class="category-number">01 · PRIME</span><h2>PRIME</h2><p id="primeDescription">Professional massage and recovery sessions.</p><span class="category-price" id="primePrice">Starting at ₹699</span><span class="category-select">EXPLORE PRIME</span></button>
-<button type="button" class="category-card" id="luxeCategory" onclick="selectCategory('LUXE')" aria-pressed="false"><span class="category-number">02 · LUXE</span><h2>LUXE</h2><p id="luxeDescription">A premium service experience.</p><span class="category-price" id="luxePrice">Starting at ₹1,699</span><span class="category-select">EXPLORE LUXE</span></button>
-</div><p class="category-caption" id="tierNote" style="margin-top:16px">LUXE massage prices are ₹1,000 above corresponding PRIME prices.</p></div>
+<button type="button" class="category-card active" id="primeCategory" onclick="selectCategory('PRIME')" aria-pressed="true"><span class="category-number">01 · PRIME</span><h2>PRIME</h2><p id="primeDescription">Everyday salon grooming at accessible prices.</p><span class="category-price" id="primePrice">Haircut ₹99</span><span class="category-select">EXPLORE PRIME</span></button>
+<button type="button" class="category-card" id="luxeCategory" onclick="selectCategory('LUXE')" aria-pressed="false"><span class="category-number">02 · LUXE</span><h2>LUXE</h2><p id="luxeDescription">Premium salon grooming and styling.</p><span class="category-price" id="luxePrice">Haircut ₹150</span><span class="category-select">EXPLORE LUXE</span></button>
+</div>
+<p class="category-caption" id="tierNote" style="margin-top:16px">Salon haircut: PRIME ₹99 · LUXE ₹150.</p>
+</div>
 </div></section>
-
-
 
 
 <section class="section" id="services"><div class="wrap"><div class="section-head"><div class="eyebrow">Your selection · <span id="selectedCategoryLabel" class="category-status">MASSAGE · PRIME</span></div><h2 id="serviceMenuTitle">PRIME Massage Menu</h2><p id="serviceMenuDescription">Choose your treatment and session length. Select any service to add it to your booking.</p></div>
@@ -202,7 +220,7 @@ const addons=[{name:"Head Massage",desc:"A short session focused on head and sca
 let cart=[],couponApplied=false,offerMode=false,appliedCoupon="",selectedCategory="PRIME",selectedDepartment="SALON";
 const money=n=>"₹"+n.toLocaleString("en-IN");
 const photo=(id,w=720)=>"https://images.unsplash.com/"+id+"?auto=format&fit=crop&w="+w+"&q=80";
-function selectDepartment(department){selectedDepartment=department==="SALON"?"SALON":"MASSAGE";document.getElementById("massageCategory").classList.toggle("active",selectedDepartment==="MASSAGE");document.getElementById("salonCategory").classList.toggle("active",selectedDepartment==="SALON");document.getElementById("massageCategory").setAttribute("aria-pressed",String(selectedDepartment==="MASSAGE"));document.getElementById("salonCategory").setAttribute("aria-pressed",String(selectedDepartment==="SALON"));document.getElementById("tierChooser").hidden=false;document.getElementById("tierEyebrow").textContent=selectedDepartment+" EXPERIENCE";document.getElementById("tierDescription").textContent=selectedDepartment==="MASSAGE"?"Choose your salon experience.":"Choose your salon experience.";document.getElementById("primeDescription").textContent=selectedDepartment==="MASSAGE"?"Professional massage and recovery sessions.":"Everyday salon grooming at accessible prices.";document.getElementById("luxeDescription").textContent=selectedDepartment==="MASSAGE"?"The same massage menu with a premium experience.":"Premium salon grooming and styling.";document.getElementById("primePrice").textContent=selectedDepartment==="MASSAGE"?"Starting at ₹699":"Haircut ₹99";document.getElementById("luxePrice").textContent=selectedDepartment==="MASSAGE"?"Starting at ₹1,699":"Haircut ₹150";document.getElementById("tierNote").textContent=selectedDepartment==="MASSAGE"?"LUXE massage prices are ₹1,000 above corresponding PRIME prices.":"Salon haircut: PRIME ₹99 · LUXE ₹150. Other salon services will be added when finalised.";selectCategory(selectedCategory,false);document.getElementById("tierChooser").scrollIntoView({behavior:"smooth",block:"start"});}
+function selectDepartment(department){selectedDepartment=department==="SALON"?"SALON":"MASSAGE";document.getElementById("massageCategory").classList.toggle("active",selectedDepartment==="MASSAGE");document.getElementById("salonCategory").classList.toggle("active",selectedDepartment==="SALON");document.getElementById("massageCategory").setAttribute("aria-pressed",String(selectedDepartment==="MASSAGE"));document.getElementById("salonCategory").setAttribute("aria-pressed",String(selectedDepartment==="SALON"));document.getElementById("tierChooser").hidden=false;document.getElementById("tierEyebrow").textContent=selectedDepartment+" EXPERIENCE";document.getElementById("tierDescription").textContent=selectedDepartment==="MASSAGE"?"Choose your massage experience.":"Choose PRIME or LUXE to view salon services and booking.";document.getElementById("primeDescription").textContent=selectedDepartment==="MASSAGE"?"Professional massage focused on relaxation and comfort.":"Everyday salon grooming at accessible prices.";document.getElementById("luxeDescription").textContent=selectedDepartment==="MASSAGE"?"Personalized premium massage experience.":"Premium salon grooming and styling.";document.getElementById("primePrice").textContent=selectedDepartment==="MASSAGE"?"Starting at ₹699":"Haircut ₹99";document.getElementById("luxePrice").textContent=selectedDepartment==="MASSAGE"?"Starting at ₹1,699":"Haircut ₹150";document.getElementById("tierNote").textContent=selectedDepartment==="MASSAGE"?(selectedCategory==="LUXE"?"LUXE includes a Detailed Massage Report and personalized aftercare tips; it is not a medical diagnosis.":"Massage Report is not included with PRIME; available with LUXE only."):"Salon haircut: PRIME ₹99 · LUXE ₹150.";selectCategory(selectedCategory,false);document.getElementById("tierChooser").scrollIntoView({behavior:"smooth",block:"start"});}
 function selectCategory(category,scroll=true){selectedCategory=category==="LUXE"?"LUXE":"PRIME";document.getElementById("services").style.display="block";document.getElementById("add-ons").style.display=selectedDepartment==="MASSAGE"?"block":"none";document.getElementById("booking").style.display="block";document.getElementById("primeCategory").classList.toggle("active",selectedCategory==="PRIME");document.getElementById("luxeCategory").classList.toggle("active",selectedCategory==="LUXE");document.getElementById("primeCategory").setAttribute("aria-pressed",String(selectedCategory==="PRIME"));document.getElementById("luxeCategory").setAttribute("aria-pressed",String(selectedCategory==="LUXE"));document.getElementById("selectedCategoryLabel").textContent=selectedDepartment+" · "+selectedCategory;document.getElementById("serviceMenuTitle").textContent=selectedCategory+" "+(selectedDepartment==="MASSAGE"?"Massage Menu":"Salon Menu");document.getElementById("serviceMenuDescription").textContent=selectedDepartment==="MASSAGE"?(selectedCategory==="LUXE"?"Enjoy the same massage menu with ₹1,000 added to each massage session.":"Choose your treatment and session length. Select any service to add it to your booking."):(selectedCategory==="LUXE"?"Choose salon services in the LUXE range. Haircut is ₹150.":"Choose salon services in the PRIME range. Haircut is ₹99.");renderServices();if(scroll)document.getElementById("services").scrollIntoView({behavior:"smooth",block:"start"});}
 function renderServices(){
  const serviceBox=document.getElementById("serviceCards");
