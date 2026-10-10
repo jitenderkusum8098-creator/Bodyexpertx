@@ -519,3 +519,39 @@ function setMinDate(){document.getElementById("date").min=new Date().toISOString
 document.getElementById("primeDescription").innerHTML="<strong>Therapist experience: 6 months–2 years</strong><br>Professional massage for relaxation and comfort.<br><strong>Without massage table/bed</strong><br><strong>Massage Report: Not included</strong>";document.getElementById("luxeDescription").innerHTML="<strong>Therapist experience: 2+ years</strong><br>Personalized premium massage experience.<br><strong>With massage table/bed option</strong><br><strong>Detailed Massage Report included</strong>";document.getElementById("primePrice").textContent="Starting at ₹699";document.getElementById("luxePrice").textContent="Starting at ₹1,999";document.getElementById("tierNote").textContent="LUXE costs ₹1,300 more than the corresponding PRIME massage and includes a Detailed Massage Report plus aftercare tips. The report is not a medical diagnosis.";document.getElementById("services").style.display="none";document.getElementById("add-ons").style.display="none";document.getElementById("booking").style.display="none";updateFemalePriceNotice();renderServices();renderIntake();renderCart();setMinDate();toggleAddress();updateCouponAvailability();
 </script>
 </body></html>
+<style>
+
+/* October mobile booking redesign: fix actual order and simplify cards */
+#bookingForm{display:flex!important;flex-direction:column!important;gap:16px!important}
+#bookingForm .billing-summary-panel{order:20!important;margin-top:0!important;padding:20px!important;border:1px solid #6c5525!important;border-radius:18px!important;background:linear-gradient(155deg,#19170f,#111113)!important;box-shadow:0 12px 30px #0004!important}
+#bookingForm #finalConfirmation{order:30!important;margin-top:0!important;padding:18px!important;border:1px solid #6c5525!important;border-radius:18px!important;background:#141416!important;box-shadow:0 12px 30px #0004!important}
+#bookingForm .billing-summary-panel>h3{font-size:clamp(22px,5vw,28px)!important;line-height:1.2!important;margin:0 0 18px!important;color:#f2d078!important}
+#bookingForm .billing-summary-panel .field{padding:14px!important;background:#101012!important;border:1px solid #383124!important;border-radius:13px!important}
+#bookingForm .billing-summary-panel .field label{font-size:14px!important;line-height:1.45!important;color:#f2ead8!important}
+#bookingForm .billing-summary-panel .totals{display:flex;justify-content:space-between;gap:12px;padding:11px 0!important;margin:0!important;border-bottom:1px solid #332b1c;font-size:17px!important;color:#d8cfbd!important}
+#bookingForm .billing-summary-panel .totals:last-child{border-bottom:0;padding-top:16px!important;font-size:23px!important;color:#f2c75b!important}
+#bookingForm .cart-item{align-items:center;padding:15px 0!important;border-bottom:1px solid #393123!important;font-size:15px!important;line-height:1.55!important}
+#bookingForm .cart-item b{font-size:19px!important;color:#f2c75b!important}
+#bookingForm .cart-item button{padding:8px 10px;border:1px solid #704747!important;border-radius:9px!important;color:#f0a5a5!important;white-space:nowrap}
+#bookingForm #referralPhone,#bookingForm #coupon{min-height:50px!important;border-radius:10px!important}
+#bookingForm .billing-summary-panel .btn.small{min-height:44px!important;padding:10px 15px!important;border-radius:10px!important}
+#bookingForm #finalConfirmation .final-step-kicker{font-size:11px!important;letter-spacing:.16em!important;color:#d9aa35!important;font-weight:900!important}
+#bookingForm #finalConfirmation h3{font-size:clamp(22px,5vw,27px)!important;color:#f2d078!important;margin:4px 0 16px!important}
+#bookingForm #finalConfirmation .final-declaration{padding:13px!important;background:#1d1a12!important;border:1px solid #40351f!important;border-radius:12px!important;font-size:14px!important}
+#bookingForm #finalConfirmation .hint{font-size:13px!important;line-height:1.6!important}
+#bookingForm #finalConfirmation .table-option-card{padding:15px!important;border-radius:13px!important;background:#1c180f!important}
+#bookingForm #finalConfirmation .table-option-card select{width:100%!important;min-height:52px!important;font-size:16px!important}
+#bookingForm #finalConfirmation .final-submit{min-height:58px!important;font-size:17px!important;border-radius:14px!important;background:linear-gradient(135deg,#f6d879,#d4a12b)!important;color:#17120a!important;box-shadow:0 8px 22px #d9aa3524!important}
+#bookingForm #finalConfirmation .final-submit:hover{transform:translateY(-1px)}
+@media(max-width:560px){
+ .booking-layout{width:min(100% - 24px,820px)!important}
+ #bookingForm{padding:14px!important;gap:13px!important}
+ #bookingForm .billing-summary-panel{padding:15px!important}
+ #bookingForm #finalConfirmation{padding:15px!important}
+ #bookingForm .billing-summary-panel .field{padding:12px!important}
+ #bookingForm .billing-summary-panel .totals{font-size:16px!important}
+ #bookingForm .billing-summary-panel .totals:last-child{font-size:22px!important}
+ .sticky-wa{bottom:12px!important;right:12px!important;padding:11px 15px!important;font-size:12px!important}
+}
+
+</style>
