@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BodyExpertX Salon Booking</title>
+<title>BodyExpertX Salon Home Service Booking</title>
 <meta name="description" content="Explore BodyExpertX Massage and Salon services in Kishangarh, Mehrauli, New Delhi. PRIME and LUXE options, massage bookings, salon haircuts and massage therapy courses.">
 <meta name="theme-color" content="#ffffff">
 <style>
@@ -155,7 +155,7 @@ body{background:#0b0b0d;color:#f7f3e8}
 <h1>Your Care.<br><span>Your Style.</span></h1>
 <p>Discover BodyExpertX for professional massage, wellness and salon grooming—with thoughtful care and services tailored to you.</p>
 <div class="hero-actions"><a class="btn" href="#categories">Explore Services</a><a class="btn ghost" href="./join.html">Join BodyExpertX</a></div>
-<div class="trust"><span>✦ Massage & recovery</span><span>✦ Salon & grooming</span><span>✦ Centre & home massage, subject to availability</span></div>
+<div class="trust"><span>✦ Massage & recovery</span><span>✦ Salon & grooming</span><span>✦ Salon home service only</span></div>
 </div>
 
 </div></div></section>
@@ -166,6 +166,7 @@ body{background:#0b0b0d;color:#f7f3e8}
   <figure><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=900&q=85" alt="Professional barber giving a haircut"><figcaption>HAIRCUT</figcaption></figure>
   <figure><img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=900&q=85" alt="Barber performing a clean shave"><figcaption>SHAVING</figcaption></figure>
 </div>
+<div class="salon-policy-banner" role="note" style="margin:22px 0;padding:16px 18px;border:1px solid #e0c45c;border-radius:10px;background:#fff8e3;text-align:center"><strong style="display:block;color:#8a6500">SALON HOME SERVICE ONLY</strong><span>We come to your home — salon appointments at a centre are not available.</span><br><strong>Minimum salon order: ₹200</strong><br><span>No massage health/intake questionnaire for salon bookings.</span></div>
 <div id="tierChooser" style="margin-top:20px">
 <div class="section-head" style="margin-bottom:18px"><div class="eyebrow" id="tierEyebrow">SALON EXPERIENCE</div><h2>Choose your salon experience</h2><p id="tierDescription">Choose PRIME or LUXE to view salon services and booking.</p></div>
 <div class="category-grid">
@@ -179,17 +180,20 @@ body{background:#0b0b0d;color:#f7f3e8}
 
 <section class="section" id="services"><div class="wrap"><div class="section-head"><div class="eyebrow">Your selection · <span id="selectedCategoryLabel" class="category-status">SALON · PRIME</span></div><h2 id="serviceMenuTitle">PRIME Salon Menu</h2><p id="serviceMenuDescription">Choose a haircut or beard-shaving service and add it to your booking.</p></div>
 <p class="gender-price-note">Haircut: PRIME ₹120 · LUXE ₹160. Beard shaving: PRIME ₹80 · LUXE ₹120. Haircut + shaving: PRIME ₹180 · LUXE ₹259.</p><div class="cards" id="serviceCards">
-<article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=720&q=85" alt="Barber cutting a customer's hair"><div class="service-body"><div class="tag">PRIME · SALON</div><h3>Haircut</h3><p>A fresh, neatly styled haircut by a barber.</p><div class="prices"><div class="price-choice"><span>PRIME price</span><b>₹99</b><button class="btn small" type="button" onclick="addSalonService(99,'Haircut')">Add Haircut</button></div></div></div></article>
-<article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=720&q=85" alt="Barber trimming a man's beard"><div class="service-body"><div class="tag">PRIME · SALON</div><h3>Beard Shaving</h3><p>A clean beard shape-up and shave for a fresh, well-groomed look.</p><div class="prices"><div class="price-choice"><span>PRIME price</span><b>₹80</b><button class="btn small" type="button" onclick="addSalonService(80,'Beard Shaving')">Add Shaving</button></div></div></div></article>
-</div></div></div></section>
+<article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=720&q=85" alt="Barber cutting a customer's hair"><div class="service-body"><div class="tag">PRIME · SALON</div><h3>Haircut</h3><p>A fresh, neatly styled haircut by a barber.</p><div class="prices"><div class="price-choice"><span>PRIME price</span><b>₹120</b></div><div class="price-choice"><span>LUXE price</span><b>₹160</b></div></div><button class="btn small" type="button" onclick="addSalonService(selectedCategory==='LUXE'?160:120,'Haircut')">Add to Cart</button></div></article>
+<article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=720&q=85" alt="Barber trimming and shaping a beard"><div class="service-body"><div class="tag">PRIME · SALON</div><h3>Beard Shaving Style</h3><p>A clean shave and neatly shaped beard style.</p><div class="prices"><div class="price-choice"><span>PRIME price</span><b>₹80</b></div><div class="price-choice"><span>LUXE price</span><b>₹120</b></div></div><button class="btn small" type="button" onclick="addSalonService(selectedCategory==='LUXE'?120:80,'Beard Shaving Style')">Add to Cart</button></div></article>
+<article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=720&q=85" alt="Men's haircut and grooming"><div class="service-body"><div class="tag">PRIME · SALON</div><h3>Haircut + Shaving</h3><p>A complete grooming combo with haircut and beard shaving.</p><div class="prices"><div class="price-choice"><span>PRIME price</span><b>₹180</b></div><div class="price-choice"><span>LUXE price</span><b>₹259</b></div></div><button class="btn small" type="button" onclick="addSalonService(selectedCategory==='LUXE'?259:180,'Haircut + Shaving')">Add to Cart</button></div></article>
+<article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?auto=format&fit=crop&w=720&q=85" alt="Pedicure foot care treatment"><div class="service-body"><div class="tag">SALON · NAIL CARE</div><h3>Pedicure</h3><p>Foot soak, nail care and a refreshing pedicure.</p><div class="prices"><div class="price-choice"><span>PRIME price</span><b>₹399</b></div><div class="price-choice"><span>LUXE price</span><b>₹599</b></div></div><button class="btn small" type="button" onclick="addSalonService(selectedCategory==='LUXE'?599:399,'Pedicure')">Add to Cart</button></div></article>
+<article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=720&q=85" alt="Manicure and nail care treatment"><div class="service-body"><div class="tag">SALON · NAIL CARE</div><h3>Manicure</h3><p>Hand care, nail shaping and a neat manicure finish.</p><div class="prices"><div class="price-choice"><span>PRIME price</span><b>₹399</b></div><div class="price-choice"><span>LUXE price</span><b>₹599</b></div></div><button class="btn small" type="button" onclick="addSalonService(selectedCategory==='LUXE'?599:399,'Manicure')">Add to Cart</button></div></article>
+<article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1610992015732-2449b76344bc?auto=format&fit=crop&w=720&q=85" alt="Manicure and pedicure nail care"><div class="service-body"><div class="tag">SALON · NAIL CARE</div><h3>Pedicure + Manicure</h3><p>A complete hand-and-foot care package.</p><div class="prices"><div class="price-choice"><span>PRIME price</span><b>₹699</b></div><div class="price-choice"><span>LUXE price</span><b>₹999</b></div></div><button class="btn small" type="button" onclick="addSalonService(selectedCategory==='LUXE'?999:699,'Pedicure + Manicure')">Add to Cart</button></div></article>
+</div></div></section>
 <section class="section alt" id="add-ons"><div class="wrap"><div class="section-head"><div class="eyebrow">A little extra care</div><h2>Quick Add-on Sessions</h2><p>Book these on their own (₹400 minimum applies) or add them to a massage.</p></div><div class="addon-grid" id="addonCards">
 <article class="addon"><h3>Head Massage</h3><p>A short session focused on head and scalp comfort · 20 min</p><strong>₹199</strong><button class="btn small" type="button" onclick="addAddon(0)">Add to Cart</button></article>
 <article class="addon"><h3>Foot Massage</h3><p>A relaxing session focused on tired feet · 20 min</p><strong>₹199</strong><button class="btn small" type="button" onclick="addAddon(1)">Add to Cart</button></article>
 <article class="addon"><h3>Head &amp; Shoulder Massage</h3><p>Focused care for head, neck and shoulder tension · 40 min</p><strong>₹449</strong><button class="btn small" type="button" onclick="addAddon(2)">Add to Cart</button></article>
 </div></div></section>
-<section class="section" id="booking"><div class="wrap"><div class="section-head"><div class="eyebrow">Your appointment, your way</div><h2>Build Your Booking</h2><p>Batayein booking male ya female ke liye hai, apni preferences aur zaroori health details bharein, phir WhatsApp par request bhejein.</p></div>
-<div class="booking-layout"><div class="panel"><h3>1. Your selected sessions</h3><div id="cartItems" class="cart-empty">Your salon cart is empty. Add salon services above.</div><div class="field" style="margin-top:14px"><label for="coupon">Choose a coupon code</label><select id="coupon" aria-label="Choose a coupon code"><option value="">No coupon</option><option value="RELAX10">RELAX10 — 10% off bookings ₹800+</option><option value="WELCOME100">WELCOME100 — ₹100 off bookings ₹999+</option><option value="RECOVERY15">RECOVERY15 — 15% off bookings ₹1,500+</option></select><button class="btn small" type="button" onclick="applyCoupon()" style="margin-top:8px">Apply Coupon</button></div><div id="couponStatus" class="status" aria-live="polite">Choose an available code and tap Apply Coupon.</div><div class="totals"><span>Discount</span><span id="discount">₹0</span></div><div class="totals"><span>Total</span><span id="total">₹0</span></div><p class="hint">Minimum salon order value ₹200. Salon services are available for home service only; centre appointments are not available.</p></div>
-<form class="panel" id="bookingForm"><h3>2. Home service booking details</h3>
+<section class="section" id="booking"><div class="wrap"><div class="section-head"><div class="eyebrow">SALON HOME SERVICE ONLY</div><h2>Book Salon Home Service</h2><p>Batayein booking male ya female ke liye hai, apni preferences aur zaroori health details bharein, phir WhatsApp par request bhejein.</p></div>
+<div class="booking-layout"><div class="panel"><h3>1. Your salon cart</h3><div id="cartItems" class="cart-empty">Your salon cart is empty. Add salon services above.</div><p id="minOrderStatus" class="status" aria-live="polite">Minimum salon order is ₹200. Add services until your subtotal reaches ₹200.</p><div class="totals"><span>Subtotal</span><span id="subtotal">₹0</span></div><div class="totals"><span>Total</span><span id="total">₹0</span></div><p class="hint">Salon services are available for home service only. No salon centre appointments.</p></div><form class="panel" id="bookingForm"><h3>2. Home service booking details</h3>
 <p class="hint">Salon services are available for home service only. We do not accept salon appointments at a centre.</p>
 <div class="field-grid"><div class="field"><label for="name">Full name *</label><input id="name" name="name" required autocomplete="name" placeholder="Your name"></div><div class="field"><label for="phone">Mobile number *</label><input id="phone" name="phone" required inputmode="tel" autocomplete="tel" pattern="[0-9+ ()-]{10,16}" placeholder="10-digit Indian mobile number"></div></div>
 <div class="field"><label for="address">Home address and nearby landmark *</label><textarea id="address" name="address" required placeholder="Enter complete home address and nearby landmark"></textarea></div>
@@ -267,23 +271,23 @@ function chooseOffer(){if(selectedDepartment==="SALON"){document.getElementById(
 function removeItem(i){if(cart[i]?.type==="offer")offerMode=false;cart.splice(i,1);couponApplied=false;appliedCoupon="";renderCart();updateCouponAvailability()}
 const coupons={RELAX10:{kind:"percent",value:10,min:800,label:"10% off"},WELCOME100:{kind:"flat",value:100,min:999,label:"₹100 off"},RECOVERY15:{kind:"percent",value:15,min:1500,label:"15% off"}};
 function updateGenderPricing(){const female=currentGender()==="Female";cart=cart.map(x=>({...x,price:(x.basePrice??x.price)+((x.type==="salon")?0:(female?150:0))}));couponApplied=false;appliedCoupon="";renderCart();updateCouponAvailability()}
-function updateCouponAvailability(){const select=document.getElementById("coupon"),el=document.getElementById("couponStatus");const hasOffer=cart.some(x=>x.type==="offer");const blocked=hasOffer;Array.from(select.options).forEach(o=>{if(o.value)o.disabled=blocked});const apply=select.parentElement.querySelector("button");apply.disabled=blocked;apply.style.opacity=blocked?".5":"1";if(blocked){couponApplied=false;appliedCoupon="";select.value="";el.textContent="The ₹399 first-booking offer cannot be combined with coupons."}else{el.textContent="Coupons are available for regular bookings, including first-time customers. Minimum spend applies.";el.style.color="var(--gold2)"}renderCart()}
-function applyCoupon(){const code=document.getElementById("coupon").value.trim().toUpperCase();const el=document.getElementById("couponStatus");const hasOffer=cart.some(x=>x.type==="offer");if(hasOffer){couponApplied=false;appliedCoupon="";el.textContent="Coupons cannot be combined with the ₹399 first-booking offer.";renderCart();return}if(!code){couponApplied=false;appliedCoupon="";el.textContent="No coupon selected.";renderCart();return}const cp=coupons[code];if(!cp){couponApplied=false;appliedCoupon="";el.textContent="Please choose one of the listed coupon codes.";renderCart();return}if(totalPrice()<cp.min){couponApplied=false;appliedCoupon="";el.textContent=code+" applies to bookings of "+money(cp.min)+" or more.";renderCart();return}couponApplied=true;appliedCoupon=code;renderCart();el.textContent=code+" applied — "+cp.label+".";el.style.color="var(--gold2)"}
+function updateCouponAvailability(){renderCart()}
+function applyCoupon(){}
 function totalPrice(){return cart.reduce((n,x)=>n+x.price,0)}
-function discountPrice(){if(!couponApplied||!coupons[appliedCoupon])return 0;const cp=coupons[appliedCoupon];return Math.min(totalPrice(),Math.round(cp.kind==="percent"?totalPrice()*cp.value/100:cp.value))}
+function discountPrice(){return 0}
 function finalPrice(){return Math.max(0,totalPrice()-discountPrice())}
 function renderCart(){
  const box=document.getElementById("cartItems");
  box.className=cart.length?"":"cart-empty";
  box.innerHTML=cart.length?cart.map((item,i)=>`
-  <div class="cart-item"><span>${item.name} · ${item.duration} min<br><b>${money(item.price)}</b>${currentGender()==="Female"?"<br><small>Female client pricing included</small>":""}</span><button type="button" aria-label="Remove item" onclick="removeItem(${i})">Remove</button></div>
- `).join(""):"Your booking is empty. Add a massage or add-on above.";
- document.getElementById("discount").textContent=money(discountPrice());
- document.getElementById("total").textContent=money(finalPrice());
- if(!couponApplied&&!cart.some(item=>item.type==="offer")){
-  document.getElementById("couponStatus").textContent="Coupons are available for regular bookings, including first-time customers. Minimum spend applies.";
-  document.getElementById("couponStatus").style.color="var(--gold2)";
- }
+  <div class="cart-item"><span>${item.name}<br><b>${money(item.price)}</b></span><button type="button" aria-label="Remove item" onclick="removeItem(${i})">Remove</button></div>
+ `).join(""):"Your salon cart is empty. Add salon services above.";
+ const subtotal=totalPrice();
+ document.getElementById("subtotal").textContent=money(subtotal);
+ document.getElementById("total").textContent=money(subtotal);
+ const note=document.getElementById("minOrderStatus");
+ if(subtotal<200){note.textContent="Minimum salon order is ₹200. Add ₹"+(200-subtotal)+" more to continue.";note.style.color="#a33"}
+ else {note.textContent="Minimum order met. Home service only — centre appointments are not available.";note.style.color="var(--gold2)"}
 }
 function toggleAddress(){}
 document.getElementById("bookingForm").addEventListener("submit",function(e){e.preventDefault();const status=document.getElementById("formStatus");if(!cart.length){status.textContent="Please add a salon service first.";return}if(totalPrice()<200){status.textContent="Minimum salon order value is ₹200. Please add another service to continue.";return}const date=document.getElementById("date").value;if(date<new Date().toISOString().slice(0,10)){status.textContent="Please choose today or a future date.";return}const details="✨ *NEW SALON HOME-SERVICE BOOKING — BODYEXPERTX* ✨\\n\\n"+
@@ -295,9 +299,7 @@ document.getElementById("bookingForm").addEventListener("submit",function(e){e.p
 "🕒 *Preferred time:* "+document.getElementById("time").value+"\\n\\n"+
 "🧾 *SALON SERVICES*\\n"+cart.map(x=>"• "+x.name+": "+money(x.price)).join("\\n")+"\\n\\n"+
 "💵 *Subtotal:* "+money(totalPrice())+"\\n"+
-"🎟️ *Discount:* "+money(discountPrice())+"\\n"+
-"💰 *TOTAL AMOUNT: "+money(finalPrice())+"*\\n"+
-"🏷️ *Coupon:* "+(appliedCoupon||"None")+"\\n\\n"+
+"💰 *TOTAL AMOUNT: "+money(totalPrice())+"*\\n\\n"+
 "🙏 *Please confirm home-service availability and booking.*\\nThank you!";
 window.open("https://wa.me/918860742376?text="+encodeURIComponent(details),"_blank","noopener");status.textContent="WhatsApp opened with your salon home-service request. Press Send there, then wait for confirmation."});
 function setMinDate(){document.getElementById("date").min=new Date().toISOString().slice(0,10)}
