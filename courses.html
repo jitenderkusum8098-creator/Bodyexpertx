@@ -14,14 +14,89 @@ button,a{transition:color .18s ease,background-color .18s ease,border-color .18s
 input,select,textarea{font-size:16px;line-height:1.5}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 @media(max-width:560px){.wrap{width:min(100% - 28px,1160px)}.section-head p{font-size:15px;line-height:1.65}}
+
+/* Student-first course guide: premium gold, black and responsive layouts */
+.learning-roadmap{padding:30px 0 8px}
+.roadmap-intro{max-width:800px;margin:0 auto 22px;text-align:center}
+.roadmap-intro h2{font-size:clamp(28px,5vw,42px);line-height:1.12;letter-spacing:-.03em;margin:10px 0}
+.roadmap-intro p{color:var(--muted);line-height:1.8;margin:0}
+.roadmap-highlights{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:25px 0}
+.roadmap-highlights>div{padding:18px;border:1px solid #51401e;border-radius:15px;background:linear-gradient(145deg,#201a0e,#141416);display:flex;flex-direction:column;gap:7px}
+.roadmap-highlights span{font-size:12px;font-weight:950;color:var(--gold2);letter-spacing:.14em}
+.roadmap-highlights b{font-size:16px}
+.roadmap-highlights small{font-size:13px;line-height:1.6;color:var(--muted)}
+.roadmap-note{padding:15px 17px;background:#211a0d;border:1px solid #5b451a;border-radius:12px;color:#e2d5b5;font-size:13px;line-height:1.75}
+.roadmap-note strong{color:var(--gold2)}
+.learning-details{padding:18px 0 12px}
+.learning-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.learning-grid article{padding:20px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#18181a,#111113)}
+.learn-symbol{width:39px;height:39px;border-radius:12px;display:grid;place-items:center;border:1px solid #856520;color:var(--gold2);font-size:20px;margin-bottom:12px}
+.learning-grid h3{font-size:17px;line-height:1.35;margin:0 0 8px}
+.learning-grid p{font-size:13px;line-height:1.75;color:var(--muted);margin:0}
+.course-fit{padding:12px 0 8px}
+.fit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.fit-grid article{padding:23px;border:1px solid #5b471f;border-radius:17px;background:linear-gradient(145deg,#211a0d,#141416)}
+.fit-tag{font-size:10px;letter-spacing:.14em;font-weight:900;color:var(--gold2)}
+.fit-grid h3{font-size:21px;line-height:1.25;margin:8px 0}
+.fit-grid p{font-size:14px;line-height:1.75;color:var(--muted)}
+.fit-grid a{color:var(--gold2);font-weight:850;text-decoration:none}
+.student-checklist{margin:25px 0 30px;padding:clamp(20px,4vw,30px);border:1px solid #806124;border-radius:19px;background:radial-gradient(ellipse at 0 0,#2c210c,transparent 70%),#151517}
+.student-checklist h2{font-size:clamp(24px,4vw,34px);line-height:1.2;margin:8px 0 15px}
+.student-checklist ol{padding-left:23px;color:#e2d9c7;display:grid;gap:9px;font-size:14px;line-height:1.65}
+.student-checklist li::marker{color:var(--gold2);font-weight:900}
+.student-checklist>p{border-top:1px solid #44371c;padding-top:13px;color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:0}
+.bundle-art{position:relative;isolation:isolate}
+.bundle-art:before{content:"";position:absolute;inset:16px;border:1px solid #8c6b29;border-radius:14px;pointer-events:none;z-index:-1}
+.bundle-art .seal{box-shadow:0 0 0 7px #d9aa3514,0 0 45px #d9aa3518}
+.course{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.course:hover{transform:translateY(-3px);border-color:#8c6b29;box-shadow:0 12px 28px #0004}
+@media(max-width:850px){.roadmap-highlights,.learning-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.roadmap-highlights,.learning-grid,.fit-grid{grid-template-columns:1fr}.roadmap-highlights>div{padding:15px}.learning-grid article{padding:17px}.fit-grid article{padding:19px}.student-checklist{margin-left:0;margin-right:0}}
+
 </style></head><body>
 <header class="header"><div class="wrap nav"><a class="brand" href="./index.html">BODYEXPERT<span>X</span></a><a class="btn ghost" href="./index.html">← Main Website</a></div></header>
 <main class="wrap">
 <section class="hero"><div class="eyebrow">Learn • Practise • Build your skills</div><h1>Massage Therapy <span>Courses</span></h1><p>Practical offline training at our Kishangarh centre. Choose our complete 7-skill programme or enrol in an individual certificate course. Add one or more courses to your cart and send an enquiry to our team.</p></section>
+
+<section class="learning-roadmap" aria-labelledby="course-roadmap-title">
+ <div class="roadmap-intro"><div class="eyebrow">START WITH CLARITY</div><h2 id="course-roadmap-title">Massage therapy seekhein — step by step</h2><p>BodyExpertX ke offline courses un learners ke liye hain jo massage techniques ko structured practice ke saath samajhna chahte hain. Neeche course ka purpose, learning approach aur enrolment se pehle jaanne wali baatein simple language mein di gayi hain.</p></div>
+ <div class="roadmap-highlights">
+  <div><span>01</span><b>Understand</b><small>Technique ka purpose, client communication aur basic safety.</small></div>
+  <div><span>02</span><b>Demonstration</b><small>Trainer ki demonstration dekhkar steps ko samajhna.</small></div>
+  <div><span>03</span><b>Supervised practice</b><small>Trainer ke guidance mein technique practice karna, as per batch plan.</small></div>
+  <div><span>04</span><b>Review</b><small>Feedback lena aur apne next practice goals samajhna.</small></div>
+ </div>
+ <div class="roadmap-note"><strong>Important:</strong> Exact daily timetable, hands-on practice hours, batch size, assessment, certificate eligibility aur included materials enrolment se pehle team se confirm karein. Course completion apne aap professional licence, medical qualification ya job guarantee nahi hai.</div>
+</section>
+
+<section class="learning-details" aria-labelledby="learning-details-title">
+ <div class="section-title"><div class="eyebrow">What students should know</div><h2 id="learning-details-title">Course mein kya samajhne ko milega?</h2><p>Yeh learning areas course discussion aur training plan ko samajhne ke liye hain. Har topic ki exact coverage trainer aur confirmed syllabus se verify karein.</p></div>
+ <div class="learning-grid">
+  <article><div class="learn-symbol">✦</div><h3>Massage fundamentals</h3><p>Session ki preparation, client comfort, basic body mechanics, draping aur professional communication ke principles.</p></article>
+  <article><div class="learn-symbol">◎</div><h3>Pressure &amp; technique awareness</h3><p>Touch aur pressure ko client feedback ke saath adjust karna; forceful pressure ko skill samajhne ki galatfehmi se bachna.</p></article>
+  <article><div class="learn-symbol">＋</div><h3>Safety &amp; suitability</h3><p>Client se relevant health information poochhne ka importance, discomfort par rukna aur jab zaroorat ho to qualified healthcare professional ki advice lena.</p></article>
+  <article><div class="learn-symbol">◇</div><h3>Hygiene &amp; boundaries</h3><p>Clean hands and equipment, privacy, informed consent, respectful behaviour aur professional service boundaries.</p></article>
+ </div>
+</section>
+
+<section class="course-fit" aria-labelledby="course-fit-title">
+ <div class="section-title"><div class="eyebrow">Choose what fits you</div><h2 id="course-fit-title">Kaunsa course aapke liye sahi ho sakta hai?</h2><p>Apne goal aur available time ke hisaab se course choose karein.</p></div>
+ <div class="fit-grid">
+  <article><span class="fit-tag">BROAD FOUNDATION</span><h3>Full 15-day programme</h3><p>Agar aap saat listed massage skills ka introductory, combined training pathway chahte hain aur 15 din attend kar sakte hain, to full programme ke baare mein poochhein.</p><a href="#full-course">Full course details ↓</a></article>
+  <article><span class="fit-tag">ONE SKILL AT A TIME</span><h3>Individual 2-day course</h3><p>Agar aap ek specific technique par focus karna chahte hain, to available individual course choose karein. Do din ki training ko mastery ya independent clinical competence na samjhein—practice aur further learning zaroori ho sakti hai.</p><a href="#single-courses">Individual courses ↓</a></article>
+ </div>
+</section>
+
+<section class="student-checklist" aria-label="Before you enrol">
+ <div><div class="eyebrow">BEFORE YOU ENROL</div><h2>Payment se pehle ye 6 baatein confirm karein</h2></div>
+ <ol><li>Batch ki exact start/end dates aur daily timings.</li><li>Written syllabus aur har technique ki practical coverage.</li><li>Total fee mein kya included hai—training, certificate, materials ya kit.</li><li>Attendance, assessment aur certificate issue karne ki conditions.</li><li>Seat reservation/advance, balance payment aur refund/cancellation terms.</li><li>Centre ka address, trainer details aur class attend karne ki requirements.</li></ol>
+ <p>Course enquiry ke liye neeche cart mein course add karke student details submit karein. Team se terms clear hone ke baad hi payment karein.</p>
+</section>
+
 <section><div class="section-title"><div class="eyebrow">Best value programme</div><h2>Complete 7 Massage Therapy Courses</h2><p>Seven skills together in one structured 15-day offline training programme.</p></div>
-<article class="bundle"><div class="bundle-art"><div class="seal">7</div><strong>One Complete<br>Massage Therapy Programme</strong><small>15 days · Offline · Certificate course</small></div><div class="bundle-body"><div class="tag">COMPLETE COURSE · 15 DAYS · OFFLINE</div><h3>Full Massage Therapy Course</h3><p>Build a broad foundation across seven massage modalities through practical, in-person training at our centre. This combined programme is designed for learners who want to study several techniques rather than just one individual skill.</p><div class="price">₹8,000</div><div class="old">Regular price ₹8,999 <span class="saving">Save ₹999</span></div><div class="pillrow"><span class="pill">15 days offline training</span><span class="pill">At our Kishangarh centre</span><span class="pill">Certificate course</span></div><h4>Includes all 7 massage skills</h4><div class="skills"><div class="skill">1. Swedish Massage</div><div class="skill">2. Deep Tissue Massage</div><div class="skill">3. Sports Massage</div><div class="skill">4. Cupping Massage</div><div class="skill">5. Hot Stone Massage</div><div class="skill">6. Lymphatic Drainage Massage</div><div class="skill">7. Signature Gym Recovery Massage</div></div><p class="subtext">Ask us about the syllabus, batch dates, practical coverage and certificate requirements before enrolment.</p><button class="btn" type="button" onclick="addCourse('full')">Add Full 7-Course Programme · ₹8,000</button></div></article></section>
+<article class="bundle" id="full-course"><div class="bundle-art"><div class="seal">7</div><strong>One Complete<br>Massage Therapy Programme</strong><small>15 days · Offline · Certificate course</small></div><div class="bundle-body"><div class="tag">COMPLETE COURSE · 15 DAYS · OFFLINE</div><h3>Full Massage Therapy Course</h3><p>Build a broad foundation across seven massage modalities through practical, in-person training at our centre. This combined programme is designed for learners who want to study several techniques rather than just one individual skill.</p><div class="price">₹8,000</div><div class="old">Regular price ₹8,999 <span class="saving">Save ₹999</span></div><div class="pillrow"><span class="pill">15 days offline training</span><span class="pill">At our Kishangarh centre</span><span class="pill">Certificate course</span></div><h4>Includes all 7 massage skills</h4><div class="skills"><div class="skill">1. Swedish Massage</div><div class="skill">2. Deep Tissue Massage</div><div class="skill">3. Sports Massage</div><div class="skill">4. Cupping Massage</div><div class="skill">5. Hot Stone Massage</div><div class="skill">6. Lymphatic Drainage Massage</div><div class="skill">7. Signature Gym Recovery Massage</div></div><p class="subtext">Ask us about the syllabus, batch dates, practical coverage and certificate requirements before enrolment.</p><button class="btn" type="button" onclick="addCourse('full')">Add Full 7-Course Programme · ₹8,000</button></div></article></section>
 <section><div class="section-title"><div class="eyebrow">Individual skill courses</div><h2>2-Day Certificate Courses</h2><p>Choose a single massage skill. Each course is ₹1,999 and includes two days of offline training at our centre.</p></div>
-<div class="course-grid">
+<div class="course-grid" id="single-courses">
 <article class="course"><div class="tag">2 DAYS · OFFLINE</div><h3>Swedish Massage Therapy Course</h3><p>Learn the foundations of a relaxation-focused massage, including flowing strokes, session flow, client comfort and pressure communication.</p><div class="price">₹1,999</div><ul><li>2 days of in-person practical training</li><li>Certificate course</li><li>Good starting point for beginners</li></ul><button class="btn" onclick="addCourse('swedish')">Add to Cart · ₹1,999</button></article>
 <article class="course"><div class="tag">2 DAYS · OFFLINE</div><h3>Deep Tissue Massage Therapy Course</h3><p>Study focused pressure concepts, working carefully with areas of muscle tightness, body mechanics and client feedback.</p><div class="price">₹1,999</div><ul><li>2 days of in-person practical training</li><li>Certificate course</li><li>Emphasis on safe pressure and communication</li></ul><button class="btn" onclick="addCourse('deep')">Add to Cart · ₹1,999</button></article>
 <article class="course"><div class="tag">2 DAYS · OFFLINE</div><h3>Sports Massage Therapy Course</h3><p>Explore massage considerations for active clients, warm-up and recovery contexts, and adapting a session to an individual's needs.</p><div class="price">₹1,999</div><ul><li>2 days of in-person practical training</li><li>Certificate course</li><li>For learners interested in sports and fitness settings</li></ul><button class="btn" onclick="addCourse('sports')">Add to Cart · ₹1,999</button></article>
