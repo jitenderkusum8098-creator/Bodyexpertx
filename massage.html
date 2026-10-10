@@ -592,7 +592,7 @@ document.getElementById("primeDescription").innerHTML=selectedDepartment==="MASS
 document.getElementById("luxeDescription").innerHTML=selectedDepartment==="MASSAGE"?"<strong>Therapist experience: 2+ years</strong><br>Personalized premium massage experience.<br><strong>Massage table/bed included</strong><br><strong>Detailed Massage Report included</strong>":"Premium salon grooming and styling.";
 document.getElementById("primePrice").textContent=selectedDepartment==="MASSAGE"?"Starting at ₹699":"Haircut ₹99";
 document.getElementById("luxePrice").textContent=selectedDepartment==="MASSAGE"?"Starting at ₹1,999":"Haircut ₹150";
-document.getElementById("tierNote").textContent=selectedDepartment==="MASSAGE"?"LUXE costs ₹1,300 more than the corresponding PRIME massage and includes a Detailed Massage Report plus aftercare tips. The report is not a medical diagnosis.":"Salon haircut: PRIME ₹99 · LUXE ₹150. Other salon services will be added when finalised.";
+const tierNote=document.getElementById("tierNote");if(tierNote)tierNote.textContent=selectedDepartment==="MASSAGE"?"LUXE costs ₹1,300 more than the corresponding PRIME massage and includes a Detailed Massage Report plus aftercare tips. The report is not a medical diagnosis.":"Salon haircut: PRIME ₹99 · LUXE ₹150. Other salon services will be added when finalised.";
 selectCategory(selectedCategory,false);
 document.getElementById("tierChooser").scrollIntoView({behavior:"smooth",block:"start"});
 }
