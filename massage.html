@@ -284,7 +284,11 @@ function renderServices(){
    <button class="btn small" type="button" onclick="addAddon(${i})">Add to Cart</button>
   </article>`).join("");
 }
-function currentGender(){return document.getElementById("recipientGender")?.value||"Male"}\nfunction isLuxeInCart(){return cart.some(x=>(x.category||"").includes("LUXE"))}\nfunction updateTableOption(){renderCart()}\nfunction tableDiscount(){return selectedDepartment==="MASSAGE"&&isLuxeInCart()&&document.getElementById("tableOption")?.value==="No"?99:0}\nfunction syncTableOption(){const wrap=document.getElementById("tableOptionWrap");const on=selectedDepartment==="MASSAGE"&&selectedCategory==="LUXE"&&isLuxeInCart();wrap.hidden=!on;if(!on)document.getElementById("tableOption").value=""}
+function currentGender(){return document.getElementById("recipientGender")?.value||"Male"}
+function isLuxeInCart(){return cart.some(x=>(x.category||"").includes("LUXE"))}
+function updateTableOption(){renderCart()}
+function tableDiscount(){return selectedDepartment==="MASSAGE"&&isLuxeInCart()&&document.getElementById("tableOption")?.value==="No"?99:0}
+function syncTableOption(){const wrap=document.getElementById("tableOptionWrap");const on=selectedDepartment==="MASSAGE"&&selectedCategory==="LUXE"&&isLuxeInCart();wrap.hidden=!on;if(!on)document.getElementById("tableOption").value=""}
 function addSalonService(price){cart.push({name:"Haircut ("+selectedCategory+")",duration:0,basePrice:price,price:price,type:"salon",category:"SALON · "+selectedCategory});couponApplied=false;offerMode=false;renderCart();showCartFeedback("Haircut added to cart.");}
 function addService(i,duration){if(!services[i])return;const s=services[i],base=(duration===60?s.p60:s.p90)+(selectedCategory==="LUXE"?1300:0);cart.push({name:s.name+" ("+selectedCategory+")",duration:duration,basePrice:base,price:base+(currentGender()==="Female"&&selectedCategory==="PRIME"?150:0),type:"service",category:"MASSAGE · "+selectedCategory});couponApplied=false;renderCart();showCartFeedback(s.name+" · "+duration+" min added to cart.");}
 function addAddon(i){if(!addons[i])return;const a=addons[i];cart.push({name:a.name,duration:a.minutes,basePrice:a.price,price:a.price+(currentGender()==="Female"&&selectedCategory==="PRIME"?150:0),type:"addon"});couponApplied=false;renderCart();showCartFeedback(a.name+" added to cart.");}
