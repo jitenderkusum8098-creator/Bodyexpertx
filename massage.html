@@ -459,19 +459,6 @@ input,select,textarea{font-size:16px;line-height:1.5}
 
 </style>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<style>
-.bx-service-zone{background:#101012;border-block:1px solid #4b3918}
-.bx-service-zone .section-head h2{color:#f7f3e8}
-.bx-service-zone .section-head p{color:#c2bdb0}
-.bx-zone-card{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(220px,.7fr);gap:20px;border:1px solid #5c461d;background:#151517;border-radius:18px;padding:14px;overflow:hidden}
-#bxNarnaulMap{height:390px;min-height:300px;border-radius:12px;background:#252525;z-index:0}
-.bx-zone-details{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:13px;padding:12px;color:#e9dfc8;font-size:14px}
-.bx-zone-details strong{color:#f2c75b;font-size:17px}
-.bx-zone-details span{display:block}
-.bx-zone-footnote{font-size:12px;color:#b9b2a2;text-align:center;margin:14px auto 0;max-width:850px}
-@media(max-width:700px){.bx-zone-card{grid-template-columns:1fr;padding:10px}#bxNarnaulMap{height:330px}.bx-zone-details{padding:8px}}
-</style>
 </head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE · NARNAUL + 35 KM</div>
@@ -482,7 +469,7 @@ input,select,textarea{font-size:16px;line-height:1.5}
 </div></header>
 <main id="home">
 <section class="brand-banner" aria-label="BodyExpertX branded massage room"><img src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1800&q=90" alt="Premium massage room"><div class="banner-overlay"><div class="banner-logo"><span class="banner-logo-mark"><svg viewBox="0 0 100 100" role="img" aria-label="BodyExpertX X symbol"><defs><linearGradient id="silverX" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".48" stop-color="#b9bdc1"/><stop offset="1" stop-color="#73777c"/></linearGradient></defs><path d="M15 14 L36 14 L85 77 L65 87 Z" fill="url(#silverX)"/><path d="M84 14 L64 14 L15 77 L35 87 Z" fill="url(#silverX)"/></svg></span><span class="banner-logo-word">BODYEXPERT<span>X</span></span></div><p>EXPERT HANDS. BETTER YOU.</p></div></section>
-<section class="section bx-service-zone" id="service-area"><div class="wrap"><div class="section-head"><div class="eyebrow">BODYEXPERTX HOME SERVICE AREA</div><h2>Service Zone: Narnaul + 35 KM</h2><p>Home massage and salon services are available within a 35 km radius of Narnaul, Haryana. The circle on the map shows the approximate service boundary.</p></div><div class="bx-zone-card"><div id="bxNarnaulMap" role="img" aria-label="Map showing a 35 kilometre service radius around Narnaul, Haryana"></div><div class="bx-zone-details"><strong>📍 Centre: Narnaul, Haryana</strong><span>Radius: 35 km in every direction</span><span>Service area: Narnaul and nearby locations inside the circle</span><a class="btn small" href="https://www.google.com/maps/dir/?api=1&origin=Narnaul%2C+Haryana&destination=Narnaul%2C+Haryana" target="_blank" rel="noopener">Open Narnaul in Google Maps</a></div></div><p class="bx-zone-footnote">The circle is a straight-line radius, not a 35 km road-travel distance. Final service availability is confirmed when the booking address is checked.</p></div></section>
+
 
 <section class="hero"><div class="wrap hero-grid"><div>
 <div class="eyebrow">Expert hands. Better you.</div>
@@ -703,19 +690,7 @@ function setMinDate(){document.getElementById("date").min=new Date().toISOString
 document.getElementById("primeDescription").innerHTML="<strong>Therapist experience: 6 months–2 years</strong><br>Professional massage for relaxation and comfort.<br><strong>Without massage table/bed</strong><br><strong>Massage Report: Not included</strong>";document.getElementById("luxeDescription").innerHTML="<strong>Therapist experience: 2+ years</strong><br>Personalized premium massage experience.<br><strong>With massage table/bed option</strong><br><strong>Detailed Massage Report included</strong>";document.getElementById("primePrice").textContent="Starting at ₹699";document.getElementById("luxePrice").textContent="Starting at ₹1,999";document.getElementById("tierNote").textContent="LUXE costs ₹1,300 more than the corresponding PRIME massage and includes a Detailed Massage Report plus aftercare tips. The report is not a medical diagnosis.";document.getElementById("services").style.display="none";document.getElementById("add-ons").style.display="none";document.getElementById("booking").style.display="none";updateFemalePriceNotice();renderServices();renderIntake();renderCart();setMinDate();toggleAddress();updateCouponAvailability();checkCurrentArea();
 </script>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-(function(){
- const el=document.getElementById("bxNarnaulMap"); if(!el||!window.L)return;
- const center=[28.0444,76.1083];
- const map=L.map(el,{scrollWheelZoom:false}).setView(center,9);
- L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
- L.circle(center,{radius:35000,color:"#f2c75b",weight:3,fillColor:"#d9aa35",fillOpacity:.2}).addTo(map);
- L.marker(center).addTo(map).bindPopup("<b>BodyExpertX</b><br>Narnaul service centre point<br>35 km service radius").openPopup();
- map.fitBounds(L.circle(center,{radius:35000}).getBounds(),{padding:[16,16]});
- setTimeout(()=>map.invalidateSize(),250);
-})();
-</script>
+
 </body></html>
 <style>
 
