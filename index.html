@@ -130,6 +130,18 @@ body{background:#0b0b0d;color:#f7f3e8}
 
 /* Google Business Profile feature card */
 .google-business-card{padding:42px 16px 48px;background:linear-gradient(180deg,#101012,#17130a);border-bottom:1px solid #3b3323;text-align:center}.google-business-inner{max-width:780px;margin:auto;padding:28px 22px 30px;border:1px solid #6b511d;border-radius:24px;background:linear-gradient(145deg,#19170f,#0e0e10);box-shadow:0 16px 45px #0006}.google-business-kicker{font-size:11px;letter-spacing:.2em;font-weight:900;color:#f2c75b}.google-business-inner h1{font-size:clamp(30px,6vw,48px);line-height:1.1;margin:10px 0;color:#f7f3e8}.google-business-subtitle{margin:0 auto 23px;color:#c2bdb0;font-size:clamp(13px,2.4vw,17px)}.google-maps-button{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:58px;padding:14px 28px;border:1px solid #f2c75b;border-radius:999px;background:linear-gradient(135deg,#f5d16e,#c18a1d);color:#17120a;text-decoration:none;font-size:clamp(16px,2.8vw,20px);font-weight:900;box-shadow:0 8px 24px #d9aa3526;transition:transform .2s}.google-maps-button:hover{transform:translateY(-2px)}.google-business-address{max-width:650px;margin:22px auto 18px;color:#e0d8c6;font-size:14px;line-height:1.7}.google-rating-pill{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:999px;background:#201a0f;border:1px solid #55411b;color:#f2c75b;font-weight:900}.google-rating-pill span{font-size:12px;color:#c2bdb0;font-weight:600}@media(max-width:480px){.google-business-card{padding:26px 12px 32px}.google-business-inner{padding:25px 16px;border-radius:18px}.google-maps-button{width:100%;padding:13px 16px}.google-rating-pill{flex-wrap:wrap;justify-content:center}}
+
+.referral-section{padding:44px 0}
+.referral-card{max-width:820px;margin:0 auto;padding:clamp(22px,5vw,38px);border:1px solid #8b6b25;border-radius:22px;background:linear-gradient(135deg,#211a0c,#101012);text-align:center}
+.referral-card h2{font-size:clamp(27px,5vw,40px);line-height:1.2;color:var(--gold);margin:10px 0 14px}
+.referral-card p{max-width:650px;margin:0 auto 18px;line-height:1.7}
+.referral-card label{display:block;text-align:left;max-width:600px;margin:18px auto 8px;font-weight:800}
+.referral-share-row{display:flex;gap:10px;max-width:600px;margin:auto}
+.referral-share-row input{flex:1;min-width:0;padding:14px;border-radius:12px;border:1px solid #695326;background:#09090b;color:#fff;font-size:16px}
+.referral-share-row button{white-space:normal}
+.referral-card .referral-note{font-size:13px;color:#d9c99e;margin-top:16px}
+@media(max-width:560px){.referral-share-row{flex-direction:column}.referral-share-row button{width:100%}}
+
 </style>
 </head>
 <body>
@@ -159,6 +171,17 @@ body{background:#0b0b0d;color:#f7f3e8}
 </div>
 </div></section>
 
+
+<section class="section referral-section" id="refer">
+ <div class="wrap referral-card">
+  <div class="eyebrow">SHARE THE WELLNESS</div>
+  <h2>Refer a Friend. Earn ₹100.</h2>
+  <p>Apne dost ko BodyExpertX recommend karein. Dost ki pehli eligible booking complete hone par, dost ko ₹100 off aur aapko agli booking par ₹100 reward milega.</p>
+  <label for="referrerMobile">Apna 10-digit mobile number daalein</label>
+  <div class="referral-share-row"><input id="referrerMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="Aapka mobile number"><button class="btn" type="button" id="shareReferral">WhatsApp par Refer Karein</button></div>
+  <p id="referralShareStatus" class="referral-note" aria-live="polite">Reward tabhi milega jab dost ki booking complete ho aur referral verify ho. Self-referral aur coupon ke saath combination allowed nahi hai.</p>
+ </div>
+</section>
 <section class="section" id="courses"><div class="wrap"><div class="section-head"><div class="eyebrow">Learn with BodyExpertX</div><h2>Massage Therapy Courses</h2><p>Build practical massage skills with offline training at our Kishangarh, New Delhi centre.</p></div><div class="course-shortcuts"><article class="course-teaser"><img loading="lazy" src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=900&q=80" alt="Massage therapy training"><div class="course-teaser-body"><div class="tag">Complete programme</div><h3>15-Day Massage Therapy Course</h3><p>Practical training covering multiple massage skills.</p><p><strong>₹8,000</strong> <span class="notice"><s>₹8,999</s></span></p><a class="btn" href="./courses.html">Explore Full Course</a></div></article><article class="course-teaser"><img loading="lazy" src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=900&q=80" alt="Massage technique practice"><div class="course-teaser-body"><div class="tag">Individual training</div><h3>2-Day Certificate Courses</h3><p>Choose an individual massage skill course according to your interest.</p><p><strong>₹1,999</strong> <span class="notice">per course</span></p><a class="btn" href="./courses.html">View Course Options</a></div></article></div></div></section>
 
 
@@ -263,5 +286,16 @@ document.getElementById("bookingForm").addEventListener("submit",function(e){e.p
 "🙏 *Please confirm availability and booking.*\nThank you!";window.open("https://wa.me/918860742376?text="+encodeURIComponent(details),"_blank","noopener");status.textContent="WhatsApp opened with your request. Press Send there, then wait for our confirmation."});
 function setMinDate(){document.getElementById("date").min=new Date().toISOString().slice(0,10)}
 renderServices();renderCart();setMinDate();updateCouponAvailability();
+</script>
+<script>
+document.getElementById("shareReferral")?.addEventListener("click",function(){
+ const field=document.getElementById("referrerMobile"),status=document.getElementById("referralShareStatus");
+ const phone=(field.value||"").replace(/\D/g,"");
+ if(phone.length!==10){status.textContent="Kripya apna sahi 10-digit mobile number daalein.";field.focus();return;}
+ const link="https://jitenderkusum8098-creator.github.io/Bodyexpertx/massage.html?ref="+encodeURIComponent(phone);
+ const message="Namaste! BodyExpertX se massage booking karein. Aapki pehli eligible booking par ₹100 referral discount milega. Booking link: "+link;
+ window.open("https://wa.me/?text="+encodeURIComponent(message),"_blank","noopener");
+ status.textContent="WhatsApp khul raha hai. Link apne dost ko bhej dein.";
+});
 </script>
 </body></html>
