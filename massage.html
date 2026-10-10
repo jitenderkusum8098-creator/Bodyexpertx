@@ -338,6 +338,32 @@ input,select,textarea{font-size:16px;line-height:1.5}
 @media(max-width:560px){.cards{grid-template-columns:1fr;gap:17px}.bx-massage-photo{height:clamp(205px,58vw,290px)}.bx-massage-body{padding:20px!important}.bx-massage-body h3{font-size:24px!important}.bx-benefits-list li{font-size:13px}.bx-massage-prices .price-choice{padding:12px!important}.bx-massage-prices .price-choice b{font-size:25px!important}.bx-massage-prices .price-choice .btn{font-size:13px;padding:12px 8px}}
 @media(prefers-reduced-motion:reduce){.bx-massage-card{transition:none}}
 
+
+/* Included-items icons and refreshed massage duration / price panels */
+.bx-included-panel{border:1px solid #4b3b1b;border-radius:16px;padding:13px;margin:0 0 17px;background:linear-gradient(145deg,#211a0d,#141416)}
+.bx-included-heading{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:950;letter-spacing:.11em;color:#f2cf6a;margin-bottom:12px}
+.bx-included-heading>span{font-size:15px}
+.bx-included-items{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.bx-included-item{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;gap:7px;padding:9px 4px;border:1px solid #41351e;border-radius:12px;background:#111113;color:#e9dfca;font-size:10px;line-height:1.35}
+.bx-included-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1px solid #8c6b29;background:#20190b;color:#f2ce65;font-size:19px}
+.bx-included-item small{display:block;font-size:9px;color:#b5aa91;line-height:1.4;margin-top:3px}
+.bx-included-item.bx-not-included{opacity:.72;border-style:dashed}
+.bx-included-item.bx-not-included .bx-included-icon{border-color:#716b5c;color:#aaa394;background:#191919}
+.bx-duration-heading{display:flex;align-items:center;gap:8px;font-size:14px!important;font-weight:900!important;margin:0 0 11px!important;color:#fff!important}
+.bx-duration-heading>span{display:grid;place-items:center;width:27px;height:27px;border-radius:50%;border:1px solid #8d6c2b;color:#f3d16d;font-size:19px}
+.bx-massage-prices{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px!important;margin:0 0 13px!important}
+.bx-massage-prices .price-choice{position:relative;display:flex!important;flex-direction:column;align-items:stretch;border:1px solid #695020!important;border-radius:17px!important;padding:14px!important;background:radial-gradient(ellipse at 100% 0,#30230b,#171510 66%)!important;color:#f7f0df!important;overflow:hidden}
+.bx-massage-prices .price-choice:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#8e671b,#f7d976,#b7831f)}
+.bx-session-top{display:flex;align-items:center;gap:6px;color:#c8b98e;font-size:9px;letter-spacing:.07em;font-weight:900;min-height:27px}
+.bx-clock-icon{font-size:18px;color:#f3ce62}
+.bx-massage-prices .price-choice .bx-session-duration{display:block;font-size:23px!important;font-weight:950;color:#fff1c7!important;line-height:1.2;margin:7px 0 0}
+.bx-session-duration small{font-size:10px;font-weight:850;color:#c8b98e;letter-spacing:.1em}
+.bx-massage-prices .price-choice b{font-size:clamp(23px,5vw,29px)!important;line-height:1.15;color:#f5cf63!important;margin:8px 0 14px;letter-spacing:-.025em}
+.bx-massage-prices .price-choice .btn{width:100%;margin:auto 0 0;border-radius:11px;padding:12px 5px;font-size:12px;white-space:normal;min-height:43px;box-shadow:0 5px 14px #0004}
+.bx-massage-prices .price-choice .btn span{font-size:16px;margin-right:3px}
+@media(max-width:560px){.bx-included-panel{padding:12px}.bx-included-items{gap:5px}.bx-included-item{font-size:9px;padding:8px 2px}.bx-included-icon{width:34px;height:34px;font-size:17px}.bx-massage-prices{gap:8px!important}.bx-massage-prices .price-choice{padding:12px 10px!important}.bx-session-top{font-size:8px;letter-spacing:.04em}.bx-massage-prices .price-choice .btn{font-size:12px;padding:11px 3px}.bx-massage-prices .price-choice b{font-size:24px!important}}
+@media(max-width:360px){.bx-included-items{grid-template-columns:repeat(2,minmax(0,1fr))}.bx-included-item{font-size:11px}.bx-included-icon{width:38px;height:38px}}
+
 </style>
 </head>
 <body>
@@ -368,9 +394,9 @@ input,select,textarea{font-size:16px;line-height:1.5}
 <div id="tierChooser" style="margin-top:24px">
 <div class="category-grid">
 <button type="button" class="category-card active" id="primeCategory" onclick="selectCategory('PRIME')" aria-pressed="true"><span class="category-number">01 · PRIME</span><h2>PRIME</h2><p class="tier-subtitle" id="primeDescription">Essential massage care for relaxation and comfort.</p><ul class="tier-feature-list"><li><span class="feature-icon">✓</span><span><strong>Therapist experience</strong><small>6 months–2 years</small></span></li><li><span class="feature-icon">✓</span><span><strong>Massage table/bed</strong><small>Not included</small></span></li><li><span class="feature-icon">—</span><span><strong>Detailed massage report</strong><small>Not included</small></span></li></ul><span class="category-price" id="primePrice">Starting at ₹699</span><span class="category-select">EXPLORE PRIME</span></button>
-<button type="button" class="category-card" id="luxeCategory" onclick="selectCategory('LUXE')" aria-pressed="false"><span class="category-number">02 · LUXE</span><h2>LUXE</h2><p class="tier-subtitle" id="luxeDescription">A more personalised premium massage experience.</p><ul class="tier-feature-list"><li><span class="feature-icon">✓</span><span><strong>Therapist experience</strong><small>2+ years</small></span></li><li><span class="feature-icon">✓</span><span><strong>Massage table/bed</strong><small>Available as an option</small></span></li><li><span class="feature-icon">✓</span><span><strong>Detailed massage report</strong><small>Included; not a medical diagnosis</small></span></li></ul><span class="category-price" id="luxePrice">Starting at ₹1,699</span><span class="category-select">EXPLORE LUXE</span></button>
+<button type="button" class="category-card" id="luxeCategory" onclick="selectCategory('LUXE')" aria-pressed="false"><span class="category-number">02 · LUXE</span><h2>LUXE</h2><p class="tier-subtitle" id="luxeDescription">A more personalised premium massage experience.</p><ul class="tier-feature-list"><li><span class="feature-icon">✓</span><span><strong>Therapist experience</strong><small>2+ years</small></span></li><li><span class="feature-icon">✓</span><span><strong>Massage table/bed</strong><small>Included with LUXE</small></span></li><li><span class="feature-icon">✓</span><span><strong>Detailed massage report</strong><small>Included; not a medical diagnosis</small></span></li></ul><span class="category-price" id="luxePrice">Starting at ₹1,699</span><span class="category-select">EXPLORE LUXE</span></button>
 </div>
-<p class="category-caption" id="tierNote" style="margin-top:18px">Choose PRIME for essential massage care, or LUXE for a more experienced therapist and a detailed session report. Table/bed availability is an option and should be confirmed when booking.</p>
+<p class="category-caption" id="tierNote" style="margin-top:18px">Choose PRIME for essential massage care, or LUXE for a more experienced therapist and a detailed session report. Massage oil, diffuser/aroma and disposable sheets are included in both tiers. Massage table/bed is included in LUXE, not PRIME.</p>
 </div>
 </div></section>
 
@@ -423,7 +449,7 @@ const money=n=>"₹"+n.toLocaleString("en-IN");
 const photo=(id,w=720)=>"https://images.unsplash.com/"+id+"?auto=format&fit=crop&w="+w+"&q=80";
 function selectDepartment(department){selectedDepartment=department==="SALON"?"SALON":"MASSAGE";document.getElementById("massageCategory").classList.toggle("active",selectedDepartment==="MASSAGE");document.getElementById("salonCategory").classList.toggle("active",selectedDepartment==="SALON");document.getElementById("massageCategory").setAttribute("aria-pressed",String(selectedDepartment==="MASSAGE"));document.getElementById("salonCategory").setAttribute("aria-pressed",String(selectedDepartment==="SALON"));document.getElementById("tierChooser").hidden=false;document.getElementById("tierEyebrow").textContent=selectedDepartment+" EXPERIENCE";document.getElementById("tierDescription").textContent=selectedDepartment==="MASSAGE"?"Choose your massage experience.":"Choose your salon experience.";
 document.getElementById("primeDescription").innerHTML=selectedDepartment==="MASSAGE"?"<strong>Therapist experience: 6 months–2 years</strong><br>Professional massage for relaxation and comfort.<br><strong>Without massage table/bed</strong><br><strong>Massage Report: Not included</strong>":"Everyday salon grooming at accessible prices.";
-document.getElementById("luxeDescription").innerHTML=selectedDepartment==="MASSAGE"?"<strong>Therapist experience: 2+ years</strong><br>Personalized premium massage experience.<br><strong>With massage table/bed option</strong><br><strong>Detailed Massage Report included</strong>":"Premium salon grooming and styling.";
+document.getElementById("luxeDescription").innerHTML=selectedDepartment==="MASSAGE"?"<strong>Therapist experience: 2+ years</strong><br>Personalized premium massage experience.<br><strong>Massage table/bed included</strong><br><strong>Detailed Massage Report included</strong>":"Premium salon grooming and styling.";
 document.getElementById("primePrice").textContent=selectedDepartment==="MASSAGE"?"Starting at ₹699":"Haircut ₹99";
 document.getElementById("luxePrice").textContent=selectedDepartment==="MASSAGE"?"Starting at ₹1,999":"Haircut ₹150";
 document.getElementById("tierNote").textContent=selectedDepartment==="MASSAGE"?"LUXE costs ₹1,300 more than the corresponding PRIME massage and includes a Detailed Massage Report plus aftercare tips. The report is not a medical diagnosis.":"Salon haircut: PRIME ₹99 · LUXE ₹150. Other salon services will be added when finalised.";
@@ -479,10 +505,19 @@ function renderServices(){
     <h3>${item.name}</h3><p class="bx-massage-desc">${item.desc}</p>
     <div class="bx-benefits-title">4 KEY BENEFITS</div>
     <ul class="bx-benefits-list">${item.benefits.map(benefit=>`<li><span aria-hidden="true">✓</span><span>${benefit}</span></li>`).join("")}</ul>
-    <div class="bx-duration-heading">Choose your session</div>
+    <div class="bx-included-panel">
+     <div class="bx-included-heading"><span aria-hidden="true">✦</span> WHAT'S INCLUDED IN ${selectedCategory}</div>
+     <div class="bx-included-items">
+      <div class="bx-included-item"><span class="bx-included-icon" aria-hidden="true">🧴</span><span>Massage Oil</span></div>
+      <div class="bx-included-item"><span class="bx-included-icon" aria-hidden="true">♨</span><span>Diffuser / Aroma</span></div>
+      <div class="bx-included-item"><span class="bx-included-icon" aria-hidden="true">▤</span><span>Disposable Sheets</span></div>
+      <div class="bx-included-item ${selectedCategory==="LUXE"?"":"bx-not-included"}"><span class="bx-included-icon" aria-hidden="true">${selectedCategory==="LUXE"?"🛏":"⊘"}</span><span>Massage Table / Bed<small>${selectedCategory==="LUXE"?"Included":"Not included in PRIME"}</small></span></div>
+     </div>
+    </div>
+    <div class="bx-duration-heading"><span aria-hidden="true">◷</span> Choose Your Session</div>
     <div class="prices bx-massage-prices">
-     <div class="price-choice"><span>60 minutes</span><b>${money(item.p60+(selectedCategory==="LUXE"?1300:0)+(selectedCategory==="PRIME"&&currentGender()==="Female"?150:0))}</b><button class="btn small" type="button" onclick="addService(${i},60)">Add 60 min</button></div>
-     <div class="price-choice"><span>90 minutes</span><b>${money(item.p90+(selectedCategory==="LUXE"?1300:0)+(selectedCategory==="PRIME"&&currentGender()==="Female"?150:0))}</b><button class="btn small" type="button" onclick="addService(${i},90)">Add 90 min</button></div>
+     <div class="price-choice"><div class="bx-session-top"><span class="bx-clock-icon" aria-hidden="true">◷</span><span>QUICK RESET</span></div><span class="bx-session-duration">60 <small>MINUTES</small></span><b>${money(item.p60+(selectedCategory==="LUXE"?1300:0)+(selectedCategory==="PRIME"&&currentGender()==="Female"?150:0))}</b><button class="btn small" type="button" onclick="addService(${i},60)"><span aria-hidden="true">＋</span> Add 60 min</button></div>
+     <div class="price-choice bx-session-long"><div class="bx-session-top"><span class="bx-clock-icon" aria-hidden="true">◷</span><span>EXTENDED CARE</span></div><span class="bx-session-duration">90 <small>MINUTES</small></span><b>${money(item.p90+(selectedCategory==="LUXE"?1300:0)+(selectedCategory==="PRIME"&&currentGender()==="Female"?150:0))}</b><button class="btn small" type="button" onclick="addService(${i},90)"><span aria-hidden="true">＋</span> Add 90 min</button></div>
     </div>
     <p class="bx-benefit-note">Benefits vary by person and are not a guarantee of treatment or cure. Tell us about relevant health conditions before booking.</p>
    </div>
