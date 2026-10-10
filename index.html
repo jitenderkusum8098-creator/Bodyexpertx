@@ -114,13 +114,21 @@ body{background:#0b0b0d;color:#f7f3e8}
 /* PRIME & LUXE category selector */
 .category-section{padding:38px 0 44px;background:linear-gradient(135deg,#111,#1b160c);border-block:1px solid #6b501b}
 .category-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.category-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:25px;border:1px solid #6b501b;border-radius:20px;background:linear-gradient(145deg,#191919,#100f0d);color:#f7f3e8;cursor:pointer;min-height:190px;transition:.2s}
-.category-card:hover,.category-card.active{border-color:#f2c75b;box-shadow:0 0 0 1px #f2c75b50,0 12px 32px #0007;transform:translateY(-2px)}
-.category-card .category-number{font-size:11px;letter-spacing:.18em;color:#f2c75b;font-weight:900}
-.category-card h2{font-size:clamp(28px,4vw,42px);line-height:1;margin:12px 0 7px;letter-spacing:.08em}
-.category-card p{color:#c2bdb0;margin:0 0 14px;font-size:13px}
-.category-card .category-price{margin-top:auto;color:#f2c75b;font-weight:900;font-size:18px}
-.category-card .category-select{margin-top:12px;font-size:11px;letter-spacing:.12em;font-weight:900;border:1px solid #9c7424;padding:8px 12px;border-radius:999px;color:#f2c75b}
+.category-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:0 0 24px;border:1px solid #6b501b;border-radius:22px;overflow:hidden;background:linear-gradient(145deg,#191919,#100f0d);color:#f7f3e8;cursor:pointer;min-height:100%;transition:transform .25s,border-color .25s,box-shadow .25s}
+.category-card:hover,.category-card.active{border-color:#f2c75b;box-shadow:0 0 0 1px #f2c75b50,0 16px 38px #0008;transform:translateY(-3px)}
+.category-card .category-number{display:inline-block;margin:22px 24px 0;font-size:11px;letter-spacing:.18em;color:#f2c75b;font-weight:900}
+.category-card h2{font-size:clamp(30px,4vw,44px);line-height:1;margin:12px 24px 8px;letter-spacing:.08em}
+.category-card p{color:#c2bdb0;margin:0 24px 15px;font-size:15px;line-height:1.65}
+.category-card .category-price{margin:0 24px;color:#f2c75b;font-weight:900;font-size:clamp(16px,2vw,19px);line-height:1.55}
+.category-card .category-select{display:inline-flex;align-items:center;gap:9px;margin:18px 24px 0;font-size:12px;letter-spacing:.12em;font-weight:900;border:1px solid #9c7424;padding:11px 16px;border-radius:999px;color:#f2c75b;transition:background .2s,color .2s}
+.category-card:hover .category-select{background:#f2c75b;color:#15120a}
+.category-card-media{position:relative;width:100%;height:190px;overflow:hidden;background:#17130b}
+.category-card-media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .45s;filter:brightness(.78) saturate(.88)}
+.category-card:hover .category-card-media img{transform:scale(1.045)}
+.category-card-media:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#100f0d 0%,#100f0d05 72%),linear-gradient(90deg,#100f0d40,transparent)}
+.category-card-icon{position:absolute;right:18px;bottom:14px;z-index:1;width:54px;height:54px;display:grid;place-items:center;border:1px solid #f2c75b;border-radius:50%;background:#111d;color:#f2c75b;box-shadow:0 5px 20px #0008}
+.category-card-icon svg{width:29px;height:29px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:560px){.category-card{padding-bottom:20px}.category-card-media{height:190px}.category-card .category-number{margin:19px 20px 0}.category-card h2{margin:11px 20px 8px}.category-card p{margin-inline:20px}.category-card .category-price{margin-inline:20px}.category-card .category-select{margin:16px 20px 0}.category-card-icon{width:48px;height:48px;right:14px;bottom:12px}}
 .category-caption{text-align:center;margin:0 auto 22px;color:#c2bdb0;font-size:13px}
 .category-status{display:inline-block;color:#f2c75b;font-weight:800}
 @media(max-width:560px){.category-grid{grid-template-columns:1fr}.category-card{min-height:160px;padding:20px}}
@@ -166,8 +174,12 @@ body{background:#0b0b0d;color:#f7f3e8}
 <section class="category-section" id="categories"><div class="wrap">
 <div class="section-head" style="margin-bottom:22px"><div class="eyebrow">Choose your service</div><h2>What would you like today?</h2><p>Start by choosing Massage or Salon. Then choose PRIME or LUXE.</p></div>
 <div class="category-grid">
-<a class="category-card" href="./massage.html?v=cart-fix-20261010-2" style="text-decoration:none"><span class="category-number">01 · WELLNESS &amp; RECOVERY</span><h2>MASSAGE</h2><p>Professional massage and recovery sessions.</p><span class="category-price">PRIME from ₹699 · LUXE from ₹1,999</span><span class="category-select">EXPLORE MASSAGE →</span></a>
-<a class="category-card" href="./salon.html?v=salon-clean-001" style="text-decoration:none"><span class="category-number">02 · GROOMING &amp; STYLE</span><h2>SALON</h2><p>Haircut and salon grooming.</p><span class="category-price">PRIME haircut ₹99 · LUXE ₹150</span><span class="category-select">EXPLORE SALON →</span></a>
+<a class="category-card" href="./massage.html?v=massage-visual-20261010" style="text-decoration:none" aria-label="Explore BodyExpertX massage services">
+<div class="category-card-media"><img loading="lazy" src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&amp;fit=crop&amp;w=1200&amp;q=85" alt="Massage therapist providing a professional back massage"><span class="category-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 13.5c2.2-1.9 4.1-2.4 6-1.6l2.1 1 2.2-2.2a2 2 0 0 1 2.8 0l1.4 1.4"/><path d="M3 17.5h5.5c1.1 0 1.9-.3 2.7-1l2-1.6c.7-.6 1.6-.6 2.3-.1l1.4 1"/><path d="M7.5 9.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/><path d="m10 10.5 2.3-1.7 2.4 1.2"/></svg></span></div>
+<span class="category-number">01 · WELLNESS &amp; RECOVERY</span><h2>MASSAGE</h2><p>Professional massage and recovery sessions.</p><span class="category-price">PRIME from ₹699 · LUXE from ₹1,999</span><span class="category-select">EXPLORE MASSAGE <span aria-hidden="true">→</span></span></a>
+<a class="category-card" href="./salon.html?v=salon-visual-20261010" style="text-decoration:none" aria-label="Explore BodyExpertX salon services">
+<div class="category-card-media"><img loading="lazy" src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&amp;fit=crop&amp;w=1200&amp;q=85" alt="Professional barber providing a haircut in a salon"><span class="category-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="m8 7.5 12 10M8 16.5 20 6"/><path d="M14.5 10.5 17 13"/></svg></span></div>
+<span class="category-number">02 · GROOMING &amp; STYLE</span><h2>SALON</h2><p>Haircut and salon grooming.</p><span class="category-price">PRIME haircut ₹99 · LUXE ₹150</span><span class="category-select">EXPLORE SALON <span aria-hidden="true">→</span></span></a>
 </div>
 </div></section>
 
