@@ -458,9 +458,23 @@ input,select,textarea{font-size:16px;line-height:1.5}
 @media(max-width:380px){#services .cards{grid-template-columns:1fr}#services .service>img{height:175px}#services .prices{grid-template-columns:repeat(2,minmax(0,1fr))}#services .price-choice{display:flex;align-items:stretch}#add-ons .addon-grid{grid-template-columns:1fr}}
 
 </style>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+.bx-service-zone{background:#101012;border-block:1px solid #4b3918}
+.bx-service-zone .section-head h2{color:#f7f3e8}
+.bx-service-zone .section-head p{color:#c2bdb0}
+.bx-zone-card{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(220px,.7fr);gap:20px;border:1px solid #5c461d;background:#151517;border-radius:18px;padding:14px;overflow:hidden}
+#bxNarnaulMap{height:390px;min-height:300px;border-radius:12px;background:#252525;z-index:0}
+.bx-zone-details{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:13px;padding:12px;color:#e9dfc8;font-size:14px}
+.bx-zone-details strong{color:#f2c75b;font-size:17px}
+.bx-zone-details span{display:block}
+.bx-zone-footnote{font-size:12px;color:#b9b2a2;text-align:center;margin:14px auto 0;max-width:850px}
+@media(max-width:700px){.bx-zone-card{grid-template-columns:1fr;padding:10px}#bxNarnaulMap{height:330px}.bx-zone-details{padding:8px}}
+</style>
 </head>
 <body>
-<div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE AVAILABLE · MEHRAULI, NEW DELHI</div>
+<div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE · NARNAUL + 35 KM</div>
 <header class="header"><div class="wrap nav">
 <a class="brand" href="./index.html"><span class="brandmark" aria-hidden="true"><svg viewBox="0 0 100 100" width="30" height="30"><defs><linearGradient id="brandSilver" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#b9bdc1"/><stop offset="1" stop-color="#73777c"/></linearGradient></defs><path d="M15 14 L36 14 L85 77 L65 87 Z" fill="url(#brandSilver)"/><path d="M84 14 L64 14 L15 77 L35 87 Z" fill="url(#brandSilver)"/></svg></span><span>BODYEXPERT<em>X</em></span></a>
 <nav class="links"><a href="./index.html">Home</a><a href="./courses.html">Courses</a></nav>
@@ -468,6 +482,8 @@ input,select,textarea{font-size:16px;line-height:1.5}
 </div></header>
 <main id="home">
 <section class="brand-banner" aria-label="BodyExpertX branded massage room"><img src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1800&q=90" alt="Premium massage room"><div class="banner-overlay"><div class="banner-logo"><span class="banner-logo-mark"><svg viewBox="0 0 100 100" role="img" aria-label="BodyExpertX X symbol"><defs><linearGradient id="silverX" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".48" stop-color="#b9bdc1"/><stop offset="1" stop-color="#73777c"/></linearGradient></defs><path d="M15 14 L36 14 L85 77 L65 87 Z" fill="url(#silverX)"/><path d="M84 14 L64 14 L15 77 L35 87 Z" fill="url(#silverX)"/></svg></span><span class="banner-logo-word">BODYEXPERT<span>X</span></span></div><p>EXPERT HANDS. BETTER YOU.</p></div></section>
+<section class="section bx-service-zone" id="service-area"><div class="wrap"><div class="section-head"><div class="eyebrow">BODYEXPERTX HOME SERVICE AREA</div><h2>Service Zone: Narnaul + 35 KM</h2><p>Home massage and salon services are available within a 35 km radius of Narnaul, Haryana. The circle on the map shows the approximate service boundary.</p></div><div class="bx-zone-card"><div id="bxNarnaulMap" role="img" aria-label="Map showing a 35 kilometre service radius around Narnaul, Haryana"></div><div class="bx-zone-details"><strong>📍 Centre: Narnaul, Haryana</strong><span>Radius: 35 km in every direction</span><span>Service area: Narnaul and nearby locations inside the circle</span><a class="btn small" href="https://www.google.com/maps/dir/?api=1&origin=Narnaul%2C+Haryana&destination=Narnaul%2C+Haryana" target="_blank" rel="noopener">Open Narnaul in Google Maps</a></div></div><p class="bx-zone-footnote">The circle is a straight-line radius, not a 35 km road-travel distance. Final service availability is confirmed when the booking address is checked.</p></div></section>
+
 <section class="hero"><div class="wrap hero-grid"><div>
 <div class="eyebrow">Expert hands. Better you.</div>
 <h1>Your Care.<br><span>Your Style.</span></h1>
@@ -504,7 +520,7 @@ input,select,textarea{font-size:16px;line-height:1.5}
 <article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=720&q=80" alt="Lymphatic drainage massage"><div class="service-body"><h3>Lymphatic Drainage Massage</h3><p>Gentle specialised techniques; suitability should be discussed first.</p><div class="prices"><div class="price-choice"><span>60 minutes</span><b>₹1,199</b><button class="btn small" type="button" onclick="addService(5,60)">Add 60 min</button></div><div class="price-choice"><span>90 minutes</span><b>₹1,699</b><button class="btn small" type="button" onclick="addService(5,90)">Add 90 min</button></div></div></div></article>
 <article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=720&q=80" alt="Gym recovery massage"><div class="service-body"><h3>BodyExpertX Signature Gym Recovery</h3><p>A recovery-focused massage for active people and gym-goers.</p><div class="prices"><div class="price-choice"><span>60 minutes</span><b>₹899</b><button class="btn small" type="button" onclick="addService(6,60)">Add 60 min</button></div><div class="price-choice"><span>90 minutes</span><b>₹1,299</b><button class="btn small" type="button" onclick="addService(6,90)">Add 90 min</button></div></div></div></article>
 </div></div></div></section>
-<section class="section alt" id="narnaul-pain-section"><div class="wrap"><div class="section-head"><div class="eyebrow">NARNAUL LOCAL MENU</div><h2>Targeted Comfort Sessions</h2><p>These additional services and prices are available only when your current location is detected in Narnaul.</p></div><div class="addon-grid" id="narnaulPainServices"></div></div></section>
+<section class="section alt" id="narnaul-pain-section"><div class="wrap"><div class="section-head"><div class="eyebrow">NARNAUL LOCAL MENU</div><h2>Targeted Comfort Sessions</h2><p>These additional services and prices are available only when your current location is detected within 35 km of Narnaul.</p></div><div class="addon-grid" id="narnaulPainServices"></div></div></section>
 <section class="section alt" id="add-ons"><div class="wrap"><div class="section-head"><div class="eyebrow">A little extra care</div><h2>Quick Add-on Sessions</h2><p>Book these on their own (₹400 minimum applies) or add them to a massage.</p></div><div class="addon-grid" id="addonCards">
 <article class="addon addon-visual"><img loading="lazy" src="https://images.pexels.com/photos/5793708/pexels-photo-5793708.jpeg?auto=compress&cs=tinysrgb&w=800&v=head-20261010" alt="Therapist giving a head and scalp massage"><div class="addon-content"><h3>Head Massage</h3><p>Scalp-focused relaxation · 20 min</p><strong>₹199</strong><button class="btn small" type="button" onclick="addAddon(0)">Add to Cart</button></div></article>
 <article class="addon addon-visual"><img loading="lazy" src="https://images.pexels.com/photos/5793888/pexels-photo-5793888.jpeg?auto=compress&cs=tinysrgb&w=800&v=foot-reflexology-20261010" alt="Therapist performing foot massage and reflexology"><div class="addon-content"><h3>Foot Reflexology</h3><p>Focused pressure for tired feet · 20 min</p><strong>₹199</strong><button class="btn small" type="button" onclick="addAddon(1)">Add to Cart</button></div></article>
@@ -538,7 +554,7 @@ const services=[
 ];
 const addons=[{name:"Head Massage",desc:"A short session focused on head and scalp comfort.",minutes:20,price:199,img:"photo-1599447421416-3414500d18a5"},{name:"Foot Massage",desc:"A relaxing session focused on tired feet.",minutes:20,price:199,img:"photo-1518611012118-696072aa579a"},{name:"Head & Shoulder Massage",desc:"Focused care for head, neck and shoulder tension.",minutes:40,price:449,img:"photo-1544161515-4ab6ce6db874"}];
 let cart=[],couponApplied=false,offerMode=false,appliedCoupon="",referralApplied=false,referrerPhone="",selectedCategory="PRIME",selectedDepartment="MASSAGE";
-let narnaulPricing=false;const narnaulCenter={lat:28.0444,lon:76.1083,radiusKm:18};function distanceKm(a,b,c,d){const R=6371,rad=x=>x*Math.PI/180,dl=rad(c-a),dn=rad(d-b);const h=Math.sin(dl/2)**2+Math.cos(rad(a))*Math.cos(rad(c))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h));}function checkCurrentArea(){const notice=document.getElementById("locationPriceNotice");if(!navigator.geolocation){notice.textContent="Standard massage prices shown. Location access is unavailable on this device.";renderServices();return;}navigator.geolocation.getCurrentPosition(pos=>{narnaulPricing=distanceKm(pos.coords.latitude,pos.coords.longitude,narnaulCenter.lat,narnaulCenter.lon)<=narnaulCenter.radiusKm;notice.textContent=narnaulPricing?"📍 Narnaul local prices applied based on your current location. Salon prices are unchanged.":"📍 Standard massage prices shown for your current area. Narnaul prices apply only when you are physically in Narnaul.";renderServices();},()=>{narnaulPricing=false;notice.textContent="Standard massage prices shown. Allow location access to check whether Narnaul local prices apply.";renderServices();},{enableHighAccuracy:false,timeout:10000,maximumAge:300000});}
+let narnaulPricing=false;const narnaulCenter={lat:28.0444,lon:76.1083,radiusKm:35};function distanceKm(a,b,c,d){const R=6371,rad=x=>x*Math.PI/180,dl=rad(c-a),dn=rad(d-b);const h=Math.sin(dl/2)**2+Math.cos(rad(a))*Math.cos(rad(c))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h));}function checkCurrentArea(){const notice=document.getElementById("locationPriceNotice");if(!navigator.geolocation){notice.textContent="Location access is unavailable. Please confirm that your service address is within 35 km of Narnaul.";renderServices();return;}navigator.geolocation.getCurrentPosition(pos=>{narnaulPricing=distanceKm(pos.coords.latitude,pos.coords.longitude,narnaulCenter.lat,narnaulCenter.lon)<=narnaulCenter.radiusKm;notice.textContent=narnaulPricing?"📍 You are within BodyExpertX’s Narnaul 35 km service zone. Narnaul massage prices apply; salon prices are unchanged.":"📍 Your current location is outside the Narnaul 35 km service zone. BodyExpertX home service is limited to this zone.";renderServices();},()=>{narnaulPricing=false;notice.textContent="We could not verify your location. Allow location access to check whether you are within the Narnaul 35 km service zone.";renderServices();},{enableHighAccuracy:false,timeout:10000,maximumAge:300000});}
 const money=n=>"₹"+n.toLocaleString("en-IN");
 const photo=(id,w=720)=>"https://images.unsplash.com/"+id+"?auto=format&fit=crop&w="+w+"&q=80";
 function selectDepartment(department){selectedDepartment=department==="SALON"?"SALON":"MASSAGE";document.getElementById("massageCategory").classList.toggle("active",selectedDepartment==="MASSAGE");document.getElementById("salonCategory").classList.toggle("active",selectedDepartment==="SALON");document.getElementById("massageCategory").setAttribute("aria-pressed",String(selectedDepartment==="MASSAGE"));document.getElementById("salonCategory").setAttribute("aria-pressed",String(selectedDepartment==="SALON"));document.getElementById("tierChooser").hidden=false;document.getElementById("tierEyebrow").textContent=selectedDepartment+" EXPERIENCE";document.getElementById("tierDescription").textContent=selectedDepartment==="MASSAGE"?"Choose your massage experience.":"Choose your salon experience.";
@@ -685,6 +701,20 @@ document.getElementById("bookingForm").addEventListener("submit",function(e){e.p
 "🙏 *Please confirm availability and booking.*\nThank you!";;window.open("https://wa.me/917838675115?text="+encodeURIComponent(details),"_blank","noopener");status.textContent="WhatsApp opened with your request. Press Send there, then wait for our confirmation."});
 function setMinDate(){document.getElementById("date").min=new Date().toISOString().slice(0,10)}
 document.getElementById("primeDescription").innerHTML="<strong>Therapist experience: 6 months–2 years</strong><br>Professional massage for relaxation and comfort.<br><strong>Without massage table/bed</strong><br><strong>Massage Report: Not included</strong>";document.getElementById("luxeDescription").innerHTML="<strong>Therapist experience: 2+ years</strong><br>Personalized premium massage experience.<br><strong>With massage table/bed option</strong><br><strong>Detailed Massage Report included</strong>";document.getElementById("primePrice").textContent="Starting at ₹699";document.getElementById("luxePrice").textContent="Starting at ₹1,999";document.getElementById("tierNote").textContent="LUXE costs ₹1,300 more than the corresponding PRIME massage and includes a Detailed Massage Report plus aftercare tips. The report is not a medical diagnosis.";document.getElementById("services").style.display="none";document.getElementById("add-ons").style.display="none";document.getElementById("booking").style.display="none";updateFemalePriceNotice();renderServices();renderIntake();renderCart();setMinDate();toggleAddress();updateCouponAvailability();checkCurrentArea();
+</script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+ const el=document.getElementById("bxNarnaulMap"); if(!el||!window.L)return;
+ const center=[28.0444,76.1083];
+ const map=L.map(el,{scrollWheelZoom:false}).setView(center,9);
+ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+ L.circle(center,{radius:35000,color:"#f2c75b",weight:3,fillColor:"#d9aa35",fillOpacity:.2}).addTo(map);
+ L.marker(center).addTo(map).bindPopup("<b>BodyExpertX</b><br>Narnaul service centre point<br>35 km service radius").openPopup();
+ map.fitBounds(L.circle(center,{radius:35000}).getBounds(),{padding:[16,16]});
+ setTimeout(()=>map.invalidateSize(),250);
+})();
 </script>
 </body></html>
 <style>
