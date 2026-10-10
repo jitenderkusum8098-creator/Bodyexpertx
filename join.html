@@ -18,12 +18,43 @@ button,a{transition:color .18s ease,background-color .18s ease,border-color .18s
 input,select,textarea{font-size:16px;line-height:1.5}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 @media(max-width:560px){.wrap{width:min(100% - 28px,1160px)}.section-head p{font-size:15px;line-height:1.65}}
+
+/* Expanded candidate guide */
+.join-guide{padding:6px 0 12px}
+.guide-heading{max-width:700px;margin:8px 0 22px}
+.guide-heading h2{font-size:clamp(26px,5.5vw,39px);line-height:1.13;letter-spacing:-.025em;margin:10px 0 12px}
+.guide-heading>p{color:var(--muted);line-height:1.8;margin:0}
+.guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.guide-tile{border:1px solid #45391f;background:linear-gradient(145deg,#18181a,#111113);border-radius:16px;padding:19px}
+.guide-icon{display:grid;place-items:center;width:37px;height:37px;border-radius:11px;border:1px solid #8c6a25;color:var(--gold2);font-weight:900;font-size:12px;margin-bottom:13px}
+.guide-tile h3{font-size:17px;line-height:1.35;margin:0 0 8px;color:#fff}
+.guide-tile p{font-size:13px;line-height:1.75;color:var(--muted);margin:0}
+.guide-process{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0}
+.guide-process>div{padding:15px 13px;border-radius:13px;background:#171510;border:1px solid #40341d;display:flex;flex-direction:column;gap:6px}
+.guide-process span{font-size:10px;letter-spacing:.12em;color:var(--gold2);font-weight:900}
+.guide-process b{font-size:13px;line-height:1.4}
+.guide-process small{font-size:12px;line-height:1.55;color:var(--muted)}
+.guide-warning{border-left:3px solid var(--gold);background:#20190d;color:#e0d5bd;border-radius:0 12px 12px 0;padding:15px 16px;font-size:13px;line-height:1.75;margin:18px 0 24px}
+.guide-warning strong{color:var(--gold2)}
+@media(max-width:620px){.guide-grid{grid-template-columns:1fr}.guide-process{grid-template-columns:repeat(2,minmax(0,1fr))}.guide-tile{padding:17px}}
+
 </style>
 </head>
 <body>
 <header class="header"><div class="wrap"><a class="brand" href="./index.html">BODYEXPERT<span>X</span></a><br><a class="back" href="./index.html">← Back to main website</a></div></header>
 <main class="wrap">
 <section class="hero"><div class="eyebrow">Career opportunities</div><h1>Join <span>BodyExpertX</span></h1><p>Experienced candidates and freshers can apply. Share your details below and our team will contact you about eligibility, training and next steps.</p></section>
+<section class="join-guide" aria-labelledby="join-guide-title">
+ <div class="guide-heading"><div class="eyebrow">YOUR CAREER PATH</div><h2 id="join-guide-title">BodyExpertX ke saath judne se pehle poori baat samjhein</h2><p>Hum chahte hain ki har candidate ko role, training, work expectations aur fees ke baare mein pehle se clear information mile. Form bharna ek enquiry hai—selection ya earning ki guarantee nahi.</p></div>
+ <div class="guide-grid">
+  <article class="guide-tile"><span class="guide-icon">01</span><h3>Kaun apply kar sakta hai?</h3><p>18+ age ke freshers aur experienced candidates apply kar sakte hain. Aapko professional behaviour, punctuality, hygiene aur client privacy ka dhyan rakhna hoga.</p></article>
+  <article class="guide-tile"><span class="guide-icon">02</span><h3>Training kyun zaroori hai?</h3><p>Joining se pehle compulsory training ka purpose massage basics, safe pressure, body mechanics, draping, hygiene, client communication aur service boundaries ko samajhna hai. Training schedule aur syllabus team se confirm karein.</p></article>
+  <article class="guide-tile"><span class="guide-icon">03</span><h3>Application ke baad kya hoga?</h3><p>Team aapse WhatsApp par contact kar sakti hai, details discuss karegi aur availability, work area, training requirements aur next steps samjhayegi. Application apne aap job offer nahi hai.</p></article>
+  <article class="guide-tile"><span class="guide-icon">04</span><h3>Kaam ke professional standards</h3><p>Client consent, dignity, privacy, clean equipment, honest communication aur agreed service scope ka palan zaroori hai. Kisi bhi inappropriate request ya misconduct ko accept na karein; concern ko management tak pahunchayein.</p></article>
+ </div>
+ <div class="guide-process"><div><span>STEP 1</span><b>Details submit karein</b><small>Form mein sahi contact aur experience information dein.</small></div><div><span>STEP 2</span><b>Team se baat karein</b><small>Role, location, schedule aur eligibility discuss karein.</small></div><div><span>STEP 3</span><b>Terms verify karein</b><small>Training, total fees, payment terms aur written conditions samajhein.</small></div><div><span>STEP 4</span><b>Training complete karein</b><small>Requirements poori hone ke baad hi next joining steps confirm honge.</small></div></div>
+ <div class="guide-warning"><strong>Payment safety:</strong> Form submit karne se pehle ya sirf apply karne ke liye payment na karein. Kisi bhi fee ko pay karne se pehle current amount, kya-kya included hai, schedule, refund/cancellation terms aur written receipt confirm karein. Kisi job, fixed income ya client bookings ki guarantee assume na karein.</div>
+</section>
 <section class="card">
 <div class="fee"><small>Compulsory training + joining fee</small><strong>₹7,999 total</strong><p>Training is compulsory before joining. Please enquire about the training schedule, syllabus, terms and payment details before paying any fee.</p></div>
 <form id="joinForm">
