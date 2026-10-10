@@ -240,6 +240,56 @@ button, .btn, .category-card, .price-choice { position:relative; z-index:1; }
 #bookingForm .totals{padding:9px 0;font-size:17px}
 #bookingForm .billing-summary-panel .field{padding:11px!important;border-radius:11px!important}
 @media(max-width:560px){#finalConfirmation{padding:16px;border-radius:16px}#finalConfirmation h3{font-size:21px}#finalConfirmation .final-declaration{font-size:14px}#finalConfirmation .final-submit{font-size:15px;min-height:52px}.table-option-card{padding:12px}#bookingForm .billing-summary-panel{padding:14px}}
+
+/* Readable mobile booking flow: stronger type, clear sections, less visual clutter */
+#booking .section-head h2{font-size:clamp(27px,6vw,36px);line-height:1.2;letter-spacing:-.02em}
+#booking .section-head p{font-size:16px;line-height:1.65;max-width:620px}
+#bookingForm{gap:14px}
+#bookingForm>.panel,#bookingForm>.final-confirmation{margin:0 0 14px}
+#bookingForm .panel{padding:clamp(15px,4vw,23px);border-radius:18px}
+#bookingForm .panel h3{font-size:clamp(20px,4.8vw,24px);line-height:1.3;margin-bottom:16px;color:#f2c75b}
+#bookingForm .field{gap:8px;margin-bottom:15px}
+#bookingForm .field label{font-size:14px;font-weight:750;line-height:1.45;color:#f0e9da}
+#bookingForm .field input,#bookingForm .field select,#bookingForm .field textarea{min-height:49px;padding:12px 13px;border-radius:10px;font-size:16px;line-height:1.45}
+#bookingForm .field textarea{min-height:100px}
+#bookingForm .field-grid{gap:14px}
+#bookingForm .status{font-size:14px;line-height:1.55;margin:9px 0;color:#d6b75e}
+#bookingForm .cart-item{font-size:15px;line-height:1.5;padding:13px 0}
+#bookingForm .cart-empty{font-size:15px;line-height:1.6}
+#bookingForm .totals{font-size:18px;line-height:1.4;padding:10px 0}
+#bookingForm .billing-summary-panel{background:linear-gradient(145deg,#191919,#101011);border:1px solid #695426}
+#bookingForm .billing-summary-panel h3{font-size:23px;line-height:1.3;color:#f7d779}
+#bookingForm .billing-summary-panel .field{background:#171614!important;border:1px solid #4a402b!important;padding:14px!important;margin-top:14px!important}
+#bookingForm #referralPhone{font-size:16px;min-height:49px;background:#0d0d0f;color:#fff}
+#bookingForm .billing-summary-panel button.btn.small{min-height:43px;padding:10px 15px;font-size:14px;font-weight:800;border-radius:10px}
+#bookingForm #coupon{font-size:16px;min-height:49px}
+#finalConfirmation{margin-top:0;padding:clamp(16px,4vw,23px);border:1px solid #92712b;border-radius:18px;background:radial-gradient(ellipse at top right,#30240d 0%,transparent 58%),linear-gradient(145deg,#1b1913,#101011);box-shadow:0 10px 25px #0003}
+#finalConfirmation h3{font-size:clamp(23px,5.2vw,28px);line-height:1.3;margin:0 0 17px;color:#f5d16e}
+#finalConfirmation .final-declaration{display:flex;align-items:flex-start;gap:12px;font-size:16px;font-weight:700;line-height:1.55;color:#fff3d4}
+#finalConfirmation .final-declaration input{width:23px;height:23px;flex:0 0 23px;margin-top:3px;accent-color:#d9aa35}
+#finalConfirmation .hint{font-size:14px;line-height:1.6;color:#c6bfae;margin:12px 0}
+#finalConfirmation .table-option-card{margin:17px 0 14px;padding:16px;border:1px solid #92712b;border-radius:15px;background:linear-gradient(145deg,#27200f,#151413)}
+#finalConfirmation .table-option-heading{gap:12px;margin-bottom:14px}
+#finalConfirmation .table-option-icon{width:44px;height:44px;flex-basis:44px;border-radius:13px;font-size:26px}
+#finalConfirmation .table-option-heading strong{font-size:17px;line-height:1.4;color:#ffdc7b}
+#finalConfirmation .table-option-heading small{font-size:14px;line-height:1.5;color:#d2c9b7}
+#finalConfirmation .table-option-label{font-size:14px;line-height:1.45;color:#f2e8d0}
+#finalConfirmation #tableOption{min-height:52px;padding:12px 13px;font-size:16px;border-radius:11px;background:#0e0e0f;color:#fff;border-color:#80672f}
+#finalConfirmation .final-submit{width:100%;min-height:58px;margin:15px 0 6px;padding:15px 18px;font-size:17px;font-weight:850;line-height:1.4;white-space:normal;border-radius:14px;box-shadow:0 7px 20px #c99c2930}
+#finalConfirmation #formStatus{font-size:14px;line-height:1.55}
+@media(max-width:560px){
+ #bookingForm .field-grid{grid-template-columns:1fr;gap:0}
+ #bookingForm .panel{padding:16px}
+ #bookingForm .billing-summary-panel h3{font-size:21px}
+ #bookingForm .totals{font-size:17px}
+ #finalConfirmation h3{font-size:23px}
+ #finalConfirmation .final-declaration{font-size:15px}
+ #finalConfirmation .hint{font-size:13px}
+ #finalConfirmation .table-option-card{padding:14px}
+ #finalConfirmation .table-option-heading strong{font-size:16px}
+ #finalConfirmation .table-option-heading small{font-size:13px}
+ #finalConfirmation .final-submit{font-size:16px;min-height:56px}
+}
 </style>
 </head>
 <body>
