@@ -166,6 +166,51 @@ button,a{transition:color .18s ease,background-color .18s ease,border-color .18s
 input,select,textarea{font-size:16px;line-height:1.5}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 @media(max-width:560px){.wrap{width:min(100% - 28px,1160px)}.section-head p{font-size:15px;line-height:1.65}}
+
+/* BodyExpertX redesigned premium hero */
+.bx-hero{height:auto!important;min-height:610px;background:#090909!important;isolation:isolate;display:flex;align-items:stretch;border-bottom:1px solid #6b511d}
+.bx-hero .bx-hero-photo{position:absolute;inset:0 0 0 auto;width:62%;height:100%;object-fit:cover;object-position:center 32%;filter:brightness(.75);z-index:-2}
+.bx-hero-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#080808 0%,#080808 35%,rgba(8,8,8,.92) 48%,rgba(8,8,8,.25) 77%,rgba(8,8,8,.15) 100%),linear-gradient(0deg,#080808 0%,transparent 34%)}
+.bx-hero-content{width:min(1200px,92%);margin:auto;padding:78px 0 150px;position:relative;display:flex;align-items:center;min-height:500px}
+.bx-hero-copy{max-width:760px;position:relative;z-index:2}
+.bx-eyebrow{display:flex;align-items:center;gap:12px;color:#e8c45b;letter-spacing:.17em;font-size:12px;font-weight:800;margin-bottom:24px}
+.bx-eyebrow span{height:3px;width:38px;background:#e8c45b;display:inline-block}
+.bx-hero h1{font-size:clamp(36px,5.4vw,68px);line-height:1.04;letter-spacing:-.035em;margin:0 0 18px;color:#fff;font-weight:950}
+.bx-hero h1 span{color:#f2c75b}
+.bx-hero-sub{font-size:clamp(15px,1.8vw,19px);color:#e0d9ca;max-width:540px;margin:0 0 22px}
+.bx-hero-trust{display:flex;align-items:center;flex-wrap:wrap;gap:12px;color:#f6f0df;font-size:13px;margin:22px 0 28px}
+.bx-hero-trust span{display:flex;align-items:center;gap:7px}.bx-hero-trust span:first-letter{color:#f2c75b}.bx-hero-trust i{height:28px;width:1px;background:#77602a}
+.bx-hero-actions{display:flex;flex-wrap:wrap;gap:13px}.bx-hero-actions .btn{min-width:180px;min-height:54px;justify-content:center;font-size:16px;padding:14px 22px;border-radius:999px}.bx-hero-actions .btn span{font-size:25px;line-height:15px}
+.bx-hero-actions .bx-primary{background:linear-gradient(135deg,#ffe17a,#d69b1e);color:#17120a}
+.bx-hero-actions .bx-secondary{background:#0b0b0b;color:#fff;border:1px solid #e3b83f;box-shadow:none}
+.bx-hero-brand{position:absolute;right:1%;top:38px;display:flex;align-items:center;gap:10px;color:#fff;font-size:20px;font-weight:950;letter-spacing:.04em;text-shadow:0 2px 8px #000}
+.bx-hero-brand em{font-style:normal;color:#f2c75b}.bx-brand-x{display:grid;place-items:center;width:42px;height:42px;border:2px solid #e2b943;border-radius:50%;font-size:27px;color:#f2c75b}
+.bx-hero-brand small{position:absolute;top:48px;left:54px;white-space:nowrap;color:#e2d8c5;font-size:10px;letter-spacing:.1em;font-weight:700}
+.bx-benefits{position:absolute;left:3%;right:3%;bottom:22px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:rgba(10,10,10,.91);border:1px solid #6d5628;border-radius:18px;box-shadow:0 12px 32px #0006;backdrop-filter:blur(10px);padding:18px 16px;gap:8px}
+.bx-benefits>div{display:flex;align-items:center;gap:12px;padding:5px 12px;border-right:1px solid #45381d}.bx-benefits>div:last-child{border-right:0}
+.bx-benefits>div>span{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border:1px solid #e2b943;border-radius:50%;color:#f2c75b;font-size:24px}
+.bx-benefits b,.bx-benefits small{display:block}.bx-benefits b{font-size:14px;color:#fff4d7;line-height:1.35}.bx-benefits small{font-size:12px;color:#c8c0b1;margin-top:3px}
+@media(max-width:700px){
+ .bx-hero{min-height:720px!important}
+ .bx-hero .bx-hero-photo{width:100%;height:58%;object-position:center 25%;filter:brightness(.75)}
+ .bx-hero-shade{background:linear-gradient(180deg,rgba(8,8,8,.06) 0%,rgba(8,8,8,.14) 20%,#080808 54%,#080808 100%)}
+ .bx-hero-content{width:88%;min-height:0;align-items:flex-end;padding:260px 0 185px}
+ .bx-hero-copy{width:100%}
+ .bx-eyebrow{font-size:10px;letter-spacing:.11em;margin-bottom:14px}
+ .bx-eyebrow span{width:24px}
+ .bx-hero h1{font-size:clamp(31px,8.6vw,43px);line-height:1.08;margin-bottom:12px}
+ .bx-hero-sub{font-size:14px;line-height:1.55;margin-bottom:14px}
+ .bx-hero-trust{gap:7px 9px;font-size:11px;margin:14px 0 19px}
+ .bx-hero-trust i{height:20px}
+ .bx-hero-actions{gap:9px}.bx-hero-actions .btn{min-width:0;flex:1;min-height:48px;font-size:13px;padding:12px 10px}
+ .bx-hero-brand{top:18px;right:6%;font-size:15px}.bx-brand-x{width:34px;height:34px;font-size:22px}.bx-hero-brand small{top:39px;left:44px;font-size:8px}
+ .bx-benefits{left:5%;right:5%;bottom:12px;padding:10px 8px;grid-template-columns:1fr;gap:0;border-radius:14px}
+ .bx-benefits>div{padding:7px 6px;border-right:0;border-bottom:1px solid #45381d;gap:10px}
+ .bx-benefits>div:last-child{border-bottom:0}
+ .bx-benefits>div>span{width:32px;height:32px;flex-basis:32px;font-size:19px}
+ .bx-benefits b{font-size:12px}.bx-benefits small{font-size:10px;margin-top:0}
+}
+
 </style>
 </head>
 <body>
@@ -174,7 +219,21 @@ input,select,textarea{font-size:16px;line-height:1.5}
 <a class="brand" href="#home"><span class="brandmark" aria-hidden="true"><svg viewBox="0 0 100 100" width="30" height="30"><defs><linearGradient id="brandSilver" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#b9bdc1"/><stop offset="1" stop-color="#73777c"/></linearGradient></defs><path d="M15 14 L36 14 L85 77 L65 87 Z" fill="url(#brandSilver)"/><path d="M84 14 L64 14 L15 77 L35 87 Z" fill="url(#brandSilver)"/></svg></span><span>BODYEXPERT<em>X</em></span></a>
 <nav class="links"><a href="#categories">Massage &amp; Salon</a><a href="#courses">Courses</a><a href="#testimonials">Ratings</a><a href="#social">Social</a></nav>
 </div></header>
-<main id="home"><section class="brand-banner" aria-label="BodyExpertX premium wellness banner"><img src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1800&q=90" alt="Premium massage room"><div class="banner-overlay"><div class="banner-logo"><span class="banner-logo-mark"><svg viewBox="0 0 100 100" role="img" aria-label="BodyExpertX X symbol"><defs><linearGradient id="silverX" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".48" stop-color="#b9bdc1"/><stop offset="1" stop-color="#73777c"/></linearGradient></defs><path d="M15 14 L36 14 L85 77 L65 87 Z" fill="url(#silverX)"/><path d="M84 14 L64 14 L15 77 L35 87 Z" fill="url(#silverX)"/></svg></span><span class="banner-logo-word">BODYEXPERT<span>X</span></span></div><p>EXPERT HANDS. BETTER YOU.</p></div></section>
+<main id="home"><section class="brand-banner bx-hero" aria-label="BodyExpertX Massage and Salon Experts">
+  <img class="bx-hero-photo" src="https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=1600&q=85" alt="Professional massage and wellness service" fetchpriority="high">
+  <div class="bx-hero-shade"></div>
+  <div class="bx-hero-content">
+    <div class="bx-hero-copy">
+      <div class="bx-eyebrow"><span></span> PROFESSIONAL CARE AT YOUR HOME</div>
+      <h1><span>MASSAGE &amp; SALON</span><br>SERVICE EXPERTS</h1>
+      <p class="bx-hero-sub">Premium wellness and grooming services, delivered with care.</p>
+      <div class="bx-hero-trust"><span>⌂ <b>Home Service Available</b></span><i></i><span>✧ <b>Trained Therapists</b></span><i></i><span>◉ <b>Relax · Rejuvenate</b></span></div>
+      <div class="bx-hero-actions"><a class="btn bx-primary" href="./massage.html?v=hero-redesign">Book Massage <span>›</span></a><a class="btn bx-secondary" href="./salon.html?v=hero-redesign">Book Salon <span>›</span></a></div>
+    </div>
+    <div class="bx-hero-brand"><span class="bx-brand-x">X</span><span>BODYEXPERT<em>X</em></span><small>EXPERT HANDS. BETTER YOU.</small></div>
+  </div>
+  <div class="bx-benefits"><div><span>✦</span><section><b>Stress Relief</b><small>Relax your mind</small></section></div><div><span>◈</span><section><b>Wellness Care</b><small>Feel better every day</small></section></div><div><span>⚕</span><section><b>Male &amp; Female Therapists</b><small>Male to male · Female to female</small></section></div></div>
+</section>
 
 
 
