@@ -211,6 +211,12 @@ input,select,textarea{font-size:16px;line-height:1.5}
  .bx-benefits b{font-size:12px}.bx-benefits small{font-size:10px;margin-top:0}
 }
 
+
+/* Prevent duplicate branding inside the photo; the sticky site header owns the logo */
+.bx-hero-brand{display:none!important}
+.bx-hero-content{padding-top:58px}
+@media(max-width:700px){.bx-hero-content{padding-top:235px}}
+
 </style>
 </head>
 <body>
@@ -230,8 +236,7 @@ input,select,textarea{font-size:16px;line-height:1.5}
       <div class="bx-hero-trust"><span>⌂ <b>Home Service Available</b></span><i></i><span>✧ <b>Trained Therapists</b></span><i></i><span>◉ <b>Relax · Rejuvenate</b></span></div>
       <div class="bx-hero-actions"><a class="btn bx-primary" href="./massage.html?v=hero-redesign">Book Massage <span>›</span></a><a class="btn bx-secondary" href="./salon.html?v=hero-redesign">Book Salon <span>›</span></a></div>
     </div>
-    <div class="bx-hero-brand"><span class="bx-brand-x">X</span><span>BODYEXPERT<em>X</em></span><small>EXPERT HANDS. BETTER YOU.</small></div>
-  </div>
+    </div>
   <div class="bx-benefits"><div><span>✦</span><section><b>Stress Relief</b><small>Relax your mind</small></section></div><div><span>◈</span><section><b>Wellness Care</b><small>Feel better every day</small></section></div><div><span>⚕</span><section><b>Male &amp; Female Therapists</b><small>Male to male · Female to female</small></section></div></div>
 </section>
 
