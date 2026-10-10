@@ -123,13 +123,22 @@ body{background:#0b0b0d;color:#f7f3e8}
 /* PRIME & LUXE category selector */
 .category-section{padding:38px 0 44px;background:linear-gradient(135deg,#111,#1b160c);border-block:1px solid #6b501b}
 .category-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.category-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:25px;border:1px solid #6b501b;border-radius:20px;background:linear-gradient(145deg,#191919,#100f0d);color:#f7f3e8;cursor:pointer;min-height:190px;transition:.2s}
-.category-card:hover,.category-card.active{border-color:#f2c75b;box-shadow:0 0 0 1px #f2c75b50,0 12px 32px #0007;transform:translateY(-2px)}
-.category-card .category-number{font-size:11px;letter-spacing:.18em;color:#f2c75b;font-weight:900}
-.category-card h2{font-size:clamp(28px,4vw,42px);line-height:1;margin:12px 0 7px;letter-spacing:.08em}
-.category-card p{color:#c2bdb0;margin:0 0 14px;font-size:13px}
-.category-card .category-price{margin-top:auto;color:#f2c75b;font-weight:900;font-size:18px}
-.category-card .category-select{margin-top:12px;font-size:11px;letter-spacing:.12em;font-weight:900;border:1px solid #9c7424;padding:8px 12px;border-radius:999px;color:#f2c75b}
+.category-card{position:relative;display:flex;flex-direction:column;align-items:stretch;text-align:left;padding:24px;border:1px solid #735925;border-radius:23px;background:radial-gradient(ellipse at top right,#29200d 0%,transparent 48%),linear-gradient(145deg,#191919,#0e0e0f);color:#f7f3e8;cursor:pointer;min-height:100%;transition:transform .22s,border-color .22s,box-shadow .22s;box-shadow:0 12px 30px #0005}
+.category-card:hover,.category-card.active{border-color:#f2c75b;box-shadow:0 0 0 1px #f2c75b45,0 16px 35px #0008;transform:translateY(-2px)}
+.category-card.active{background:radial-gradient(ellipse at top right,#3a2b0e 0%,transparent 55%),linear-gradient(145deg,#1d1b15,#0e0e0f)}
+.category-card .category-number{display:inline-flex;align-self:flex-start;align-items:center;gap:8px;font-size:11px;letter-spacing:.17em;color:#f2c75b;font-weight:900}
+.category-card h2{font-size:clamp(30px,4vw,42px);line-height:1;margin:13px 0 7px;letter-spacing:.08em}
+.category-card .tier-subtitle{margin:0 0 17px;color:#c2bdb0;font-size:13px;line-height:1.5}
+.tier-feature-list{list-style:none;display:grid;gap:12px;margin:0 0 20px;padding:16px 0 0;border-top:1px solid #ffffff1c}
+.tier-feature-list li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:start;color:#f0ece3;font-size:14px;line-height:1.45}
+.tier-feature-list .feature-icon{display:grid;place-items:center;width:21px;height:21px;border:1px solid #a8893e;border-radius:50%;color:#f2c75b;font-size:12px;font-weight:900}
+.tier-feature-list strong{display:block;font-weight:800;color:#fffaf0}
+.tier-feature-list small{display:block;margin-top:2px;color:#bdb6a8;font-size:12px;line-height:1.45}
+.category-card .category-price{display:block;margin-top:auto;color:#f2c75b;font-weight:900;font-size:clamp(19px,2.4vw,23px);line-height:1.3}
+.category-card .category-select{display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;gap:9px;margin-top:15px;font-size:11px;letter-spacing:.12em;font-weight:900;border:1px solid #b08a35;padding:11px 15px;border-radius:999px;color:#f2c75b;transition:background .2s,color .2s}
+.category-card:hover .category-select,.category-card.active .category-select{background:linear-gradient(135deg,#f4d16e,#c28c27);color:#17130a;border-color:#f2c75b}
+.category-card .category-select:after{content:"→";font-size:16px;line-height:1}
+@media(max-width:560px){.category-card{padding:21px;border-radius:20px}.tier-feature-list{gap:11px}.tier-feature-list li{font-size:14px}.category-card h2{font-size:34px}}
 .category-caption{text-align:center;margin:0 auto 22px;color:#c2bdb0;font-size:13px}
 .category-status{display:inline-block;color:#f2c75b;font-weight:800}
 @media(max-width:560px){.category-grid{grid-template-columns:1fr}.category-card{min-height:160px;padding:20px}}
@@ -239,10 +248,10 @@ button, .btn, .category-card, .price-choice { position:relative; z-index:1; }
 </div>
 <div id="tierChooser" style="margin-top:24px">
 <div class="category-grid">
-<button type="button" class="category-card active" id="primeCategory" onclick="selectCategory('PRIME')" aria-pressed="true"><span class="category-number">01 · PRIME</span><h2>PRIME</h2><p id="primeDescription"><strong>Therapist experience: 6 months–2 years</strong><br>Professional massage for relaxation and comfort.<br><strong>Without massage table/bed</strong><br><strong>Massage Report: Not included</strong></p><span class="category-price" id="primePrice">Starting at ₹699</span><span class="category-select">EXPLORE PRIME</span></button>
-<button type="button" class="category-card" id="luxeCategory" onclick="selectCategory('LUXE')" aria-pressed="false"><span class="category-number">02 · LUXE</span><h2>LUXE</h2><p id="luxeDescription"><strong>Therapist experience: 2+ years</strong><br>Personalized premium massage experience.<br><strong>With massage table/bed option</strong><br><strong>Detailed Massage Report included</strong></p><span class="category-price" id="luxePrice">Starting at ₹1,699</span><span class="category-select">EXPLORE LUXE</span></button>
+<button type="button" class="category-card active" id="primeCategory" onclick="selectCategory('PRIME')" aria-pressed="true"><span class="category-number">01 · PRIME</span><h2>PRIME</h2><p class="tier-subtitle">Essential massage care for relaxation and comfort.</p><ul class="tier-feature-list"><li><span class="feature-icon">✓</span><span><strong>Therapist experience</strong><small>6 months–2 years</small></span></li><li><span class="feature-icon">✓</span><span><strong>Massage table/bed</strong><small>Not included</small></span></li><li><span class="feature-icon">—</span><span><strong>Detailed massage report</strong><small>Not included</small></span></li></ul><span class="category-price" id="primePrice">Starting at ₹699</span><span class="category-select">EXPLORE PRIME</span></button>
+<button type="button" class="category-card" id="luxeCategory" onclick="selectCategory('LUXE')" aria-pressed="false"><span class="category-number">02 · LUXE</span><h2>LUXE</h2><p class="tier-subtitle">A more personalised premium massage experience.</p><ul class="tier-feature-list"><li><span class="feature-icon">✓</span><span><strong>Therapist experience</strong><small>2+ years</small></span></li><li><span class="feature-icon">✓</span><span><strong>Massage table/bed</strong><small>Available as an option</small></span></li><li><span class="feature-icon">✓</span><span><strong>Detailed massage report</strong><small>Included; not a medical diagnosis</small></span></li></ul><span class="category-price" id="luxePrice">Starting at ₹1,699</span><span class="category-select">EXPLORE LUXE</span></button>
 </div>
-<p class="category-caption" id="tierNote" style="margin-top:16px">LUXE costs ₹1,300 more than the corresponding PRIME massage, includes a Detailed Massage Report, and offers a massage table/bed. The report is not a medical diagnosis.</p>
+<p class="category-caption" id="tierNote" style="margin-top:18px">Choose PRIME for essential massage care, or LUXE for a more experienced therapist and a detailed session report. Table/bed availability is an option and should be confirmed when booking.</p>
 </div>
 </div></section>
 
