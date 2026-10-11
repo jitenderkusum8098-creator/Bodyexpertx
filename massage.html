@@ -779,9 +779,14 @@ document.getElementById("primeDescription").innerHTML="<strong>Therapist experie
   }
   const chosen=(q.get("massage")||"").trim();
   if(chosen){
-    const serviceIndex=services.findIndex(s=>s.name.toLowerCase()===chosen.toLowerCase());
+    const normalize=s=>String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"").replace("bodyexpertxspecialgymtherapy","bodyexpertsignaturegymrecovery");
+    const serviceIndex=services.findIndex(s=>normalize(s.name)===normalize(chosen));
     if(serviceIndex>=0){
       document.getElementById("add-ons").hidden=true;
+      document.getElementById("categories").style.display="none";
+      document.getElementById("services").style.display="block";
+      document.getElementById("serviceMenuTitle").textContent=chosen;
+      document.getElementById("serviceMenuDescription").textContent="आपकी चुनी हुई मसाज। नीचे केवल इसी मसाज के 60 या 90 मिनट में से चुनें।";
       setTimeout(()=>document.getElementById("services")?.scrollIntoView({behavior:"smooth",block:"start"}),250);
     }
   }
