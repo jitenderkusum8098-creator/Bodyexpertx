@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BodyExpertX | Partner Registration</title>
+<meta name="description" content="Register as a BodyExpertX massage partner.">
+<style>
+:root{color-scheme:dark;--bg:#0b0b0d;--panel:#151517;--gold:#f2c75b;--line:#40351f;--muted:#c2bdb0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f7f3e8;font:16px/1.55 system-ui,Arial,sans-serif}.wrap{max-width:760px;width:92%;margin:28px auto}.brand{font-size:23px;font-weight:900;letter-spacing:.04em}.brand span{color:var(--gold)}.top{border-bottom:1px solid var(--line);padding:16px 0}.card{margin-top:22px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px}.eyebrow{color:var(--gold);font-size:11px;letter-spacing:.15em;font-weight:800}.hero h1{font-size:clamp(28px,6vw,42px);line-height:1.1;margin:10px 0}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}.field label{font-size:13px;color:#e8dfca}.field input,.field select{width:100%;background:#0e0e10;color:#fff;border:1px solid #4a402d;border-radius:10px;padding:12px;font:inherit}.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:999px;background:linear-gradient(135deg,#f5d16e,#c18a1d);color:#17120a;font-weight:800;padding:13px 18px;cursor:pointer;width:100%;font:inherit}.profile{display:flex;gap:14px;align-items:center}.avatar{width:74px;height:74px;border-radius:50%;background:#282113;border:2px solid var(--gold);display:grid;place-items:center;color:var(--gold);font-size:25px;font-weight:900}.id{font-size:24px;font-weight:900;color:var(--gold);overflow-wrap:anywhere}.notice{font-size:12px;color:var(--muted)}[hidden]{display:none!important}a{color:var(--gold)}@media(max-width:560px){.grid{grid-template-columns:1fr}.card{padding:17px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap" style="margin:0 auto"><a href="./index.html" style="text-decoration:none;color:inherit"><div class="brand">BodyExpert<span>X</span></div></a></div></header>
+<main class="wrap">
+<section class="hero"><div class="eyebrow">PARTNER NETWORK</div><h1>Join BodyExpertX as a Partner</h1><p class="muted">Apni details submit karein. Partner ID system demo mein automatically generate hogi. Live registration, login aur shared partner records ke liye secure database connect karna abhi baaki hai.</p></section>
+<section class="card">
+<div class="profile"><div class="avatar" aria-hidden="true">BX</div><div><div class="eyebrow">INITIAL PARTNER SLOT</div><div class="id">BEX-VK-001</div><div class="muted">Service area: Vasant Kunj</div></div></div>
+<p class="notice">Partner 1 ke liye sample ID. Is page par ID dikhna account approval ya real database entry ka proof nahi hai.</p>
+</section>
+<section class="card">
+<h2 style="margin-top:0">Partner registration</h2>
+<form id="partnerForm">
+<div class="grid">
+<div class="field"><label for="name">Full name *</label><input id="name" required autocomplete="name" placeholder="Partner ka naam"></div>
+<div class="field"><label for="phone">Mobile / WhatsApp number *</label><input id="phone" required type="tel" inputmode="tel" pattern="[0-9+ ()-]{10,18}" placeholder="Mobile number"></div>
+</div>
+<div class="grid">
+<div class="field"><label for="area">Service area *</label><input id="area" required value="Vasant Kunj"></div>
+<div class="field"><label for="experience">Experience *</label><select id="experience" required><option value="">Select experience</option><option>Fresher</option><option>6 months–2 years</option><option>2+ years</option></select></div>
+</div>
+<div class="field"><label for="skills">Massage skills *</label><select id="skills" required><option value="">Select skills</option><option>Swedish Massage</option><option>Deep Tissue Massage</option><option>Sports Massage</option><option>Cupping Massage</option><option>Hot Stone Massage</option><option>Multiple Massage Skills</option></select></div>
+<div class="field"><label for="availability">Availability *</label><select id="availability" required><option value="">Select availability</option><option>Available full day</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select></div>
+<label class="notice" style="display:flex;gap:9px;margin:12px 0 18px"><input type="checkbox" id="consent" required> I confirm these details are correct and agree that BodyExpertX may contact me about partner onboarding.</label>
+<button class="btn" type="submit">Generate Partner ID</button>
+</form>
+<div id="result" hidden style="margin-top:20px;border:1px solid var(--line);border-radius:12px;padding:16px">
+<div class="eyebrow">DEMO REGISTRATION CREATED ON THIS DEVICE</div><div class="id" id="generatedId"></div><p id="summary" class="muted"></p><button id="copy" class="btn" type="button">Copy registration summary</button>
+</div>
+</section>
+<p class="notice">Important: This GitHub Pages demo saves registration only in this browser. It does not send data to BodyExpertX, create a secure account, notify an admin, or connect to live booking assignment. Do not enter sensitive information.</p>
+<p><a href="./index.html">← Back to BodyExpertX website</a></p>
+</main>
+<script>
+const form=document.getElementById('partnerForm'), result=document.getElementById('result');
+form.addEventListener('submit',function(e){e.preventDefault();const entries=JSON.parse(localStorage.getItem('bex_partner_demo_entries')||'[]');const id='BEX-VK-'+String(entries.length+1).padStart(3,'0');const item={id,name:document.getElementById('name').value.trim(),phone:document.getElementById('phone').value.trim(),area:document.getElementById('area').value.trim(),experience:document.getElementById('experience').value,skills:document.getElementById('skills').value,availability:document.getElementById('availability').value};entries.push(item);localStorage.setItem('bex_partner_demo_entries',JSON.stringify(entries));document.getElementById('generatedId').textContent=id;document.getElementById('summary').textContent=item.name+' · '+item.phone+' · '+item.skills+' · '+item.experience+' · '+item.area+' · '+item.availability;result.hidden=false;result.scrollIntoView({behavior:'smooth',block:'center'});});
+document.getElementById('copy').addEventListener('click',function(){const t='BodyExpertX Partner Registration Demo\nID: '+document.getElementById('generatedId').textContent+'\n'+document.getElementById('summary').textContent;navigator.clipboard?.writeText(t).then(()=>this.textContent='Copied').catch(()=>{});});
+</script>
+</body></html>
