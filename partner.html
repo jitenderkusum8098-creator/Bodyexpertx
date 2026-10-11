@@ -12,11 +12,8 @@
 <body>
 <header class="top"><div class="wrap" style="margin:0 auto"><a href="./index.html" style="text-decoration:none;color:inherit"><div class="brand">BodyExpert<span>X</span></div></a></div></header>
 <main class="wrap">
-<section class="hero"><div class="eyebrow">PARTNER NETWORK</div><h1>Join BodyExpertX as a Partner</h1><p class="muted">Apni details submit karein. Partner ID system demo mein automatically generate hogi. Live registration, login aur shared partner records ke liye secure database connect karna abhi baaki hai.</p></section>
-<section class="card">
-<div class="profile"><div class="avatar" aria-hidden="true">BX</div><div><div class="eyebrow">INITIAL PARTNER SLOT</div><div class="id">BEX-VK-001</div><div class="muted">Service area: Vasant Kunj</div></div></div>
-<p class="notice">Partner 1 ke liye sample ID. Is page par ID dikhna account approval ya real database entry ka proof nahi hai.</p>
-</section>
+<section class="hero"><div class="eyebrow">PARTNER NETWORK</div><h1>Join BodyExpertX as a Partner</h1><p class="muted">Yeh sirf application hai. Har applicant ko BodyExpertX team verify aur approve karegi. Approval se pehle Partner ID nahi milegi aur koi applicant automatically active partner nahi banega.</p></section>
+<section class="card"><div class="eyebrow">APPROVAL REQUIRED</div><h2>Only approved partners can join</h2><p class="muted">Application bhejne se registration approve nahi hota. BodyExpertX team details review karegi; approval ke baad hi Partner ID issue hogi.</p><p class="notice">Service area: Vasant Kunj.</p></section>
 <section class="card">
 <h2 style="margin-top:0">Partner registration</h2>
 <form id="partnerForm">
@@ -31,18 +28,26 @@
 <div class="field"><label for="skills">Massage skills *</label><select id="skills" required><option value="">Select skills</option><option>Swedish Massage</option><option>Deep Tissue Massage</option><option>Sports Massage</option><option>Cupping Massage</option><option>Hot Stone Massage</option><option>Multiple Massage Skills</option></select></div>
 <div class="field"><label for="availability">Availability *</label><select id="availability" required><option value="">Select availability</option><option>Available full day</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select></div>
 <label class="notice" style="display:flex;gap:9px;margin:12px 0 18px"><input type="checkbox" id="consent" required> I confirm these details are correct and agree that BodyExpertX may contact me about partner onboarding.</label>
-<button class="btn" type="submit">Generate Partner ID</button>
+<button class="btn" type="submit">Apply for BodyExpertX Approval</button>
 </form>
-<div id="result" hidden style="margin-top:20px;border:1px solid var(--line);border-radius:12px;padding:16px">
-<div class="eyebrow">DEMO REGISTRATION CREATED ON THIS DEVICE</div><div class="id" id="generatedId"></div><p id="summary" class="muted"></p><button id="copy" class="btn" type="button">Copy registration summary</button>
-</div>
 </section>
-<p class="notice">Important: This GitHub Pages demo saves registration only in this browser. It does not send data to BodyExpertX, create a secure account, notify an admin, or connect to live booking assignment. Do not enter sensitive information.</p>
+<p class="notice">When you submit, WhatsApp opens with your application addressed to BodyExpertX (+91 88607 42376). You must press Send. This page does not itself verify applicants or issue IDs; the team must review applications manually. A secure approval dashboard and database are still needed for fully automated partner management.</p>
 <p><a href="./index.html">← Back to BodyExpertX website</a></p>
 </main>
 <script>
-const form=document.getElementById('partnerForm'), result=document.getElementById('result');
-form.addEventListener('submit',function(e){e.preventDefault();const entries=JSON.parse(localStorage.getItem('bex_partner_demo_entries')||'[]');const id='BEX-VK-'+String(entries.length+1).padStart(3,'0');const item={id,name:document.getElementById('name').value.trim(),phone:document.getElementById('phone').value.trim(),area:document.getElementById('area').value.trim(),experience:document.getElementById('experience').value,skills:document.getElementById('skills').value,availability:document.getElementById('availability').value};entries.push(item);localStorage.setItem('bex_partner_demo_entries',JSON.stringify(entries));document.getElementById('generatedId').textContent=id;document.getElementById('summary').textContent=item.name+' · '+item.phone+' · '+item.skills+' · '+item.experience+' · '+item.area+' · '+item.availability;result.hidden=false;result.scrollIntoView({behavior:'smooth',block:'center'});});
-document.getElementById('copy').addEventListener('click',function(){const t='BodyExpertX Partner Registration Demo\nID: '+document.getElementById('generatedId').textContent+'\n'+document.getElementById('summary').textContent;navigator.clipboard?.writeText(t).then(()=>this.textContent='Copied').catch(()=>{});});
+document.getElementById('partnerForm').addEventListener('submit',function(e){
+ e.preventDefault();
+ const v=id=>document.getElementById(id).value.trim();
+ const message="*BODYEXPERTX PARTNER APPLICATION — FOR REVIEW*\\n\\n"+
+ "*Name:* "+v('name')+"\\n"+
+ "*Mobile:* "+v('phone')+"\\n"+
+ "*Service area:* "+v('area')+"\\n"+
+ "*Experience:* "+v('experience')+"\\n"+
+ "*Skills:* "+v('skills')+"\\n"+
+ "*Availability:* "+v('availability')+"\\n\\n"+
+ "Please review this application. I understand this is not approval, and a Partner ID will only be issued by BodyExpertX after verification.";
+ window.open("https://wa.me/918860742376?text="+encodeURIComponent(message),"_blank","noopener");
+ alert("WhatsApp will open with your application. Press Send to submit it to BodyExpertX. No Partner ID is issued until the team approves you.");
+});
 </script>
 </body></html>
