@@ -771,7 +771,7 @@ document.getElementById("primeDescription").innerHTML="<strong>Therapist experie
   const category=q.get("category")==="LUXE"?"LUXE":"PRIME";
   if(typeof selectCategory==="function") selectCategory(category,false);
   if(q.get("source")==="activity"){
-    const activityNames={running:"दौड़ना",gym:"जिम / वजन उठाना",football:"फुटबॉल",cricket:"क्रिकेट",badminton:"बैडमिंटन",cycling:"साइकिल चलाना",swimming:"तैराकी",walking:"पैदल चलना",other:"अन्य गतिविधि",pain:"दर्द / मांसपेशियों में जकड़न",relax:"आराम और तनाव से राहत",help:"सही मसाज चुनने में मदद"};
+    const activityNames={running:"दौड़ना",gym:"जिम / वजन उठाना",football:"फुटबॉल",cricket:"क्रिकेट",badminton:"बैडमिंटन",cycling:"साइकिल चलाना",swimming:"तैराकी",walking:"स्पोर्ट्स वॉकिंग",basketball:"बास्केटबॉल",tennis:"टेनिस",crossfit:"क्रॉसफिट / फंक्शनल ट्रेनिंग",boxing:"बॉक्सिंग / मार्शल आर्ट्स",other:"अन्य स्पोर्ट्स गतिविधि",pain:"दर्द / मांसपेशियों में जकड़न",relax:"आराम और तनाव से राहत",help:"सही मसाज चुनने में मदद"};
     const activity=activityNames[q.get("activity")]||"चुनी गई गतिविधि";
     const focus=q.get("focus")||"ग्राहक की जरूरत के अनुसार";
     const notes=document.getElementById("notes");
