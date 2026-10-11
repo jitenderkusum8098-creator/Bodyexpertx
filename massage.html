@@ -672,7 +672,7 @@ function renderServices(){
   </article>`).join("");
 }
 function currentGender(){return document.getElementById("recipientGender")?.value||"Male"}
-function updateFemalePriceNotice(){const note=document.getElementById("femalePriceNotice");if(!note)return;note.textContent=selectedDepartment==="MASSAGE"?(selectedCategory==="PRIME"?"Female bookings cost ₹150 extra per massage service.":"Female bookings cost ₹150 extra per massage service.""):"Salon services do not use the massage gender surcharge.";note.hidden=selectedDepartment!=="MASSAGE"&&selectedDepartment!=="SALON";}
+function updateFemalePriceNotice(){const note=document.getElementById("femalePriceNotice");if(!note)return;note.textContent=selectedDepartment==="MASSAGE"?"Female bookings cost ₹150 extra per massage service.":"Salon services do not use the massage gender surcharge.";note.hidden=selectedDepartment!=="MASSAGE"&&selectedDepartment!=="SALON";}
 function isLuxeInCart(){return cart.some(x=>(x.category||"").includes("LUXE"))}
 function updateTableOption(){renderCart()}
 function tableDiscount(){return selectedDepartment==="MASSAGE"&&isLuxeInCart()&&document.getElementById("tableOption")?.value==="No"?99:0}
