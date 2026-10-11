@@ -621,65 +621,10 @@ const tierNote=document.getElementById("tierNote");if(tierNote)tierNote.textCont
 selectCategory(selectedCategory,false);
 document.getElementById("tierChooser").scrollIntoView({behavior:"smooth",block:"start"});
 }
-function multiQuestion(id,label,options){return '<div class="field"><label>'+label+' *</label><div class="intake-options">'+options.map(o=>'<label><input type="checkbox" name="'+id+'" value="'+o.replace(/"/g,'&quot;')+'"> '+o+'</label>').join('')+'</div></div>'}
-function singleQuestion(id,label,options,required=true){return '<div class="field"><label for="'+id+'">'+label+(required?' *':'')+'</label><select id="'+id+'" name="'+id+'" '+(required?'required':'')+'><option value="">Choose an answer</option>'+options.map(o=>'<option>'+o+'</option>').join('')+'</select></div>'}
-function renderIntake(){return;}const medical=["Diabetes","High blood pressure (BP)","Low blood pressure","Heart condition","Arthritis / joint problems","Osteoporosis / weak bones","Asthma / breathing problem","Varicose veins","History of blood clots","Recent surgery or injury","Skin infection / open wound","Numbness / nerve problems","Cancer / cancer treatment","Pregnancy","Other medical condition","None of the above"];const areas=["Neck","Shoulder","Upper back","Lower back","Arms","Hips","Legs","Full body","No pain"];const work=["Sitting / desk work","Standing work","Physical labour","Driving","Household work","Sports / fitness","Other"];const activity=["Low","Moderate","High"];let h='<div class="intake-block"><h4>'+(selectedCategory==="PRIME"?"PRIME · Quick Body Assessment":"LUXE · Detailed Body Assessment")+'</h4>';
-if(selectedCategory==="PRIME"){
-h+=singleQuestion("priorMassage","1. Kya aapne pehle kabhi massage karwaya hai?",["Yes","No"]);
-h+=multiQuestion("medical","2. Kya aapko inmein se koi health problem hai? Jo lagu ho, sab select karein.",medical);
-h+='<div class="field"><label for="medicalDetails">Important details about condition/medication (optional)</label><textarea id="medicalDetails" name="medicalDetails" placeholder="Yahan zaroori details likhein."></textarea></div>';
-h+=multiQuestion("painAreas","3. Sharir ke kis hisse mein dard ya jakdan hai? Jo lagu ho, sab select karein.",areas);
-h+=singleQuestion("workType","4. Aap kis tarah ka kaam karte hain?",work);
-h+=singleQuestion("activityLevel","5. Aap roz kitni physical activity karte hain?",activity);
-h+='<div class="field"><label>How severe is your pain right now? *</label><p class="hint">Choose one number: 1 = mild pain, 10 = very severe pain.</p><div class="pain-scale"><label><input type="radio" name="painScale" value="No pain" required> No pain</label>'+Array.from({length:10},(_,i)=>'<label><input type="radio" name="painScale" value="'+(i+1)+'" required> '+(i+1)+'</label>').join('')+'</div><p class="hint">1 = mild pain · 10 = very severe pain</p></div>';
-}else{
-h+='<h4>Previous massage history</h4>';
-h+=multiQuestion("previousTypes","1. Aapne pehle kaun-kaun se massage karwaye hain?",["Swedish","Deep Tissue","Sports","Cupping","Hot Stone","Other","Never had massage"]);
-h+=singleQuestion("lastMassage","2. Aapne aakhri baar massage kab karwaya tha?",["Within 7 days","Within a month","1–6 months ago","More than 6 months ago","Never"]);
-h+=singleQuestion("previousExperience","3. Pehle massage ka experience kaisa tha?",["Very good","Good","No major change","Discomfort","Not applicable"]);
-h+='<h4>Medical history</h4>'+multiQuestion("medical","4. Kya aapko inmein se koi health problem hai? Jo lagu ho, sab select karein.",medical);
-h+=singleQuestion("medication","5. Kya aap roz koi dawa lete hain?",["Yes","No"]);
-h+=singleQuestion("surgery","6. Kya aapki koi surgery hui hai ya badi chot lagi hai?",["Yes","No"]);
-h+=singleQuestion("swelling","7. Kya aapko sujan, aasani se nishaan padna ya skin sensitivity hoti hai?",["Yes","No"]);
-h+=singleQuestion("numbness","8. Kya haath-pair mein sunnpan ya jhanjhanahat hoti hai?",["Yes","No"]);
-h+='<h4>Pain & stiffness assessment</h4>'+multiQuestion("painAreas","9. Sharir ke kis hisse mein dard ya jakdan hai? Jo lagu ho, sab select karein.",["Neck","Shoulder","Upper back","Lower back","Arms","Elbows","Wrists","Hips","Thighs","Knees","Calves","Feet","Full body","No pain"]);
-h+=singleQuestion("painDuration","10. Dard kab se hai?",["1–3 days","4–7 days","1–4 weeks","More than 1 month","More than 3 months"]);
-h+=multiQuestion("painType","11. What does the pain feel like? Select all that apply.",["Dull ache","Sharp pain","Burning","Tightness","Muscle soreness","Stiffness","Other"]);
-h+=singleQuestion("painFrequency","12. How often does it happen?",["Constant","Daily but comes and goes","During movement or work","Occasionally"]);
-h+='<div class="field"><label>13. Current pain scale *</label><div class="pain-scale"><label><input type="radio" name="painScale" value="No pain" required> No pain</label>'+Array.from({length:10},(_,i)=>'<label><input type="radio" name="painScale" value="'+(i+1)+'" required> '+(i+1)+'</label>').join('')+'</div><p class="hint">1 = mild pain · 10 = most severe pain</p></div>';
-h+=singleQuestion("painMovement","14. Does movement make the pain worse?",["Yes","No","Not sure"]);
-h+='<h4>Work & lifestyle</h4>'+singleQuestion("workType","15. What type of work do you do?",work);
-h+=singleQuestion("sittingHours","16. How many hours do you sit daily?",["Less than 2","2–4","5–8","More than 8","Not applicable"]);
-h+=singleQuestion("standingHours","17. How many hours do you stand daily?",["Less than 2","2–4","5–8","More than 8","Not applicable"]);
-h+=singleQuestion("activityLevel","18. What is your physical activity level?",activity)+multiQuestion("activityTypes","Which activities do you do? Select all that apply.",["Walking","Gym","Running","Sports","Yoga","Heavy physical work","None","Other"],false);
-h+='<h4>Wellness & goals</h4><div class="field"><label>19. Sleep quality *</label><select name="sleepQuality" required><option value="">Choose an answer</option><option>Good</option><option>Average</option><option>Poor</option></select><label for="stressLevel" style="margin-top:8px">Stress level *</label><select id="stressLevel" name="stressLevel" required><option value="">Choose an answer</option><option>Low</option><option>Moderate</option><option>High</option></select></div>';
-h+=multiQuestion("massageGoal","20. What is your main goal for massage? Select all that apply.",["Relaxation","Muscle tightness relief","Post-workout recovery","Mobility support","Stress relief","General wellness","Other"]);
-}
-h+='</div>';box.innerHTML=h;box.querySelectorAll('input[type="checkbox"][name="medical"]').forEach(el=>el.addEventListener("change",()=>{const all=[...box.querySelectorAll('input[name="medical"]')],none=all.find(x=>x.value==="None of the above");if(el.value==="None of the above"&&el.checked)all.forEach(x=>{if(x!==el)x.checked=false});else if(el.checked&&none)none.checked=false;}));box.querySelectorAll('input[type="checkbox"][name="painAreas"]').forEach(el=>el.addEventListener("change",()=>{const all=[...box.querySelectorAll('input[name="painAreas"]')],none=all.find(x=>x.value==="No pain");if(el.value==="No pain"&&el.checked)all.forEach(x=>{if(x!==el)x.checked=false});else if(el.checked&&none)none.checked=false;}));}
-function collectIntake(){
- const box=document.getElementById("intakeQuestions"),out=[];
- const labels={
-  priorMassage:"Pehle massage karwaya hai",medical:"Medical conditions / health problems",medicalDetails:"Medical condition ya medicines ki details",
-  painAreas:"Dard ya jakdan kis hisse mein hai",workType:"Kaam ka type",activityLevel:"Physical activity level",painScale:"Abhi dard kitna hai (1–10)",
-  previousTypes:"Pehle kaun se massage karwaye",lastMassage:"Aakhri massage kab karwaya",previousExperience:"Pichhle massage ka experience",
-  medication:"Roz dawa lete hain",surgery:"Surgery ya badi chot ka history",swelling:"Sujan / aasani se nishaan / skin sensitivity",
-  numbness:"Sunnpan ya jhanjhanahat",painDuration:"Dard kab se hai",painType:"Dard kaisa mehsoos hota hai",
-  painFrequency:"Dard kitni baar hota hai",painMovement:"Movement se dard badhta hai",sittingHours:"Roz baithne ke ghante",
-  standingHours:"Roz khade rehne ke ghante",activityTypes:"Kaun si physical activities karte hain",sleepQuality:"Neend ki quality",
-  stressLevel:"Stress level",massageGoal:"Massage ka main goal"
- };
- box.querySelectorAll("select,input[type=radio],textarea").forEach(el=>{
-  if(el.name&&el.value&&((el.type!=="radio")||el.checked)){
-   const label=labels[el.name]||el.name;
-   const line=label+": "+el.value;
-   if(!out.includes(line))out.push(line);
-  }
- });
- const groups={};
- box.querySelectorAll('input[type="checkbox"]:checked').forEach(el=>{(groups[el.name]||(groups[el.name]=[])).push(el.value)});
- Object.keys(groups).forEach(k=>out.push((labels[k]||k)+": "+groups[k].join(", ")));
- return out.length?out.map(x=>"• "+x).join("\n"):"Assessment details not provided.";
-}
+function multiQuestion(){return "";}
+function singleQuestion(){return "";}
+function renderIntake(){const box=document.getElementById("intakeQuestions");if(box)box.innerHTML="";}
+function collectIntake(){return "Not provided";}
 function selectCategory(category,scroll=true){selectedCategory=category==="LUXE"?"LUXE":"PRIME";updateFemalePriceNotice();document.getElementById("services").style.display="block";document.getElementById("add-ons").style.display=selectedDepartment==="MASSAGE"?"block":"none";document.getElementById("booking").style.display="block";document.getElementById("primeCategory").classList.toggle("active",selectedCategory==="PRIME");document.getElementById("luxeCategory").classList.toggle("active",selectedCategory==="LUXE");document.getElementById("primeCategory").setAttribute("aria-pressed",String(selectedCategory==="PRIME"));document.getElementById("luxeCategory").setAttribute("aria-pressed",String(selectedCategory==="LUXE"));document.getElementById("selectedCategoryLabel").textContent=selectedDepartment+" · "+selectedCategory;document.getElementById("serviceMenuTitle").textContent=selectedCategory+" "+(selectedDepartment==="MASSAGE"?"Massage Menu":"Salon Menu");document.getElementById("serviceMenuDescription").textContent=selectedDepartment==="MASSAGE"?(selectedCategory==="LUXE"?"Choose your premium massage treatment and session length.":"Choose your treatment and session length. Select any service to add it to your booking."):(selectedCategory==="LUXE"?"Choose salon services in the LUXE range. Haircut is ₹160.":"Choose salon services in the PRIME range. Haircut is ₹120.");renderServices();renderIntake();syncTableOption();if(scroll)document.getElementById("services").scrollIntoView({behavior:"smooth",block:"start"});}
 function renderServices(){
  const serviceBox=document.getElementById("serviceCards");
