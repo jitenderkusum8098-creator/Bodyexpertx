@@ -50,6 +50,24 @@ hr{border-color:#39342A!important}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 <style id="recommendation-massage-name-fix">.recommendation .recommended-massage{display:block;margin:12px 0;padding:12px 14px;border:1px solid #D8B568;border-radius:12px;background:linear-gradient(135deg,#2b261b,#1b1b1b);color:#F7F4ED!important;font-size:16px;font-weight:700}.recommendation .recommended-massage strong{color:#E8C982}.recommendation [data-book-massage]{white-space:normal;line-height:1.4;padding:12px 18px}</style>
+<style id="running-question-layout">
+.running-intro-copy{margin:16px 0 26px;padding:18px;line-height:1.75}
+.running-intro-copy p{margin:0 0 12px}.running-intro-copy p:last-child{margin-bottom:0}
+.running-question-kicker{margin:22px 0 4px}
+.running-question-title{font-size:clamp(24px,5.5vw,32px)!important;margin:6px 0 16px}
+.running-form{display:flex;flex-direction:column;gap:20px;padding:16px!important}
+.run-fieldset{border:0;padding:0;margin:0;min-width:0}
+.run-fieldset legend,.run-question>label{display:block;font-size:17px;line-height:1.5;font-weight:750;color:#F7F4ED;margin:0 0 12px}
+.run-fieldset legend span{font-size:14px;font-weight:400;color:#BDB8AD}
+.run-fieldset .pills{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.run-fieldset .pill{display:flex;align-items:center;gap:9px;min-width:0;min-height:58px;padding:12px!important;font-size:15px;line-height:1.4;overflow-wrap:anywhere}
+.run-fieldset .pill input{width:19px;height:19px;flex:0 0 19px;margin:0}
+.run-question{display:flex;flex-direction:column;gap:9px;min-width:0}
+.run-question select{display:block;width:100%;max-width:100%;min-height:52px;padding:12px 14px!important;font-size:16px!important;line-height:1.4;border-radius:12px!important}
+.running-form .actions{margin-top:0}
+.running-form .actions .btn{width:100%;min-height:54px}
+@media(max-width:420px){.running-form{padding:13px!important;gap:18px}.run-fieldset .pills{gap:8px}.run-fieldset .pill{padding:10px!important;min-height:54px;font-size:14px}.run-fieldset legend,.run-question>label{font-size:16px}.running-intro-copy{padding:16px}}
+</style>
 </head>
 <body>
 <main class="wrap">
@@ -176,28 +194,31 @@ hr{border-color:#39342A!important}
   </section>
 
   <section id="screen-running-intro" class="hidden">
-    <div class="step">Running · चरण 2</div><div class="eyebrow">BODYEXPERTX · आपकी एक्टिविटी, आपकी जरूरत</div>
+    <div class="step">Running · चरण 2 / 6</div>
+    <div class="eyebrow">BODYEXPERTX · आपकी एक्टिविटी, आपकी जरूरत</div>
     <h1 class="title">हर रनर के लिए पर्सनलाइज़्ड केयर</h1>
-    <div class="panel"><p>दौड़ने के दौरान पिंडली, जांघों, हैमस्ट्रिंग, कूल्हों और पैरों की मांसपेशियों पर काम का दबाव पड़ सकता है। BodyExpertX आपकी रनिंग की आदतों, पसंद और शरीर में महसूस होने वाली जकड़न को समझकर उपलब्ध मसाज विकल्प चुनने में मदद करता है।</p><p>नीचे दिए गए सवालों के जवाब दें। आपके जवाबों के आधार पर हम एक मसाज सुझाएँगे; आप चाहें तो RunFit Recovery Massage या अपनी पसंद की दूसरी मसाज भी चुन सकते हैं।</p><p class="note">यह मेडिकल डायग्नोसिस नहीं है। तेज दर्द, सूजन या हाल की चोट होने पर पहले स्वास्थ्य विशेषज्ञ से सलाह लें।</p></div>
-    <div class="actions"><button class="btn" id="running-intro-next">आगे बढ़ें</button></div>
+    <div class="panel running-intro-copy">
+      <p>दौड़ने के दौरान पिंडली, जांघों, हैमस्ट्रिंग, कूल्हों और पैरों की मांसपेशियों पर काम का दबाव पड़ सकता है। BodyExpertX आपकी रनिंग की आदतों, पसंद और शरीर में महसूस होने वाली जकड़न को समझकर उपलब्ध मसाज विकल्प चुनने में मदद करता है।</p>
+      <p>नीचे दिए गए सवालों के जवाब दें। आपके जवाबों के आधार पर हम एक मसाज सुझाएँगे; आप चाहें तो RunFit Recovery Massage या अपनी पसंद की दूसरी मसाज भी चुन सकते हैं।</p>
+      <p class="note">यह मेडिकल डायग्नोसिस नहीं है। तेज दर्द, सूजन या हाल की चोट होने पर पहले स्वास्थ्य विशेषज्ञ से सलाह लें।</p>
+    </div>
+    <div class="eyebrow running-question-kicker">अपनी रनिंग के बारे में बताएँ</div>
+    <h2 class="title running-question-title">आपकी एक्टिविटी से जुड़े सवाल</h2>
+    <form id="running-form" class="panel running-form">
+      <fieldset class="run-fieldset"><legend>1. आप किस तरह की रनिंग करते हैं?</legend><div class="pills"><label class="pill"><input required type="radio" name="runType" value="Fitness running"> फिटनेस रनिंग</label><label class="pill"><input type="radio" name="runType" value="Sprint"> स्प्रिंट</label><label class="pill"><input type="radio" name="runType" value="Long distance"> लॉन्ग डिस्टेंस</label><label class="pill"><input type="radio" name="runType" value="Marathon"> मैराथन</label><label class="pill"><input type="radio" name="runType" value="Trail running"> ट्रेल रनिंग</label></div></fieldset>
+      <div class="run-question"><label for="run-days">2. सप्ताह में कितने दिन दौड़ते हैं?</label><select id="run-days" name="days" required><option value="">चुनें</option><option>1–2 दिन</option><option>3–4 दिन</option><option>5–6 दिन</option><option>हर दिन</option></select></div>
+      <div class="run-question"><label for="run-duration">3. एक बार में कितनी देर दौड़ते हैं?</label><select id="run-duration" name="duration" required><option value="">चुनें</option><option>30 मिनट से कम</option><option>30–60 मिनट</option><option>60 मिनट से ज्यादा</option><option>अलग-अलग</option></select></div>
+      <fieldset class="run-fieldset"><legend>4. किन हिस्सों पर फोकस चाहते हैं? <span>(एक या अधिक)</span></legend><div class="pills"><label class="pill"><input type="checkbox" name="areas" value="Calves"> पिंडली</label><label class="pill"><input type="checkbox" name="areas" value="Thighs"> जांघें</label><label class="pill"><input type="checkbox" name="areas" value="Hamstrings"> हैमस्ट्रिंग</label><label class="pill"><input type="checkbox" name="areas" value="Hips"> कूल्हे</label><label class="pill"><input type="checkbox" name="areas" value="Feet / soles"> पैर / तलवे</label><label class="pill"><input type="checkbox" name="areas" value="Lower back"> कमर</label><label class="pill"><input type="checkbox" name="areas" value="No specific area"> कोई खास हिस्सा नहीं</label></div></fieldset>
+      <div class="run-question"><label for="run-feeling">5. अभी क्या महसूस होता है?</label><select id="run-feeling" name="feeling" required><option value="">चुनें</option><option>सामान्य थकान</option><option>मांसपेशियों में जकड़न</option><option>दौड़ने के बाद soreness</option><option>कोई परेशानी नहीं</option></select></div>
+      <div class="run-question"><label for="run-when">6. यह कब महसूस होता है?</label><select id="run-when" name="when" required><option value="">चुनें</option><option>दौड़ते समय</option><option>दौड़ने के बाद</option><option>अगली सुबह</option><option>कोई परेशानी नहीं</option></select></div>
+      <div class="run-question"><label for="run-goal">7. आपका मुख्य उद्देश्य?</label><select id="run-goal" name="goal" required><option value="">चुनें</option><option>आराम और रिलैक्सेशन</option><option>मसल जकड़न में राहत</option><option>मोबिलिटी सपोर्ट</option><option>सामान्य वेलनेस</option></select></div>
+      <div class="run-question"><label for="run-pressure">8. मसाज प्रेशर की पसंद</label><select id="run-pressure" name="pressure" required><option value="">चुनें</option><option>हल्का</option><option>मध्यम</option><option>गहरा</option><option>थेरेपिस्ट की सलाह से</option></select></div>
+      <div class="actions"><button class="btn" type="submit">जवाब सबमिट करें</button></div>
+    </form>
     <button class="back" data-back="activity">← गतिविधि चुनें</button>
   </section>
-  <section id="screen-running-questions" class="hidden">
-    <div class="step">Running · चरण 3 / 6</div><div class="eyebrow">अपनी रनिंग के बारे में बताएँ</div><h1 class="title">आपकी एक्टिविटी से जुड़े सवाल</h1>
-    <form id="running-form" class="panel">
-      <label>1. आप किस तरह की रनिंग करते हैं?</label><div class="pills"><label class="pill"><input required type="radio" name="runType" value="Fitness running"> फिटनेस रनिंग</label><label class="pill"><input type="radio" name="runType" value="Sprint"> स्प्रिंट</label><label class="pill"><input type="radio" name="runType" value="Long distance"> लॉन्ग डिस्टेंस</label><label class="pill"><input type="radio" name="runType" value="Marathon"> मैराथन</label><label class="pill"><input type="radio" name="runType" value="Trail running"> ट्रेल रनिंग</label></div>
-      <p><label>2. सप्ताह में कितने दिन दौड़ते हैं?</label><select name="days" required><option value="">चुनें</option><option>1–2 दिन</option><option>3–4 दिन</option><option>5–6 दिन</option><option>हर दिन</option></select></p>
-      <p><label>3. एक बार में कितनी देर दौड़ते हैं?</label><select name="duration" required><option value="">चुनें</option><option>30 मिनट से कम</option><option>30–60 मिनट</option><option>60 मिनट से ज्यादा</option><option>अलग-अलग</option></select></p>
-      <p><label>4. किन हिस्सों पर फोकस चाहते हैं? (एक या अधिक)</label><div class="pills"><label class="pill"><input type="checkbox" name="areas" value="Calves"> पिंडली</label><label class="pill"><input type="checkbox" name="areas" value="Thighs"> जांघें</label><label class="pill"><input type="checkbox" name="areas" value="Hamstrings"> हैमस्ट्रिंग</label><label class="pill"><input type="checkbox" name="areas" value="Hips"> कूल्हे</label><label class="pill"><input type="checkbox" name="areas" value="Feet / soles"> पैर / तलवे</label><label class="pill"><input type="checkbox" name="areas" value="Lower back"> कमर</label><label class="pill"><input type="checkbox" name="areas" value="No specific area"> कोई खास हिस्सा नहीं</label></div></p>
-      <p><label>5. अभी क्या महसूस होता है?</label><select name="feeling" required><option value="">चुनें</option><option>सामान्य थकान</option><option>मांसपेशियों में जकड़न</option><option>दौड़ने के बाद soreness</option><option>कोई परेशानी नहीं</option></select></p>
-      <p><label>6. यह कब महसूस होता है?</label><select name="when" required><option value="">चुनें</option><option>दौड़ते समय</option><option>दौड़ने के बाद</option><option>अगली सुबह</option><option>कोई परेशानी नहीं</option></select></p>
-      <p><label>7. आपका मुख्य उद्देश्य?</label><select name="goal" required><option value="">चुनें</option><option>आराम और रिलैक्सेशन</option><option>मसल जकड़न में राहत</option><option>मोबिलिटी सपोर्ट</option><option>सामान्य वेलनेस</option></select></p>
-      <p><label>8. मसाज प्रेशर की पसंद</label><select name="pressure" required><option value="">चुनें</option><option>हल्का</option><option>मध्यम</option><option>गहरा</option><option>थेरेपिस्ट की सलाह से</option></select></p>
-      <div class="actions"><button class="btn" type="submit">आगे बढ़ें</button></div>
-    </form><button class="back" data-back="running-intro">← वापस</button>
-  </section>
-  <section id="screen-running-summary" class="hidden">
-    <div class="step">Running · चरण 4 / 6</div><div class="eyebrow">आपके जवाब</div><h1 class="title">आपकी रनिंग प्रोफाइल</h1><div class="panel" id="running-summary"></div><div class="actions"><button class="btn" id="running-summary-next">मसाज सुझाव देखें</button></div><button class="back" data-back="running-questions">← जवाब बदलें</button>
+    <section id="screen-running-summary" class="hidden">
+    <div class="step">Running · चरण 4 / 6</div><div class="eyebrow">आपके जवाब</div><h1 class="title">आपकी रनिंग प्रोफाइल</h1><div class="panel" id="running-summary"></div><div class="actions"><button class="btn" id="running-summary-next">मसाज सुझाव देखें</button></div><button class="back" data-back="running-intro">← जवाब बदलें</button>
   </section>
   <section id="screen-running-recommend" class="hidden">
     <div class="step">Running · चरण 5 / 6</div><div class="eyebrow">आपके लिए मसाज विकल्प</div><h1 class="title">आपके लिए सुझाई गई मसाज</h1><p class="sub">RunFit हमेशा एक विशेष विकल्प रहेगा। दूसरा सुझाव आपके जवाबों और पसंद के अनुसार दिखेगा।</p><div class="recommendations" id="running-recommendations"></div><div class="actions"><button class="btn secondary" id="running-own-massage">अपनी पसंद की मसाज चुनें</button></div>
@@ -224,7 +245,7 @@ hr{border-color:#39342A!important}
   <footer class="note">मसाज मार्गदर्शन है, चिकित्सा निदान या चोट के इलाज का दावा नहीं। अचानक तेज दर्द, सूजन या संदिग्ध चोट होने पर पहले स्वास्थ्य विशेषज्ञ से सलाह लें।</footer>
 </main>
 <script>
-const screens=["start","need","relax-intake","relax-result","pain-intake","pain-review","recommend","activity","running-intro","running-questions","running-summary","running-recommend","runfit-package","package","done"];
+const screens=["start","need","relax-intake","relax-result","pain-intake","pain-review","recommend","activity","running-intro","running-summary","running-recommend","runfit-package","package","done"];
 function show(name){screens.forEach(s=>document.getElementById("screen-"+s).classList.toggle("hidden",s!==name));window.scrollTo({top:0,behavior:"smooth"});}
 let need="",activity="",pkg="",selectedMassage="";
 function updateRelaxPackagePrices(){
@@ -328,7 +349,6 @@ document.querySelectorAll("[data-activity]").forEach(b=>b.addEventListener("clic
 document.getElementById("to-package").addEventListener("click",()=>show("package"));
 
 let runningAnswers={},runfitChoice=null;
-document.getElementById("running-intro-next").addEventListener("click",()=>show("running-questions"));
 document.getElementById("running-form").addEventListener("submit",e=>{
  e.preventDefault();const fd=new FormData(e.currentTarget);runningAnswers={runType:fd.get("runType"),days:fd.get("days"),duration:fd.get("duration"),areas:fd.getAll("areas"),feeling:fd.get("feeling"),when:fd.get("when"),goal:fd.get("goal"),pressure:fd.get("pressure")};
  if(!runningAnswers.areas.length)runningAnswers.areas=["कोई खास हिस्सा नहीं"];
