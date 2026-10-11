@@ -227,8 +227,9 @@ const relaxForm=document.getElementById("relax-form");
  document.getElementById("relax-own-choice")?.addEventListener("click",()=>{window.location.href="./massage.html";});
  document.querySelectorAll("[data-relax-massage]").forEach(b=>b.addEventListener("click",()=>{
   selectedMassage=b.dataset.relaxMassage;activity="relax";need="relax";
-  document.getElementById("summary").textContent="आपका चुना गया मसाज: "+selectedMassage+" · अब PRIME या LUXE चुनें।";
-  document.getElementById("package-intro").textContent="आपका चुना गया मसाज: "+selectedMassage+"। श्रेणी चुनने पर यही मसाज आपकी बुकिंग में चुना जाएगा।";
+  updatePackageMassage();
+  document.getElementById("summary").textContent="आपकी सुझाई गई मसाज: "+selectedMassage+" · अब PRIME या LUXE चुनें, फिर 60 या 90 मिनट चुनकर बुकिंग पूरी करें।";
+  document.getElementById("package-intro").textContent="आपकी सुझाई गई मसाज: "+selectedMassage+"। इसे दोबारा चुनने की जरूरत नहीं है—सिर्फ PRIME/LUXE और अवधि चुनें, फिर सीधे बुकिंग पर जाएँ।";
   show("package");
  }));
  const painForm=document.getElementById("pain-form");
