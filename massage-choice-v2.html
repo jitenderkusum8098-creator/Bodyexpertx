@@ -106,7 +106,7 @@ hr{border-color:#39342A!important}
   </section>
   <section id="screen-relax-result" class="hidden"><div class="step">आपके जवाब · उपयुक्त विकल्प</div><div class="eyebrow">BodyExpertX · Relaxation</div><h1 class="title">आपके लिए मसाज विकल्प</h1><p class="sub" id="relax-result-intro">आपके जवाब हमें आपकी पसंद और दिनचर्या समझने में मदद करते हैं।</p><div class="panel" id="relax-result-summary"></div>
     <div class="recommendations"><article class="recommendation"><h2>Swedish Massage</h2><p>हल्के से मध्यम दबाव और आरामदायक स्ट्रोक पसंद करने वालों के लिए विचार करने योग्य विकल्प।</p><p class="note">60 मिनट ₹699 · 90 मिनट ₹1099</p><button class="btn" type="button" data-relax-massage="Swedish Massage">Swedish Massage चुनें</button></article><article class="recommendation"><h2>Hot Stone Massage</h2><p>गर्म पत्थरों के साथ आरामदायक अनुभव पसंद करने वालों के लिए विकल्प। बुकिंग से पहले उपयुक्तता की पुष्टि करें।</p><p class="note">60 मिनट ₹999 · 90 मिनट ₹1399</p><button class="btn" type="button" data-relax-massage="Hot Stone Massage">Hot Stone Massage चुनें</button></article></div>
-    <div class="panel"><strong>ध्यान दें:</strong> ये जवाब आपकी पसंद समझने में मदद करते हैं, मेडिकल निदान नहीं हैं। दर्द, चोट या स्वास्थ्य संबंधी चिंता हो तो पहले स्वास्थ्य विशेषज्ञ से सलाह लें।</div><div class="actions"><button class="btn secondary" type="button" data-back="relax-intake">← जवाब बदलें</button><button class="btn secondary" type="button" data-back="need">दूसरी जरूरत चुनें</button></div>
+    <div class="panel"><strong>ध्यान दें:</strong> ये जवाब आपकी पसंद समझने में मदद करते हैं, मेडिकल निदान नहीं हैं। दर्द, चोट या स्वास्थ्य संबंधी चिंता हो तो पहले स्वास्थ्य विशेषज्ञ से सलाह लें।</div><div class="actions"><button class="btn secondary" type="button" data-back="relax-intake">← जवाब बदलें</button><button class="btn secondary" type="button" id="relax-own-choice">अपनी पसंद की मसाज चुनें</button><button class="btn secondary" type="button" data-back="need">दूसरी जरूरत चुनें</button></div>
   </section>
   <section id="screen-pain-intake" class="hidden">
     <div class="step">दर्द / जकड़न · जरूरी जानकारी</div><div class="eyebrow">BodyExpertX ग्राहक मार्गदर्शन</div>
@@ -224,6 +224,7 @@ const relaxForm=document.getElementById("relax-form");
   document.getElementById("relax-result-intro").textContent="धन्यवाद। आपके जवाब हमें आपकी दिनचर्या और पसंद समझने में मदद करते हैं। नीचे दिए गए विकल्पों में से अपनी पसंद चुनें।";
   show("relax-result");
  });
+ document.getElementById("relax-own-choice")?.addEventListener("click",()=>{window.location.href="./massage.html";});
  document.querySelectorAll("[data-relax-massage]").forEach(b=>b.addEventListener("click",()=>{
   selectedMassage=b.dataset.relaxMassage;activity="relax";need="relax";
   document.getElementById("summary").textContent="आपका चुना गया मसाज: "+selectedMassage+" · अब PRIME या LUXE चुनें।";
