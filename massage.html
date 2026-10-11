@@ -780,6 +780,19 @@ document.getElementById("primeDescription").innerHTML="<strong>Therapist experie
     notice.textContent="आपका गतिविधि-आधारित चयन: "+activity+" · फोकस: "+focus+". यह जानकारी booking notes में जोड़ी गई है; आप इसे नीचे बदल सकते हैं।";
     desc.insertAdjacentElement("afterend",notice);
   }
+  const chosen=(q.get("massage")||"").trim();
+  if(chosen){
+    const serviceIndex=services.findIndex(s=>s.name.toLowerCase()===chosen.toLowerCase());
+    if(serviceIndex>=0 && typeof addService==="function"){
+      addService(serviceIndex,60);
+      const bookingNotice=document.createElement("div");
+      bookingNotice.className="status";
+      bookingNotice.style.cssText="margin:12px 0;padding:12px;border:1px solid #c49a22;border-radius:10px;background:#fff8e3;color:#171717";
+      bookingNotice.textContent="आपका सुझाया गया मसाज cart में जोड़ दिया गया है: "+chosen+" · 60 मिनट। समय, पता और भुगतान की जानकारी नीचे पूरी करें।";
+      if(desc) desc.insertAdjacentElement("afterend",bookingNotice);
+      setTimeout(()=>document.getElementById("booking")?.scrollIntoView({behavior:"smooth",block:"start"}),250);
+    }
+  }
 })();
 </script>
 
