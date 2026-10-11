@@ -766,16 +766,17 @@ document.getElementById("primeDescription").innerHTML="<strong>Therapist experie
 <script>
 (function(){
   const q=new URLSearchParams(window.location.search);
-  if(q.get("source")!=="activity") return;
   const category=q.get("category")==="LUXE"?"LUXE":"PRIME";
   if(typeof selectCategory==="function") selectCategory(category,false);
-  const activityNames={running:"दौड़ना",gym:"जिम / वजन उठाना",football:"फुटबॉल",cricket:"क्रिकेट",badminton:"बैडमिंटन",cycling:"साइकिल चलाना",swimming:"तैराकी",walking:"पैदल चलना",other:"अन्य गतिविधि",pain:"दर्द / मांसपेशियों में जकड़न",relax:"आराम और तनाव से राहत",help:"सही मसाज चुनने में मदद"};
-  const activity=activityNames[q.get("activity")]||"चुनी गई गतिविधि";
-  const focus=q.get("focus")||"ग्राहक की जरूरत के अनुसार";
-  const notes=document.getElementById("notes");
-  if(notes){
-    const summary="गतिविधि-आधारित मसाज मार्गदर्शन: "+activity+"\nचुना गया फोकस: "+focus+"\nचुनी गई श्रेणी: "+category;
-    notes.value=summary+(notes.value.trim()?"\n"+notes.value.trim():"");
+  if(q.get("source")==="activity"){
+    const activityNames={running:"दौड़ना",gym:"जिम / वजन उठाना",football:"फुटबॉल",cricket:"क्रिकेट",badminton:"बैडमिंटन",cycling:"साइकिल चलाना",swimming:"तैराकी",walking:"पैदल चलना",other:"अन्य गतिविधि",pain:"दर्द / मांसपेशियों में जकड़न",relax:"आराम और तनाव से राहत",help:"सही मसाज चुनने में मदद"};
+    const activity=activityNames[q.get("activity")]||"चुनी गई गतिविधि";
+    const focus=q.get("focus")||"ग्राहक की जरूरत के अनुसार";
+    const notes=document.getElementById("notes");
+    if(notes){
+      const summary="गतिविधि-आधारित मसाज मार्गदर्शन: "+activity+"\nचुना गया फोकस: "+focus+"\nचुनी गई श्रेणी: "+category;
+      notes.value=summary+(notes.value.trim()?"\n"+notes.value.trim():"");
+    }
   }
   const chosen=(q.get("massage")||"").trim();
   if(chosen){
@@ -791,6 +792,7 @@ document.getElementById("primeDescription").innerHTML="<strong>Therapist experie
     }
   }
 })();
+</script>;
 </script>
 
 </body></html>
