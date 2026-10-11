@@ -11,28 +11,40 @@
 </style>
 <style id="bodyexpertx-premium-theme">
 :root{color-scheme:dark;--bg:#101010;--panel:#191919;--panel2:#22201b;--gold:#D8B568;--gold2:#E8C982;--text:#F7F4ED;--muted:#BDB8AD;--line:#39342A;--ink:#F7F4ED;--gold-light:#2B261B;--white:#F7F4ED}
-html{background:#101010!important;scroll-behavior:smooth}
-body{background:radial-gradient(ellipse at 50% -18%,rgba(216,181,104,.13),transparent 42%),#101010!important;color:#F7F4ED!important}
-body *{border-color:var(--line)}
-header,nav,.nav,.navbar,.topbar,.site-header,.header,.footer,footer{background:rgba(16,16,16,.97)!important;color:var(--text)!important;border-color:var(--line)!important}
-main,section,article,.section,.container,.wrap,.page,.content,.hero,.hero-content,.hero-section{color:var(--text)}
-h1,h2,h3,h4,h5,h6,.title,.heading{color:var(--gold)!important;letter-spacing:.01em}
-p,li,label,small,.description,.subtitle,.muted,.text-muted{color:var(--muted)}
-a{color:var(--gold)!important;text-decoration-color:rgba(216,181,104,.45)}
-a:hover{color:var(--gold2)!important}
-.card,.service-card,.course-card,.massage-card,.tier-card,.category-card,.panel,.box,.booking-card,.form-card,.review-card,.testimonial,.price-card,.choice-card,.feature-card,.faq-item,.content-card,.modal-content,.dropdown-menu{background:linear-gradient(145deg,#202020,#151515)!important;color:var(--text)!important;border:1px solid var(--line)!important;border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.22)}
-button,.btn,.button,input[type=submit],input[type=button],.cta{background:linear-gradient(135deg,#E8C982,#D8B568)!important;color:#14120D!important;border:1px solid #D8B568!important;border-radius:999px;font-weight:750;box-shadow:0 5px 18px rgba(216,181,104,.12);transition:transform .18s ease,filter .18s ease}
-button:hover,.btn:hover,.button:hover,input[type=submit]:hover,input[type=button]:hover,.cta:hover{filter:brightness(1.08);transform:translateY(-1px)}
-button.secondary,.btn-secondary,.outline,.ghost,.back-btn{background:#202020!important;color:var(--gold)!important;border:1px solid var(--gold)!important}
-input,select,textarea{background:#171717!important;color:#F7F4ED!important;border:1px solid #494236!important;border-radius:10px}
+*{box-sizing:border-box}
+html,body{min-height:100%;background:#101010!important;color:#F7F4ED!important}
+body{background:radial-gradient(ellipse at 50% -10%,rgba(216,181,104,.16),transparent 40%),#101010!important;font:16px/1.6 system-ui,-apple-system,"Noto Sans Devanagari",Arial,sans-serif!important}
+.wrap{max-width:760px;padding:22px 0 44px}
+.top{border-bottom:1px solid #39342A!important}
+.brand{color:#F7F4ED!important;font-size:22px}
+.brand b{color:#D8B568!important}
+.area,.city-note{background:#211d14!important;color:#E8D7AD!important;border:1px solid #55462A!important;border-radius:14px}
+.eyebrow{color:#D8B568!important;letter-spacing:.14em}
+.title,h1,h2,h3{color:#E8C982!important}
+.title{font-weight:850;line-height:1.18;letter-spacing:-.025em}
+.sub,.note,.step{color:#BDB8AD!important}
+.cards{gap:14px}
+.choice{display:flex!important;gap:16px;align-items:center;text-align:left;width:100%;padding:16px!important;background:linear-gradient(145deg,#222222,#171717)!important;color:#F7F4ED!important;border:1px solid #39342A!important;border-radius:20px!important;box-shadow:0 10px 26px rgba(0,0,0,.22)!important;transition:transform .18s,border-color .18s,box-shadow .18s}
+.choice:hover,.choice:focus-visible{border-color:#D8B568!important;background:linear-gradient(145deg,#29251d,#171717)!important;box-shadow:0 0 0 1px rgba(216,181,104,.3),0 12px 30px rgba(0,0,0,.3)!important;transform:translateY(-2px)}
+.choice h2{font-size:19px;font-weight:800;color:#E8C982!important;margin:0 0 6px}
+.choice p{color:#C6C0B4!important;line-height:1.55}
+.art{background:linear-gradient(145deg,#302719,#211d16)!important;border:1px solid #55462A!important;color:#E8C982!important;border-radius:16px!important;box-shadow:inset 0 1px rgba(255,255,255,.04)}
+.btn,button.btn{background:linear-gradient(120deg,#E8C982,#D8B568)!important;color:#17130a!important;border:1px solid #E8C982!important;border-radius:999px!important;font-weight:850!important;box-shadow:0 8px 20px rgba(216,181,104,.13)!important}
+.btn.secondary,.back{background:#1b1b1b!important;color:#D8B568!important;border:1px solid #55462A!important}
+.panel,.pill,.recommendation{background:linear-gradient(145deg,#202020,#151515)!important;color:#F7F4ED!important;border:1px solid #39342A!important;border-radius:16px!important}
+.pill{padding:13px!important}
+.pill span,.pill label,.panel label{color:#EAE5DA!important}
+.pill.selected,.pill:has(input:checked){background:#2b261b!important;border-color:#D8B568!important}
+.recommendation .why{background:#2b261b!important;color:#E8D7AD!important;border:1px solid #55462A!important}
+.city-note{font-size:13px!important;line-height:1.6}
+input,select,textarea{background:#171717!important;color:#F7F4ED!important;border:1px solid #494236!important;border-radius:10px!important;accent-color:#D8B568}
 input::placeholder,textarea::placeholder{color:#8F897D!important}
-input:focus,select:focus,textarea:focus{outline:2px solid rgba(216,181,104,.45)!important;border-color:var(--gold)!important}
-table,th,td{background:#171717;color:var(--text);border-color:var(--line)!important}
-hr,.divider{border-color:var(--line)!important}
-.badge,.tag,.pill,.eyebrow{background:#2A2418!important;color:var(--gold)!important;border:1px solid #55462A!important}
-img{max-width:100%}
-::selection{background:#D8B568;color:#101010}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(216,181,104,.45)!important;border-color:#D8B568!important}
+a{color:#D8B568!important}
+hr{border-color:#39342A!important}
+.hidden{display:none!important}
+@media(max-width:430px){.wrap{width:calc(100% - 28px);padding-top:18px}.choice{gap:12px;padding:12px!important}.art{width:88px;height:88px;flex-basis:88px;font-size:34px}.choice h2{font-size:17px}.choice p{font-size:13px}.title{font-size:clamp(27px,7vw,34px)}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
