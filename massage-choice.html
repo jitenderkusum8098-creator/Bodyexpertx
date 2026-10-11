@@ -162,6 +162,7 @@ document.getElementById("guided").addEventListener("click",()=>show("need"));
 document.querySelectorAll("[data-need]").forEach(b=>b.addEventListener("click",()=>{
  need=b.dataset.need;
  if(need==="pain"){show("pain-intake");return;}
+ if(need==="relax"){show("relax-intake");return;}
  show("activity");
  const list=document.getElementById("activity-list"),detail=document.getElementById("activity-detail"),next=document.getElementById("to-package");
  if(need==="sports"){document.querySelector("#screen-activity .title").textContent="आप कौन-सी गतिविधि करते हैं?";document.querySelector("#screen-activity .sub").textContent="अपनी गतिविधि चुनें और उससे जुड़े विशेष फोकस की जानकारी देखें।";list.classList.remove("hidden");detail.classList.add("hidden");next.disabled=true;}
