@@ -660,7 +660,12 @@ function renderServices(){
  const serviceBox=document.getElementById("serviceCards");
  const addonBox=document.getElementById("addonCards");
  if(selectedDepartment==="SALON"){document.getElementById("add-ons").hidden=true;serviceBox.innerHTML=`<article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=720&q=80" alt="Barber giving a haircut"><div class="service-body"><div class="tag">${selectedCategory} · SALON</div><h3>Haircut</h3><p>A neat, fresh haircut. Please confirm availability and any specific styling requirements before your appointment.</p><div class="prices"><div class="price-choice" style="grid-column:1/-1"><span>${selectedCategory} price</span><b>${money(selectedCategory==="LUXE"?160:120)}</b><button class="btn small" type="button" onclick="addSalonService(${selectedCategory==="LUXE"?160:120})">Add Haircut</button></div></div></div></article>`;addonBox.innerHTML="";return;}document.getElementById("add-ons").hidden=false;
- const bxFlowQ=new URLSearchParams(window.location.search),bxChosen=(bxFlowQ.get("source")==="activity"?(bxFlowQ.get("massage")||"").trim():"");serviceBox.innerHTML=services.map((item,i)=>({item,i})).filter(({item})=>!bxChosen||item.name.toLowerCase()===bxChosen.toLowerCase()).map(({item,i})=>`
+ const bxFlowQ=new URLSearchParams(window.location.search),bxChosen=(bxFlowQ.get("source")==="activity"?(bxFlowQ.get("massage")||"").trim():"");
+ const bxNormalizeName=s=>String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"").replace("bodyexpertxspecialgymtherapy","bodyexpertsignaturegymrecovery");
+ const bxWanted=bxNormalizeName(bxChosen);
+ const bxVisibleServices=services.map((item,i)=>({item,i})).filter(({item})=>!bxChosen||bxNormalizeName(item.name)===bxWanted);
+ if(bxChosen){document.getElementById("add-ons").hidden=true;document.getElementById("addonCards").innerHTML="";}
+ serviceBox.innerHTML=bxVisibleServices.map(({item,i})=>({item,i})).map(({item,i})=>`
   <article class="service bx-massage-card">
    <div class="bx-massage-photo"><img loading="lazy" src="${photo(item.img)}" alt="${item.name}"><span class="bx-tier-badge">${selectedCategory==="LUXE"?"✦ LUXE · PREMIUM CARE":"✓ PRIME · ESSENTIAL CARE"}</span>${item.tag?`<span class="bx-popular-badge">${item.tag}</span>`:""}</div>
    <div class="service-body bx-massage-body">
