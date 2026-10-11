@@ -163,8 +163,12 @@ hr{border-color:#39342A!important}
       <button class="pill" data-activity="badminton"><strong>🏸 बैडमिंटन</strong><span>पैर, कूल्हे, रैकेट वाली बाँह</span></button>
       <button class="pill" data-activity="cycling"><strong>🚴 साइकिल चलाना</strong><span>जाँघें, पिंडली, कूल्हे</span></button>
       <button class="pill" data-activity="swimming"><strong>🏊 तैराकी</strong><span>शैली के अनुसार कंधे, पीठ, पैर</span></button>
-      <button class="pill" data-activity="walking"><strong>🚶 पैदल चलना</strong><span>पिंडली, पैर और जाँघें</span></button>
-      <button class="pill" data-activity="other"><strong>➕ अन्य गतिविधि</strong><span>अपनी जरूरत बताएँ</span></button>
+      <button class="pill" data-activity="walking"><strong>🚶 स्पोर्ट्स वॉकिंग</strong><span>पिंडली, पैर और जाँघें</span></button>
+      <button class="pill" data-activity="basketball"><strong>🏀 बास्केटबॉल</strong><span>जाँघें, पिंडली, कूल्हे, कंधे</span></button>
+      <button class="pill" data-activity="tennis"><strong>🎾 टेनिस</strong><span>कंधे, अग्रबाहु, पीठ, पैर</span></button>
+      <button class="pill" data-activity="crossfit"><strong>🏋️ क्रॉसफिट / फंक्शनल ट्रेनिंग</strong><span>वर्कआउट के अनुसार फोकस</span></button>
+      <button class="pill" data-activity="boxing"><strong>🥊 बॉक्सिंग / मार्शल आर्ट्स</strong><span>कंधे, बाँहें, पीठ, कोर, पैर</span></button>
+      <button class="pill" data-activity="other"><strong>➕ अन्य स्पोर्ट्स गतिविधि</strong><span>अपना खेल या गतिविधि बताएँ</span></button>
     </div>
     <div id="activity-detail" class="panel hidden"></div>
     <div class="actions"><button class="btn" id="to-package" disabled>PRIME / LUXE देखें</button></div>
@@ -209,8 +213,12 @@ const data={
  badminton:{name:"बैडमिंटन",areas:["पिंडली और जाँघें","कूल्हे","रैकेट पकड़ने वाली बाँह और कंधा"],session:"तेज कदमों, लंज और रैकेट वाली गतिविधि के अनुसार ग्राहक की सुविधा से फोकस तय किया जाएगा।",benefit:"आराम और जकड़न में अस्थायी राहत मिल सकती है।"},
  cycling:{name:"साइकिल चलाना",areas:["जाँघों का अगला और पिछला हिस्सा","पिंडली और कूल्हे","जरूरत के अनुसार ऊपरी पीठ और कंधे"],session:"सवारी की अवधि, बैठने की मुद्रा और ग्राहक की जरूरत के अनुसार सत्र का फोकस तय होगा।",benefit:"आराम और मांसपेशियों की जकड़न में अस्थायी राहत मिल सकती है।"},
  swimming:{name:"तैराकी",areas:["तैराकी की शैली के अनुसार कंधे","ऊपरी पीठ","जरूरत के अनुसार पैर"],session:"तैराकी की शैली और ग्राहक की जरूरत समझकर उपयुक्त मांसपेशी समूहों पर ध्यान दिया जाएगा।",benefit:"आराम और मांसपेशियों के तनाव में अस्थायी राहत मिल सकती है।"},
- walking:{name:"पैदल चलना",areas:["पिंडली","पैर और तलवे","जाँघें"],session:"चलने की अवधि और ग्राहक की सुविधा के अनुसार पैरों पर ध्यान दिया जा सकता है।",benefit:"आराम और जकड़न में अस्थायी राहत मिल सकती है।"},
- other:{name:"अन्य गतिविधि",areas:["ग्राहक की बताई गतिविधि और जरूरत के अनुसार"],session:"बुकिंग से पहले गतिविधि और जरूरत के बारे में अतिरिक्त जानकारी लेना जरूरी होगा।",benefit:"लाभ व्यक्ति की जरूरत और उपयुक्त सेवा पर निर्भर करेंगे।"}
+ walking:{name:"स्पोर्ट्स वॉकिंग",areas:["पिंडली","पैर और तलवे","जाँघें"],session:"चलने की अवधि और ग्राहक की सुविधा के अनुसार पैरों पर ध्यान दिया जा सकता है।",benefit:"आराम और जकड़न में अस्थायी राहत मिल सकती है।"},
+ basketball:{name:"बास्केटबॉल",areas:["जाँघें और पिंडलियाँ","कूल्हे","जरूरत के अनुसार कंधे"],session:"कूदने, दौड़ने और दिशा बदलने की ट्रेनिंग के अनुसार ग्राहक की जरूरत से फोकस तय किया जाएगा।",benefit:"आराम और सामान्य मांसपेशी तनाव में अस्थायी राहत मिल सकती है।"},
+ tennis:{name:"टेनिस",areas:["कंधे और अग्रबाहु","ऊपरी पीठ","जाँघें और पिंडलियाँ"],session:"सर्व, स्ट्रोक और कोर्ट पर मूवमेंट के अनुसार आरामदायक फोकस चुना जाएगा।",benefit:"आराम और मांसपेशियों की जकड़न में अस्थायी राहत मिल सकती है।"},
+ crossfit:{name:"क्रॉसफिट / फंक्शनल ट्रेनिंग",areas:["वर्कआउट के अनुसार पैर और कूल्हे","कंधे और पीठ","ग्राहक द्वारा चुने गए अन्य हिस्से"],session:"हाल की ट्रेनिंग और ग्राहक की सुविधा समझकर मांसपेशी समूहों पर ध्यान दिया जाएगा।",benefit:"आराम और मांसपेशियों की जकड़न में अस्थायी राहत मिल सकती है।"},
+ boxing:{name:"बॉक्सिंग / मार्शल आर्ट्स",areas:["कंधे और बाँहें","ऊपरी पीठ और कोर","जाँघें और पिंडलियाँ"],session:"पंचिंग, फुटवर्क और ट्रेनिंग की प्रकृति के अनुसार फोकस तय किया जाएगा।",benefit:"आराम और मांसपेशियों के तनाव में अस्थायी राहत मिल सकती है।"},
+ other:{name:"अन्य स्पोर्ट्स गतिविधि",areas:["ग्राहक का चुना हुआ खेल और जरूरत"],session:"बुकिंग से पहले खेल, ट्रेनिंग और जरूरत के बारे में अतिरिक्त जानकारी लेना जरूरी होगा।",benefit:"लाभ व्यक्ति की जरूरत और उपयुक्त सेवा पर निर्भर करेंगे।"}
 };
 document.getElementById("direct").addEventListener("click",()=>{window.location.href="./massage.html";});
 document.getElementById("choose-own-massage")?.addEventListener("click",()=>{window.location.href="./massage.html";});
