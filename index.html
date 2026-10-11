@@ -404,8 +404,8 @@ function renderServices(){
     ${item.tag?`<div class="tag">${item.tag}</div>`:""}
     <h3>${item.name}</h3><p>${item.desc}</p>
     <div class="prices">
-     <div class="price-choice"><span>60 minutes</span><b>${money(item.p60+(selectedCategory==="LUXE"?1000:0))}</b><button class="btn small" type="button" onclick="addService(${i},60)">Add 60 min</button></div>
-     <div class="price-choice"><span>90 minutes</span><b>${money(item.p90+(selectedCategory==="LUXE"?1000:0))}</b><button class="btn small" type="button" onclick="addService(${i},90)">Add 90 min</button></div>
+     <div class="price-choice"><span>60 minutes</span><b>${money(item.p60+(selectedCategory==="LUXE"?1300:0))}</b><button class="btn small" type="button" onclick="addService(${i},60)">Add 60 min</button></div>
+     <div class="price-choice"><span>90 minutes</span><b>${money(item.p90+(selectedCategory==="LUXE"?1300:0))}</b><button class="btn small" type="button" onclick="addService(${i},90)">Add 90 min</button></div>
     </div>
    </div>
   </article>`).join("");
@@ -419,7 +419,7 @@ function renderServices(){
 }
 function currentGender(){return document.getElementById("recipientGender")?.value||"Male"}
 function addSalonService(price){cart.push({name:"Haircut ("+selectedCategory+")",duration:0,basePrice:price,price:price,type:"salon",category:"SALON · "+selectedCategory});couponApplied=false;offerMode=false;renderCart();showCartFeedback("Haircut added to cart.");}
-function addService(i,duration){if(!services[i])return;const s=services[i],base=(duration===60?s.p60:s.p90)+(selectedCategory==="LUXE"?1000:0);cart.push({name:s.name+" ("+selectedCategory+")",duration:duration,basePrice:base,price:base+(currentGender()==="Female"?150:0),type:"service",category:"MASSAGE · "+selectedCategory});couponApplied=false;renderCart();showCartFeedback(s.name+" · "+duration+" min added to cart.");}
+function addService(i,duration){if(!services[i])return;const s=services[i],base=(duration===60?s.p60:s.p90)+(selectedCategory==="LUXE"?1300:0);cart.push({name:s.name+" ("+selectedCategory+")",duration:duration,basePrice:base,price:base+(currentGender()==="Female"?150:0),type:"service",category:"MASSAGE · "+selectedCategory});couponApplied=false;renderCart();showCartFeedback(s.name+" · "+duration+" min added to cart.");}
 function addAddon(i){if(!addons[i])return;const a=addons[i];cart.push({name:a.name,duration:a.minutes,basePrice:a.price,price:a.price+(currentGender()==="Female"?150:0),type:"addon"});couponApplied=false;renderCart();showCartFeedback(a.name+" added to cart.");}
 function showCartFeedback(message){const box=document.getElementById("cartItems");box.scrollIntoView({behavior:"smooth",block:"center"});const old=document.getElementById("cartFeedback");if(old)old.remove();const note=document.createElement("p");note.id="cartFeedback";note.className="status";note.textContent=message;box.appendChild(note)}
 function chooseOffer(){if(selectedDepartment!=="MASSAGE")selectDepartment("MASSAGE");if(selectedCategory!=="PRIME")selectCategory("PRIME");if(document.getElementById("customerType").value==="Returning customer"){document.getElementById("formStatus").textContent="The ₹399 first-booking offer is for new customers only. You can still choose any regular massage from the Massage Menu.";document.getElementById("booking").scrollIntoView({behavior:"smooth"});return}cart=[{name:"Swedish Massage — First Booking Offer",duration:60,basePrice:399,price:399+(currentGender()==="Female"?150:0),type:"offer"}];offerMode=true;couponApplied=false;appliedCoupon="";document.getElementById("coupon").value="";renderCart();updateCouponAvailability();document.getElementById("booking").scrollIntoView({behavior:"smooth"});}
