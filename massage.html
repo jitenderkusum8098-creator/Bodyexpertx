@@ -757,6 +757,32 @@ document.getElementById("primeDescription").innerHTML="<strong>Therapist experie
 </script>
 
 
+
+<script>
+(function(){
+  const q=new URLSearchParams(window.location.search);
+  if(q.get("source")!=="activity") return;
+  const category=q.get("category")==="LUXE"?"LUXE":"PRIME";
+  if(typeof selectCategory==="function") selectCategory(category,false);
+  const activityNames={running:"दौड़ना",gym:"जिम / वजन उठाना",football:"फुटबॉल",cricket:"क्रिकेट",badminton:"बैडमिंटन",cycling:"साइकिल चलाना",swimming:"तैराकी",walking:"पैदल चलना",other:"अन्य गतिविधि",pain:"दर्द / मांसपेशियों में जकड़न",relax:"आराम और तनाव से राहत",help:"सही मसाज चुनने में मदद"};
+  const activity=activityNames[q.get("activity")]||"चुनी गई गतिविधि";
+  const focus=q.get("focus")||"ग्राहक की जरूरत के अनुसार";
+  const notes=document.getElementById("notes");
+  if(notes){
+    const summary="गतिविधि-आधारित मसाज मार्गदर्शन: "+activity+"\nचुना गया फोकस: "+focus+"\nचुनी गई श्रेणी: "+category;
+    notes.value=summary+(notes.value.trim()?"\n"+notes.value.trim():"");
+  }
+  const desc=document.getElementById("serviceMenuDescription");
+  if(desc){
+    const notice=document.createElement("div");
+    notice.className="status";
+    notice.style.cssText="margin-top:12px;padding:12px;border:1px solid #c49a22;border-radius:10px;background:#fff8e3;color:#171717";
+    notice.textContent="आपका गतिविधि-आधारित चयन: "+activity+" · फोकस: "+focus+". यह जानकारी booking notes में जोड़ी गई है; आप इसे नीचे बदल सकते हैं।";
+    desc.insertAdjacentElement("afterend",notice);
+  }
+})();
+</script>
+
 </body></html>
 <style>
 
