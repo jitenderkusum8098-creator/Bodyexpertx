@@ -780,6 +780,25 @@ document.getElementById("primeDescription").innerHTML="<strong>Therapist experie
       notes.value=summary+(notes.value.trim()?"\n"+notes.value.trim():"");
     }
   }
+  if(q.get("service")==="BodyExpertX RunFit Recovery Massage"){
+    const tier=q.get("category")==="LUXE"?"LUXE":"PRIME";
+    const minutes=Number(q.get("duration"));
+    const prices={"PRIME":{"40":600,"60":999},"LUXE":{"40":1099,"60":1499}};
+    const price=prices[tier]&&prices[tier][String(minutes)];
+    if(price){
+      const exists=cart.some(item=>item.name==="BodyExpertX RunFit Recovery Massage ("+tier+")"&&item.duration===minutes);
+      if(!exists)cart.push({name:"BodyExpertX RunFit Recovery Massage ("+tier+")",duration:minutes,basePrice:price,price:price,type:"service",category:"MASSAGE · "+tier});
+      selectedCategory=tier;
+      const answers=q.get("answers");
+      const notes=document.getElementById("notes");
+      if(notes){let extra="Running activity: Running\\nService: BodyExpertX RunFit Recovery Massage\\nCategory: "+tier+"\\nDuration: "+minutes+" minutes\\nPrice: ₹"+price;if(answers){try{const a=JSON.parse(answers);extra+="\\nRunning answers: "+Object.entries(a).map(([k,v])=>k+": "+(Array.isArray(v)?v.join(", "):v)).join("; ");}catch(e){}}notes.value=extra+(notes.value.trim()?"\\n"+notes.value.trim():"");}
+      document.getElementById("services").style.display="none";
+      document.getElementById("add-ons").style.display="none";
+      document.getElementById("booking").style.display="block";
+      renderCart();updateFemalePriceNotice();
+      setTimeout(()=>document.getElementById("booking")?.scrollIntoView({behavior:"smooth",block:"start"}),300);
+    }
+  }
   const chosen=(q.get("massage")||"").trim();
   if(chosen){
     const normalize=s=>String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"").replace("bodyexpertxspecialgymtherapy","bodyexpertsignaturegymrecovery");
