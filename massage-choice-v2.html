@@ -205,14 +205,15 @@ hr{border-color:#39342A!important}
     <div class="eyebrow running-question-kicker">अपनी रनिंग के बारे में बताएँ</div>
     <h2 class="title running-question-title">आपकी एक्टिविटी से जुड़े सवाल</h2>
     <form id="running-form" class="panel running-form">
-      <fieldset class="run-fieldset"><legend>1. आप किस तरह की रनिंग करते हैं?</legend><div class="pills"><label class="pill"><input required type="radio" name="runType" value="Fitness running"> फिटनेस रनिंग</label><label class="pill"><input type="radio" name="runType" value="Sprint"> स्प्रिंट</label><label class="pill"><input type="radio" name="runType" value="Long distance"> लॉन्ग डिस्टेंस</label><label class="pill"><input type="radio" name="runType" value="Marathon"> मैराथन</label><label class="pill"><input type="radio" name="runType" value="Trail running"> ट्रेल रनिंग</label></div></fieldset>
+      <fieldset class="run-fieldset"><legend>1. आप किस तरह की रनिंग करते हैं?</legend><div class="pills"><label class="pill"><input required type="radio" name="runType" value="All running types"> सभी प्रकार की रनिंग</label><label class="pill"><input required type="radio" name="runType" value="Fitness running"> फिटनेस रनिंग</label><label class="pill"><input type="radio" name="runType" value="Sprint"> स्प्रिंट</label><label class="pill"><input type="radio" name="runType" value="Long distance"> लॉन्ग डिस्टेंस</label><label class="pill"><input type="radio" name="runType" value="Marathon"> मैराथन</label><label class="pill"><input type="radio" name="runType" value="Trail running"> ट्रेल रनिंग</label></div></fieldset>
       <div class="run-question"><label for="run-days">2. सप्ताह में कितने दिन दौड़ते हैं?</label><select id="run-days" name="days" required><option value="">चुनें</option><option>1–2 दिन</option><option>3–4 दिन</option><option>5–6 दिन</option><option>हर दिन</option></select></div>
       <div class="run-question"><label for="run-duration">3. एक बार में कितनी देर दौड़ते हैं?</label><select id="run-duration" name="duration" required><option value="">चुनें</option><option>30 मिनट से कम</option><option>30–60 मिनट</option><option>60 मिनट से ज्यादा</option><option>अलग-अलग</option></select></div>
-      <fieldset class="run-fieldset"><legend>4. किन हिस्सों पर फोकस चाहते हैं? <span>(एक या अधिक)</span></legend><div class="pills"><label class="pill"><input type="checkbox" name="areas" value="Calves"> पिंडली</label><label class="pill"><input type="checkbox" name="areas" value="Thighs"> जांघें</label><label class="pill"><input type="checkbox" name="areas" value="Hamstrings"> हैमस्ट्रिंग</label><label class="pill"><input type="checkbox" name="areas" value="Hips"> कूल्हे</label><label class="pill"><input type="checkbox" name="areas" value="Feet / soles"> पैर / तलवे</label><label class="pill"><input type="checkbox" name="areas" value="Lower back"> कमर</label><label class="pill"><input type="checkbox" name="areas" value="No specific area"> कोई खास हिस्सा नहीं</label></div></fieldset>
-      <div class="run-question"><label for="run-feeling">5. अभी क्या महसूस होता है?</label><select id="run-feeling" name="feeling" required><option value="">चुनें</option><option>सामान्य थकान</option><option>मांसपेशियों में जकड़न</option><option>दौड़ने के बाद soreness</option><option>कोई परेशानी नहीं</option></select></div>
-      <div class="run-question"><label for="run-when">6. यह कब महसूस होता है?</label><select id="run-when" name="when" required><option value="">चुनें</option><option>दौड़ते समय</option><option>दौड़ने के बाद</option><option>अगली सुबह</option><option>कोई परेशानी नहीं</option></select></div>
-      <div class="run-question"><label for="run-goal">7. आपका मुख्य उद्देश्य?</label><select id="run-goal" name="goal" required><option value="">चुनें</option><option>आराम और रिलैक्सेशन</option><option>मसल जकड़न में राहत</option><option>मोबिलिटी सपोर्ट</option><option>सामान्य वेलनेस</option></select></div>
-      <div class="run-question"><label for="run-pressure">8. मसाज प्रेशर की पसंद</label><select id="run-pressure" name="pressure" required><option value="">चुनें</option><option>हल्का</option><option>मध्यम</option><option>गहरा</option><option>थेरेपिस्ट की सलाह से</option></select></div>
+      <div class="run-question"><label for="run-distance">4. एक बार में लगभग कितने किलोमीटर दौड़ते हैं?</label><select id="run-distance" name="distanceKm" required><option value="">दूरी चुनें</option><option value="1–3">1–3 km</option><option value="3–5">3–5 km</option><option value="5–10">5–10 km</option><option value="10–21">10–21 km</option><option value="21+">21 km से ज्यादा</option><option value="varies">दूरी अलग-अलग होती है</option></select></div>
+      <fieldset class="run-fieldset"><legend>5. किन हिस्सों पर फोकस चाहते हैं? <span>(एक या अधिक)</span></legend><div class="pills"><label class="pill"><input type="checkbox" name="areas" value="Calves"> पिंडली</label><label class="pill"><input type="checkbox" name="areas" value="Thighs"> जांघें</label><label class="pill"><input type="checkbox" name="areas" value="Hamstrings"> हैमस्ट्रिंग</label><label class="pill"><input type="checkbox" name="areas" value="Hips"> कूल्हे</label><label class="pill"><input type="checkbox" name="areas" value="Feet / soles"> पैर / तलवे</label><label class="pill"><input type="checkbox" name="areas" value="Lower back"> कमर</label><label class="pill"><input type="checkbox" name="areas" value="All focus areas"> सभी मुख्य हिस्से</label></div></fieldset>
+      <div class="run-question"><label for="run-feeling">6. अभी क्या महसूस होता है?</label><select id="run-feeling" name="feeling" required><option value="">चुनें</option><option>सामान्य थकान</option><option>मांसपेशियों में जकड़न</option><option>दौड़ने के बाद soreness</option><option>कोई परेशानी नहीं</option></select></div>
+      <div class="run-question" id="run-when-wrap"><label for="run-when">7. यह कब महसूस होता है?</label><select id="run-when" name="when"><option value="">चुनें</option><option>दौड़ते समय</option><option>दौड़ने के बाद</option><option>अगली सुबह</option></select></div>
+      <div class="run-question"><label for="run-goal">8. आपका मुख्य उद्देश्य?</label><select id="run-goal" name="goal" required><option value="">चुनें</option><option>आराम और रिलैक्सेशन</option><option>मसल जकड़न में राहत</option><option>मोबिलिटी सपोर्ट</option><option>सामान्य वेलनेस</option></select></div>
+      <div class="run-question"><label for="run-pressure">9. मसाज प्रेशर की पसंद</label><select id="run-pressure" name="pressure" required><option value="">चुनें</option><option>हल्का</option><option>मध्यम</option><option>गहरा</option><option>थेरेपिस्ट की सलाह से</option></select></div>
       <div class="actions"><button class="btn" type="submit">जवाब सबमिट करें</button></div>
     </form>
     <button class="back" data-back="activity">← गतिविधि चुनें</button>
@@ -349,11 +350,40 @@ document.querySelectorAll("[data-activity]").forEach(b=>b.addEventListener("clic
 document.getElementById("to-package").addEventListener("click",()=>show("package"));
 
 let runningAnswers={},runfitChoice=null;
+
+const runTypeInputs=[...document.querySelectorAll('input[name="runType"]')];
+runTypeInputs.forEach(input=>input.addEventListener("change",()=>{
+ const distance=document.getElementById("run-distance");
+ const runType=document.querySelector('input[name="runType"]:checked')?.value;
+ if(distance)distance.required=true;
+}));
+const feelingSelect=document.getElementById("run-feeling");
+feelingSelect.addEventListener("change",()=>{
+ const noIssue=feelingSelect.value==="कोई परेशानी नहीं";
+ const whenWrap=document.getElementById("run-when-wrap");
+ const whenSelect=document.getElementById("run-when");
+ if(whenWrap)whenWrap.classList.toggle("hidden",noIssue);
+ if(whenSelect){whenSelect.required=!noIssue;whenSelect.value=noIssue?"":whenSelect.value;}
+});
+document.querySelectorAll('input[name="areas"]').forEach(input=>input.addEventListener("change",()=>{
+ const all=document.querySelector('input[name="areas"][value="All focus areas"]');
+ const individual=[...document.querySelectorAll('input[name="areas"]:not([value="All focus areas"])')];
+ if(input===all&&all.checked)individual.forEach(x=>x.checked=false);
+ else if(input!==all&&input.checked&&all)all.checked=false;
+}));
+
 document.getElementById("running-form").addEventListener("submit",e=>{
- e.preventDefault();const fd=new FormData(e.currentTarget);runningAnswers={runType:fd.get("runType"),days:fd.get("days"),duration:fd.get("duration"),areas:fd.getAll("areas"),feeling:fd.get("feeling"),when:fd.get("when"),goal:fd.get("goal"),pressure:fd.get("pressure")};
- if(!runningAnswers.areas.length)runningAnswers.areas=["कोई खास हिस्सा नहीं"];
+ e.preventDefault();const fd=new FormData(e.currentTarget);
+ const runType=fd.get("runType");
+ let runDistance=fd.get("distanceKm");
+ runningAnswers={runType:runType,days:fd.get("days"),duration:fd.get("duration"),distanceKm:runDistance||"",areas:fd.getAll("areas"),feeling:fd.get("feeling"),when:fd.get("when")||"",goal:fd.get("goal"),pressure:fd.get("pressure")};
+ if(runType==="All running types")runningAnswers.runType="सभी प्रकार की रनिंग";
+ if(!runningAnswers.areas.length)runningAnswers.areas=["सभी मुख्य हिस्से"];
+ if(runningAnswers.areas.includes("All focus areas"))runningAnswers.areas=["सभी मुख्य हिस्से (पिंडली, जांघें, हैमस्ट्रिंग, कूल्हे, पैर/तलवे और कमर)"];
+ if(runningAnswers.feeling==="कोई परेशानी नहीं")runningAnswers.when="लागू नहीं — कोई परेशानी नहीं";
  sessionStorage.setItem("bodyexpertxRunningIntake",JSON.stringify(runningAnswers));
- document.getElementById("running-summary").innerHTML="<p><strong>रनिंग:</strong> "+runningAnswers.runType+"</p><p><strong>सप्ताह में:</strong> "+runningAnswers.days+"</p><p><strong>अवधि:</strong> "+runningAnswers.duration+"</p><p><strong>फोकस एरिया:</strong> "+runningAnswers.areas.join(", ")+"</p><p><strong>कैसा महसूस होता है:</strong> "+runningAnswers.feeling+"</p><p><strong>कब:</strong> "+runningAnswers.when+"</p><p><strong>उद्देश्य:</strong> "+runningAnswers.goal+"</p><p><strong>प्रेशर:</strong> "+runningAnswers.pressure+"</p>";
+ const rows=[["रनिंग का प्रकार",runningAnswers.runType],["सप्ताह में",runningAnswers.days],["एक बार की अवधि",runningAnswers.duration],["दूरी",runningAnswers.distanceKm?runningAnswers.distanceKm+" km":"नहीं बताई"],["फोकस एरिया",runningAnswers.areas.join(", ")],["अभी कैसा महसूस होता है",runningAnswers.feeling],["कब महसूस होता है",runningAnswers.when||"लागू नहीं"],["मुख्य उद्देश्य",runningAnswers.goal],["मसाज प्रेशर",runningAnswers.pressure]];
+ document.getElementById("running-summary").innerHTML=rows.map(([k,v])=>"<p><strong>"+k+":</strong> "+v+"</p>").join("");
  show("running-summary");
 });
 document.getElementById("running-summary-next").addEventListener("click",()=>{
