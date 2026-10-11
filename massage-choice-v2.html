@@ -343,7 +343,7 @@ document.getElementById("running-summary-next").addEventListener("click",()=>{
  '<article class="recommendation"><span class="eyebrow">BODYEXPERTX SPECIAL</span><h2>BodyExpertX RunFit Recovery Massage</h2><p>रनर्स के लिए खास मसाज अनुभव।</p><p class="why">रनिंग एक्टिविटी के लिए बनाया गया विशेष विकल्प।</p><button class="btn" data-runfit-open>RunFit चुनें</button></article>'+
  '<article class="recommendation"><span class="eyebrow">आपके जवाबों के अनुसार</span><h2>'+rec.name+'</h2><p class="why">'+rec.why+'</p><p>उपलब्ध मौजूदा सर्विस की कीमतें अगले चरण में दिखाई जाएँगी।</p><button class="btn" data-existing-massage="'+rec.name+'"> '+rec.name+' चुनें </button></article>';
  document.querySelector('[data-runfit-open]').addEventListener("click",()=>{runfitChoice=null;document.getElementById("runfit-selected").textContent="पहले पैकेज और अवधि चुनें।";document.getElementById("runfit-book").disabled=true;show("runfit-package");});
- document.querySelector('[data-existing-massage]').addEventListener("click",e=>{selectedMassage=e.currentTarget.dataset.existingMassage;const url="./massage.html?guidedMassage="+encodeURIComponent(selectedMassage)+"&activity=running&source=running-guided";window.location.href=url;});
+ document.querySelector('[data-existing-massage]').addEventListener("click",e=>{selectedMassage=e.currentTarget.dataset.existingMassage;const url="./massage.html?massage="+encodeURIComponent(selectedMassage)+"&activity=running&source=activity";window.location.href=url;});
  show("running-recommend");
 });
 document.getElementById("running-own-massage").addEventListener("click",()=>{window.location.href="./massage.html?activity=running&source=running-own-choice";});
