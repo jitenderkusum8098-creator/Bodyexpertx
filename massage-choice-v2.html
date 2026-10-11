@@ -81,7 +81,7 @@
     <p class="sub">ये सामान्य वेलनेस सुझाव हैं, निदान नहीं। सही दबाव और उपयुक्तता थेरपिस्ट बुकिंग से पहले आपसे पुष्टि करेगा।</p>
     <div id="recommendation-cards" class="recommendations"></div>
     <div class="panel"><strong>जरूरी:</strong> तेज/बढ़ता दर्द, नई कमजोरी या सुन्नपन, सूजन, बुखार या हाल की चोट में पहले स्वास्थ्य विशेषज्ञ से सलाह लें। मसाज डॉक्टर के इलाज का विकल्प नहीं है।</div>
-    <div class="actions"><button class="btn secondary" data-back="pain-review">← जवाबों पर वापस जाएँ</button></div>
+    <div class="actions"><button class="btn secondary" data-back="pain-review">← जवाबों पर वापस जाएँ</button><button class="btn" id="choose-own-massage" type="button">खुद मसाज चुनें · Choose Your Massage</button></div>
   </section>
   <section id="screen-activity" class="hidden">
     <div class="step">चरण 2 / 3</div><div class="eyebrow">गतिविधि के अनुसार विशेष फोकस</div><h1 class="title">आप कौन-सी गतिविधि करते हैं?</h1><p class="sub">गतिविधि चुनने पर संबंधित मांसपेशियों और सत्र के बारे में जानकारी दिखाई जाएगी।</p>
@@ -132,6 +132,7 @@ const data={
  other:{name:"अन्य गतिविधि",areas:["ग्राहक की बताई गतिविधि और जरूरत के अनुसार"],session:"बुकिंग से पहले गतिविधि और जरूरत के बारे में अतिरिक्त जानकारी लेना जरूरी होगा।",benefit:"लाभ व्यक्ति की जरूरत और उपयुक्त सेवा पर निर्भर करेंगे।"}
 };
 document.getElementById("direct").addEventListener("click",()=>{window.location.href="./massage.html";});
+document.getElementById("choose-own-massage")?.addEventListener("click",()=>{window.location.href="./massage.html";});
 document.getElementById("guided").addEventListener("click",()=>show("need"));
 document.querySelectorAll("[data-need]").forEach(b=>b.addEventListener("click",()=>{
  need=b.dataset.need;
