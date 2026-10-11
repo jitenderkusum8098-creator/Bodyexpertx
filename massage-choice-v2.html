@@ -73,7 +73,7 @@
       <p>यदि दर्द अचानक बहुत तेज हो, छाती में दर्द या साँस लेने में परेशानी हो, नई कमजोरी/सुन्नपन, सूजन, बुखार या चोट हो, तो मसाज के बजाय पहले स्वास्थ्य विशेषज्ञ से सलाह लें। बुकिंग से पहले थेरपिस्ट को अपनी स्वास्थ्य समस्या और दवाओं के बारे में सही जानकारी दें।</p>
     </div>
     <div class="panel"><label style="display:flex;gap:10px;align-items:flex-start"><input id="pain-review-confirm" type="checkbox" style="margin-top:6px;flex:0 0 auto"><span>मैंने ऊपर दी गई जानकारी पढ़ ली है और यह मेरे जवाबों के अनुसार सही है। मैं समझता/समझती हूँ कि मसाज सहायक देखभाल है, चिकित्सा निदान या इलाज का विकल्प नहीं।</span></label></div>
-    <div class="actions"><button class="btn" id="pain-review-next" disabled>आगे बढ़ें · PRIME / LUXE</button><button class="btn secondary" type="button" data-back="pain-intake">← जवाब बदलें</button></div>
+    <div class="actions"><button class="btn" id="pain-review-next" disabled>आगे बढ़ें · मसाज सुझाव देखें</button><button class="btn secondary" type="button" data-back="pain-intake">← जवाब बदलें</button></div>
   </section>
   <section id="screen-recommend" class="hidden">
     <div class="step">अगला चरण · आपके जवाबों के आधार पर</div><div class="eyebrow">BodyExpertX · शुरुआती सुझाव</div>
@@ -170,7 +170,7 @@ function renderPainReview(fd){
  document.getElementById("pain-review-next").disabled=true;
 }
 document.getElementById("pain-review-confirm").addEventListener("change",e=>{document.getElementById("pain-review-next").disabled=!e.target.checked;});
-document.getElementById("pain-review-next").addEventListener("click",()=>{if(!document.getElementById("pain-review-confirm").checked)return;renderRecommendations();show("recommend");});
+document.getElementById("pain-review-next").addEventListener("click",()=>{if(!document.getElementById("pain-review-confirm").checked){document.getElementById("pain-review-confirm").focus();return;}renderRecommendations();show("recommend");});
 function renderRecommendations(){
  const f=new FormData(painForm),getAll=n=>f.getAll(n),areas=getAll("areas"),sensation=getAll("sensation")[0]||"",triggers=getAll("triggers"),severity=getAll("severity")[0]||"";
  const caution=severity==="गंभीर"||getAll("warning").some(x=>x!=="इनमें से कोई नहीं")||getAll("injury")[0]==="हाँ, चोट लगी थी"||getAll("health")[0]!=="नहीं";
