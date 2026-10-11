@@ -19,6 +19,22 @@
 .runfit-price-options .pill{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-height:78px;width:100%;justify-content:center}
 .runfit-price-options .pill.selected{outline:2px solid var(--gold,#e8c36b);background:rgba(220,180,80,.13)}
 @media(min-width:760px){.runfit-packages{grid-template-columns:1fr 1fr}}
+
+/* RunFit package cards: match the existing PRIME/LUXE massage service cards */
+#screen-runfit-package .runfit-packages{display:grid;grid-template-columns:minmax(0,1fr);gap:22px;margin-top:22px}
+#screen-runfit-package article.runfit-tier{box-sizing:border-box;position:relative;display:block;width:100%;min-height:0;text-align:left;color:#f7f3e8;background:radial-gradient(ellipse at top right,rgba(196,154,34,.16),transparent 55%),linear-gradient(145deg,#201b10,#090909);border:1.5px solid #b89535;border-radius:26px;padding:28px 24px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+#screen-runfit-package .runfit-tier h3{font-size:clamp(30px,7vw,42px);letter-spacing:.06em;margin:4px 0 12px;color:#fff}
+#screen-runfit-package .runfit-tier .runfit-service-name{font-size:clamp(22px,5vw,30px);letter-spacing:0;margin:28px 0 16px;color:#f0c95a}
+#screen-runfit-package .runfit-tier .tier-kicker{color:#e8c45e;font-size:13px;font-weight:900;letter-spacing:.16em;margin-bottom:16px}
+#screen-runfit-package .runfit-tier .tier-desc{margin:0;color:#c8c3b8;font-size:17px;min-height:0}
+#screen-runfit-package .runfit-tier .tier-line{height:1px;background:#51452b;margin:20px 0}
+#screen-runfit-package .runfit-tier .tier-feature{display:flex;gap:12px;align-items:flex-start;margin:18px 0;color:#f6f1e5;font-weight:750}
+#screen-runfit-package .runfit-tier .tier-feature small{display:block;color:#bdb7ab;font-size:14px;font-weight:400;margin-top:5px}
+#screen-runfit-package .runfit-price-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+#screen-runfit-package .runfit-price-options .pill{box-sizing:border-box;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-height:88px;width:100%;padding:16px;border:1px solid #51452b;border-radius:14px;background:#17140e;color:#f7f3e8;text-align:left;font-size:17px}
+#screen-runfit-package .runfit-price-options .pill span{font-size:20px;color:#f0c95a;font-weight:900;margin:0}
+#screen-runfit-package .runfit-price-options .pill.selected{outline:2px solid #e8c45e;border-color:#e8c45e;background:rgba(220,180,80,.13)}
+@media(min-width:760px){#screen-runfit-package .runfit-packages{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 <style id="bodyexpertx-premium-theme">
 :root{color-scheme:dark;--bg:#101010;--panel:#191919;--panel2:#22201b;--gold:#D8B568;--gold2:#E8C982;--text:#F7F4ED;--muted:#BDB8AD;--line:#39342A;--ink:#F7F4ED;--gold-light:#2B261B;--white:#F7F4ED}
