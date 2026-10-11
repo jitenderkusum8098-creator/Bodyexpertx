@@ -190,6 +190,17 @@ hr{border-color:#39342A!important}
 const screens=["start","need","relax-intake","relax-result","pain-intake","pain-review","recommend","activity","package","done"];
 function show(name){screens.forEach(s=>document.getElementById("screen-"+s).classList.toggle("hidden",s!==name));window.scrollTo({top:0,behavior:"smooth"});}
 let need="",activity="",pkg="",selectedMassage="";
+function updateRelaxPackagePrices(){
+ const prices={"Swedish Massage":[699,1099],"Deep Tissue Massage":[799,1199],"Sports Massage":[899,1299],"Cupping Massage":[799,1099],"Hot Stone Massage":[999,1399],"Lymphatic Drainage Massage":[1199,1699],"BodyExpertX Special gym therapy":[899,1299],"BodyExpertX Signature Gym Recovery":[899,1299]};
+ const p=prices[selectedMassage]||prices["Swedish Massage"];
+ document.querySelectorAll("[data-package]").forEach(card=>{
+  const luxe=card.dataset.package==="LUXE",add=luxe?1300:0;
+  const price=card.querySelector(".tier-price");
+  if(price)price.innerHTML=selectedMassage+"<br><strong>₹"+(p[0]+add).toLocaleString("en-IN")+" / 60 min</strong><br><span style='font-size:16px'>₹"+(p[1]+add).toLocaleString("en-IN")+" / 90 min</span>";
+ });
+ document.getElementById("package-intro").textContent="आपकी चुनी हुई मसाज: "+selectedMassage+"। PRIME और LUXE में इसी मसाज की कीमतें देखें।";
+}
+
 const data={
  running:{name:"दौड़ना",areas:["पिंडली की मांसपेशियाँ","जाँघों का अगला और पिछला हिस्सा","कूल्हों की मांसपेशियाँ","जरूरत के अनुसार पैरों के तलवे"],session:"दौड़ने की आदत और ग्राहक की जरूरत समझकर चुने हुए हिस्सों पर आरामदायक दबाव के साथ मसाज।",benefit:"मांसपेशियों की जकड़न में अस्थायी राहत और आराम महसूस करने में मदद मिल सकती है।"},
  gym:{name:"जिम / वजन उठाना",areas:["व्यायाम के अनुसार जाँघें और कूल्हे","छाती, कंधे या पीठ — वर्कआउट के अनुसार","ग्राहक द्वारा चुने गए अन्य हिस्से"],session:"कौन-सा व्यायाम किया गया और शरीर कैसा महसूस कर रहा है, यह समझकर फोकस तय किया जाएगा।",benefit:"आराम और मांसपेशियों की जकड़न में अस्थायी राहत मिल सकती है।"},
@@ -227,7 +238,7 @@ const relaxForm=document.getElementById("relax-form");
  document.getElementById("relax-own-choice")?.addEventListener("click",()=>{window.location.href="./massage.html";});
  document.querySelectorAll("[data-relax-massage]").forEach(b=>b.addEventListener("click",()=>{
   selectedMassage=b.dataset.relaxMassage;activity="relax";need="relax";
-  updatePackageMassage();
+  updateRelaxPackagePrices();
   document.getElementById("summary").textContent="आपकी सुझाई गई मसाज: "+selectedMassage+" · अब PRIME या LUXE चुनें, फिर 60 या 90 मिनट चुनकर बुकिंग पूरी करें।";
   document.getElementById("package-intro").textContent="आपकी सुझाई गई मसाज: "+selectedMassage+"। इसे दोबारा चुनने की जरूरत नहीं है—सिर्फ PRIME/LUXE और अवधि चुनें, फिर सीधे बुकिंग पर जाएँ।";
   show("package");
