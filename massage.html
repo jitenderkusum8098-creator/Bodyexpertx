@@ -1403,6 +1403,18 @@ body[data-bx-flow-stage="booking"] #booking{display:block!important}
   }
   if (stage === "services") {
     drawServicesCart();
+    const detailsAdd = new URLSearchParams(window.location.search);
+    if (detailsAdd.get("addDetailsToCart") === "1") {
+      const requestedName = (detailsAdd.get("service") || detailsAdd.get("massage") || "").trim();
+      const requestedDuration = Number(detailsAdd.get("duration"));
+      const serviceIndex = services.findIndex(item => item.name === requestedName);
+      if (serviceIndex >= 0 && [60,90].includes(requestedDuration)) {
+        detailsAdd.delete("addDetailsToCart");
+        history.replaceState(null,"",window.location.pathname+"?"+detailsAdd.toString()+window.location.hash);
+        addService(serviceIndex,requestedDuration);
+        window.showCartFeedback && window.showCartFeedback("मसाज कार्ट में जोड़ दी गई है।");
+      }
+    }
     document.getElementById("flowServicesContinue")?.addEventListener("click",() => {
       if (!cart.length) {
         const section = document.getElementById("flowServicesCartSection");
