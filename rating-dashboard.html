@@ -141,7 +141,6 @@ async function doLogin(){clearMsg("authMsg");const email=$("email").value.trim()
 $("login").onclick=async()=>{try{await doLogin()}catch(e){msg("authMsg",e.message)}};
 $("signup").onclick=async()=>{clearMsg("authMsg");const email=$("email").value.trim(),password=$("password").value;if(!email||password.length<8){msg("authMsg","Email भरें और कम से कम 8 characters का password रखें।");return}const {data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:"https://jitenderkusum8098-creator.github.io/Bodyexpertx/rating-dashboard.html"}});if(error){msg("authMsg",error.message);return}msg("authMsg",data.session?"Account बना। अब sign in करें।":"Confirmation email भेजा गया है। Email verify करने के बाद sign in करें।")};
 $("signOut").onclick=async()=>{await sb.auth.signOut();session=null;role=null;$("dashboard").classList.add("hidden");$("authCard").classList.remove("hidden");$("signOut").classList.add("hidden")};
-async 
 function showAdminView(view){
  const groups={
   bookings:["bookingManagement"],
@@ -156,7 +155,7 @@ function showAdminView(view){
  const content=$("adminContent");if(content)content.scrollIntoView({behavior:"smooth",block:"start"});
 }
 document.querySelectorAll("#adminNav [data-view]").forEach(b=>b.addEventListener("click",()=>showAdminView(b.dataset.view)));
-function loadDashboard(){const {data:{session:s}}=await sb.auth.getSession();session=s;if(!s){$("dashboard").classList.add("hidden");$("authCard").classList.remove("hidden");$("signOut").classList.add("hidden");return}
+async function loadDashboard(){const {data:{session:s}}=await sb.auth.getSession();session=s;if(!s){$("dashboard").classList.add("hidden");$("authCard").classList.remove("hidden");$("signOut").classList.add("hidden");return}
 $("authCard").classList.add("hidden");$("dashboard").classList.remove("hidden");$("signOut").classList.remove("hidden");
 const {data:p,error}=await sb.from("user_profiles").select("role").eq("user_id",s.user.id).maybeSingle();
 if(error||!p){role=null;$("roleMsg").textContent="आपका login ठीक है, लेकिन Admin ने अभी इस account को role नहीं दिया है। यदि आप Admin हैं, तो पहले एक बार नीचे दिए गए setup step को पूरा करना होगा; therapist हों तो Admin से आपको जोड़ने को कहें।";$("adminTools").classList.add("hidden");$("linkTools").classList.add("hidden");$("therapistListCard").classList.add("hidden");$("ratingList").innerHTML='<div class="empty">Role assign होने के बाद यहां आपका private dashboard खुलेगा।</div>';return}
