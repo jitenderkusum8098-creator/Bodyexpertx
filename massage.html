@@ -919,6 +919,10 @@ document.getElementById("primeDescription").innerHTML="<strong>Therapist experie
 <script src="./hindi-ui.js" defer></script>
 
 <style id="bx-step-flow-styles">
+body[data-bx-flow-stage="tier"] #narnaul-pain-section,
+body[data-bx-flow-stage="services"] #narnaul-pain-section,
+body[data-bx-flow-stage="selected"] #narnaul-pain-section,
+body[data-bx-flow-stage="booking"] #narnaul-pain-section{display:none!important}
 body[data-bx-flow-stage="tier"] #categories{display:block!important}
 body[data-bx-flow-stage="tier"] #categories .massage-gallery{display:none!important}
 body[data-bx-flow-stage="tier"] #tierChooser{display:block!important}
