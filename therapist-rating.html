@@ -13,7 +13,7 @@
 <h1>आपका अनुभव कैसा रहा?</h1>
 <p id="intro">आपकी प्रतिक्रिया सीधे BodyExpertX टीम को भेजी जाएगी। यह rating सार्वजनिक वेबसाइट पर नहीं दिखाई जाएगी।</p>
 <div id="formArea" class="hidden">
-<label for="therapist">Therapist</label><div id="therapist" style="font-size:20px;font-weight:800;color:var(--gold)">लोड हो रहा है…</div>
+<label>Therapist का नाम</label><div id="therapist" style="font-size:20px;font-weight:800;color:var(--gold)">लोड हो रहा है…</div><label>BodyExpertX Unique ID</label><div id="therapistCode" style="font-size:16px;font-weight:800;color:#fff;letter-spacing:.08em">लोड हो रहा है…</div>
 <form id="ratingForm">
 <label for="rating">आपकी rating</label>
 <select id="rating" required><option value="">Rating चुनें</option><option value="5">★★★★★ — बहुत बढ़िया (5)</option><option value="4">★★★★☆ — अच्छा (4)</option><option value="3">★★★☆☆ — ठीक (3)</option><option value="2">★★☆☆☆ — बेहतर हो सकता है (2)</option><option value="1">★☆☆☆☆ — खराब (1)</option></select>
@@ -30,6 +30,6 @@ const token=new URLSearchParams(location.search).get("token")||"";
 const area=document.getElementById("formArea"),msg=document.getElementById("message"),intro=document.getElementById("intro");
 async function call(action,extra={}){const r=await fetch(SUPABASE_URL+"/functions/v1/therapist-ratings",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY},body:JSON.stringify({action,token,...extra})});const d=await r.json().catch(()=>({error:"Server response समझ नहीं आया।"}));if(!r.ok)throw new Error(d.error||"Request पूरा नहीं हुआ।");return d}
 function showError(e){msg.textContent=e.message||"कुछ गलत हुआ।";msg.classList.remove("hidden")}
-(async()=>{if(!token){showError(new Error("यह rating link अधूरा है। कृपया BodyExpertX से नया link लें।"));return}try{const d=await call("public-profile");document.getElementById("therapist").textContent=d.therapist.display_name;area.classList.remove("hidden")}catch(e){showError(e);intro.textContent="इस link से rating नहीं ली जा सकती।"} })();
+(async()=>{if(!token){showError(new Error("यह rating link अधूरा है। कृपया BodyExpertX से नया link लें।"));return}try{const d=await call("public-profile");document.getElementById("therapist").textContent=d.therapist.display_name;document.getElementById("therapistCode").textContent=d.therapist.therapist_code||"ID उपलब्ध नहीं";area.classList.remove("hidden")}catch(e){showError(e);intro.textContent="इस link से rating नहीं ली जा सकती।"} })();
 document.getElementById("ratingForm").addEventListener("submit",async e=>{e.preventDefault();const btn=document.getElementById("submitBtn");btn.disabled=true;btn.textContent="भेज रहे हैं…";msg.classList.add("hidden");try{const d=await call("submit-rating",{rating:Number(document.getElementById("rating").value),review:document.getElementById("review").value});area.classList.add("hidden");msg.textContent=d.message;msg.classList.remove("hidden");}catch(err){showError(err);btn.disabled=false;btn.textContent="Rating भेजें"}});
 </script></body></html>
