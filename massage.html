@@ -1418,6 +1418,67 @@ article.service .bx-massage-photo img {
 }
 </style>
 
+
+<style id="bodyexpertx-all-service-cards-consistent-v4">
+/* Apply the same compact card design to built-in and dynamically rendered recovery services. */
+#services #serviceCards article.service .bx-massage-photo,
+#services #serviceCards article.service > .bx-massage-photo {
+  display:block!important;
+  height:260px!important;
+  min-height:260px!important;
+  max-height:260px!important;
+  flex:0 0 260px!important;
+  flex-basis:260px!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#services #serviceCards article.service .bx-massage-photo img {
+  display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;
+}
+#services #serviceCards article.service > img {
+  display:block!important;width:100%!important;height:260px!important;min-height:260px!important;max-height:260px!important;object-fit:cover!important;
+}
+#services #serviceCards article.service .bx-massage-body > .tag,
+#services #serviceCards article.service .bx-massage-body .tag {
+  display:none!important;
+}
+#services #serviceCards article.service .bx-massage-body h3 {
+  font-size:21px!important;line-height:1.22!important;margin:0 0 8px!important;
+}
+#services #serviceCards article.service .bx-massage-desc,
+#services #serviceCards article.service .service-body > p {
+  font-size:14px!important;line-height:1.45!important;margin:0 0 10px!important;
+}
+#services #serviceCards article.service .bx-benefits-title,
+#services #serviceCards article.service .bx-benefits-list,
+#services #serviceCards article.service .bx-included-panel {
+  display:none!important;
+}
+#services #serviceCards article.service a.bx-view-details {
+  height:32px!important;min-height:32px!important;max-height:32px!important;
+  padding:4px 9px!important;margin:0 0 10px!important;font-size:13px!important;line-height:1.1!important;
+}
+#services #serviceCards article.service .bx-duration-heading {
+  font-size:16px!important;margin:0 0 9px!important;
+}
+#services #serviceCards article.service .bx-massage-prices .price-choice {
+  padding:10px!important;gap:7px!important;
+}
+@media(max-width:700px) {
+  #services #serviceCards article.service .bx-massage-photo,
+  #services #serviceCards article.service > .bx-massage-photo {
+    height:340px!important;min-height:340px!important;max-height:340px!important;
+    flex:0 0 340px!important;flex-basis:340px!important;
+  }
+  #services #serviceCards article.service > img {
+    height:340px!important;min-height:340px!important;max-height:340px!important;
+  }
+  #services #serviceCards article.service .bx-massage-body h3 {font-size:20px!important}
+  #services #serviceCards article.service .bx-massage-desc,
+  #services #serviceCards article.service .service-body > p {font-size:13px!important}
+}
+</style>
+
 </head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE · NARNAUL + 35 KM</div>
