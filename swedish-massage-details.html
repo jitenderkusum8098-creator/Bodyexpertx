@@ -30,11 +30,11 @@
     <h2 class="booking-heading">अपना मसाज सत्र चुनें</h2>
     <div class="session">
       <div><div class="session-name">60 मिनट</div><div class="session-price" id="price60">₹699/-</div><small>प्राइम सत्र · सामान्य सूचीबद्ध कीमत</small></div>
-      <a class="btn" id="add60" href="./massage.html?stage=services&service=Swedish%20Massage&category=प्राइम&duration=60&addDetailsToCart=1">＋ कार्ट में जोड़ें</a>
+      <a class="btn" id="add60" href="./massage.html?stage=services&service=Swedish%20Massage&category=PRIME&duration=60&addDetailsToCart=1">＋ कार्ट में जोड़ें</a>
     </div>
     <div class="session">
       <div><div class="session-name">90 मिनट</div><div class="session-price" id="price90">₹1,099/-</div><small>प्राइम सत्र · सामान्य सूचीबद्ध कीमत</small></div>
-      <a class="btn" id="add90" href="./massage.html?stage=services&service=Swedish%20Massage&category=प्राइम&duration=90&addDetailsToCart=1">＋ कार्ट में जोड़ें</a>
+      <a class="btn" id="add90" href="./massage.html?stage=services&service=Swedish%20Massage&category=PRIME&duration=90&addDetailsToCart=1">＋ कार्ट में जोड़ें</a>
     </div>
     <p class="booking-note">चुनने के बाद BodyExpertX का मौजूदा कार्ट और बुकिंग क्रम जारी रहेगा। चुनी गई श्रेणी और सेवा क्षेत्र के अनुसार कीमत बदल सकती है। महिला ग्राहक की प्रत्येक मसाज सेवा पर ₹150 अतिरिक्त लगते हैं।</p>
   </div>
@@ -194,10 +194,10 @@
   document.getElementById("add60").href=addLink(60);
   document.getElementById("add90").href=addLink(90);
   document.querySelector(".back").href="./massage.html?stage=services&massage=Swedish%20Massage&category="+category;
-  document.querySelector(".hero-tag").textContent=category==="लक्स"?"लक्स · प्रीमियम केयर":"प्राइम · प्रोफेशनल केयर";
+  document.querySelector(".hero-tag").textContent=category==="LUXE"?"लक्स · प्रीमियम केयर":"प्राइम · प्रोफेशनल केयर";
   const priceNodes=[document.getElementById("price60"),document.getElementById("price90")];
   function paintPrices(narnaul){
-    const prices=narnaul?(category==="लक्स"?[649,849]:[499,699]):(category==="लक्स"?[1999,2399]:[699,1099]);
+    const prices=narnaul?(category==="LUXE"?[649,849]:[499,699]):(category==="LUXE"?[1999,2399]:[699,1099]);
     priceNodes.forEach((node,i)=>node.textContent="₹"+prices[i].toLocaleString("en-IN")+"/-");
     document.querySelectorAll(".session small").forEach(node=>node.textContent=narnaul?"स्थानीय सेवा क्षेत्र की कीमत · कार्ट में पुष्टि करें":"सामान्य सूचीबद्ध कीमत · कार्ट में पुष्टि करें");
   }
