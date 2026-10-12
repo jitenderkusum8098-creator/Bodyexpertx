@@ -443,5 +443,7 @@ document.querySelectorAll(".package .tier-action").forEach(btn=>btn.addEventList
 document.getElementById("restart").addEventListener("click",()=>{need="";activity="";pkg="";selectedMassage="";document.querySelectorAll("[data-activity],[data-package]").forEach(x=>x.classList.remove("selected"));document.getElementById("to-package").disabled=true;document.getElementById("activity-detail").classList.add("hidden");show("start");});
 document.querySelectorAll("[data-back]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.back)));
 </script>
+
+<script src="./hindi-ui.js" defer></script>
 </body>
 </html>
