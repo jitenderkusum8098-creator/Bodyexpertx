@@ -486,13 +486,16 @@ try{
    discount_amount:discountPrice(),
    coupon_code:appliedCoupon||"",
    customer_notes:document.getElementById("notes").value.trim(),
+   customer_type:document.getElementById("customerType").value,
+   preferred_pressure:document.getElementById("pressure").value,
+   main_concern:document.getElementById("mainConcern").value,
    service_details:cart.map(x=>({name:x.name,duration:x.duration,price:x.price,category:x.category,type:x.type}))
   })
  });
  const result=await response.json().catch(()=>({}));
  if(!response.ok)throw new Error(result.error||"Dashboard save failed");
  bookingReference=result.reference_code||"";
- if(bookingReference)details+="\\n🔖 *Booking Reference:* "+bookingReference;
+ if(bookingReference)details+="\n🔖 *Booking Reference:* "+bookingReference;
 }catch(saveError){
  status.textContent="WhatsApp booking flow जारी है, लेकिन Admin Panel में save नहीं हो पाया: "+(saveError.message||"Please retry later.");
 }
