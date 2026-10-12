@@ -1121,6 +1121,51 @@ img{max-width:100%}
  #serviceCards .bx-massage-prices .price-choice .btn{font-size:10px!important}
 }
 </style>
+
+<style id="bodyexpertx-reference-compact-cards">
+/* Requested compact black-and-gold service card design */
+#serviceCards > .bx-massage-card {
+  display:flex!important; flex-direction:column!important; min-width:0!important;
+  overflow:hidden!important; border:2px solid #c6a34a!important; border-radius:24px!important;
+  background:linear-gradient(155deg,#19191b,#101012)!important; color:#f7f3e8!important;
+  box-shadow:0 8px 22px #0005!important;
+}
+#serviceCards .bx-massage-photo { position:relative!important; overflow:hidden!important; height:190px!important; min-height:190px!important; max-height:190px!important; flex:0 0 190px!important; }
+#serviceCards .bx-massage-photo img { display:block!important; width:100%!important; height:100%!important; object-fit:cover!important; }
+#serviceCards .bx-massage-body { padding:18px!important; color:#f7f3e8!important; }
+#serviceCards .bx-massage-body>.tag { font-size:12px!important; line-height:1.45!important; margin:0 0 10px!important; color:#e8c35c!important; }
+#serviceCards .bx-massage-body h3 { font-size:25px!important; line-height:1.22!important; margin:0 0 10px!important; color:#fff!important; }
+#serviceCards .bx-massage-desc { font-size:16px!important; line-height:1.5!important; margin:0 0 16px!important; color:#d4cfc4!important; }
+#serviceCards .bx-view-details { display:flex!important; align-items:center!important; justify-content:center!important; width:100%!important; min-height:58px!important; margin:0 0 16px!important; padding:12px!important; border:1px solid #f3d18a!important; border-radius:999px!important; background:linear-gradient(135deg,#f8e5b8,#e4bd67)!important; color:#21190b!important; font-size:19px!important; line-height:1.3!important; font-weight:850!important; text-align:center!important; text-decoration:none!important; }
+#serviceCards .bx-duration-heading { display:flex!important; align-items:center!important; gap:9px!important; font-size:17px!important; line-height:1.4!important; font-weight:900!important; margin:0 0 12px!important; color:#fff!important; }
+#serviceCards .bx-massage-prices { display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr))!important; gap:10px!important; margin:0!important; }
+#serviceCards .bx-massage-prices .price-choice { display:grid!important; grid-template-columns:minmax(0,1fr) auto!important; grid-template-rows:auto auto auto!important; align-items:center!important; gap:8px!important; padding:13px 10px!important; min-width:0!important; border:1.5px solid #a88a43!important; border-top:3px solid #d2ad4d!important; border-radius:15px!important; background:linear-gradient(145deg,#1b1b1b,#101010)!important; color:#f7f3e8!important; }
+#serviceCards .bx-session-top { grid-column:1/-1!important; display:flex!important; align-items:center!important; gap:6px!important; font-size:12px!important; line-height:1.3!important; color:#bcae7b!important; }
+#serviceCards .bx-session-duration { grid-column:1/-1!important; font-size:14px!important; line-height:1.3!important; font-weight:850!important; color:#f2e7c9!important; }
+#serviceCards .bx-session-duration small { font-size:11px!important; }
+#serviceCards .bx-massage-prices .price-choice b { grid-column:1!important; font-size:21px!important; line-height:1.2!important; white-space:nowrap!important; color:#f2c75b!important; }
+#serviceCards .bx-massage-prices .price-choice .btn { grid-column:2!important; width:auto!important; min-width:0!important; min-height:42px!important; padding:8px!important; font-size:12px!important; line-height:1.2!important; font-weight:850!important; white-space:normal!important; border-radius:10px!important; }
+@media(max-width:700px) {
+ #serviceCards { grid-template-columns:minmax(0,1fr)!important; gap:22px!important; }
+ #serviceCards > .bx-massage-card { width:100%!important; border-radius:26px!important; }
+ #serviceCards .bx-massage-photo { height:clamp(250px,48vw,330px)!important; min-height:clamp(250px,48vw,330px)!important; max-height:330px!important; flex-basis:clamp(250px,48vw,330px)!important; }
+ #serviceCards .bx-massage-body { padding:20px!important; }
+ #serviceCards .bx-massage-body>.tag { font-size:14px!important; margin-bottom:12px!important; }
+ #serviceCards .bx-massage-body h3 { font-size:clamp(26px,5vw,36px)!important; margin-bottom:12px!important; }
+ #serviceCards .bx-massage-desc { font-size:18px!important; line-height:1.55!important; margin-bottom:18px!important; }
+ #serviceCards .bx-view-details { min-height:78px!important; margin-bottom:16px!important; padding:16px 14px!important; font-size:clamp(20px,4vw,28px)!important; }
+ #serviceCards .bx-duration-heading { font-size:19px!important; margin-bottom:14px!important; }
+ #serviceCards .bx-massage-prices { gap:12px!important; }
+ #serviceCards .bx-massage-prices .price-choice { gap:9px 8px!important; padding:16px 12px!important; border-radius:18px!important; }
+ #serviceCards .bx-session-top { font-size:15px!important; }
+ #serviceCards .bx-session-duration { font-size:17px!important; }
+ #serviceCards .bx-session-duration small { font-size:13px!important; }
+ #serviceCards .bx-massage-prices .price-choice b { font-size:clamp(19px,3.8vw,25px)!important; }
+ #serviceCards .bx-massage-prices .price-choice .btn { min-height:48px!important; padding:10px 9px!important; font-size:clamp(12px,2.5vw,16px)!important; }
+}
+@media(min-width:701px) and (max-width:1050px) { #serviceCards { grid-template-columns:repeat(2,minmax(0,1fr))!important; } }
+</style>
+
 </head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE · NARNAUL + 35 KM</div>
@@ -1284,17 +1329,7 @@ function renderServices(){
    <div class="service-body bx-massage-body">
     <div class="tag">${selectedCategory} MASSAGE · ${selectedCategory==="LUXE"?"PERSONALISED EXPERIENCE":"PROFESSIONAL CARE"}</div>
     <h3>${item.name}</h3><p class="bx-massage-desc">${item.desc}</p>${item.name==="Swedish Massage"?`<a class="btn small bx-view-details" href="./swedish-massage-details.html?category=${selectedCategory}&v=20261012-swedish-guide-1" aria-label="स्वीडिश मसाज की जानकारी देखें">पूरी जानकारी देखें ↗</a>`:`<a class="btn small bx-view-details" href="./massage-service-details.html?service=${encodeURIComponent(item.name)}&category=${selectedCategory}&v=20261012-hindi-guides-2" aria-label="${item.name} की पूरी हिंदी जानकारी देखें">पूरी जानकारी देखें ↗</a>`}
-    <div class="bx-benefits-title">4 KEY BENEFITS</div>
-    <ul class="bx-benefits-list">${item.benefits.map(benefit=>`<li><span aria-hidden="true">✓</span><span>${benefit}</span></li>`).join("")}</ul>
-    <div class="bx-included-panel">
-     <div class="bx-included-heading"><span aria-hidden="true">✦</span> WHAT'S INCLUDED IN ${selectedCategory}</div>
-     <div class="bx-included-items">
-      <div class="bx-included-item"><span class="bx-included-icon" aria-hidden="true">🧴</span><span>Massage Oil</span></div>
-      <div class="bx-included-item"><span class="bx-included-icon" aria-hidden="true">♨</span><span>Diffuser / Aroma</span></div>
-      <div class="bx-included-item"><span class="bx-included-icon" aria-hidden="true">▤</span><span>Disposable Sheets</span></div>
-      <div class="bx-included-item ${selectedCategory==="LUXE"?"":"bx-not-included"}"><span class="bx-included-icon" aria-hidden="true">${selectedCategory==="LUXE"?"🛏":"⊘"}</span><span>Massage Table / Bed<small>${selectedCategory==="LUXE"?"Included":"Not included in PRIME"}</small></span></div>
-     </div>
-    </div>
+
     <div class="bx-duration-heading"><span aria-hidden="true">◷</span> Choose Your Session</div>
     <div class="prices bx-massage-prices">
      <div class="price-choice"><div class="bx-session-top"><span class="bx-clock-icon" aria-hidden="true">◷</span><span>QUICK RESET</span></div><span class="bx-session-duration">60 <small>MINUTES</small></span><b>${money((narnaulPricing&&item.n60?item.n60:item.p60)+(selectedCategory==="LUXE"?(narnaulPricing?150:1300):0)+(selectedCategory==="PRIME"&&currentGender()==="Female"?150:0))}</b><button class="btn small" type="button" onclick="addService(${i},60)"><span aria-hidden="true">＋</span> Add 60 min</button></div>
