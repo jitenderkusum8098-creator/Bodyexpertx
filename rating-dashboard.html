@@ -17,7 +17,7 @@
 .booking-filters input,.booking-filters select,.booking-row select,.booking-row input{width:100%;padding:10px;border-radius:9px;background:#0d0d0f;border:1px solid #51442c;color:#fff;font:inherit}
 .booking-row{border:1px solid #49391c;background:#101012;border-radius:14px;padding:14px;margin:12px 0}
 .booking-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.booking-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.booking-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
 .booking-field{display:block;font-size:12px;color:var(--muted)}
 .booking-field span{display:block;margin-bottom:5px}
 .booking-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
@@ -164,19 +164,22 @@ function renderBookingRows(){
   const top=document.createElement("div");top.className="booking-top";
   const title=document.createElement("div");title.innerHTML='<strong>'+esc(a.reference_code)+'</strong><div>'+esc(a.service_name)+' · '+esc(a.service_type)+' / '+esc(a.tier)+'</div><div class="muted small">'+esc(z?.name||"Zone missing")+' · '+esc(a.appointment_date||"Date pending")+' '+esc(a.appointment_time||"")+'</div><div class="muted small">Created: '+esc(new Date(a.created_at).toLocaleString("en-IN"))+'</div>';
   const pill=document.createElement("span");pill.className="status-pill";pill.textContent=statusLabel(a.status);top.append(title,pill);card.append(top);
-  if(a.customer_name||a.customer_phone){const cust=document.createElement("p");cust.className="muted small";cust.textContent="Customer: "+(a.customer_name||"Name not saved")+" · "+(a.customer_phone||"Phone not saved");card.append(cust)}
+  if(a.customer_name||a.customer_phone){const cust=document.createElement("p");cust.className="muted small";cust.textContent="Customer: "+(a.customer_name||"Name not saved")+" · "+(a.customer_phone||"Phone not saved")+(a.customer_age?" · Age "+a.customer_age:"")+(a.recipient_gender?" · For "+a.recipient_gender:"")+(a.visit_type?" · "+a.visit_type:"");card.append(cust);if(a.customer_address){const addr=document.createElement("p");addr.className="muted small";addr.textContent="Address: "+a.customer_address;card.append(addr)}if(a.customer_notes){const note=document.createElement("p");note.className="muted small";note.textContent="Notes: "+a.customer_notes;card.append(note)}if(a.discount_amount){const discount=document.createElement("p");discount.className="muted small";discount.textContent="Discount: "+rupee(a.discount_amount)+(a.coupon_code?" · Coupon "+a.coupon_code:"");card.append(discount)}}
   const fields=document.createElement("div");fields.className="booking-fields";
   const statusWrap=document.createElement("label");statusWrap.className="booking-field";statusWrap.innerHTML="<span>Status</span>";
   const statusSel=document.createElement("select");bookingStatuses.forEach(([v,l])=>statusSel.append(new Option(l,v)));statusSel.value=a.status;statusSel.disabled=cancelled;statusWrap.append(statusSel);
   const therapistWrap=document.createElement("label");therapistWrap.className="booking-field";therapistWrap.innerHTML="<span>Assigned therapist</span>";
+  const zoneWrap=document.createElement("label");zoneWrap.className="booking-field";zoneWrap.innerHTML="<span>Booking zone</span>";
+  const zSel=document.createElement("select");zSel.append(new Option("— Zone चुनें —",""));
+  zones.filter(x=>x.active).forEach(x=>zSel.append(new Option(x.name,x.id)));zSel.value=a.zone_id||"";zSel.disabled=cancelled;zoneWrap.append(zSel);
   const tSel=document.createElement("select");tSel.append(new Option("— Not assigned —",""));
-  therapists.filter(x=>x.active).forEach(x=>tSel.append(new Option(x.display_name+" · "+(x.therapist_code||"ID"),x.id)));tSel.value=a.therapist_id||"";tSel.disabled=cancelled;therapistWrap.append(tSel);
+  therapists.filter(x=>x.active&&x.available).forEach(x=>tSel.append(new Option(x.display_name+" · "+(x.therapist_code||"ID"),x.id)));tSel.value=a.therapist_id||"";tSel.disabled=cancelled;therapistWrap.append(tSel);
   const amountWrap=document.createElement("label");amountWrap.className="booking-field";amountWrap.innerHTML="<span>Booking amount (₹)</span>";
   const amount=document.createElement("input");amount.type="number";amount.min="0";amount.step="0.01";amount.max="10000000";amount.value=Number(a.booking_amount||0);amount.disabled=cancelled;amountWrap.append(amount);
-  fields.append(statusWrap,therapistWrap,amountWrap);card.append(fields);
+  fields.append(statusWrap,zoneWrap,therapistWrap,amountWrap);card.append(fields);
   if(cancelled){const note=document.createElement("p");note.className="muted small";note.textContent="Cancelled booking history सुरक्षित है; इसे दोबारा active नहीं किया जा सकता।"+(a.cancelled_at?" Cancelled: "+new Date(a.cancelled_at).toLocaleString("en-IN"):"")+(a.cancel_reason?" · Reason: "+a.cancel_reason:"");card.append(note)}
   const actions=document.createElement("div");actions.className="booking-actions";
-  const save=document.createElement("button");save.className="btn";save.textContent="Save booking changes";save.disabled=cancelled;save.onclick=async()=>{try{const body={booking_id:a.id,status:statusSel.value,therapist_id:tSel.value,booking_amount:amount.value};if(body.status==="cancelled"&&!confirm("इस booking को Cancelled करना है? यह history में रहेगी और active jobs से हट जाएगी।"))return;const result=await edge("admin-update-booking",body);alert(result.message||"Booking saved");await loadAdmin()}catch(e){alert(e.message)}};
+  const save=document.createElement("button");save.className="btn";save.textContent="Save booking changes";save.disabled=cancelled;save.onclick=async()=>{try{const body={booking_id:a.id,status:statusSel.value,zone_id:zSel.value,therapist_id:tSel.value,booking_amount:amount.value};if(body.status==="cancelled"&&!confirm("इस booking को Cancelled करना है? यह history में रहेगी और active jobs से हट जाएगी।"))return;const result=await edge("admin-update-booking",body);alert(result.message||"Booking saved");await loadAdmin()}catch(e){alert(e.message)}};
   const cancel=document.createElement("button");cancel.className="btn danger";cancel.textContent="Cancel booking";cancel.disabled=cancelled;cancel.onclick=async()=>{if(!confirm("Booking cancel करें? History सुरक्षित रहेगी और active job count से हट जाएगी।"))return;const reason=prompt("Cancellation reason (optional):")||"";try{const result=await edge("admin-update-booking",{booking_id:a.id,status:"cancelled",cancel_reason:reason});alert(result.message||"Booking cancelled");await loadAdmin()}catch(e){alert(e.message)}};
   actions.append(save,cancel);card.append(actions);list.append(card);
  }
