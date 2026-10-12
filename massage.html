@@ -1301,6 +1301,22 @@ img{max-width:100%}
 }
 </style>
 
+
+<style id="bodyexpertx-compact-service-cards-v2">
+#serviceCards .bx-massage-body h3,#serviceCards .bx-massage-card .bx-massage-body h3{font-size:clamp(17px,4.3vw,21px)!important;line-height:1.2!important;margin:0 0 6px!important}
+#serviceCards .bx-massage-desc,#serviceCards .bx-massage-card .bx-massage-desc{font-size:12px!important;line-height:1.45!important;margin:0 0 10px!important}
+#serviceCards .bx-view-details,#serviceCards a.bx-view-details{box-sizing:border-box!important;width:100%!important;height:28px!important;min-height:28px!important;max-height:28px!important;padding:3px 8px!important;margin:0 0 9px!important;font-size:12px!important;line-height:1.1!important;border-radius:999px!important}
+#serviceCards .bx-duration-heading{font-size:15px!important;line-height:1.25!important;margin:0 0 9px!important;gap:7px!important}
+#serviceCards .bx-massage-prices{gap:8px!important;margin-top:4px!important}
+#serviceCards .bx-massage-prices .price-choice{padding:8px!important;gap:6px!important;border-radius:13px!important}
+#serviceCards .bx-session-top{font-size:11px!important;line-height:1.2!important}
+#serviceCards .bx-session-duration{font-size:14px!important;line-height:1.2!important}
+#serviceCards .bx-massage-prices .price-choice>b{font-size:18px!important;line-height:1.2!important}
+#serviceCards .bx-massage-prices .price-choice>.btn,#serviceCards .bx-massage-prices .price-choice>button.btn{min-height:34px!important;padding:7px 4px!important;font-size:11px!important;line-height:1.15!important}
+#serviceCards .bx-benefit-note{display:none!important}
+@media(max-width:700px){#serviceCards .bx-massage-body h3,#serviceCards .bx-massage-card .bx-massage-body h3{font-size:20px!important}#serviceCards .bx-massage-desc,#serviceCards .bx-massage-card .bx-massage-desc{font-size:12px!important;line-height:1.4!important}#serviceCards .bx-view-details,#serviceCards a.bx-view-details{height:28px!important;min-height:28px!important;max-height:28px!important;font-size:12px!important;padding:3px 8px!important}#serviceCards .bx-massage-prices .price-choice{padding:8px 6px!important}#serviceCards .bx-massage-prices .price-choice>b{font-size:17px!important}}
+</style>
+
 </head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE · NARNAUL + 35 KM</div>
@@ -1470,7 +1486,6 @@ function renderServices(){
      <div class="price-choice"><div class="bx-session-top"><span class="bx-clock-icon" aria-hidden="true">◷</span><span>QUICK RESET</span></div><span class="bx-session-duration">60 <small>MINUTES</small></span><b>${money((narnaulPricing&&item.n60?item.n60:item.p60)+(selectedCategory==="LUXE"?(narnaulPricing?150:1300):0)+(selectedCategory==="PRIME"&&currentGender()==="Female"?150:0))}</b><button class="btn small" type="button" onclick="addService(${i},60)"><span aria-hidden="true">＋</span> Add 60 min</button></div>
      <div class="price-choice bx-session-long"><div class="bx-session-top"><span class="bx-clock-icon" aria-hidden="true">◷</span><span>EXTENDED CARE</span></div><span class="bx-session-duration">90 <small>MINUTES</small></span><b>${money((narnaulPricing&&item.n90?item.n90:item.p90)+(selectedCategory==="LUXE"?(narnaulPricing?150:1300):0)+(selectedCategory==="PRIME"&&currentGender()==="Female"?150:0))}</b><button class="btn small" type="button" onclick="addService(${i},90)"><span aria-hidden="true">＋</span> Add 90 min</button></div>
     </div>
-    <p class="bx-benefit-note">Benefits vary by person and are not a guarantee of treatment or cure. Tell us about relevant health conditions before booking.</p>
    </div>
   </article>`).join("");
 
