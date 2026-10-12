@@ -30,6 +30,42 @@
 @media(max-width:480px){.booking-fields,.booking-detail{grid-template-columns:1fr}.kpi .k-value{font-size:22px}}
 
 @media(max-width:720px){.grid{grid-template-columns:1fr}.head{align-items:flex-start;flex-direction:column}.right{margin-left:0}}
+
+/* Admin redesign: clean dashboard with compact side navigation */
+:root{color-scheme:light;--bg:#f3f5f9;--card:#ffffff;--gold:#c58b22;--line:#e2e7ef;--muted:#657187;--ink:#17243a}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+.wrap{width:min(1440px,98%);margin:0 auto;padding:18px 0 42px}
+.head{background:#14233b;color:#fff;border:0;border-radius:18px;padding:18px 22px;margin-bottom:18px;box-shadow:0 8px 24px #17243a12}
+.brand{color:#f3c86a;font-size:12px;letter-spacing:.18em}
+.head h1{font-size:25px;color:#fff}.head .sub{color:#c8d2e2}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin:0 0 16px;box-shadow:0 4px 16px #17243a08}
+h2{color:#17243a;font-size:19px}.muted,.sub{color:var(--muted)}
+.field input,.field select,.booking-filters input,.booking-filters select,.booking-row select,.booking-row input{background:#fff;border:1px solid #d5dce7;color:#17243a;border-radius:10px}
+.btn{background:#d5a23b;color:#17243a;box-shadow:none;border-radius:10px;padding:10px 14px}
+.btn.alt{background:#fff;border:1px solid #c9d3e2;color:#233754}
+.btn.danger{background:#fff5f5;border-color:#e5aaaa;color:#a12626}
+.item{background:#fff;border-color:#e0e6ef}.pill,.status-pill{background:#fff5dc;border-color:#f0dca5;color:#835b0d}
+.msg{background:#fff6dc;color:#75510c;border:1px solid #f1dfa8}
+.empty{background:#f8fafd;border-color:#d8e0eb;color:#68758a}
+.kpi-grid{gap:12px}.kpi{background:linear-gradient(180deg,#fff,#f9fbfe);border-color:#e1e7f0;box-shadow:0 3px 12px #17243a07}
+.kpi .k-label{color:#69778c}.kpi .k-value{color:#172e50}
+.booking-row{background:#fff;border-color:#dfe6ef;box-shadow:0 3px 12px #17243a06}
+.booking-row h3{color:#17243a}.booking-field{color:#657187}
+#roleMsg{margin-bottom:14px}
+.admin-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:18px;align-items:start}
+.admin-nav{position:sticky;top:12px;background:#14233b;color:#fff;border-radius:16px;padding:12px;box-shadow:0 8px 24px #17243a12}
+.admin-nav-title{padding:10px 10px 14px;font-size:11px;letter-spacing:.15em;color:#aebbd0;font-weight:800}
+.admin-nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid transparent;border-radius:10px;padding:12px 10px;margin:3px 0;background:transparent;color:#d7dfeb;font:600 14px/1.3 inherit;cursor:pointer}
+.admin-nav button:hover{background:#213653;color:#fff}
+.admin-nav button.active{background:#f0c45d;color:#17243a;font-weight:850}
+.admin-nav .nav-icon{display:inline-grid;place-items:center;width:25px;height:25px;border-radius:7px;background:#ffffff15;font-size:15px}
+#adminContent{min-width:0}
+#bookingManagement{border-top:3px solid #d5a23b}
+#bookingManagement> .row:first-child{align-items:center}
+.admin-view-title{font-size:12px;color:#748198;margin:0 0 10px}
+@media(max-width:800px){.admin-layout{grid-template-columns:1fr}.admin-nav{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.admin-nav-title{grid-column:1/-1;padding-bottom:4px}.admin-nav button{margin:0;padding:10px 8px;font-size:12px}.wrap{width:96%;padding-top:10px}.head{padding:16px}}
+@media(max-width:480px){.admin-nav{grid-template-columns:1fr 1fr}.admin-nav button{gap:6px}.card{padding:14px}.head h1{font-size:21px}}
+
 </style>
 </head>
 <body><div class="wrap">
@@ -43,6 +79,15 @@
 <section id="recoveryCard" class="card hidden"><h2>नया password बनाएं</h2><p class="muted">Email के reset link से यहां आए हैं। नया password कम से कम 8 characters का रखें।</p><label class="field"><span>नया password</span><input id="newPassword" type="password" minlength="8" autocomplete="new-password" placeholder="नया password"></label><label class="small" style="display:flex;align-items:center;gap:8px;margin:8px 0 14px;font-weight:600"><input id="showNewPassword" type="checkbox" style="width:auto"> नया password दिखाएं</label><button id="saveNewPassword" class="btn">Password update करें</button><div id="recoveryMsg" class="msg hidden" role="status"></div></section>
 <div id="dashboard" class="hidden">
 <section id="roleMsg" class="msg"></section>
+<div id="adminLayout" class="admin-layout hidden">
+<nav id="adminNav" class="admin-nav" aria-label="Admin sections">
+  <div class="admin-nav-title">ADMIN MENU</div>
+  <button type="button" data-view="bookings" class="active"><span class="nav-icon">▤</span> Booking Operations</button>
+  <button type="button" data-view="zones"><span class="nav-icon">⌖</span> Zone Management</button>
+  <button type="button" data-view="therapists"><span class="nav-icon">♙</span> All Therapists</button>
+  <button type="button" data-view="ratings"><span class="nav-icon">★</span> Ratings & Reviews</button>
+</nav>
+<div id="adminContent">
 <section id="adminTools" class="card hidden">
 <h2>नया therapist जोड़ें</h2><p class="muted small">Therapist के लिए email/login जरूरी नहीं। नाम, मोबाइल और फोटो से profile बनेगी; BodyExpertX ID अपने आप बनेगी।</p>
 <div class="grid"><label class="field"><span>Therapist का नाम</span><input id="newName" maxlength="100" placeholder="पूरा नाम"></label><label class="field"><span>मोबाइल नंबर</span><input id="newPhone" type="tel" inputmode="tel" maxlength="16" placeholder="10 digit mobile number"></label></div><div class="grid"><label class="field"><span>Experience (साल)</span><input id="newExperience" type="number" min="0" max="60" step="0.5" value="0" placeholder="जैसे 2.5"></label><div class="field"><span>Experience नोट</span><p class="muted small">Therapist बनाते समय सही अनुभव भरें। Prime के लिए कम से कम 0.5 साल और Luxe के लिए 2 साल जरूरी हैं।</p></div></div><div class="grid"><label class="field"><span>BodyExpertX Unique ID</span><input id="newTherapistCode" readonly placeholder="पहले ID बनाएं"></label><button id="generateTherapistCode" type="button" class="btn alt">Generate Unique ID</button><label class="field"><span>Therapist की फोटो</span><input id="newPhoto" type="file" accept="image/*"></label></div><div id="photoPreviewWrap" class="hidden"><img id="photoPreview" alt="Therapist photo preview" style="width:110px;height:110px;object-fit:cover;border-radius:14px;border:1px solid #49391c"></div>
@@ -70,7 +115,7 @@
 <div id="therapistDetail"><div class="empty">पूरी job history देखने के लिए therapist चुनें।</div></div>
 </section>
 <section id="linkTools" class="card hidden"><h2>WhatsApp rating link बनाएं</h2><label class="field"><span>Therapist चुनें</span><select id="therapistSelect"><option value="">पहले therapist बनाएं</option></select></label><button id="makeLink" class="btn">Generate private rating link</button><div id="linkMsg" class="msg hidden"></div><div id="linkOutput" class="hidden"><div class="linkbox" id="linkText"></div><div class="row"><button id="copyLink" class="btn alt">Copy link</button><a id="whatsappLink" class="btn" target="_blank" rel="noopener">WhatsApp पर भेजें</a></div><p class="muted small">Link 30 दिन में expire होगा और एक customer rating के बाद इस्तेमाल नहीं हो सकेगा।</p></div></section>
-<section class="card"><div class="row"><h2 id="ratingHeading">Ratings & reviews</h2><button id="refresh" class="btn alt right">Refresh</button></div><div id="ratingList"><div class="empty">Login के बाद ratings यहां दिखेंगी।</div></div></section>
+<section id="ratingsSection" class="card"><div class="row"><h2 id="ratingHeading">Ratings & reviews</h2><button id="refresh" class="btn alt right">Refresh</button></div><div id="ratingList"><div class="empty">Login के बाद ratings यहां दिखेंगी।</div></div></section>
 <section id="therapistListCard" class="card hidden"><h2>Therapist profiles</h2><div id="therapistList"></div></section>
 </div>
 </div>
@@ -94,12 +139,27 @@ async function doLogin(){clearMsg("authMsg");const email=$("email").value.trim()
 $("login").onclick=async()=>{try{await doLogin()}catch(e){msg("authMsg",e.message)}};
 $("signup").onclick=async()=>{clearMsg("authMsg");const email=$("email").value.trim(),password=$("password").value;if(!email||password.length<8){msg("authMsg","Email भरें और कम से कम 8 characters का password रखें।");return}const {data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:"https://jitenderkusum8098-creator.github.io/Bodyexpertx/rating-dashboard.html"}});if(error){msg("authMsg",error.message);return}msg("authMsg",data.session?"Account बना। अब sign in करें।":"Confirmation email भेजा गया है। Email verify करने के बाद sign in करें।")};
 $("signOut").onclick=async()=>{await sb.auth.signOut();session=null;role=null;$("dashboard").classList.add("hidden");$("authCard").classList.remove("hidden");$("signOut").classList.add("hidden")};
-async function loadDashboard(){const {data:{session:s}}=await sb.auth.getSession();session=s;if(!s){$("dashboard").classList.add("hidden");$("authCard").classList.remove("hidden");$("signOut").classList.add("hidden");return}
+async 
+function showAdminView(view){
+ const groups={
+  bookings:["bookingManagement"],
+  zones:["zoneTools","assignmentTools"],
+  therapists:["adminTools","serviceIdTools","therapistListCard","linkTools"],
+  ratings:["ratingsSection"]
+ };
+ const all=["bookingManagement","zoneTools","assignmentTools","adminTools","serviceIdTools","therapistListCard","linkTools","ratingsSection"];
+ all.forEach(id=>{const el=$(id);if(el)el.classList.add("hidden")});
+ (groups[view]||groups.bookings).forEach(id=>{const el=$(id);if(el)el.classList.remove("hidden")});
+ document.querySelectorAll("#adminNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
+ const content=$("adminContent");if(content)content.scrollIntoView({behavior:"smooth",block:"start"});
+}
+document.querySelectorAll("#adminNav [data-view]").forEach(b=>b.addEventListener("click",()=>showAdminView(b.dataset.view)));
+function loadDashboard(){const {data:{session:s}}=await sb.auth.getSession();session=s;if(!s){$("dashboard").classList.add("hidden");$("authCard").classList.remove("hidden");$("signOut").classList.add("hidden");return}
 $("authCard").classList.add("hidden");$("dashboard").classList.remove("hidden");$("signOut").classList.remove("hidden");
 const {data:p,error}=await sb.from("user_profiles").select("role").eq("user_id",s.user.id).maybeSingle();
 if(error||!p){role=null;$("roleMsg").textContent="आपका login ठीक है, लेकिन Admin ने अभी इस account को role नहीं दिया है। यदि आप Admin हैं, तो पहले एक बार नीचे दिए गए setup step को पूरा करना होगा; therapist हों तो Admin से आपको जोड़ने को कहें।";$("adminTools").classList.add("hidden");$("linkTools").classList.add("hidden");$("therapistListCard").classList.add("hidden");$("ratingList").innerHTML='<div class="empty">Role assign होने के बाद यहां आपका private dashboard खुलेगा।</div>';return}
 role=p.role;$("roleMsg").textContent=role==="admin"?"Admin access active — सभी therapist और reviews देख सकते हैं।":"Therapist access active — केवल आपकी assigned ratings दिखाई जाएंगी.";
-if(role==="admin"){ $("adminTools").classList.remove("hidden");$("serviceIdTools").classList.remove("hidden");$("zoneTools").classList.remove("hidden");$("assignmentTools").classList.remove("hidden");$("bookingManagement").classList.remove("hidden");$("linkTools").classList.remove("hidden");$("therapistListCard").classList.remove("hidden");await loadAdmin()}else if(role==="therapist"){ $("adminTools").classList.add("hidden");$("serviceIdTools").classList.add("hidden");$("zoneTools").classList.add("hidden");$("assignmentTools").classList.add("hidden");$("bookingManagement").classList.add("hidden");$("linkTools").classList.add("hidden");$("therapistListCard").classList.add("hidden");await loadTherapist()}else{ $("ratingList").innerHTML='<div class="empty">इस role को dashboard access नहीं है।</div>'}}
+if(role==="admin"){ $("adminLayout").classList.remove("hidden"); $("adminTools").classList.remove("hidden");$("serviceIdTools").classList.remove("hidden");$("zoneTools").classList.remove("hidden");$("assignmentTools").classList.remove("hidden");$("bookingManagement").classList.remove("hidden");$("linkTools").classList.remove("hidden");$("therapistListCard").classList.remove("hidden");await loadAdmin();showAdminView("bookings")}else if(role==="therapist"){ $("adminLayout").classList.add("hidden"); $("adminTools").classList.add("hidden");$("serviceIdTools").classList.add("hidden");$("zoneTools").classList.add("hidden");$("assignmentTools").classList.add("hidden");$("bookingManagement").classList.add("hidden");$("linkTools").classList.add("hidden");$("therapistListCard").classList.add("hidden");await loadTherapist()}else{ $("ratingList").innerHTML='<div class="empty">इस role को dashboard access नहीं है।</div>'}}
 let zones=[],therapistZones=[],assignments=[];
 function renderZoneChecks(selectedIds=[]){const box=$("zoneCheckboxes");box.replaceChildren();const activeZones=zones.filter(z=>z.active);if(!activeZones.length){box.textContent="पहले एक active zone बनाएं।";return}for(const z of activeZones){const label=document.createElement("label");const input=document.createElement("input");input.type="checkbox";input.value=z.id;input.checked=selectedIds.includes(z.id);label.append(input,document.createTextNode(z.name));box.append(label)}}
 function loadTherapistSettings(){const t=therapists.find(x=>x.id===$("zoneTherapist").value);if(!t)return;$("zoneExperience").value=Number(t.experience_years||0);$("therapistAvailable").checked=t.available!==false;$("serviceMassage").checked=(t.service_types||["Massage"]).includes("Massage");$("serviceSalon").checked=(t.service_types||[]).includes("Salon");$("tierPrime").checked=(t.tiers||["Prime","Luxe"]).includes("Prime");$("tierLuxe").checked=(t.tiers||["Prime","Luxe"]).includes("Luxe");renderZoneChecks(therapistZones.filter(x=>x.therapist_id===t.id).map(x=>x.zone_id))}
