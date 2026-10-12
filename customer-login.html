@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0b0d">
+<title>Customer Login | BodyExpertX</title>
+<meta name="description" content="BodyExpertX customer login with mobile OTP.">
+<style>
+:root{color-scheme:dark;--bg:#0b0b0d;--panel:#151517;--line:#3b3323;--gold:#f2c75b;--muted:#c2bdb0;--text:#f7f3e8}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#21190a 0%,var(--bg) 58%);color:var(--text);font:16px/1.55 Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;display:grid;place-items:center;padding:20px}
+a{color:var(--gold)}button,input{font:inherit}.shell{width:min(100%,440px)}.brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:22px}.mark{width:48px;height:48px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:24px;background:#17130a}.brand-name{font-size:22px;font-weight:900;letter-spacing:.04em}.brand-name span{color:var(--gold)}.tagline{text-align:center;color:var(--muted);font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:-15px;margin-bottom:24px}.card{border:1px solid var(--line);border-radius:22px;padding:clamp(22px,6vw,32px);background:#121214f5;box-shadow:0 24px 70px #0008}.eyebrow{font-size:11px;letter-spacing:.15em;color:var(--gold);font-weight:800}.card h1{font-size:29px;line-height:1.15;margin:8px 0}.sub{color:var(--muted);font-size:14px;margin:0 0 22px}.field{display:grid;gap:7px;margin:15px 0}.field label{font-size:13px;color:#e2d9c5}.field input{width:100%;border:1px solid #4a402d;background:#0b0b0d;color:var(--text);padding:13px 14px;border-radius:11px;outline:none}.field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px #d9aa3520}.phone-row{display:grid;grid-template-columns:90px 1fr;gap:8px}.country{display:grid;place-items:center;border:1px solid #4a402d;border-radius:11px;color:var(--gold);font-weight:800;background:#201a0f}.btn{width:100%;border:0;border-radius:999px;padding:14px 16px;background:linear-gradient(135deg,#f5d16e,#c18a1d);color:#17120a;font-weight:900;cursor:pointer;margin-top:10px}.btn:disabled{opacity:.6;cursor:wait}.secondary{background:transparent;border:1px solid var(--line);color:var(--text);margin-top:10px}.hint{font-size:12px;color:var(--muted);margin:13px 0 0}.status{display:none;margin-top:15px;padding:12px;border-radius:10px;font-size:13px;overflow-wrap:anywhere}.status.show{display:block}.status.error{border:1px solid #7f3434;background:#291313;color:#ffd1d1}.status.ok{border:1px solid #386947;background:#102319;color:#d2ffe0}.divider{display:flex;align-items:center;gap:12px;color:#817b6f;font-size:11px;margin:22px 0}.divider:before,.divider:after{content:"";height:1px;background:var(--line);flex:1}.guest{text-align:center;font-size:13px;margin-top:18px}.guest a{text-decoration:none}.privacy{text-align:center;color:#817b6f;font-size:11px;margin-top:18px}.otp-help{font-size:12px;color:var(--muted);margin-top:8px}@media(max-width:380px){.phone-row{grid-template-columns:78px 1fr}.brand-name{font-size:19px}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <div class="brand" aria-label="BodyExpertX">
+    <div class="mark" aria-hidden="true">✦</div>
+    <div class="brand-name">BodyExpert<span>X</span></div>
+  </div>
+  <div class="tagline">Premium Wellness · Customer Account</div>
+  <section class="card">
+    <div class="eyebrow">CUSTOMER ACCESS</div>
+    <h1 id="heading">Welcome back</h1>
+    <p class="sub" id="subheading">Mobile number se secure OTP login karein. Password yaad rakhne ki zaroorat nahi.</p>
+    <form id="phoneForm">
+      <div class="field" id="nameField" hidden>
+        <label for="fullName">Aapka naam</label>
+        <input id="fullName" name="fullName" autocomplete="name" maxlength="80" placeholder="Poora naam">
+      </div>
+      <div class="field">
+        <label for="phone">Mobile number</label>
+        <div class="phone-row">
+          <div class="country" aria-label="India country code">🇮🇳 +91</div>
+          <input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="10" pattern="[0-9]{10}" placeholder="10-digit number" required>
+        </div>
+      </div>
+      <button class="btn" id="sendBtn" type="submit">OTP bhejein</button>
+    </form>
+    <form id="otpForm" hidden>
+      <div class="field">
+        <label for="otp">6-digit OTP</label>
+        <input id="otp" name="otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="123456" required>
+      </div>
+      <button class="btn" id="verifyBtn" type="submit">Verify karke login karein</button>
+      <button class="btn secondary" id="backBtn" type="button">Number badlein</button>
+      <p class="otp-help" id="otpHelp">OTP aane mein kuch samay lag sakta hai.</p>
+    </form>
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <section id="accountState" hidden>
+      <p id="accountMessage" class="sub"></p>
+      <button class="btn" id="continueBtn" type="button">Website par jaayein</button>
+      <button class="btn secondary" id="signOutBtn" type="button">Logout</button>
+    </section>
+    <div class="divider">OR</div>
+    <div class="guest">Bina login booking karni hai? <a href="./index.html#booking">Guest booking par jaayein</a></div>
+  </section>
+  <div class="privacy">Aapka account aapke verified mobile number se juda rahega.</div>
+</main>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/+esm';
+
+const SUPABASE_URL = 'https://myjstwbpmbrhaiwytpnq.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy';
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+});
+
+const $ = (id) => document.getElementById(id);
+const phoneForm = $('phoneForm');
+const otpForm = $('otpForm');
+const phoneInput = $('phone');
+const statusBox = $('status');
+let currentPhone = '';
+let sending = false;
+
+function showStatus(message, kind = 'error') {
+  statusBox.textContent = message;
+  statusBox.className = 'status show ' + kind;
+}
+function clearStatus() {
+  statusBox.textContent = '';
+  statusBox.className = 'status';
+}
+function setBusy(button, busy, label) {
+  button.disabled = busy;
+  if (busy) button.dataset.oldLabel = button.textContent;
+  button.textContent = busy ? label : (button.dataset.oldLabel || label);
+}
+function normalizePhone(value) {
+  const digits = value.replace(/\D/g, '');
+  if (digits.length !== 10) return null;
+  return '+91' + digits;
+}
+function explainAuthError(error) {
+  const msg = String(error?.message || 'Login abhi complete nahi ho saka.');
+  if (/sms provider|phone.*disabled|phone provider|unsupported phone/i.test(msg)) {
+    return 'Phone OTP abhi backend par enable nahi hai. Admin ko Supabase mein Phone Auth aur SMS provider (jaise Twilio) configure karna hoga.';
+  }
+  if (/rate limit|too many requests/i.test(msg)) return 'Bahut jaldi OTP request hui hain. Thodi der baad dobara koshish karein.';
+  return msg;
+}
+
+$('backBtn').addEventListener('click', () => {
+  otpForm.hidden = true;
+  phoneForm.hidden = false;
+  $('heading').textContent = 'Welcome back';
+  $('subheading').textContent = 'Mobile number se secure OTP login karein. Password yaad rakhne ki zaroorat nahi.';
+  clearStatus();
+  $('phone').focus();
+});
+
+phoneForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (sending) return;
+  clearStatus();
+  const phone = normalizePhone(phoneInput.value);
+  if (!phone) {
+    showStatus('Kripya sahi 10-digit Indian mobile number daalein.');
+    phoneInput.focus();
+    return;
+  }
+  currentPhone = phone;
+  sending = true;
+  setBusy($('sendBtn'), true, 'OTP bhej rahe hain…');
+  try {
+    const { error } = await supabase.auth.signInWithOtp({ phone: currentPhone });
+    if (error) throw error;
+    phoneForm.hidden = true;
+    otpForm.hidden = false;
+    $('heading').textContent = 'OTP verify karein';
+    $('subheading').textContent = 'Aapke mobile number par bheja gaya 6-digit OTP daalein.';
+    $('otp').focus();
+    showStatus('OTP request bhej di gayi hai. SMS check karein.', 'ok');
+  } catch (error) {
+    showStatus(explainAuthError(error));
+  } finally {
+    sending = false;
+    $('sendBtn').disabled = false;
+    $('sendBtn').textContent = 'OTP bhejein';
+  }
+});
+
+otpForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  clearStatus();
+  const token = $('otp').value.trim();
+  if (!/^\d{6}$/.test(token)) {
+    showStatus('6-digit OTP sahi tarah daalein.');
+    return;
+  }
+  setBusy($('verifyBtn'), true, 'Verify kar rahe hain…');
+  try {
+    const { data, error } = await supabase.auth.verifyOtp({
+      phone: currentPhone,
+      token,
+      type: 'sms'
+    });
+    if (error) throw error;
+    if (!data.user || !data.session) throw new Error('Login session nahi bani. Kripya dobara koshish karein.');
+
+    const { error: profileError } = await supabase.from('customer_profiles').upsert({
+      user_id: data.user.id,
+      phone: data.user.phone || currentPhone,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id' });
+    if (profileError) throw profileError;
+
+    showStatus('Login safal! BodyExpertX website khol rahe hain…', 'ok');
+    window.location.replace('./index.html?customer=1');
+  } catch (error) {
+    showStatus(explainAuthError(error));
+  } finally {
+    $('verifyBtn').disabled = false;
+    $('verifyBtn').textContent = 'Verify karke login karein';
+  }
+});
+
+async function renderAccount(session) {
+  if (!session?.user) return;
+  phoneForm.hidden = true;
+  otpForm.hidden = true;
+  $('accountState').hidden = false;
+  $('heading').textContent = 'Aap login hain';
+  $('subheading').textContent = 'Aapka BodyExpertX customer account active hai.';
+  const phone = session.user.phone || 'Verified mobile';
+  $('accountMessage').textContent = 'Login mobile: ' + phone;
+}
+$('continueBtn').addEventListener('click', () => {
+  window.location.href = './index.html?customer=1';
+});
+$('signOutBtn').addEventListener('click', async () => {
+  clearStatus();
+  $('signOutBtn').disabled = true;
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+    $('accountState').hidden = true;
+    phoneForm.hidden = false;
+    otpForm.hidden = true;
+    $('heading').textContent = 'Welcome back';
+    $('subheading').textContent = 'Mobile number se secure OTP login karein. Password yaad rakhne ki zaroorat nahi.';
+    showStatus('Logout ho gaya. Aap dobara login kar sakte hain.', 'ok');
+  } catch (error) {
+    showStatus(explainAuthError(error));
+  } finally {
+    $('signOutBtn').disabled = false;
+  }
+});
+supabase.auth.getSession().then(({ data, error }) => {
+  if (!error && data.session) renderAccount(data.session);
+});
+supabase.auth.onAuthStateChange((_event, session) => {
+  if (session) renderAccount(session);
+});
+</script>
+</body>
+</html>
