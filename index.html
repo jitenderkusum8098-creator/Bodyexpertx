@@ -914,6 +914,43 @@ article.service .bx-massage-photo img {
 }
 </style>
 
+
+<style id="bodyexpertx-service-images-larger-v3">
+/* Final override: visibly enlarge every service-card photo by about 30% on all pages. */
+#serviceCards .service .bx-massage-photo,
+#serviceCards .bx-massage-card .bx-massage-photo,
+#serviceCards .bx-massage-photo,
+.bx-massage-card .bx-massage-photo {
+  height:380px!important;
+  min-height:380px!important;
+  max-height:380px!important;
+  flex:0 0 380px!important;
+  flex-basis:380px!important;
+  overflow:hidden!important;
+}
+#serviceCards .service .bx-massage-photo img,
+#serviceCards .bx-massage-card .bx-massage-photo img,
+#serviceCards .bx-massage-photo img,
+.bx-massage-card .bx-massage-photo img {
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+}
+@media(min-width:701px) {
+  #serviceCards .service .bx-massage-photo,
+  #serviceCards .bx-massage-card .bx-massage-photo,
+  #serviceCards .bx-massage-photo,
+  .bx-massage-card .bx-massage-photo {
+    height:350px!important;
+    min-height:350px!important;
+    max-height:350px!important;
+    flex:0 0 350px!important;
+    flex-basis:350px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="topbar">प्रीमियम मसाज और सैलून सेवाएँ · घर पर सुविधा · बुकिंग की पुष्टि WhatsApp पर</div>
