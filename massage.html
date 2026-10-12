@@ -753,8 +753,8 @@ function renderServices(){
    <button class="btn small" type="button" onclick="addAddon(${i})">Add to Cart</button>
   </article>`).join("");
 }
-function addKickFitService(tier,minutes,price){const name="BodyExpertX KickFit Recovery Massage ("+tier+")";const exists=cart.some(item=>item.name===name&&item.duration===minutes);if(!exists)cart.push({name,duration:minutes,basePrice:price,price,type:"service",category:"MASSAGE · "+tier});selectedCategory=tier;updateFemalePriceNotice();renderCart();document.getElementById("booking").style.display="block";document.getElementById("booking").scrollIntoView({behavior:"smooth",block:"start"});const status=document.getElementById("formStatus");if(status)status.textContent="KickFit Recovery Massage cart mein add ho gayi. Ab booking form complete karein.";}
-function addRunFitService(tier,minutes,price){const name="BodyExpertX RunFit Recovery Massage ("+tier+")";const exists=cart.some(item=>item.name===name&&item.duration===minutes);if(!exists)cart.push({name,duration:minutes,basePrice:price,price,type:"service",category:"MASSAGE · "+tier});selectedCategory=tier;updateFemalePriceNotice();renderCart();document.getElementById("booking").style.display="block";document.getElementById("booking").scrollIntoView({behavior:"smooth",block:"start"});const status=document.getElementById("formStatus");if(status)status.textContent="RunFit Recovery Massage cart mein add ho gayi. Ab booking form complete karein.";}
+function addKickFitService(tier,minutes,price){const name="BodyExpertX KickFit Recovery Massage ("+tier+")";const exists=cart.some(item=>item.name===name&&item.duration===minutes);if(!exists)cart.push({name,duration:minutes,basePrice:price,price:price+(currentGender()==="Female"&&tier==="PRIME"?150:0),type:"service",category:"MASSAGE · "+tier});selectedCategory=tier;updateFemalePriceNotice();renderCart();const status=document.getElementById("formStatus");if(status)status.textContent="KickFit Recovery Massage कार्ट में जुड़ गई। आप दूसरी मसाज भी जोड़ सकते हैं।";if(typeof window.refreshStepCart==="function")window.refreshStepCart();}
+function addRunFitService(tier,minutes,price){const name="BodyExpertX RunFit Recovery Massage ("+tier+")";const exists=cart.some(item=>item.name===name&&item.duration===minutes);if(!exists)cart.push({name,duration:minutes,basePrice:price,price:price+(currentGender()==="Female"&&tier==="PRIME"?150:0),type:"service",category:"MASSAGE · "+tier});selectedCategory=tier;updateFemalePriceNotice();renderCart();const status=document.getElementById("formStatus");if(status)status.textContent="RunFit Recovery Massage कार्ट में जुड़ गई। आप दूसरी मसाज भी जोड़ सकते हैं।";if(typeof window.refreshStepCart==="function")window.refreshStepCart();}
 function currentGender(){return document.getElementById("recipientGender")?.value||"Male"}
 function updateFemalePriceNotice(){const note=document.getElementById("femalePriceNotice");if(!note)return;note.textContent=selectedDepartment==="MASSAGE"?"Female bookings cost ₹150 extra per massage service.":"Salon services do not use the massage gender surcharge.";note.hidden=selectedDepartment!=="MASSAGE"&&selectedDepartment!=="SALON";}
 function isLuxeInCart(){return cart.some(x=>(x.category||"").includes("LUXE"))}
@@ -980,12 +980,12 @@ body[data-bx-flow-stage="booking"] #booking{display:block!important}
   const params = new URLSearchParams(window.location.search);
   let stage = params.get("stage");
   const guidedOrSpecific = ["source","activity","service","massage","offer"].some(k => params.has(k));
-  if (!stage && !guidedOrSpecific) {
-    params.set("stage","tier");
+  if (!stage) {
+    params.set("stage", guidedOrSpecific ? "services" : "tier");
     window.location.replace(window.location.pathname + "?" + params.toString() + window.location.hash);
     return;
   }
-  if (!stage || !["tier","services","selected","booking"].includes(stage)) return;
+  if (!["tier","services","selected","booking"].includes(stage)) return;
   document.body.dataset.bxFlowStage = stage;
   const storageKey = "bodyexpertxMassageFlowCart";
   const copyParams = () => {
