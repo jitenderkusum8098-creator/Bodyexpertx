@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0b0b">
+  <title>BodyExpertX | Customer Login</title>
+  <style>
+    :root{color-scheme:dark;--gold:#d8b45a;--bg:#0b0b0b;--panel:#171717;--muted:#b7b7b7}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(ellipse at top,#292317 0,#0b0b0b 58%);font-family:Arial,sans-serif;color:#fff}
+    main{width:min(100%,430px);padding:28px;border:1px solid #5a4821;border-radius:20px;background:rgba(20,20,20,.97);box-shadow:0 18px 60px #0008}
+    .brand{color:var(--gold);font-size:13px;letter-spacing:3px;font-weight:bold;text-transform:uppercase}
+    h1{margin:12px 0 6px;font-size:28px}p{color:var(--muted);line-height:1.5;font-size:14px}
+    label{display:block;margin:18px 0 8px;font-size:13px;color:#ddd}
+    input{width:100%;padding:14px;border:1px solid #484848;border-radius:10px;background:#090909;color:white;font-size:16px;outline:none}
+    input:focus{border-color:var(--gold)}button{width:100%;margin-top:14px;padding:14px;border:0;border-radius:10px;background:var(--gold);color:#111;font-weight:bold;font-size:15px;cursor:pointer}
+    button.secondary{background:#292929;color:#fff;border:1px solid #484848}button:disabled{opacity:.55;cursor:wait}
+    #status{min-height:22px;margin-top:14px;font-size:13px;overflow-wrap:anywhere}.fine{font-size:11px;color:#888;margin-top:18px}
+    [hidden]{display:none!important}
+  </style>
+</head>
+<body>
+<main>
+  <div class="brand">BodyExpertX</div>
+  <h1>Customer Login</h1>
+  <p>Sign in with your mobile number to access your customer account.</p>
+
+  <section id="phoneSection">
+    <label for="phone">Mobile number (with country code)</label>
+    <input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+919876543210" value="+91">
+    <div id="recaptcha-container" style="margin-top:14px"></div>
+    <button id="sendOtp">Send OTP</button>
+  </section>
+
+  <section id="otpSection" hidden>
+    <label for="otp">6-digit OTP</label>
+    <input id="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="Enter OTP">
+    <button id="verifyOtp">Verify OTP</button>
+    <button id="back" class="secondary">Change mobile number</button>
+  </section>
+
+  <section id="signedIn" hidden>
+    <p>Login successful.</p>
+    <p id="accountPhone"></p>
+    <button id="signOut" class="secondary">Log out</button>
+  </section>
+  <div id="status" role="status" aria-live="polite"></div>
+  <p class="fine">Your number is used for authentication. Never share an OTP with anyone.</p>
+</main>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+  // Firebase Web configuration from Project settings > Your apps.
+  const firebaseConfig = {
+    apiKey: "PASTE_YOUR_FIREBASE_API_KEY_HERE",
+    authDomain: "bodyexpertx-44580.firebaseapp.com",
+    projectId: "bodyexpertx-44580",
+    storageBucket: "bodyexpertx-44580.firebasestorage.app",
+    messagingSenderId: "616415951966",
+    appId: "1:616415951966:web:0c0c0991c284513de748cf"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const $ = (id) => document.getElementById(id);
+  let confirmationResult = null;
+  let verifier = null;
+  const status = (message, error = false) => {
+    $("status").textContent = message;
+    $("status").style.color = error ? "#ff9999" : "#d8b45a";
+  };
+  const show = (section) => {
+    for (const id of ["phoneSection","otpSection","signedIn"]) $(id).hidden = id !== section;
+  };
+
+  function makeVerifier() {
+    if (verifier) return verifier;
+    verifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+      size: "normal",
+      callback: () => status("Verification complete. Press Send OTP."),
+      "expired-callback": () => status("reCAPTCHA expired. Please verify again.", true)
+    });
+    return verifier;
+  }
+
+  $("sendOtp").addEventListener("click", async () => {
+    const phone = $("phone").value.trim().replace(/[\s()-]/g, "");
+    if (!/^\+[1-9]\d{7,14}$/.test(phone)) {
+      status("Enter a valid number including country code, e.g. +919876543210.", true); return;
+    }
+    $("sendOtp").disabled = true;
+    try {
+      confirmationResult = await signInWithPhoneNumber(auth, phone, makeVerifier());
+      show("otpSection");
+      status("OTP request sent. Check your phone.");
+    } catch (e) {
+      status(e.message || "Could not send OTP. Check Firebase billing, SMS region policy, authorized domain, and quota.", true);
+      if (verifier) { try { await verifier.clear(); } catch {} verifier = null; }
+      $("recaptcha-container").innerHTML = "";
+    } finally { $("sendOtp").disabled = false; }
+  });
+
+  $("verifyOtp").addEventListener("click", async () => {
+    const code = $("otp").value.trim();
+    if (!/^\d{6}$/.test(code)) { status("Enter the 6-digit OTP.", true); return; }
+    $("verifyOtp").disabled = true;
+    try {
+      await confirmationResult.confirm(code);
+      status("Phone number verified.");
+    } catch (e) { status(e.message || "OTP verification failed.", true); }
+    finally { $("verifyOtp").disabled = false; }
+  });
+
+  $("back").addEventListener("click", async () => {
+    confirmationResult = null; show("phoneSection"); status("");
+    if (verifier) { try { await verifier.clear(); } catch {} verifier = null; }
+    $("recaptcha-container").innerHTML = "";
+  });
+  $("signOut").addEventListener("click", async () => {
+    await signOut(auth); status("You are logged out.");
+  });
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      show("signedIn");
+      $("accountPhone").textContent = user.phoneNumber || "";
+    } else if (!confirmationResult) show("phoneSection");
+  });
+</script>
+</body>
+</html>
