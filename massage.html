@@ -1021,7 +1021,7 @@ function renderServices(){
    <div class="bx-massage-photo"><img loading="lazy" src="${photo(item.img)}" alt="${item.name}"><span class="bx-tier-badge">${selectedCategory==="LUXE"?"✦ LUXE · PREMIUM CARE":"✓ PRIME · ESSENTIAL CARE"}</span>${item.tag?`<span class="bx-popular-badge">${item.tag}</span>`:""}</div>
    <div class="service-body bx-massage-body">
     <div class="tag">${selectedCategory} MASSAGE · ${selectedCategory==="LUXE"?"PERSONALISED EXPERIENCE":"PROFESSIONAL CARE"}</div>
-    <h3>${item.name}</h3><p class="bx-massage-desc">${item.desc}</p>
+    <h3>${item.name}</h3><p class="bx-massage-desc">${item.desc}</p>${item.name==="Swedish Massage"?`<a class="btn small bx-view-details" href="./swedish-massage-details.html?category=${selectedCategory}&v=20261012-swedish-guide-1" aria-label="View details for Swedish Massage">View Details ↗</a>`:""}
     <div class="bx-benefits-title">4 KEY BENEFITS</div>
     <ul class="bx-benefits-list">${item.benefits.map(benefit=>`<li><span aria-hidden="true">✓</span><span>${benefit}</span></li>`).join("")}</ul>
     <div class="bx-included-panel">
@@ -1483,5 +1483,5 @@ body[data-bx-flow-stage="booking"] #booking{display:block!important}
  #serviceCards .bx-massage-prices .price-choice .btn{font-size:8px!important;padding:5px 4px!important}
 }
 </style>
-</body>
+<style id="bx-swedish-view-details-style">\n#serviceCards .bx-view-details{align-self:flex-start!important;width:auto!important;margin:0 0 10px!important;padding:5px 9px!important;min-height:0!important;border:1px solid #c6a34a!important;border-radius:7px!important;background:transparent!important;color:#f2c75b!important;box-shadow:none!important;font-size:10px!important;line-height:1.2!important;text-decoration:none!important;white-space:nowrap!important}\n#serviceCards .bx-view-details:hover{background:#241d0f!important;color:#ffe39a!important}\n@media(max-width:560px){#serviceCards .bx-view-details{font-size:10px!important;padding:5px 8px!important;margin-bottom:8px!important}}\n</style>\n<script id="bx-details-add-to-cart">\n(function(){\n const q=new URLSearchParams(window.location.search);\n if(q.get("addDetailsToCart")!=="1")return;\n const name=(q.get("service")||q.get("massage")||"").trim();\n const duration=Number(q.get("duration"));\n const category=q.get("category")==="LUXE"?"LUXE":"PRIME";\n if(name.toLowerCase()!=="swedish massage"||![60,90].includes(duration))return;\n const idx=Array.isArray(services)?services.findIndex(s=>s.name==="Swedish Massage"):-1;\n if(idx<0||typeof addService!=="function")return;\n selectedCategory=category;\n addService(idx,duration);\n if(typeof window.refreshStepCart==="function")window.refreshStepCart();\n q.delete("addDetailsToCart");\n history.replaceState(null,"",window.location.pathname+"?"+q.toString()+window.location.hash);\n const feedback=document.getElementById("flowCartFeedback")||document.getElementById("cartFeedback");\n if(feedback)feedback.textContent="Swedish Massage ("+duration+" minutes) added to your cart. Continue with the existing booking steps.";\n})();\n</script>\n</body>
 </html>
