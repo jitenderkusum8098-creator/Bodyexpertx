@@ -157,7 +157,7 @@ const data={
  walking:{name:"पैदल चलना",areas:["पिंडली","पैर और तलवे","जाँघें"],session:"चलने की अवधि और ग्राहक की सुविधा के अनुसार पैरों पर ध्यान दिया जा सकता है।",benefit:"आराम और जकड़न में अस्थायी राहत मिल सकती है।"},
  other:{name:"अन्य गतिविधि",areas:["ग्राहक की बताई गतिविधि और जरूरत के अनुसार"],session:"बुकिंग से पहले गतिविधि और जरूरत के बारे में अतिरिक्त जानकारी लेना जरूरी होगा।",benefit:"लाभ व्यक्ति की जरूरत और उपयुक्त सेवा पर निर्भर करेंगे।"}
 };
-document.getElementById("direct").addEventListener("click",()=>{window.location.href="./massage.html";});
+document.getElementById("direct").addEventListener("click",()=>{window.location.href="./massage.html?stage=tier";});
 document.getElementById("guided").addEventListener("click",()=>show("need"));
 document.querySelectorAll("[data-need]").forEach(b=>b.addEventListener("click",()=>{
  need=b.dataset.need;
