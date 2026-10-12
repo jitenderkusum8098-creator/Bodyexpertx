@@ -1021,7 +1021,7 @@ function renderServices(){
    <div class="bx-massage-photo"><img loading="lazy" src="${photo(item.img)}" alt="${item.name}"><span class="bx-tier-badge">${selectedCategory==="LUXE"?"✦ LUXE · PREMIUM CARE":"✓ PRIME · ESSENTIAL CARE"}</span>${item.tag?`<span class="bx-popular-badge">${item.tag}</span>`:""}</div>
    <div class="service-body bx-massage-body">
     <div class="tag">${selectedCategory} MASSAGE · ${selectedCategory==="LUXE"?"PERSONALISED EXPERIENCE":"PROFESSIONAL CARE"}</div>
-    <h3>${item.name}</h3><p class="bx-massage-desc">${item.desc}</p><a class="btn small bx-view-details" href="./massage-service-details.html?service=${encodeURIComponent(item.name)}&category=${selectedCategory}&v=20261012-all-hindi-guide-1" aria-label="इस मसाज की विस्तृत हिंदी जानकारी देखें">पूरी जानकारी देखें ↗</a>
+    <h3>${item.name}</h3><p class="bx-massage-desc">${item.desc}</p>${item.name==="Swedish Massage"?`<a class="btn small bx-view-details" href="./swedish-massage-details.html?category=${selectedCategory}&v=20261012-swedish-guide-1" aria-label="स्वीडिश मसाज की जानकारी देखें">पूरी जानकारी देखें ↗</a>`:`<a class="btn small bx-view-details" href="./massage-service-details.html?service=${encodeURIComponent(item.name)}&category=${selectedCategory}&v=20261012-hindi-guides-2" aria-label="${item.name} की पूरी हिंदी जानकारी देखें">पूरी जानकारी देखें ↗</a>`}
     <div class="bx-benefits-title">4 KEY BENEFITS</div>
     <ul class="bx-benefits-list">${item.benefits.map(benefit=>`<li><span aria-hidden="true">✓</span><span>${benefit}</span></li>`).join("")}</ul>
     <div class="bx-included-panel">
