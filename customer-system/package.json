@@ -1,0 +1,21 @@
+{
+  "name": "bodyexpertx-customer-system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Self-hosted BodyExpertX customer accounts and admin massage history",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
+    "helmet": "^8.0.0",
+    "better-sqlite3": "^11.8.1"
+  }
+}
