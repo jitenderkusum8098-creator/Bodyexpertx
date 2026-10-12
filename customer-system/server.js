@@ -11,7 +11,8 @@ const app = express();
 const db = new Database(process.env.DB_FILE || path.join(__dirname, 'bodyexpertx.sqlite'));
 const PORT = Number(process.env.PORT || 3000);
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const ADMIN_PASSWORD_HASH = ADMIN_PASSWORD ? bcrypt.hashSync(ADMIN_PASSWORD, 12) : null;
 const SESSION_SECRET = process.env.SESSION_SECRET;
 
 if (!ADMIN_USERNAME || !ADMIN_PASSWORD_HASH || !SESSION_SECRET) {
