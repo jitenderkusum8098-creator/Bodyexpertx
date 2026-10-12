@@ -1532,5 +1532,23 @@ body[data-bx-flow-stage="booking"] #booking{display:block!important}
  #serviceCards .bx-massage-prices .price-choice .btn{font-size:8px!important;padding:5px 4px!important}
 }
 </style>
-<style id="bx-swedish-view-details-style">\n#serviceCards .bx-view-details{align-self:flex-start!important;width:auto!important;margin:0 0 10px!important;padding:5px 9px!important;min-height:0!important;border:1px solid #c6a34a!important;border-radius:7px!important;background:transparent!important;color:#f2c75b!important;box-shadow:none!important;font-size:10px!important;line-height:1.2!important;text-decoration:none!important;white-space:nowrap!important}\n#serviceCards .bx-view-details:hover{background:#241d0f!important;color:#ffe39a!important}\n@media(max-width:560px){#serviceCards .bx-view-details{font-size:10px!important;padding:5px 8px!important;margin-bottom:8px!important}}\n</style>\n<script id="bx-details-add-to-cart">\n(function(){\n const q=new URLSearchParams(window.location.search);\n if(q.get("addDetailsToCart")!=="1")return;\n const name=(q.get("service")||q.get("massage")||"").trim();\n const duration=Number(q.get("duration"));\n const category=q.get("category")==="LUXE"?"LUXE":"PRIME";\n if(name.toLowerCase()!=="swedish massage"||![60,90].includes(duration))return;\n const idx=Array.isArray(services)?services.findIndex(s=>s.name==="Swedish Massage"):-1;\n if(idx<0||typeof addService!=="function")return;\n selectedCategory=category;\n addService(idx,duration);\n if(typeof window.refreshStepCart==="function")window.refreshStepCart();\n q.delete("addDetailsToCart");\n history.replaceState(null,"",window.location.pathname+"?"+q.toString()+window.location.hash);\n const feedback=document.getElementById("flowCartFeedback")||document.getElementById("cartFeedback");\n if(feedback)feedback.textContent="Swedish Massage ("+duration+" minutes) added to your cart. Continue with the existing booking steps.";\n})();\n</script>\n</body>
+<style id="bx-swedish-view-details-style">\n#serviceCards .bx-view-details{align-self:flex-start!important;width:auto!important;margin:0 0 10px!important;padding:5px 9px!important;min-height:0!important;border:1px solid #c6a34a!important;border-radius:7px!important;background:transparent!important;color:#f2c75b!important;box-shadow:none!important;font-size:10px!important;line-height:1.2!important;text-decoration:none!important;white-space:nowrap!important}\n#serviceCards .bx-view-details:hover{background:#241d0f!important;color:#ffe39a!important}\n@media(max-width:560px){#serviceCards .bx-view-details{font-size:10px!important;padding:5px 8px!important;margin-bottom:8px!important}}\n</style>\n<script id="bx-details-add-to-cart">
+(function(){
+  const q = new URLSearchParams(window.location.search);
+  if (q.get("addDetailsToCart") !== "1") return;
+  const name = (q.get("service") || q.get("massage") || "").trim();
+  const duration = Number(q.get("duration"));
+  const category = q.get("category") === "LUXE" ? "LUXE" : "PRIME";
+  if (name.toLowerCase() !== "swedish massage" || ![60, 90].includes(duration)) return;
+  const idx = Array.isArray(services) ? services.findIndex(s => s.name === "Swedish Massage") : -1;
+  if (idx < 0 || typeof addService !== "function") return;
+  selectedCategory = category;
+  addService(idx, duration);
+  if (typeof window.refreshStepCart === "function") window.refreshStepCart();
+  q.delete("addDetailsToCart");
+  history.replaceState(null, "", window.location.pathname + "?" + q.toString() + window.location.hash);
+  const feedback = document.getElementById("flowCartFeedback") || document.getElementById("cartFeedback");
+  if (feedback) feedback.textContent = "स्वीडिश मसाज कार्ट में जोड़ दी गई है। अब मौजूदा बुकिंग प्रक्रिया जारी रखें।";
+})();
+</script>\n</body>
 </html>
