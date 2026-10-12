@@ -673,6 +673,79 @@ img{max-width:100%}
  #finalConfirmation .final-submit{min-height:37px!important;font-size:11px!important}
 }
 </style>
+<style id="bx-compact-prime-luxe-cards">
+/* Compact three-column PRIME/LUXE service cards inspired by approved preview */
+#serviceCards.cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}
+#serviceCards .bx-massage-card{border-radius:15px!important;box-shadow:0 8px 22px #0003}
+#serviceCards .bx-massage-photo{height:100px}
+#serviceCards .bx-tier-badge,#serviceCards .bx-popular-badge{top:7px;padding:4px 7px;font-size:8px;letter-spacing:.04em}
+#serviceCards .bx-tier-badge{left:7px}
+#serviceCards .bx-popular-badge{right:7px}
+#serviceCards .bx-massage-body{padding:10px!important}
+#serviceCards .bx-massage-body .tag{font-size:8px;letter-spacing:.07em;margin-bottom:4px}
+#serviceCards .bx-massage-body h3{font-size:15px!important;line-height:1.22;margin:0 0 5px!important}
+#serviceCards .bx-massage-desc{font-size:11px!important;line-height:1.4!important;margin:0 0 8px!important}
+#serviceCards .bx-benefits-title{font-size:9px;letter-spacing:.08em;margin-bottom:5px}
+#serviceCards .bx-benefits-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin:0 0 8px}
+#serviceCards .bx-benefits-list li{grid-template-columns:13px minmax(0,1fr);gap:4px;font-size:9px;line-height:1.3}
+#serviceCards .bx-benefits-list li>span:first-child{width:13px;height:13px;font-size:8px}
+#serviceCards .bx-included-panel{padding:7px;margin:0 0 8px;border-radius:10px}
+#serviceCards .bx-included-heading{font-size:8px;letter-spacing:.05em;gap:4px;margin-bottom:6px}
+#serviceCards .bx-included-heading>span{font-size:11px}
+#serviceCards .bx-included-items{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+#serviceCards .bx-included-item{gap:4px;padding:5px 2px;border-radius:7px;font-size:8px;line-height:1.2}
+#serviceCards .bx-included-icon{width:24px;height:24px;font-size:13px}
+#serviceCards .bx-included-item small{font-size:7px;line-height:1.2}
+#serviceCards .bx-duration-heading{font-size:10px;margin:0 0 5px;gap:4px}
+#serviceCards .bx-massage-prices{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px!important;margin:0 0 7px!important}
+#serviceCards .bx-massage-prices .price-choice{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;gap:2px;padding:6px!important;border-radius:9px!important;min-width:0}
+#serviceCards .bx-massage-prices .price-choice .bx-session-top{display:none}
+#serviceCards .bx-massage-prices .price-choice .bx-session-duration{grid-column:1;grid-row:1;font-size:9px!important;line-height:1.2;font-weight:800}
+#serviceCards .bx-massage-prices .price-choice .bx-session-duration small{font-size:7px}
+#serviceCards .bx-massage-prices .price-choice b{grid-column:1;grid-row:2;font-size:14px!important;line-height:1.15;margin:1px 0 0!important;white-space:nowrap}
+#serviceCards .bx-massage-prices .price-choice .btn{grid-column:2;grid-row:1/3;align-self:stretch;display:flex;align-items:center;justify-content:center;width:auto;min-width:0;padding:5px 6px!important;border-radius:7px;font-size:9px!important;line-height:1.15;white-space:normal}
+#serviceCards .bx-benefit-note{font-size:8px!important;line-height:1.35!important}
+#serviceMenuTitle{font-size:clamp(22px,3vw,30px);margin-bottom:4px}
+#serviceMenuDescription{font-size:12px;line-height:1.5;margin:0 auto 14px}
+@media(max-width:850px){
+ #serviceCards.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ #serviceCards .bx-massage-photo{height:92px}
+ #serviceCards .bx-massage-body{padding:9px!important}
+ #serviceCards .bx-massage-body h3{font-size:14px!important}
+ #serviceCards .bx-included-item{font-size:7px}
+ #serviceCards .bx-massage-prices .price-choice .btn{font-size:8px!important;padding:4px!important}
+}
+@media(max-width:560px){
+ #serviceCards.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #serviceCards .bx-massage-card{border-radius:12px!important}
+ #serviceCards .bx-massage-photo{height:78px}
+ #serviceCards .bx-tier-badge,#serviceCards .bx-popular-badge{font-size:6px;padding:3px 5px}
+ #serviceCards .bx-massage-body{padding:7px!important}
+ #serviceCards .bx-massage-body .tag{font-size:6px;margin-bottom:3px}
+ #serviceCards .bx-massage-body h3{font-size:12px!important;line-height:1.2}
+ #serviceCards .bx-massage-desc{font-size:9px!important;line-height:1.3!important;margin-bottom:6px!important}
+ #serviceCards .bx-benefits-title{font-size:7px;margin-bottom:4px}
+ #serviceCards .bx-benefits-list{gap:4px;margin-bottom:6px}
+ #serviceCards .bx-benefits-list li{grid-template-columns:11px minmax(0,1fr);gap:3px;font-size:7px;line-height:1.25}
+ #serviceCards .bx-benefits-list li>span:first-child{width:11px;height:11px;font-size:7px}
+ #serviceCards .bx-included-panel{padding:5px;margin-bottom:6px}
+ #serviceCards .bx-included-heading{font-size:6px;margin-bottom:4px}
+ #serviceCards .bx-included-items{gap:2px}
+ #serviceCards .bx-included-item{padding:4px 1px;font-size:6px;gap:3px}
+ #serviceCards .bx-included-icon{width:19px;height:19px;font-size:10px}
+ #serviceCards .bx-included-item small{font-size:6px}
+ #serviceCards .bx-duration-heading{font-size:8px;margin-bottom:4px}
+ #serviceCards .bx-massage-prices{gap:4px!important}
+ #serviceCards .bx-massage-prices .price-choice{padding:4px!important;border-radius:7px!important}
+ #serviceCards .bx-massage-prices .price-choice .bx-session-duration{font-size:7px!important}
+ #serviceCards .bx-massage-prices .price-choice .bx-session-duration small{font-size:6px}
+ #serviceCards .bx-massage-prices .price-choice b{font-size:11px!important}
+ #serviceCards .bx-massage-prices .price-choice .btn{font-size:7px!important;padding:3px!important;border-radius:5px}
+ #serviceCards .bx-benefit-note{font-size:7px!important}
+ #serviceMenuTitle{font-size:22px}
+ #serviceMenuDescription{font-size:11px}
+}
+</style>
 </head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE · NARNAUL + 35 KM</div>
