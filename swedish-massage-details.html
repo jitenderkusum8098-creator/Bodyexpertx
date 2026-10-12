@@ -12,6 +12,24 @@
 @media(max-width:650px){.site-header{position:relative;top:auto;backdrop-filter:none}.section{scroll-margin-top:18px}.nav{min-height:60px}.brand{font-size:15px}.mark{width:32px;height:32px}.back{font-size:11px;padding:8px 10px}.hero{padding-top:14px}.hero-copy{padding-top:15px}.booking-box{padding:13px}.session{gap:8px}.session-price{font-size:19px}.btn{padding:10px 11px;font-size:12px}.section{padding:25px 0}.split,.body-map{grid-template-columns:1fr}.oil-grid{grid-template-columns:1fr 1fr}.oil-card img{height:125px}.benefit-grid,.consult-grid{grid-template-columns:1fr 1fr}.technique,.step{grid-template-columns:112px minmax(0,1fr);gap:10px}.technique img,.step img{height:150px}.technique .copy,.step .copy{padding:10px 9px 10px 0}.technique h3,.step h3{font-size:15px}.technique p,.step p{font-size:12px}.bottom-cta{align-items:flex-start;flex-direction:column}.bottom-cta .btn{width:100%}}
 @media(max-width:390px){.session{grid-template-columns:minmax(0,1fr) auto}.session-price{font-size:18px}.session .btn{padding:9px 8px;font-size:11px}.oil-grid,.benefit-grid,.consult-grid{grid-template-columns:1fr}.technique,.step{grid-template-columns:94px minmax(0,1fr)}.technique img,.step img{height:135px}.area-list{grid-template-columns:1fr 1fr}}
 </style>
+
+<style id="bodyexpertx-detail-heading-size-fix">
+/* Make the service title and intro about 30% smaller, keeping the same black-and-gold design. */
+.hero h1 {
+  font-size: clamp(22px, 3.5vw, 35px) !important;
+  line-height: 1.25 !important;
+  margin: 9px 0 12px !important;
+}
+.hero p {
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+}
+@media (max-width: 600px) {
+  .hero h1 { font-size: clamp(22px, 5.5vw, 29px) !important; }
+  .hero p { font-size: 13px !important; line-height: 1.6 !important; }
+}
+</style>
+
 </head>
 <body>
 <header class="site-header"><div class="wrap nav">
