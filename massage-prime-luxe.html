@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BodyExpertX Massage Booking</title>
@@ -302,4 +302,6 @@ document.getElementById("bookingForm").addEventListener("submit",function(e){e.p
 function setMinDate(){document.getElementById("date").min=new Date().toISOString().slice(0,10)}
 document.getElementById("tierEyebrow").textContent="MASSAGE EXPERIENCE";document.getElementById("tierDescription").textContent="Choose PRIME or LUXE to view services and booking.";document.getElementById("primeDescription").textContent="Professional massage and recovery sessions.";document.getElementById("luxeDescription").textContent="Premium massage experience.";document.getElementById("primePrice").textContent="Starting at ₹699";document.getElementById("luxePrice").textContent="Starting at ₹1,999";document.getElementById("tierNote").textContent="LUXE massage prices are ₹1,300 above corresponding PRIME prices.";document.getElementById("services").style.display="none";document.getElementById("add-ons").style.display="none";document.getElementById("booking").style.display="none";renderServices();renderCart();setMinDate();updateCouponAvailability();
 </script>
+
+<script src="./hindi-ui.js" defer></script>
 </body></html>
