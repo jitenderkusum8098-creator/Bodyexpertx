@@ -127,7 +127,7 @@ const SUPABASE_URL="https://myjstwbpmbrhaiwytpnq.supabase.co";
 const SUPABASE_KEY="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy";
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id);
-let session=null,role=null,therapists=[],adminRatings=[],selectedJobFilter="all";
+let session=null,role=null,therapists=[],adminRatings=[],selectedJobFilter="all",selectedAdminBookingFilter="";
 function msg(id,text){$(id).textContent=text;$(id).classList.remove("hidden")}
 function clearMsg(id){$(id).classList.add("hidden");$(id).textContent=""}
 async function edge(action,extra={}){const {data:{session:s}}=await sb.auth.getSession();const r=await fetch(SUPABASE_URL+"/functions/v1/therapist-ratings",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY,...(s?.access_token?{Authorization:"Bearer "+s.access_token}:{})},body:JSON.stringify({action,...extra})});const d=await r.json().catch(()=>({error:"Unexpected server response"}));if(!r.ok)throw new Error(d.error||"Request failed");return d}
@@ -202,7 +202,7 @@ function renderAdminOps(){
  ["Remaining jobs",active.length,"Not completed or cancelled"],
  ["Cancelled bookings",assignments.filter(a=>a.status==="cancelled").length,"Kept in history"]
  ];
- $("bookingStats").innerHTML=stats.map(x=>'<div class="kpi"><span class="k-label">'+esc(x[0])+'</span><span class="k-value">'+esc(String(x[1]))+'</span><span class="k-note">'+esc(x[2])+'</span></div>').join("");
+ const statFilters=["all","pending","unassigned","massage","salon","sales","therapists","five","active","completed","remaining","cancelled"];$("bookingStats").replaceChildren();stats.forEach((x,i)=>{const b=document.createElement("button");b.type="button";b.className="kpi";b.style.cssText="text-align:left;width:100%;cursor:pointer;color:inherit;font:inherit";b.setAttribute("aria-label",x[0]+". "+x[2]+". Tap to open details.");b.innerHTML='<span class="k-label">'+esc(x[0])+'</span><span class="k-value">'+esc(String(x[1]))+'</span><span class="k-note">'+esc(x[2])+'</span><span class="k-note" style="font-weight:700;margin-top:8px">खोलने के लिए टैप करें ↗</span>';b.onclick=()=>{const f=statFilters[i];if(f==="therapists"||f==="five"){showAdminView("therapists");if(f==="five"){const t=therapists.find(t=>{const r=therapistRating(t.id);return r.avg===5&&r.count>0});if(t)$("detailTherapistSelect").value=t.id;selectedJobFilter="reviews";renderTherapistDetail()}$("therapistDetail").scrollIntoView({behavior:"smooth",block:"start"});return}selectedAdminBookingFilter=f;renderBookingRows();$("bookingList").scrollIntoView({behavior:"smooth",block:"start"})};$("bookingStats").append(b)});
  const select=$("detailTherapistSelect"),current=select.value;select.replaceChildren(new Option("Therapist चुनें",""));
  therapists.forEach(t=>select.append(new Option(t.display_name+" · "+(t.therapist_code||"ID pending"),t.id)));
  if(therapists.some(t=>t.id===current))select.value=current;
@@ -214,8 +214,18 @@ function renderBookingRows(){
   const t=therapists.find(x=>x.id===a.therapist_id),z=zones.find(x=>x.id===a.zone_id);
   const hay=[a.reference_code,a.service_name,t?.display_name,t?.therapist_code,z?.name,a.service_type,a.tier,a.status].join(" ").toLowerCase();
   if(q&&!hay.includes(q))return false;if(svc&&a.service_type!==svc)return false;
-  if(st==="unassigned")return !a.therapist_id&&activeJobStatuses.includes(a.status);
-  if(st&&a.status!==st)return false;return true;
+  if(st==="unassigned"&&!(!a.therapist_id&&activeJobStatuses.includes(a.status)))return false;
+  if(st&&st!=="unassigned"&&a.status!==st)return false;
+  if(selectedAdminBookingFilter==="pending"&&!["awaiting_whatsapp","whatsapp_opened"].includes(a.status))return false;
+  if(selectedAdminBookingFilter==="unassigned"&&(a.therapist_id||!activeJobStatuses.includes(a.status)))return false;
+  if(selectedAdminBookingFilter==="massage"&&a.service_type!=="Massage")return false;
+  if(selectedAdminBookingFilter==="salon"&&a.service_type!=="Salon")return false;
+  if(selectedAdminBookingFilter==="sales"&&a.status!=="completed")return false;
+  if(selectedAdminBookingFilter==="active"&&(!a.therapist_id||!activeJobStatuses.includes(a.status)))return false;
+  if(selectedAdminBookingFilter==="completed"&&a.status!=="completed")return false;
+  if(selectedAdminBookingFilter==="remaining"&&!activeJobStatuses.includes(a.status))return false;
+  if(selectedAdminBookingFilter==="cancelled"&&a.status!=="cancelled")return false;
+  return true;
  });
  list.replaceChildren();
  if(!rows.length){list.innerHTML='<div class="empty">इस filter में कोई booking नहीं मिली।</div>';return}
@@ -259,9 +269,9 @@ function renderTherapistDetail(){
  const visibleJobs=jobs.filter(a=>selectedJobFilter==="all"||selectedJobFilter==="reviews"||(selectedJobFilter==="active"&&activeJobStatuses.includes(a.status))||(selectedJobFilter==="completed"&&a.status==="completed")||(selectedJobFilter==="cancelled"&&a.status==="cancelled"));const filterTitle={all:"सभी jobs",active:"Active jobs",completed:"Completed jobs",cancelled:"Cancelled history",reviews:"सभी jobs"}[selectedJobFilter]||"सभी jobs";const filterHead=document.createElement("div");filterHead.className="row";const filterName=document.createElement("strong");filterName.textContent=filterTitle+" · "+visibleJobs.length;const reset=document.createElement("button");reset.className="btn alt";reset.textContent="सभी jobs दिखाएँ";reset.onclick=()=>{selectedJobFilter="all";renderTherapistDetail()};filterHead.append(filterName,reset);history.append(filterHead);if(!visibleJobs.length)history.insertAdjacentHTML("beforeend",'<div class="empty">इस category में कोई job नहीं है।</div>');
  else visibleJobs.forEach(a=>{const z=zones.find(x=>x.id===a.zone_id),item=document.createElement("details");item.className="item";item.style.cssText="cursor:pointer;margin-top:10px";const summary=document.createElement("summary");summary.style.cssText="font-weight:700;cursor:pointer;padding:4px 0";summary.textContent=a.reference_code+" · "+a.service_name+" · "+statusLabel(a.status);const brief=document.createElement("div");brief.className="muted small";brief.textContent=a.service_type+" / "+a.tier+" · "+(z?.name||"Zone missing")+" · "+(a.appointment_date||"Date pending")+" "+(a.appointment_time||"")+" · Booking amount: "+rupee(a.booking_amount);item.append(summary,brief);const extra=document.createElement("div");extra.style.cssText="margin-top:12px;border-top:1px solid var(--line);padding-top:10px";const lines=[["Booking ID",a.reference_code],["Service",a.service_name],["Service type / category",a.service_type+" / "+a.tier],["Status",statusLabel(a.status)],["Zone",z?.name||"Zone missing"],["Date & time",(a.appointment_date||"Date pending")+" "+(a.appointment_time||"")],["Customer",a.customer_name||"Not recorded"],["Customer phone",a.customer_phone||"Not recorded"],["Address",a.customer_address||"Not recorded"],["Visit type",a.visit_type||"Not recorded"],["Customer age",a.customer_age||"Not recorded"],["For",a.recipient_gender||"Not recorded"],["Customer notes",a.customer_notes||"None"],["Main concern",a.main_concern||"Not recorded"],["Pressure preference",a.preferred_pressure||"Not recorded"],["Customer type",a.customer_type||"Not recorded"],["Service items",Array.isArray(a.service_details)&&a.service_details.length?a.service_details.map(x=>x.name+" ("+rupee(x.price)+")").join(", "):"Not recorded"],["Booking amount",rupee(a.booking_amount)],["Discount",rupee(a.discount_amount)],["Coupon",a.coupon_code||"None"],["Created",a.created_at?new Date(a.created_at).toLocaleString("en-IN"):"Not recorded"],["Cancelled at",a.cancelled_at?new Date(a.cancelled_at).toLocaleString("en-IN"):"—"],["Cancellation reason",a.cancel_reason||"—"]];lines.forEach(([k,v])=>{const p=document.createElement("p");p.className="muted small";p.style.margin="7px 0";const strong=document.createElement("strong");strong.textContent=k+": ";p.append(strong,document.createTextNode(String(v)));extra.append(p)});item.append(extra);history.append(item)});box.append(history);
 }
-$("bookingSearch").addEventListener("input",renderBookingRows);
-$("bookingStatusFilter").addEventListener("change",renderBookingRows);
-$("bookingServiceFilter").addEventListener("change",renderBookingRows);
+$("bookingSearch").addEventListener("input",()=>{selectedAdminBookingFilter="";renderBookingRows()});
+$("bookingStatusFilter").addEventListener("change",()=>{selectedAdminBookingFilter="";renderBookingRows()});
+$("bookingServiceFilter").addEventListener("change",()=>{selectedAdminBookingFilter="";renderBookingRows()});
 $("detailTherapistSelect").addEventListener("change",()=>{selectedJobFilter="all";renderTherapistDetail()});
 $("bookingRefresh").onclick=async()=>{try{await loadAdmin()}catch(e){alert(e.message)}};
 
