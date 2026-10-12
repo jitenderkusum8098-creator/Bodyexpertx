@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BodyExpertX Salon Home Service Booking</title>
@@ -350,4 +350,6 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
 function setMinDate(){document.getElementById("date").min=new Date().toISOString().slice(0,10)}
 selectedDepartment="SALON";document.getElementById("tierEyebrow").textContent="SALON EXPERIENCE";document.getElementById("tierDescription").textContent="Choose PRIME or LUXE to view salon services and booking.";document.getElementById("primeDescription").textContent="Haircut ₹120 · Beard shaving ₹80.";document.getElementById("luxeDescription").textContent="Haircut ₹160 · Beard shaving ₹120.";document.getElementById("primePrice").textContent="Haircut ₹120 · Shaving ₹80 · Combo ₹180";document.getElementById("luxePrice").textContent="Haircut ₹160 · Shaving ₹120 · Combo ₹259";document.getElementById("tierNote").textContent="Pedicure: ₹399/₹599 · Manicure: ₹399/₹599 · Pedicure + Manicure: ₹699/₹999 (PRIME/LUXE).";document.getElementById("selectedCategoryLabel").textContent="SALON · PRIME";document.getElementById("serviceMenuTitle").textContent="PRIME Salon Menu";document.getElementById("services").style.display="none";document.getElementById("add-ons").style.display="none";document.getElementById("booking").style.display="none";renderServices();renderCart();setMinDate();updateCouponAvailability();
 </script>
+
+<script src="./hindi-ui.js" defer></script>
 </body></html>
