@@ -180,6 +180,25 @@ img{max-width:100%}
 ::selection{background:#D8B568;color:#101010}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 </style>
+<style id="bx-premium-salon-checkout">
+/* Match salon checkout to the BodyExpertX premium black-and-gold billing system */
+#booking .booking-layout{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:20px;align-items:start;max-width:1080px;margin-inline:auto}
+#booking .booking-layout>.panel,#bookingForm{padding:clamp(17px,3.5vw,27px);border:1px solid #806126;border-radius:23px;background:radial-gradient(ellipse at 8% 0%,#242016 0%,transparent 42%),linear-gradient(145deg,#171717,#0d0d0e);box-shadow:0 16px 38px #0003,inset 0 1px 0 #ffdd8f0c}
+#booking .booking-layout>.panel>h3,#bookingForm>h3{font-family:Georgia,'Times New Roman',serif;font-size:clamp(22px,4vw,29px);line-height:1.2;color:#f7d681;margin:0 0 18px}
+#booking #cartItems{display:grid;gap:11px;margin:12px 0 16px}
+#booking #cartItems.cart-empty{display:block;padding:16px;border:1px dashed #5b4a2b;border-radius:15px;color:#c4bcae;background:#121212;font-size:14px;line-height:1.6}
+#booking .cart-item{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;padding:15px 13px;border:1px solid #393633;border-radius:17px;background:linear-gradient(140deg,#22201e,#141414);font-size:14px;line-height:1.55;color:#f2eee7}
+#booking .cart-item b{display:inline-block;margin-top:5px;color:#f3ca6c;font-size:20px}
+#booking .cart-item button{min-width:72px;min-height:42px;padding:9px 11px;border:1px solid #8d3b36;border-radius:12px;background:#211514;color:#ffb2a8;font-size:13px;font-weight:800}
+#booking .totals{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid #3c3934;color:#e6e0d5;font-size:16px;line-height:1.4}
+#booking .totals span:last-child{color:#f7d681;font-weight:850}
+#booking .status{font-size:13px;line-height:1.55;color:#d7c9a4}
+#bookingForm .field label{font-size:14px;font-weight:750;color:#eee5d1}
+#bookingForm .field input,#bookingForm .field select,#bookingForm .field textarea{min-height:49px;padding:12px 13px;border:1px solid #4e4638;border-radius:11px;background:#141414;color:#f7f2e8;font-size:16px}
+#bookingForm .field input:focus,#bookingForm .field select:focus,#bookingForm .field textarea:focus{border-color:#e0b44d;box-shadow:0 0 0 3px #e0b44d20}
+#bookingForm .btn{border-radius:13px;font-weight:850}
+@media(max-width:760px){#booking .booking-layout{grid-template-columns:minmax(0,1fr);gap:15px}#booking .booking-layout>.panel,#bookingForm{border-radius:20px;padding:17px}#booking .booking-layout>.panel>h3,#bookingForm>h3{font-size:24px}}
+</style>
 </head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE AVAILABLE · MEHRAULI, NEW DELHI</div>
