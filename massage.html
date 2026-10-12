@@ -1317,6 +1317,41 @@ img{max-width:100%}
 @media(max-width:700px){#serviceCards .bx-massage-body h3,#serviceCards .bx-massage-card .bx-massage-body h3{font-size:20px!important}#serviceCards .bx-massage-desc,#serviceCards .bx-massage-card .bx-massage-desc{font-size:12px!important;line-height:1.4!important}#serviceCards .bx-view-details,#serviceCards a.bx-view-details{height:28px!important;min-height:28px!important;max-height:28px!important;font-size:12px!important;padding:3px 8px!important}#serviceCards .bx-massage-prices .price-choice{padding:8px 6px!important}#serviceCards .bx-massage-prices .price-choice>b{font-size:17px!important}}
 </style>
 
+
+<style id="bodyexpertx-remove-eyebrow-enlarge-image">
+/* Remove the service category eyebrow and give each service photo a little more height. */
+#serviceCards .bx-massage-body > .tag,
+#serviceCards .service-body > .tag,
+#serviceCards .bx-massage-body .tag {
+  display:none!important;
+}
+#serviceCards .bx-massage-photo {
+  height:clamp(220px,34vw,300px)!important;
+  min-height:clamp(220px,34vw,300px)!important;
+  max-height:300px!important;
+  flex-basis:clamp(220px,34vw,300px)!important;
+}
+#serviceCards .bx-massage-photo img {
+  width:100%!important;height:100%!important;object-fit:cover!important;
+}
+#serviceCards > .service > img {
+  width:100%!important;
+  height:clamp(220px,34vw,300px)!important;
+  object-fit:cover!important;
+}
+@media(max-width:700px) {
+  #serviceCards .bx-massage-photo {
+    height:clamp(250px,58vw,340px)!important;
+    min-height:clamp(250px,58vw,340px)!important;
+    max-height:340px!important;
+    flex-basis:clamp(250px,58vw,340px)!important;
+  }
+  #serviceCards > .service > img {
+    height:clamp(250px,58vw,340px)!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE · NARNAUL + 35 KM</div>
