@@ -1069,7 +1069,7 @@ function renderServices(){
   addonBox.innerHTML=addons.map((item,i)=>`
   <article class="addon">
    <img loading="lazy" src="${photo(item.img,600)}" alt="${item.name}" style="width:100%;height:145px;object-fit:cover;border-radius:7px;margin-bottom:12px">
-   <div class="tag">ADD-ON · ${item.minutes} MIN</div><h3>${item.name}</h3><p>${item.desc}</p>
+   <div class="tag">ADD-ON · ${item.minutes} MIN</div><h3>${item.name}</h3><a class="btn small bx-view-details" href="./massage-service-details.html?service=${encodeURIComponent(item.name)}&category=${selectedCategory}&v=20261012-hindi-guides-3">पूरी हिंदी जानकारी देखें ↗</a><p>${item.desc}</p>
    <div style="color:var(--gold2);font-size:21px;font-weight:900;margin-bottom:12px">${money(item.price)}</div>
    <button class="btn small" type="button" onclick="addAddon(${i})">Add to Cart</button>
   </article>`).join("");
