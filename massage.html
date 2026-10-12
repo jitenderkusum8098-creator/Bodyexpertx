@@ -762,7 +762,7 @@ function updateTableOption(){renderCart()}
 function tableDiscount(){return selectedDepartment==="MASSAGE"&&isLuxeInCart()&&document.getElementById("tableOption")?.value==="No"?99:0}
 function syncTableOption(){const wrap=document.getElementById("tableOptionWrap");const on=selectedDepartment==="MASSAGE"&&selectedCategory==="LUXE"&&isLuxeInCart();wrap.hidden=!on;if(!on)document.getElementById("tableOption").value=""}
 function addSalonService(price){cart.push({name:"Haircut ("+selectedCategory+")",duration:0,basePrice:price,price:price,type:"salon",category:"SALON · "+selectedCategory});couponApplied=false;offerMode=false;renderCart();showCartFeedback("Haircut added to cart.");}
-function addService(i,duration){if(!services[i])return;const s=services[i],base=(narnaulPricing&&s["n"+duration]?s["n"+duration]:(duration===60?s.p60:s.p90))+(selectedCategory==="LUXE"?(narnaulPricing?150:1300):0);cart.push({name:s.name+" ("+selectedCategory+")",duration:duration,basePrice:base,price:base+(currentGender()==="Female"?150:0),type:"service",category:"MASSAGE · "+selectedCategory});couponApplied=false;renderCart();showCartFeedback(s.name+" · "+duration+" min added to cart.");}
+function addService(i,duration){if(!services[i])return;const s=services[i],base=(narnaulPricing&&s["n"+duration]?s["n"+duration]:(duration===60?s.p60:s.p90))+(selectedCategory==="LUXE"?(narnaulPricing?150:1300):0);cart.push({name:s.name+" ("+selectedCategory+")",duration:duration,basePrice:base,price:base+(currentGender()==="Female"?150:0),type:"service",category:"MASSAGE · "+selectedCategory});couponApplied=false;renderCart();showCartFeedback(s.name+" · "+duration+" min added to cart.");if(typeof window.refreshStepCart==="function")window.refreshStepCart();}
 function addAddon(i){if(!addons[i])return;const a=addons[i];cart.push({name:a.name,duration:a.minutes,basePrice:a.price,price:a.price+(currentGender()==="Female"?150:0),type:"addon"});couponApplied=false;renderCart();showCartFeedback(a.name+" added to cart.");}
 function addPainService(i){const list=[{name:"Kamar Dard Care",minutes:20,price:299},{name:"Pairon Mein Dard Care",minutes:20,price:299},{name:"Gardan Dard Care",minutes:20,price:250},{name:"Poore Badan Mein Dard Care",minutes:40,price:399},{name:"Ghutne Ke Dard Care",minutes:30,price:350}];if(!narnaulPricing||!list[i])return;const a=list[i],basePrice=a.price+(selectedCategory==="LUXE"?150:0);cart.push({name:a.name+" ("+selectedCategory+")",duration:a.minutes,basePrice,price:basePrice+(currentGender()==="Female"&&selectedCategory==="PRIME"?150:0),type:"pain",category:"MASSAGE · "+selectedCategory+" · NARNAUL"});couponApplied=false;renderCart();showCartFeedback(a.name+" added to cart.");}
 function showCartFeedback(message){const box=document.getElementById("cartItems");box.scrollIntoView({behavior:"smooth",block:"center"});const old=document.getElementById("cartFeedback");if(old)old.remove();const note=document.createElement("p");note.id="cartFeedback";note.className="status";note.textContent=message;box.appendChild(note)}
@@ -1065,15 +1065,12 @@ body[data-bx-flow-stage="booking"] #booking{display:block!important}
       target.appendChild(feedback);
     }
   }
-  const originalAddService = window.addService;
-  window.addService = function(index,duration) {
-    originalAddService.apply(this,arguments);
-    if (stage === "services") {
-      sessionStorage.setItem(storageKey,JSON.stringify(cart));
-      drawServicesCart();
-      const panel = document.getElementById("flowServicesCart");
-      if (panel) panel.scrollIntoView({behavior:"smooth",block:"nearest"});
-    }
+  window.refreshStepCart = function() {
+    if (stage !== "services") return;
+    sessionStorage.setItem(storageKey,JSON.stringify(cart));
+    drawServicesCart();
+    const panel = document.getElementById("flowServicesCart");
+    if (panel && cart.length) panel.scrollIntoView({behavior:"smooth",block:"nearest"});
   };
   function drawSelectedItems(){
     const target = document.getElementById("flowSelectedItems");
