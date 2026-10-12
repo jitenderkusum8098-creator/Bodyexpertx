@@ -763,6 +763,77 @@ html[lang="hi"] .footer,html[lang="hi"] .footer-row,html[lang="hi"] .footer a{fo
 }
 </style>
 
+
+<style id="bodyexpertx-final-price-layout">
+/* All massage service cards: prices must have their own row and never sit behind buttons. */
+#serviceCards .bx-view-details,
+#serviceCards a.bx-view-details {
+  box-sizing:border-box!important;
+  height:40px!important;
+  min-height:40px!important;
+  max-height:40px!important;
+  padding:6px 12px!important;
+  margin:0 0 10px!important;
+  font-size:16px!important;
+  line-height:1.15!important;
+  overflow:hidden!important;
+}
+#serviceCards .bx-massage-prices .price-choice {
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:auto auto auto auto!important;
+  align-content:start!important;
+  justify-items:stretch!important;
+  gap:8px!important;
+  min-width:0!important;
+  padding:12px!important;
+}
+#serviceCards .bx-massage-prices .price-choice .bx-session-top { grid-column:1!important;grid-row:1!important;width:100%!important;min-width:0!important; }
+#serviceCards .bx-massage-prices .price-choice .bx-session-duration { grid-column:1!important;grid-row:2!important;width:100%!important;min-width:0!important; }
+#serviceCards .bx-massage-prices .price-choice > b {
+  display:block!important;
+  position:static!important;
+  grid-column:1!important;
+  grid-row:3!important;
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:0!important;
+  font-size:22px!important;
+  line-height:1.25!important;
+  white-space:nowrap!important;
+  color:#f2c75b!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+#serviceCards .bx-massage-prices .price-choice > button.btn {
+  position:static!important;
+  grid-column:1!important;
+  grid-row:4!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:40px!important;
+  height:auto!important;
+  margin:0!important;
+  padding:9px 5px!important;
+  font-size:12px!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  transform:none!important;
+}
+@media(max-width:700px) {
+  #serviceCards .bx-view-details,
+  #serviceCards a.bx-view-details { height:40px!important;min-height:40px!important;max-height:40px!important;font-size:16px!important;padding:6px 10px!important; }
+  #serviceCards .bx-massage-prices { grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important; }
+  #serviceCards .bx-massage-prices .price-choice { padding:10px 8px!important;gap:8px!important; }
+  #serviceCards .bx-massage-prices .price-choice > b { font-size:20px!important; }
+  #serviceCards .bx-massage-prices .price-choice > button.btn { font-size:11px!important;padding:9px 3px!important; }
+}
+</style>
+
 </head>
 <body>
 <div class="topbar">प्रीमियम मसाज और सैलून सेवाएँ · घर पर सुविधा · बुकिंग की पुष्टि WhatsApp पर</div>
