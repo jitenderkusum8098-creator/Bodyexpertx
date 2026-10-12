@@ -1352,6 +1352,35 @@ img{max-width:100%}
 }
 </style>
 
+
+<style id="bodyexpertx-image-size-30-percent">
+/* Increase service photo height by about 30%; broad selectors override older card rules. */
+.bx-massage-photo,
+#serviceCards .bx-massage-photo,
+article.service .bx-massage-photo {
+  height:267px!important;
+  min-height:267px!important;
+  max-height:267px!important;
+  flex:0 0 267px!important;
+  overflow:hidden!important;
+}
+.bx-massage-photo img,
+#serviceCards .bx-massage-photo img,
+article.service .bx-massage-photo img {
+  display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;
+}
+@media(max-width:700px) {
+  .bx-massage-photo,
+  #serviceCards .bx-massage-photo,
+  article.service .bx-massage-photo {
+    height:429px!important;
+    min-height:429px!important;
+    max-height:429px!important;
+    flex:0 0 429px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE · NARNAUL + 35 KM</div>
