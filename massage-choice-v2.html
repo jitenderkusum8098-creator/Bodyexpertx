@@ -311,8 +311,8 @@ const data={
  boxing:{name:"बॉक्सिंग / मार्शल आर्ट्स",areas:["कंधे और बाँहें","ऊपरी पीठ और कोर","जाँघें और पिंडलियाँ"],session:"पंचिंग, फुटवर्क और ट्रेनिंग की प्रकृति के अनुसार फोकस तय किया जाएगा।",benefit:"आराम और मांसपेशियों के तनाव में अस्थायी राहत मिल सकती है।"},
  other:{name:"अन्य स्पोर्ट्स गतिविधि",areas:["ग्राहक का चुना हुआ खेल और जरूरत"],session:"बुकिंग से पहले खेल, ट्रेनिंग और जरूरत के बारे में अतिरिक्त जानकारी लेना जरूरी होगा।",benefit:"लाभ व्यक्ति की जरूरत और उपयुक्त सेवा पर निर्भर करेंगे।"}
 };
-document.getElementById("direct").addEventListener("click",()=>{window.location.href="./massage.html";});
-document.getElementById("choose-own-massage")?.addEventListener("click",()=>{window.location.href="./massage.html";});
+document.getElementById("direct").addEventListener("click",()=>{window.location.href="./massage.html?stage=tier";});
+document.getElementById("choose-own-massage")?.addEventListener("click",()=>{window.location.href="./massage.html?stage=tier";});
 document.getElementById("guided").addEventListener("click",()=>show("need"));
 document.querySelectorAll("[data-need]").forEach(b=>b.addEventListener("click",()=>{
  need=b.dataset.need;
