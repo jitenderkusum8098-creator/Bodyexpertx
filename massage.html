@@ -600,6 +600,21 @@ img{max-width:100%}
 <article class="addon addon-visual"><img loading="lazy" src="https://images.pexels.com/photos/5793888/pexels-photo-5793888.jpeg?auto=compress&cs=tinysrgb&w=800&v=foot-reflexology-20261010" alt="Therapist performing foot massage and reflexology"><div class="addon-content"><h3>Foot Reflexology</h3><p>Focused pressure for tired feet · 20 min</p><strong>₹199</strong><button class="btn small" type="button" onclick="addAddon(1)">Add to Cart</button></div></article>
 <article class="addon addon-visual"><img loading="lazy" src="https://images.pexels.com/photos/5794020/pexels-photo-5794020.jpeg?auto=compress&cs=tinysrgb&w=800&v=head-shoulder-20261010" alt="Therapist massaging the head, neck and shoulders"><div class="addon-content"><h3>Head &amp; Shoulder Massage</h3><p>Care for head, neck and shoulders · 40 min</p><strong>₹449</strong><button class="btn small" type="button" onclick="addAddon(2)">Add to Cart</button></div></article>
 </div></div></section>
+
+<section class="section" id="selectedServicesReview" hidden>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">BODYEXPERTX · आपकी पसंद</div>
+      <h2>आपने यह मसाज चुनी है</h2>
+      <p>आगे बढ़ने से पहले अपनी चुनी हुई सर्विस देख लें।</p>
+    </div>
+    <div class="panel flow-selected-panel">
+      <div id="flowSelectedItems"></div>
+      <button type="button" class="btn flow-next-button" id="flowContinueBooking">आगे बढ़ें · Appointment Details</button>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="booking"><div class="wrap"><div class="section-head"><div class="eyebrow">Your appointment, your way</div><h2>Build Your Booking</h2><p>Apni appointment details bharein, booking confirm karein aur WhatsApp par request bhejein.</p></div>
 <div class="booking-layout"><form class="panel" id="bookingForm"><h3>2. Appointment details</h3>
 <div class="field-grid"><div class="field"><label for="name">Full name *</label><input id="name" name="name" required autocomplete="name" placeholder="Your name"></div><div class="field"><label for="phone">Mobile number *</label><input id="phone" name="phone" required inputmode="tel" autocomplete="tel" pattern="[0-9+ ()-]{10,16}" placeholder="10-digit Indian mobile number"></div></div>
@@ -902,5 +917,128 @@ document.getElementById("primeDescription").innerHTML="<strong>Therapist experie
 
 
 <script src="./hindi-ui.js" defer></script>
+
+<style id="bx-step-flow-styles">
+body[data-bx-flow-stage="tier"] #categories{display:block!important}
+body[data-bx-flow-stage="tier"] #categories .massage-gallery{display:none!important}
+body[data-bx-flow-stage="tier"] #tierChooser{display:block!important}
+body[data-bx-flow-stage="tier"] #services,
+body[data-bx-flow-stage="tier"] #add-ons,
+body[data-bx-flow-stage="tier"] #booking,
+body[data-bx-flow-stage="tier"] #selectedServicesReview{display:none!important}
+body[data-bx-flow-stage="services"] #categories,
+body[data-bx-flow-stage="services"] #add-ons,
+body[data-bx-flow-stage="services"] #booking,
+body[data-bx-flow-stage="services"] #selectedServicesReview{display:none!important}
+body[data-bx-flow-stage="services"] #services{display:block!important}
+body[data-bx-flow-stage="selected"] #categories,
+body[data-bx-flow-stage="selected"] #services,
+body[data-bx-flow-stage="selected"] #add-ons,
+body[data-bx-flow-stage="selected"] #booking{display:none!important}
+body[data-bx-flow-stage="selected"] #selectedServicesReview{display:block!important}
+body[data-bx-flow-stage="booking"] #categories,
+body[data-bx-flow-stage="booking"] #services,
+body[data-bx-flow-stage="booking"] #add-ons,
+body[data-bx-flow-stage="booking"] #selectedServicesReview{display:none!important}
+body[data-bx-flow-stage="booking"] #booking{display:block!important}
+.flow-selected-panel{max-width:820px;margin:0 auto;padding:22px}
+.flow-selected-item{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.flow-selected-item:last-child{border-bottom:0}
+.flow-selected-item h3{margin:0 0 4px;font-size:19px}
+.flow-selected-item p{margin:0;color:var(--muted);font-size:14px}
+.flow-selected-price{font-size:20px;font-weight:900;color:var(--gold2);white-space:nowrap}
+.flow-next-button{width:100%;margin-top:22px;min-height:54px}
+@media(max-width:560px){.flow-selected-panel{padding:16px}.flow-selected-item{align-items:flex-start}.flow-selected-item h3{font-size:16px}.flow-selected-price{font-size:18px}}
+</style>
+<script id="bx-step-flow-controller">
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  let stage = params.get("stage");
+  const guidedOrSpecific = ["source","activity","service","massage","offer"].some(k => params.has(k));
+  if (!stage && !guidedOrSpecific) {
+    params.set("stage","tier");
+    window.location.replace(window.location.pathname + "?" + params.toString() + window.location.hash);
+    return;
+  }
+  if (!stage || !["tier","services","selected","booking"].includes(stage)) return;
+  document.body.dataset.bxFlowStage = stage;
+  const storageKey = "bodyexpertxMassageFlowCart";
+  const copyParams = () => {
+    const p = new URLSearchParams(window.location.search);
+    p.set("stage",stage);
+    p.set("category",selectedCategory === "LUXE" ? "LUXE" : "PRIME");
+    return p;
+  };
+  if (stage === "tier") {
+    sessionStorage.removeItem(storageKey);
+  } else {
+    try {
+      const saved = sessionStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) cart = parsed;
+      }
+    } catch (e) {
+      sessionStorage.removeItem(storageKey);
+    }
+  }
+  const go = nextStage => {
+    const p = copyParams();
+    p.set("stage",nextStage);
+    window.location.href = "./massage.html?" + p.toString();
+  };
+  const originalSelectCategory = window.selectCategory;
+  window.selectCategory = function(category, scroll=true) {
+    if (stage === "tier") {
+      const p = new URLSearchParams(window.location.search);
+      p.set("stage","services");
+      p.set("category",category === "LUXE" ? "LUXE" : "PRIME");
+      p.delete("service");
+      p.delete("massage");
+      window.location.href = "./massage.html?" + p.toString();
+      return;
+    }
+    return originalSelectCategory.apply(this,arguments);
+  };
+  const originalAddService = window.addService;
+  window.addService = function(index,duration) {
+    originalAddService.apply(this,arguments);
+    if (stage === "services") {
+      sessionStorage.setItem(storageKey,JSON.stringify(cart));
+      go("selected");
+    }
+  };
+  const esc = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+  function drawSelectedItems(){
+    const target = document.getElementById("flowSelectedItems");
+    if (!target) return;
+    target.innerHTML = cart.map(item => `
+      <div class="flow-selected-item">
+        <div><h3>${esc(item.name)}</h3><p>${item.duration ? esc(item.duration)+" मिनट का सत्र" : "चुनी हुई सर्विस"}</p></div>
+        <div class="flow-selected-price">${typeof money === "function" ? money(Number(item.price)||0) : "₹"+(Number(item.price)||0)}</div>
+      </div>`).join("");
+  }
+  if ((stage === "selected" || stage === "booking") && (!Array.isArray(cart) || !cart.length)) {
+    const p = new URLSearchParams(window.location.search);
+    p.set("stage","services");
+    window.location.replace("./massage.html?" + p.toString());
+    return;
+  }
+  if (stage === "selected") {
+    drawSelectedItems();
+    document.getElementById("flowContinueBooking")?.addEventListener("click",() => {
+      sessionStorage.setItem(storageKey,JSON.stringify(cart));
+      go("booking");
+    });
+  }
+  if (stage === "booking") {
+    if (typeof renderCart === "function") renderCart();
+    if (typeof updateCouponAvailability === "function") updateCouponAvailability();
+    const booking = document.getElementById("booking");
+    if (booking) booking.scrollIntoView({block:"start",behavior:"auto"});
+  }
+})();
+</script>
+
 </body>
 </html>
