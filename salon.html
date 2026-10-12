@@ -205,6 +205,37 @@ img{max-width:100%}
 #bookingForm .btn{border-radius:13px;font-weight:850}
 @media(max-width:760px){#booking .booking-layout{grid-template-columns:minmax(0,1fr);gap:15px}#booking .booking-layout>.panel,#bookingForm{border-radius:20px;padding:17px}#booking .booking-layout>.panel>h3,#bookingForm>h3{font-size:24px}}
 </style>
+
+<style id="bx-unified-addon-and-salon-cards">
+#addonCards>.addon{display:flex!important;flex-direction:column!important;align-self:stretch!important;min-width:0!important;overflow:hidden!important;border:2px solid #c6a34a!important;border-radius:19px!important;background:linear-gradient(155deg,#19191b,#101012)!important;color:#f7f3e8!important;box-shadow:0 8px 22px #0005!important;padding:15px!important}
+#addonCards>.addon>img{display:block!important;width:calc(100% + 30px)!important;max-width:none!important;height:150px!important;flex:0 0 150px!important;object-fit:cover!important;border-radius:0!important;margin:-15px -15px 14px!important}
+#addonCards>.addon>.tag{display:inline-flex!important;align-self:flex-start!important;padding:5px 8px!important;margin:0 0 8px!important;border:1px solid #7c6025!important;border-radius:999px!important;background:#19150c!important;color:#e8c35c!important;font-size:10px!important;line-height:1.4!important;font-weight:900!important}
+#addonCards>.addon>h3{margin:0 0 9px!important;color:#fff!important;font-size:20px!important;line-height:1.3!important}
+#addonCards>.addon>p{margin:0 0 12px!important;color:#d4cfc4!important;font-size:13px!important;line-height:1.6!important}
+#addonCards>.addon>div[style*="color:var(--gold2)"]{margin:0 0 12px!important;color:#f2c75b!important;font-size:22px!important;font-weight:900!important}
+#addonCards>.addon>button{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:44px!important;margin-top:auto!important;padding:10px 14px!important;border:1px solid #e8c46d!important;border-radius:999px!important;background:linear-gradient(135deg,#f8e5b8,#e4bd67)!important;color:#21190b!important;font-size:13px!important;font-weight:900!important}
+#serviceCards>.service:not(.bx-massage-card){display:flex!important;flex-direction:column!important;min-width:0!important;overflow:hidden!important;border:2px solid #c6a34a!important;border-radius:19px!important;background:linear-gradient(155deg,#19191b,#101012)!important;color:#f7f3e8!important;box-shadow:0 8px 22px #0005!important}
+#serviceCards>.service:not(.bx-massage-card)>img{display:block!important;width:100%!important;height:150px!important;flex:0 0 150px!important;object-fit:cover!important;border-radius:0!important;margin:0 0 0!important}
+#serviceCards>.service:not(.bx-massage-card)>.service-body{display:flex!important;flex:1!important;flex-direction:column!important;padding:15px!important;color:#f7f3e8!important}
+#serviceCards>.service:not(.bx-massage-card) .tag{color:#e8c35c!important;font-size:10px!important;font-weight:900!important}
+#serviceCards>.service:not(.bx-massage-card) h3{font-size:20px!important;color:#fff!important;line-height:1.3!important}
+#serviceCards>.service:not(.bx-massage-card) p{font-size:13px!important;line-height:1.6!important;color:#d4cfc4!important}
+#serviceCards>.service:not(.bx-massage-card) .price-choice{border:1px solid #695020!important;border-radius:14px!important;background:linear-gradient(145deg,#241d0e,#171511)!important;color:#eee5d2!important}
+#serviceCards>.service:not(.bx-massage-card) .price-choice b{color:#f2c75b!important}
+#serviceCards>.service:not(.bx-massage-card) .btn,#addonCards>.addon .btn{border-radius:999px!important}
+@media(max-width:560px){
+#addonCards>.addon{padding:20px!important;border-width:3px!important;border-radius:25px!important}
+#addonCards>.addon>img{width:calc(100% + 40px)!important;height:clamp(230px,65vw,300px)!important;flex-basis:auto!important;margin:-20px -20px 17px!important}
+#addonCards>.addon>.tag{font-size:11px!important;margin-bottom:10px!important}
+#addonCards>.addon>h3{font-size:25px!important}
+#addonCards>.addon>p{font-size:16px!important;line-height:1.65!important}
+#addonCards>.addon>button{min-height:52px!important;font-size:15px!important}
+#serviceCards>.service:not(.bx-massage-card)>img{height:clamp(230px,65vw,300px)!important;flex-basis:auto!important}
+#serviceCards>.service:not(.bx-massage-card)>.service-body{padding:20px!important}
+#serviceCards>.service:not(.bx-massage-card) h3{font-size:25px!important}
+#serviceCards>.service:not(.bx-massage-card) p{font-size:16px!important;line-height:1.65!important}
+}
+</style>
 </head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE AVAILABLE · MEHRAULI, NEW DELHI</div>
