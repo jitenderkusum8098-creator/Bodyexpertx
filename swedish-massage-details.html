@@ -188,10 +188,23 @@
   const addLink=(duration)=>"./massage.html?stage=services&service=Swedish%20Massage&category="+category+"&duration="+duration+"&addDetailsToCart=1";
   document.getElementById("add60").href=addLink(60);
   document.getElementById("add90").href=addLink(90);
+  document.querySelector(".back").href="./massage.html?stage=services&massage=Swedish%20Massage&category="+category;
   document.querySelector(".hero-tag").textContent=category==="LUXE"?"LUXE · PREMIUM CARE":"PRIME · PROFESSIONAL CARE";
-  const prices=category==="LUXE"?[1999,2399]:[699,1099];
-  document.getElementById("price60").textContent="₹"+prices[0].toLocaleString("en-IN")+"/-";
-  document.getElementById("price90").textContent="₹"+prices[1].toLocaleString("en-IN")+"/-";
+  const priceNodes=[document.getElementById("price60"),document.getElementById("price90")];
+  function paintPrices(narnaul){
+    const prices=narnaul?(category==="LUXE"?[649,849]:[499,699]):(category==="LUXE"?[1999,2399]:[699,1099]);
+    priceNodes.forEach((node,i)=>node.textContent="₹"+prices[i].toLocaleString("en-IN")+"/-");
+    document.querySelectorAll(".session small").forEach(node=>node.textContent=narnaul?"Local service-area rate · confirm in cart":"Standard listed rate · confirm in cart");
+  }
+  paintPrices(false);
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      const rad=x=>x*Math.PI/180,lat=pos.coords.latitude,lon=pos.coords.longitude,lat2=28.0444,lon2=76.1083,R=6371;
+      const dlat=rad(lat2-lat),dlon=rad(lon2-lon);
+      const a=Math.sin(dlat/2)**2+Math.cos(rad(lat))*Math.cos(rad(lat2))*Math.sin(dlon/2)**2;
+      paintPrices(2*R*Math.asin(Math.sqrt(a))<=35);
+    },()=>{});
+  }
   document.getElementById("year").textContent=new Date().getFullYear();
 })();
 </script>
