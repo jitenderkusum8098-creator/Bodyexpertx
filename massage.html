@@ -594,7 +594,7 @@ img{max-width:100%}
 <article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=720&q=80" alt="Lymphatic drainage massage"><div class="service-body"><h3>Lymphatic Drainage Massage</h3><p>Gentle specialised techniques; suitability should be discussed first.</p><div class="prices"><div class="price-choice"><span>60 minutes</span><b>₹1,199</b><button class="btn small" type="button" onclick="addService(5,60)">Add 60 min</button></div><div class="price-choice"><span>90 minutes</span><b>₹1,699</b><button class="btn small" type="button" onclick="addService(5,90)">Add 90 min</button></div></div></div></article>
 <article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=720&q=80" alt="Gym recovery massage"><div class="service-body"><h3>BodyExpertX Signature Gym Recovery</h3><p>A recovery-focused massage for active people and gym-goers.</p><div class="prices"><div class="price-choice"><span>60 minutes</span><b>₹899</b><button class="btn small" type="button" onclick="addService(6,60)">Add 60 min</button></div><div class="price-choice"><span>90 minutes</span><b>₹1,299</b><button class="btn small" type="button" onclick="addService(6,90)">Add 90 min</button></div></div></div></article>
 </div></div></div></section>
-<section class="section alt" id="narnaul-pain-section"><div class="wrap"><div class="section-head"><div class="eyebrow">NARNAUL LOCAL MENU</div><h2>Targeted Comfort Sessions</h2><p>These additional services and prices are available only when your current location is detected within 35 km of Narnaul.</p></div><div class="addon-grid" id="narnaulPainServices"></div></div></section>
+<section class="section" id="flowServicesCartSection" hidden><div class="wrap"><div class="flow-cart-panel" id="flowServicesCart" hidden><div class="flow-cart-heading"><div><span class="eyebrow">आपकी पसंद</span><h2>आपका मसाज कार्ट</h2><p>एक से ज़्यादा मसाज जोड़ सकते हैं।</p></div><div class="flow-cart-count" id="flowServicesCartCount">0 सर्विस</div></div><div id="flowServicesCartItems"></div><div class="flow-cart-footer"><div><span>कुल राशि</span><strong id="flowServicesCartTotal">₹0</strong></div><button type="button" class="btn flow-next-button" id="flowServicesContinue">आगे बढ़ें और बुकिंग पूरी करें →</button></div></div></div></section> <section class="section alt" id="narnaul-pain-section"><div class="wrap"><div class="section-head"><div class="eyebrow">NARNAUL LOCAL MENU</div><h2>Targeted Comfort Sessions</h2><p>These additional services and prices are available only when your current location is detected within 35 km of Narnaul.</p></div><div class="addon-grid" id="narnaulPainServices"></div></div></section>
 <section class="section alt" id="add-ons"><div class="wrap"><div class="section-head"><div class="eyebrow">A little extra care</div><h2>Quick Add-on Sessions</h2><p>Book these on their own (₹400 minimum applies) or add them to a massage.</p></div><div class="addon-grid" id="addonCards">
 <article class="addon addon-visual"><img loading="lazy" src="https://images.pexels.com/photos/5793708/pexels-photo-5793708.jpeg?auto=compress&cs=tinysrgb&w=800&v=head-20261010" alt="Therapist giving a head and scalp massage"><div class="addon-content"><h3>Head Massage</h3><p>Scalp-focused relaxation · 20 min</p><strong>₹199</strong><button class="btn small" type="button" onclick="addAddon(0)">Add to Cart</button></div></article>
 <article class="addon addon-visual"><img loading="lazy" src="https://images.pexels.com/photos/5793888/pexels-photo-5793888.jpeg?auto=compress&cs=tinysrgb&w=800&v=foot-reflexology-20261010" alt="Therapist performing foot massage and reflexology"><div class="addon-content"><h3>Foot Reflexology</h3><p>Focused pressure for tired feet · 20 min</p><strong>₹199</strong><button class="btn small" type="button" onclick="addAddon(1)">Add to Cart</button></div></article>
@@ -919,6 +919,27 @@ document.getElementById("primeDescription").innerHTML="<strong>Therapist experie
 <script src="./hindi-ui.js" defer></script>
 
 <style id="bx-step-flow-styles">
+body[data-bx-flow-stage="tier"] #flowServicesCartSection,
+body[data-bx-flow-stage="selected"] #flowServicesCartSection,
+body[data-bx-flow-stage="booking"] #flowServicesCartSection{display:none!important}
+body[data-bx-flow-stage="services"] #flowServicesCartSection{display:block!important}
+.flow-cart-panel{max-width:1040px;margin:0 auto;padding:clamp(18px,3vw,28px);border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,#151a32,#202b4c);box-shadow:0 18px 40px #0002}
+.flow-cart-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:10px}
+.flow-cart-heading h2{margin:5px 0;font-size:clamp(22px,3vw,30px);color:var(--gold2)}
+.flow-cart-heading p{margin:0;color:var(--muted)}
+.flow-cart-count{padding:9px 13px;border:1px solid var(--line);border-radius:999px;font-weight:800;white-space:nowrap}
+.flow-cart-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.flow-cart-row-info h3{margin:0 0 5px;font-size:17px}
+.flow-cart-row-info p{margin:0;color:var(--muted);font-size:14px}
+.flow-cart-row-price{color:var(--gold2);font-size:19px;white-space:nowrap}
+.flow-cart-remove{min-height:40px;padding:7px 12px;border:1px solid var(--line);border-radius:10px;background:transparent;color:inherit;font-weight:800}
+.flow-cart-footer{margin-top:18px}
+.flow-cart-footer>div{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:17px}
+.flow-cart-footer>div strong{font-size:25px;color:var(--gold2)}
+.flow-cart-footer .flow-next-button{width:100%;margin-top:18px;min-height:56px}
+#flowCartFeedback:empty{display:none}
+@media(max-width:560px){.flow-cart-row{grid-template-columns:minmax(0,1fr) auto;gap:10px}.flow-cart-remove{grid-column:2;justify-self:end}.flow-cart-row-price{grid-column:2;grid-row:1}}
+
 body[data-bx-flow-stage="tier"] #narnaul-pain-section,
 body[data-bx-flow-stage="services"] #narnaul-pain-section,
 body[data-bx-flow-stage="selected"] #narnaul-pain-section,
@@ -1004,15 +1025,56 @@ body[data-bx-flow-stage="booking"] #booking{display:block!important}
     }
     return originalSelectCategory.apply(this,arguments);
   };
+  const esc = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+  if (stage === "services") {
+    window.showCartFeedback = function(message) {
+      const status = document.getElementById("flowCartFeedback");
+      if (status) status.textContent = message || "कार्ट अपडेट हो गया।";
+    };
+  }
+  function drawServicesCart(){
+    const section = document.getElementById("flowServicesCartSection");
+    const panel = document.getElementById("flowServicesCart");
+    const target = document.getElementById("flowServicesCartItems");
+    if (!panel || !target || !section) return;
+    section.hidden = stage !== "services";
+    panel.hidden = !cart.length;
+    const count = document.getElementById("flowServicesCartCount");
+    const total = document.getElementById("flowServicesCartTotal");
+    if (count) count.textContent = cart.length + " सर्विस";
+    if (total) total.textContent = typeof money === "function" ? money(cart.reduce((sum,item)=>sum+(Number(item.price)||0),0)) : "₹"+cart.reduce((sum,item)=>sum+(Number(item.price)||0),0);
+    target.innerHTML = cart.map((item,index) => `
+      <div class="flow-cart-row">
+        <div class="flow-cart-row-info"><h3>${esc(item.name)}</h3><p>${item.duration ? esc(item.duration)+" मिनट का सत्र" : "चुनी हुई सर्विस"}</p></div>
+        <strong class="flow-cart-row-price">${typeof money === "function" ? money(Number(item.price)||0) : "₹"+(Number(item.price)||0)}</strong>
+        <button type="button" class="flow-cart-remove" data-flow-remove="${index}" aria-label="इस सर्विस को हटाएँ">हटाएँ</button>
+      </div>`).join("");
+    target.querySelectorAll("[data-flow-remove]").forEach(button => button.addEventListener("click",() => {
+      const index = Number(button.getAttribute("data-flow-remove"));
+      if (!Number.isInteger(index) || index < 0 || index >= cart.length) return;
+      cart.splice(index,1);
+      sessionStorage.setItem(storageKey,JSON.stringify(cart));
+      if (typeof renderCart === "function") renderCart();
+      drawServicesCart();
+    }));
+    let feedback = document.getElementById("flowCartFeedback");
+    if (!feedback) {
+      feedback = document.createElement("p");
+      feedback.id = "flowCartFeedback";
+      feedback.className = "status";
+      target.appendChild(feedback);
+    }
+  }
   const originalAddService = window.addService;
   window.addService = function(index,duration) {
     originalAddService.apply(this,arguments);
     if (stage === "services") {
       sessionStorage.setItem(storageKey,JSON.stringify(cart));
-      go("selected");
+      drawServicesCart();
+      const panel = document.getElementById("flowServicesCart");
+      if (panel) panel.scrollIntoView({behavior:"smooth",block:"nearest"});
     }
   };
-  const esc = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
   function drawSelectedItems(){
     const target = document.getElementById("flowSelectedItems");
     if (!target) return;
@@ -1027,6 +1089,22 @@ body[data-bx-flow-stage="booking"] #booking{display:block!important}
     p.set("stage","services");
     window.location.replace("./massage.html?" + p.toString());
     return;
+  }
+  if (stage === "services") {
+    drawServicesCart();
+    document.getElementById("flowServicesContinue")?.addEventListener("click",() => {
+      if (!cart.length) {
+        const section = document.getElementById("flowServicesCartSection");
+        if (section) section.hidden = false;
+        const panel = document.getElementById("flowServicesCart");
+        if (panel) panel.hidden = false;
+        const target = document.getElementById("flowServicesCartItems");
+        if (target) target.innerHTML = '<p class="status">आगे बढ़ने से पहले कम से कम एक मसाज कार्ट में जोड़ें।</p>';
+        return;
+      }
+      sessionStorage.setItem(storageKey,JSON.stringify(cart));
+      go("selected");
+    });
   }
   if (stage === "selected") {
     drawSelectedItems();
