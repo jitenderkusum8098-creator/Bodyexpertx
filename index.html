@@ -550,7 +550,33 @@ html[lang="hi"] .footer,html[lang="hi"] .footer-row,html[lang="hi"] .footer a{fo
 .bx-team-copy p{font-size:14px!important;line-height:1.9!important}
 @media(max-width:950px){.bx-team-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.bx-team-photo{height:260px!important}}
 @media(max-width:620px){.bx-team-grid{grid-template-columns:1fr!important;gap:16px!important}.bx-team-photo{height:auto!important;max-height:none!important;aspect-ratio:4/3!important}.bx-team-photo img{object-fit:contain!important;object-position:center!important}.bx-team-copy{padding:18px!important}.bx-team-copy h3{font-size:22px!important}.bx-team-copy p{font-size:15px!important;line-height:2!important}}
-</style></head>
+</style>
+<style id="bx-unified-reference-service-cards">
+#serviceCards{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:16px!important;align-items:stretch!important}
+#serviceCards>.bx-massage-card{display:flex!important;flex-direction:column!important;min-width:0!important;overflow:hidden!important;border:2px solid #c6a34a!important;border-radius:19px!important;background:linear-gradient(155deg,#19191b,#101012)!important;color:#f7f3e8!important;box-shadow:0 8px 22px #0005!important}
+#serviceCards .bx-massage-photo{height:150px!important;min-height:150px!important;max-height:150px!important;flex:0 0 150px!important;position:relative!important;overflow:hidden!important}
+#serviceCards .bx-massage-photo img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important}
+#serviceCards .bx-tier-badge,#serviceCards .bx-popular-badge{position:absolute!important;z-index:1!important;top:9px!important;padding:5px 8px!important;border-radius:999px!important;font-size:9px!important;line-height:1.3!important;font-weight:950!important}
+#serviceCards .bx-tier-badge{left:9px!important;border:1px solid #e2bd5a!important;background:#101010e8!important;color:#f3d171!important}
+#serviceCards .bx-popular-badge{right:9px!important;border:1px solid #b18b36!important;background:#2b210ce8!important;color:#ffe5a0!important}
+#serviceCards .bx-massage-body{display:flex!important;flex-direction:column!important;flex:1!important;min-width:0!important;padding:15px!important;color:#f7f3e8!important}
+#serviceCards .bx-massage-body>.tag{font-size:9px!important;line-height:1.45!important;letter-spacing:.05em!important;margin:0 0 7px!important;color:#e8c35c!important}
+#serviceCards .bx-massage-body h3{font-size:20px!important;line-height:1.25!important;margin:0 0 9px!important;color:#fff!important;overflow-wrap:anywhere!important}
+#serviceCards .bx-massage-desc{font-size:12px!important;line-height:1.55!important;margin:0 0 12px!important;color:#d4cfc4!important}
+#serviceCards .bx-view-details{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:48px!important;margin:0 0 12px!important;padding:9px 10px!important;border:1px solid #f3d18a!important;border-radius:999px!important;background:linear-gradient(135deg,#f8e5b8,#e4bd67)!important;color:#21190b!important;font-size:15px!important;line-height:1.35!important;font-weight:850!important;text-align:center!important;text-decoration:none!important}
+#serviceCards .bx-duration-heading{display:flex!important;align-items:center!important;gap:6px!important;font-size:13px!important;line-height:1.4!important;font-weight:900!important;margin:0 0 8px!important;color:#fff!important}
+#serviceCards .bx-massage-prices{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin:0!important}
+#serviceCards .bx-massage-prices .price-choice{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto auto!important;align-items:center!important;gap:5px 4px!important;padding:9px 7px!important;min-width:0!important;border:1.5px solid #a88a43!important;border-top:3px solid #d2ad4d!important;border-radius:12px!important;background:linear-gradient(145deg,#1b1b1b,#101010)!important;color:#f7f3e8!important}
+#serviceCards .bx-session-top{grid-column:1/-1!important;display:flex!important;align-items:center!important;gap:4px!important;font-size:8px!important;line-height:1.3!important;color:#bcae7b!important}
+#serviceCards .bx-session-duration{grid-column:1/-1!important;font-size:11px!important;line-height:1.3!important;font-weight:850!important;color:#f2e7c9!important}
+#serviceCards .bx-session-duration small{font-size:8px!important}
+#serviceCards .bx-massage-prices .price-choice b{grid-column:1!important;font-size:17px!important;line-height:1.2!important;white-space:nowrap!important;color:#f2c75b!important}
+#serviceCards .bx-massage-prices .price-choice .btn{grid-column:2!important;width:auto!important;min-width:0!important;min-height:35px!important;padding:7px!important;font-size:10px!important;line-height:1.2!important;font-weight:850!important;white-space:normal!important;border-radius:9px!important}
+@media(max-width:850px){#serviceCards{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}#serviceCards .bx-massage-photo{height:130px!important;min-height:130px!important;max-height:130px!important;flex-basis:130px!important}#serviceCards .bx-massage-body{padding:12px!important}#serviceCards .bx-massage-body h3{font-size:18px!important}}
+@media(max-width:560px){#serviceCards{grid-template-columns:minmax(0,1fr)!important;gap:22px!important}#serviceCards>.bx-massage-card{border-width:3px!important;border-radius:27px!important;box-shadow:0 0 0 1px #72551b,0 10px 28px #0007!important}#serviceCards .bx-massage-photo{height:clamp(250px,72vw,330px)!important;min-height:clamp(250px,72vw,330px)!important;max-height:none!important;flex:0 0 auto!important}#serviceCards .bx-massage-body{padding:20px!important}#serviceCards .bx-massage-body>.tag{font-size:12px!important;margin:0 0 12px!important}#serviceCards .bx-massage-body h3{font-size:clamp(28px,7vw,36px)!important;line-height:1.2!important;margin:0 0 14px!important}#serviceCards .bx-massage-desc{font-size:18px!important;line-height:1.65!important;margin:0 0 18px!important}#serviceCards .bx-view-details{min-height:78px!important;margin-bottom:16px!important;padding:14px 12px!important;font-size:23px!important}#serviceCards .bx-duration-heading{font-size:20px!important;margin:0 0 15px!important;gap:9px!important}#serviceCards .bx-massage-prices{gap:12px!important}#serviceCards .bx-massage-prices .price-choice{gap:8px 6px!important;padding:17px 13px!important;border-radius:20px!important;border-top-width:4px!important}#serviceCards .bx-session-top{font-size:11px!important}#serviceCards .bx-session-duration{font-size:17px!important}#serviceCards .bx-session-duration small{font-size:12px!important}#serviceCards .bx-massage-prices .price-choice b{font-size:25px!important}#serviceCards .bx-massage-prices .price-choice .btn{min-height:54px!important;padding:12px 13px!important;font-size:13px!important;border-radius:15px!important}}
+@media(max-width:390px){#serviceCards .bx-massage-body{padding:15px!important}#serviceCards .bx-view-details{font-size:19px!important;min-height:66px!important}#serviceCards .bx-massage-prices .price-choice{padding:12px 8px!important;gap:7px 4px!important}#serviceCards .bx-massage-prices .price-choice b{font-size:20px!important}#serviceCards .bx-massage-prices .price-choice .btn{font-size:11px!important;padding:9px 7px!important;min-height:46px!important}#serviceCards .bx-session-duration{font-size:15px!important}}
+</style>
+</head>
 <body>
 <div class="topbar">प्रीमियम मसाज और सैलून सेवाएँ · घर पर सुविधा · बुकिंग की पुष्टि WhatsApp पर</div>
 <header class="header"><div class="wrap nav">
@@ -719,14 +745,16 @@ function renderServices(){
  const addonBox=document.getElementById("addonCards");
  if(selectedDepartment==="SALON"){document.querySelector(".gender-price-note").textContent="Salon haircut prices are fixed by category: PRIME ₹120 · LUXE ₹160.";document.getElementById("add-ons").hidden=true;serviceBox.innerHTML=`<article class="service"><img loading="lazy" src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=720&q=80" alt="Barber giving a haircut"><div class="service-body"><div class="tag">${selectedCategory} · SALON</div><h3>Haircut</h3><p>A neat, fresh haircut. Please confirm availability and any specific styling requirements before your appointment.</p><div class="prices"><div class="price-choice" style="grid-column:1/-1"><span>${selectedCategory} price</span><b>${money(selectedCategory==="LUXE"?160:120)}</b><button class="btn small" type="button" onclick="addSalonService(${selectedCategory==="LUXE"?160:120})">Add Haircut</button></div></div></div></article>`;addonBox.innerHTML="";return;}document.querySelector(".gender-price-note").textContent="Prices shown in the massage menu are for male clients. Female bookings cost ₹150 extra per service. Choose who the appointment is for in the booking form; your cart prices will update automatically.";document.getElementById("add-ons").hidden=false;
  serviceBox.innerHTML=services.map((item,i)=>`
-  <article class="service">
-   <img loading="lazy" src="${photo(item.img)}" alt="${item.name}">
-   <div class="service-body">
-    ${item.tag?`<div class="tag">${item.tag}</div>`:""}
-    <h3>${item.name}</h3><p>${item.desc}</p>
-    <div class="prices">
-     <div class="price-choice"><span>60 minutes</span><b>${money(item.p60+(selectedCategory==="LUXE"?1300:0))}</b><button class="btn small" type="button" onclick="addService(${i},60)">Add 60 min</button></div>
-     <div class="price-choice"><span>90 minutes</span><b>${money(item.p90+(selectedCategory==="LUXE"?1300:0))}</b><button class="btn small" type="button" onclick="addService(${i},90)">Add 90 min</button></div>
+  <article class="service bx-massage-card">
+   <div class="bx-massage-photo"><img loading="lazy" src="${photo(item.img)}" alt="${item.name}"><span class="bx-tier-badge">${selectedCategory==="LUXE"?"✦ LUXE · PREMIUM CARE":"✓ PRIME · ESSENTIAL CARE"}</span>${item.tag?`<span class="bx-popular-badge">${item.tag}</span>`:""}</div>
+   <div class="service-body bx-massage-body">
+    <div class="tag">${selectedCategory} MASSAGE · ${selectedCategory==="LUXE"?"PERSONALISED EXPERIENCE":"PROFESSIONAL CARE"}</div>
+    <h3>${item.name}</h3><p class="bx-massage-desc">${item.desc}</p>
+    ${item.name==="Swedish Massage"?`<a class="btn small bx-view-details" href="./swedish-massage-details.html?category=${selectedCategory}&v=20261012-unified-cards-4">पूरी जानकारी देखें ↗</a>`:`<a class="btn small bx-view-details" href="./massage-service-details.html?service=${encodeURIComponent(item.name)}&category=${selectedCategory}&v=20261012-unified-cards-4">पूरी जानकारी देखें ↗</a>`}
+    <div class="bx-duration-heading"><span aria-hidden="true">◷</span> Choose Your Session</div>
+    <div class="prices bx-massage-prices">
+     <div class="price-choice"><div class="bx-session-top"><span aria-hidden="true">◷</span><span>QUICK RESET</span></div><span class="bx-session-duration">60 <small>MINUTES</small></span><b>${money(item.p60+(selectedCategory==="LUXE"?1300:0))}</b><button class="btn small" type="button" onclick="addService(${i},60)">＋ Add 60 min</button></div>
+     <div class="price-choice"><div class="bx-session-top"><span aria-hidden="true">◷</span><span>EXTENDED CARE</span></div><span class="bx-session-duration">90 <small>MINUTES</small></span><b>${money(item.p90+(selectedCategory==="LUXE"?1300:0))}</b><button class="btn small" type="button" onclick="addService(${i},90)">＋ Add 90 min</button></div>
     </div>
    </div>
   </article>`).join("");
