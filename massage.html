@@ -1166,6 +1166,70 @@ img{max-width:100%}
 @media(min-width:701px) and (max-width:1050px) { #serviceCards { grid-template-columns:repeat(2,minmax(0,1fr))!important; } }
 </style>
 
+
+<style id="bodyexpertx-cart-and-button-fix">
+/* Final mobile fixes: prevent price/button overlap and duplicate session additions */
+#serviceCards .bx-view-details {
+  min-height: 40px !important;
+  height: 40px !important;
+  padding: 7px 12px !important;
+  margin-bottom: 10px !important;
+  font-size: 16px !important;
+  line-height: 1.15 !important;
+}
+#serviceCards .bx-massage-prices .price-choice {
+  display: grid !important;
+  grid-template-columns: minmax(0,1fr) !important;
+  grid-template-rows: auto auto auto auto !important;
+  align-items: center !important;
+  justify-items: stretch !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  padding: 12px !important;
+}
+#serviceCards .bx-massage-prices .price-choice .bx-session-top,
+#serviceCards .bx-massage-prices .price-choice .bx-session-duration,
+#serviceCards .bx-massage-prices .price-choice b,
+#serviceCards .bx-massage-prices .price-choice .btn {
+  grid-column: 1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+#serviceCards .bx-massage-prices .price-choice b {
+  display: block !important;
+  white-space: nowrap !important;
+  font-size: 22px !important;
+  line-height: 1.2 !important;
+  overflow: visible !important;
+}
+#serviceCards .bx-massage-prices .price-choice .btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 40px !important;
+  height: auto !important;
+  padding: 9px 6px !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  border-radius: 10px !important;
+}
+@media (max-width: 700px) {
+  #serviceCards .bx-view-details {
+    min-height: 40px !important;
+    height: 40px !important;
+    padding: 7px 10px !important;
+    margin-bottom: 10px !important;
+    font-size: 16px !important;
+  }
+  #serviceCards .bx-massage-prices { gap: 10px !important; }
+  #serviceCards .bx-massage-prices .price-choice { padding: 10px 8px !important; gap: 8px !important; }
+  #serviceCards .bx-massage-prices .price-choice b { font-size: 20px !important; }
+  #serviceCards .bx-massage-prices .price-choice .btn { font-size: 11px !important; padding: 9px 4px !important; }
+}
+</style>
+
 </head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE · NARNAUL + 35 KM</div>
@@ -1381,7 +1445,7 @@ function updateTableOption(){renderCart()}
 function tableDiscount(){return selectedDepartment==="MASSAGE"&&isLuxeInCart()&&document.getElementById("tableOption")?.value==="No"?99:0}
 function syncTableOption(){const wrap=document.getElementById("tableOptionWrap");const on=selectedDepartment==="MASSAGE"&&selectedCategory==="LUXE"&&isLuxeInCart();wrap.hidden=!on;if(!on)document.getElementById("tableOption").value=""}
 function addSalonService(price){cart.push({name:"Haircut ("+selectedCategory+")",duration:0,basePrice:price,price:price,type:"salon",category:"SALON · "+selectedCategory});couponApplied=false;offerMode=false;renderCart();showCartFeedback("Haircut added to cart.");}
-function addService(i,duration){if(!services[i])return;const s=services[i],base=(narnaulPricing&&s["n"+duration]?s["n"+duration]:(duration===60?s.p60:s.p90))+(selectedCategory==="LUXE"?(narnaulPricing?150:1300):0);cart.push({name:s.name+" ("+selectedCategory+")",duration:duration,basePrice:base,price:base+(currentGender()==="Female"?150:0),type:"service",category:"MASSAGE · "+selectedCategory});couponApplied=false;renderCart();showCartFeedback(s.name+" · "+duration+" min added to cart.");if(typeof window.refreshStepCart==="function")window.refreshStepCart();}
+function addService(i,duration){if(!services[i])return;const s=services[i],itemName=s.name+" ("+selectedCategory+")";if(cart.some(item=>item.type==="service"&&item.name===itemName&&Number(item.duration)===Number(duration))){showCartFeedback(s.name+" · "+duration+" min is already in your cart.");if(typeof window.refreshStepCart==="function")window.refreshStepCart();return;}const base=(narnaulPricing&&s["n"+duration]?s["n"+duration]:(duration===60?s.p60:s.p90))+(selectedCategory==="LUXE"?(narnaulPricing?150:1300):0);cart.push({name:itemName,duration:duration,basePrice:base,price:base+(currentGender()==="Female"?150:0),type:"service",category:"MASSAGE · "+selectedCategory});couponApplied=false;renderCart();showCartFeedback(s.name+" · "+duration+" min added to cart.");if(typeof window.refreshStepCart==="function")window.refreshStepCart();}
 function addAddon(i){if(!addons[i])return;const a=addons[i];cart.push({name:a.name,duration:a.minutes,basePrice:a.price,price:a.price+(currentGender()==="Female"?150:0),type:"addon"});couponApplied=false;renderCart();showCartFeedback(a.name+" added to cart.");}
 function addPainService(i){const list=[{name:"Kamar Dard Care",minutes:20,price:299},{name:"Pairon Mein Dard Care",minutes:20,price:299},{name:"Gardan Dard Care",minutes:20,price:250},{name:"Poore Badan Mein Dard Care",minutes:40,price:399},{name:"Ghutne Ke Dard Care",minutes:30,price:350}];if(!narnaulPricing||!list[i])return;const a=list[i],basePrice=a.price+(selectedCategory==="LUXE"?150:0);cart.push({name:a.name+" ("+selectedCategory+")",duration:a.minutes,basePrice,price:basePrice+(currentGender()==="Female"&&selectedCategory==="PRIME"?150:0),type:"pain",category:"MASSAGE · "+selectedCategory+" · NARNAUL"});couponApplied=false;renderCart();showCartFeedback(a.name+" added to cart.");}
 function showCartFeedback(message){const box=document.getElementById("cartItems");box.scrollIntoView({behavior:"smooth",block:"center"});const old=document.getElementById("cartFeedback");if(old)old.remove();const note=document.createElement("p");note.id="cartFeedback";note.className="status";note.textContent=message;box.appendChild(note)}
