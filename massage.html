@@ -586,6 +586,49 @@ img{max-width:100%}
 #finalConfirmation .final-submit{min-height:58px!important;margin:15px 0 6px!important;border:1px solid #f8d27b!important;border-radius:16px!important;background:linear-gradient(110deg,#ffe18b 0%,#d6a431 100%)!important;color:#17120a!important;font-size:17px!important;font-weight:900!important;box-shadow:0 10px 24px #d7a63822;white-space:normal}
 @media(min-width:760px){#bookingForm .billing-summary-panel{padding:28px!important}#bookingForm .cart-item{padding:19px 20px}#bookingForm .billing-heading-copy p{font-size:15px}#bookingForm .coupon-field{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;column-gap:14px}#bookingForm .coupon-field label{grid-column:1/-1}#bookingForm .coupon-field #coupon{grid-column:1;grid-row:2}#bookingForm .coupon-field button{grid-column:2;grid-row:2;width:auto;min-width:135px;margin:0!important;min-height:53px!important}}
 @media(max-width:430px){#bookingForm .billing-heading{grid-template-columns:44px minmax(0,1fr);gap:10px;margin-bottom:18px}#bookingForm .billing-icon{width:42px;height:42px;font-size:20px}#bookingForm .billing-secure{grid-column:2;justify-self:start;margin-top:1px;padding:6px 9px}#bookingForm .billing-heading-copy h3{font-size:23px!important}#bookingForm .billing-heading-copy p{font-size:12px}#bookingForm .cart-item{gap:8px;padding:13px 11px;font-size:14px}#bookingForm .cart-item button{min-width:66px;padding:8px 9px;font-size:12px}#bookingForm .billing-totals{padding:13px 12px 9px}#bookingForm .billing-totals .grand-total span:last-child{font-size:29px}#finalConfirmation .final-declaration{font-size:14px!important;padding:13px}#finalConfirmation .final-submit{font-size:16px!important}}
+
+/* Refined compact typography and controls after mobile review */
+#bookingForm .billing-heading{grid-template-columns:46px minmax(0,1fr) auto;gap:11px;margin-bottom:17px}
+#bookingForm .billing-icon{width:44px;height:44px;font-size:21px}
+#bookingForm .billing-heading-copy h3{font-size:clamp(21px,4.5vw,27px)!important;line-height:1.15!important;letter-spacing:-.025em}
+#bookingForm .billing-heading-copy p{font-size:12px;line-height:1.4}
+#bookingForm .billing-secure{padding:6px 8px;font-size:15px;gap:5px;border-radius:10px}
+#bookingForm .billing-secure span{font-size:10px}
+#bookingForm .cart-item{padding:12px 12px;font-size:14px;line-height:1.45;border-radius:15px}
+#bookingForm .cart-item b{font-size:18px;margin-top:4px}
+#bookingForm .cart-item button{min-width:66px;min-height:36px;padding:7px 9px;font-size:12px;border-radius:10px}
+#bookingForm .coupon-heading{gap:11px;margin:6px 0 3px;padding:10px 2px 0}
+#bookingForm .coupon-icon{flex:0 0 40px;width:40px;height:38px;font-size:22px;border-width:1.5px;border-radius:8px}
+#bookingForm .coupon-heading strong{font-size:17px;line-height:1.25;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;letter-spacing:-.02em}
+#bookingForm .coupon-heading p{font-size:12px;line-height:1.4;margin-top:3px}
+#bookingForm .coupon-field{margin:10px 0 9px!important;padding:12px!important;border-radius:14px!important}
+#bookingForm .coupon-field label{font-size:12px}
+#bookingForm #coupon{min-height:45px!important;padding:10px 12px!important;font-size:15px!important;border-radius:10px!important}
+#bookingForm .billing-summary-panel button.btn.small{min-height:43px!important;margin-top:8px!important;font-size:14px!important;border-radius:11px!important}
+#bookingForm #couponStatus{font-size:12px;line-height:1.45}
+#bookingForm .billing-totals{margin-top:12px;padding:12px 13px 8px;border-radius:15px}
+#bookingForm .billing-totals .totals{font-size:14px;padding:7px 0}
+#bookingForm .billing-totals .grand-total{font-size:18px;padding:11px 0 4px}
+#bookingForm .billing-totals .grand-total span:last-child{font-size:clamp(25px,6vw,31px)}
+#finalConfirmation{padding:18px!important;border-radius:20px!important}
+#finalConfirmation h3{font-size:clamp(22px,5vw,28px)!important}
+#finalConfirmation .final-declaration{font-size:14px!important;padding:13px;gap:10px}
+#finalConfirmation .final-submit{min-height:48px!important;font-size:15px!important;border-radius:12px!important;padding:11px 14px}
+@media(max-width:560px){
+ #bookingForm .billing-heading{grid-template-columns:40px minmax(0,1fr);gap:9px}
+ #bookingForm .billing-icon{width:38px;height:38px;font-size:18px}
+ #bookingForm .billing-heading-copy h3{font-size:21px!important;line-height:1.16!important}
+ #bookingForm .billing-secure{grid-column:1/-1;justify-self:start;margin-top:0}
+ #bookingForm .billing-heading-copy p{font-size:12px}
+ #bookingForm .cart-item{grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:11px 10px;font-size:13px}
+ #bookingForm .cart-item button{min-width:62px;min-height:34px;padding:6px 8px;font-size:11px}
+ #bookingForm .coupon-heading{gap:10px}
+ #bookingForm .coupon-heading strong{font-size:16px}
+ #bookingForm .coupon-heading p{font-size:11px}
+ #bookingForm .billing-totals .grand-total{font-size:17px}
+ #bookingForm .billing-totals .grand-total span:last-child{font-size:26px}
+ #finalConfirmation .final-submit{font-size:14px!important}
+}
 </style>
 </head>
 <body>
