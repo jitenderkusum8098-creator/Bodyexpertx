@@ -47,6 +47,11 @@ a{color:var(--gold)}button,input{font:inherit}.shell{width:min(100%,440px)}.bran
       <p class="otp-help" id="otpHelp">OTP aane mein kuch samay lag sakta hai.</p>
     </form>
     <div id="status" class="status" role="status" aria-live="polite"></div>
+    <section id="accountState" hidden>
+      <p id="accountMessage" class="sub"></p>
+      <button class="btn" id="continueBtn" type="button">Website par jaayein</button>
+      <button class="btn secondary" id="signOutBtn" type="button">Logout</button>
+    </section>
     <div class="divider">OR</div>
     <div class="guest">Bina login booking karni hai? <a href="./index.html#booking">Guest booking par jaayein</a></div>
   </section>
@@ -171,10 +176,42 @@ otpForm.addEventListener('submit', async (event) => {
   }
 });
 
-supabase.auth.getSession().then(({ data, error }) => {
-  if (!error && data.session) {
-    window.location.replace('./index.html?customer=1');
+async function renderAccount(session) {
+  if (!session?.user) return;
+  phoneForm.hidden = true;
+  otpForm.hidden = true;
+  $('accountState').hidden = false;
+  $('heading').textContent = 'Aap login hain';
+  $('subheading').textContent = 'Aapka BodyExpertX customer account active hai.';
+  const phone = session.user.phone || 'Verified mobile';
+  $('accountMessage').textContent = 'Login mobile: ' + phone;
+}
+$('continueBtn').addEventListener('click', () => {
+  window.location.href = './index.html?customer=1';
+});
+$('signOutBtn').addEventListener('click', async () => {
+  clearStatus();
+  $('signOutBtn').disabled = true;
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+    $('accountState').hidden = true;
+    phoneForm.hidden = false;
+    otpForm.hidden = true;
+    $('heading').textContent = 'Welcome back';
+    $('subheading').textContent = 'Mobile number se secure OTP login karein. Password yaad rakhne ki zaroorat nahi.';
+    showStatus('Logout ho gaya. Aap dobara login kar sakte hain.', 'ok');
+  } catch (error) {
+    showStatus(explainAuthError(error));
+  } finally {
+    $('signOutBtn').disabled = false;
   }
+});
+supabase.auth.getSession().then(({ data, error }) => {
+  if (!error && data.session) renderAccount(data.session);
+});
+supabase.auth.onAuthStateChange((_event, session) => {
+  if (session) renderAccount(session);
 });
 </script>
 </body>
