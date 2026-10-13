@@ -2,7 +2,13 @@
 <html lang="hi">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Private Rating Dashboard | BodyExpertX</title><meta name="robots" content="noindex,nofollow"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
+<title>BodyExpertX Admin Panel</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0b0b0d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="BEX Admin">
+<link rel="apple-touch-icon" href="./icons/bex-admin.svg"><meta name="robots" content="noindex,nofollow"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
 <style>
 #zoneMap{height:390px;border:1px solid #51442c;border-radius:14px;overflow:hidden;margin:12px 0}.map-note{font-size:12px;color:var(--muted);margin:8px 0}.checkrow{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.checkrow label{display:flex;gap:6px;align-items:center;font-size:14px}.checkrow input{width:auto}.item-list{display:grid;gap:10px;margin-top:14px}.item-list .item{padding:12px;border:1px solid var(--line);border-radius:12px}
 
@@ -607,7 +613,13 @@ function bpOpenQr(code,name){
  modal.style.display="flex";modal.querySelector("#bpQrName").textContent=name;modal.querySelector("#bpQrCode").textContent="Partner ID: "+code;modal.querySelector("#bpQrCanvas").innerHTML="";
  const draw=()=>{modal.querySelector("#bpQrCanvas").innerHTML="";new QRCode(modal.querySelector("#bpQrCanvas"),{text:link,width:210,height:210,colorDark:"#111111",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.H});};
  if(window.QRCode)draw();else{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";s.onload=draw;s.onerror=()=>alert("QR लाइब्रेरी लोड नहीं हुई।");document.head.appendChild(s);}
- modal.querySelector("#bpQrDownload").onclick=()=>{const qr=modal.querySelector("#bpQrCanvas").querySelector("canvas")||modal.querySelector("#bpQrCanvas").querySelector("img");if(!qr){alert("QR अभी बन रहा है, फिर कोशिश करें।");return;}const src=qr.tagName==="CANVAS"?qr.toDataURL("image/png"):qr.src;const w=window.open("","_blank");if(!w){alert("ब्राउज़र में pop-ups allow करें।");return;}w.document.write('<!doctype html><html><head><title>BodyExpertX Partner QR</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>@page{size:A4;margin:15mm}body{font-family:Arial,sans-serif;text-align:center;color:#171717;margin:0;padding:20mm 8mm}.poster{border:3px solid #c49a22;border-radius:22px;padding:28px;max-width:520px;margin:auto}.brand{font-weight:900;letter-spacing:3px;color:#987318;font-size:24px}h1{font-size:32px}p{font-size:18px}img{width:260px;height:260px;image-rendering:pixelated}.id{font-weight:bold;margin-top:20px}</style></head><body><div class="poster"><div class="brand">BODYEXPERTX</div><h1>'+bpEsc(name)+'</h1><p>स्कैन करें और अपनी बुकिंग करें</p><img src="'+src+'"><div class="id">Partner ID: '+bpEsc(code)+'</div><p>पार्टनर रेफरल · BodyExpertX</p></div><script>window.onload=()=>setTimeout(()=>window.print(),500)<\\/script></body></html>');w.document.close();};
+ modal.querySelector("#bpQrDownload").onclick=()=>{const qr=modal.querySelector("#bpQrCanvas").querySelector("canvas")||modal.querySelector("#bpQrCanvas").querySelector("img");if(!qr){alert("QR अभी बन रहा है, फिर कोशिश करें।");return;}const src=qr.tagName==="CANVAS"?qr.toDataURL("image/png"):qr.src;const w=window.open("","_blank");if(!w){alert("ब्राउज़र में pop-ups allow करें।");return;}w.document.write('<!doctype html><html><head><title>BodyExpertX Partner QR</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>@page{size:A4;margin:15mm}body{font-family:Arial,sans-serif;text-align:center;color:#171717;margin:0;padding:20mm 8mm}.poster{border:3px solid #c49a22;border-radius:22px;padding:28px;max-width:520px;margin:auto}.brand{font-weight:900;letter-spacing:3px;color:#987318;font-size:24px}h1{font-size:32px}p{font-size:18px}img{width:260px;height:260px;image-rendering:pixelated}.id{font-weight:bold;margin-top:20px}</style></head><body><div class="poster"><div class="brand">BODYEXPERTX</div><h1>'+bpEsc(name)+'</h1><p>स्कैन करें और अपनी बुकिंग करें</p><img src="'+src+'"><div class="id">Partner ID: '+bpEsc(code)+'</div><p>पार्टनर रेफरल · BodyExpertX</p></div><script>window.onload=()=>setTimeout(()=>window.print(),500)<\\/script>
+<script>
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(err => console.warn("App offline support unavailable", err)));
+}
+</script>
+</body></html>');w.document.close();};
  modal.querySelector("#bpQrCopy").onclick=async()=>{try{await navigator.clipboard.writeText(link);alert("Referral link कॉपी हो गया।")}catch(e){window.prompt("Referral link कॉपी करें:",link)}};
 }
 function bpUpdateCommissionControls(){const scope=$("bpRuleScope").value,chosen=Array.from(document.querySelectorAll('input[name="bpService"]:checked')).map(x=>x.value);$("bpServicesField").style.display=scope==="selected"?"block":"none";document.querySelectorAll(".bpServiceRule").forEach(card=>{const tier=card.dataset.tier;card.style.display=(scope==="all"||chosen.includes(tier))?"block":"none";const mode=$(tier==="Prime"?"bpPrimeMode":"bpLuxeMode").value;card.querySelector(".bpMonthsField").style.display=mode==="period"?"flex":"none";});}
