@@ -314,6 +314,32 @@ a{color:#f0d58e}
 @media(max-width:820px){#bookingList{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 @media(max-width:560px){#bookingList{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}#bookingList>.booking-row{padding:9px!important}#bookingList .booking-summary-customer{font-size:13px!important}#bookingList .booking-summary-service{font-size:12px!important}#bookingList .booking-summary-price{font-size:15px!important}}
 @media(max-width:360px){#bookingList{grid-template-columns:minmax(0,1fr)!important}}
+
+/* Therapist directory: compact five-across luxury cards */
+#therapistList{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;align-items:stretch}
+.therapist-directory-card{display:flex;flex-direction:column;min-width:0;padding:12px!important;border:1px solid #c6a45b!important;border-radius:15px!important;background:linear-gradient(160deg,#17181b,#242529)!important;color:#f6f6f7!important;box-shadow:0 5px 16px #090a0c22}
+.therapist-directory-main{display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;min-width:0}
+.therapist-directory-photo,.therapist-directory-placeholder{width:100%!important;height:155px!important;max-width:190px;object-fit:cover!important;object-position:center 18%!important;border-radius:10px!important;border:1px solid #c6a45b!important;background:#0d0e10!important}
+.therapist-directory-placeholder{display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:900;color:#f0d99a}
+.therapist-directory-info{width:100%;min-width:0}
+.therapist-directory-info h3{font-size:18px!important;line-height:1.25;font-weight:900!important;color:#f0d99a!important;margin:3px 0 10px!important;overflow-wrap:anywhere}
+.therapist-directory-info .therapist-info-line{display:none!important}
+.therapist-directory-info .therapist-info-line:nth-of-type(2){display:block!important;font-size:13px!important;font-weight:800;color:#f5f5f6!important;line-height:1.45;margin:6px 0!important;overflow-wrap:anywhere}
+.therapist-directory-info .therapist-id-line{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px;margin-top:8px!important;font-size:12px!important;font-weight:800;color:#f5f5f6!important;overflow-wrap:anywhere}
+.therapist-directory-info .therapist-id-line strong{display:none}
+.therapist-directory-info .therapist-id-value{font-size:12px!important;color:#f0d99a!important;overflow-wrap:anywhere}
+.therapist-directory-info .copy-therapist-id{display:none!important}
+.therapist-directory-info .rating,.therapist-directory-info .therapist-info-line:nth-of-type(5){display:none!important}
+.therapist-action-row{display:flex;flex-direction:column;gap:7px;margin-top:auto;padding-top:12px!important;border-top:1px solid #4a4740}
+.therapist-action-row .btn{width:100%;min-width:0;min-height:38px;padding:8px 5px!important;font-size:12px!important;font-weight:900!important;white-space:normal;line-height:1.2;border-radius:8px!important}
+.therapist-action-row .btn:not(.danger){background:linear-gradient(120deg,#f1d58f,#c6a45b)!important;color:#171717!important;border:1px solid #b38e42!important}
+.therapist-action-row .btn.danger{background:#fff1f1!important;color:#9b2222!important}
+.therapist-directory-expanded{margin-top:10px}
+@media(max-width:1250px){#therapistList{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:950px){#therapistList{grid-template-columns:repeat(3,minmax(0,1fr))}.therapist-directory-photo,.therapist-directory-placeholder{height:140px!important}}
+@media(max-width:650px){#therapistList{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.therapist-directory-card{padding:9px!important}.therapist-directory-photo,.therapist-directory-placeholder{height:125px!important}.therapist-directory-info h3{font-size:16px!important}.therapist-action-row .btn{font-size:11px!important}}
+@media(max-width:370px){#therapistList{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body><div class="wrap">
@@ -449,7 +475,7 @@ function renderTherapistDirectory(){
   const actions=document.createElement("div");actions.className="therapist-action-row";
   const edit=document.createElement("button");edit.type="button";edit.className="btn alt";edit.textContent="Edit Profile";actions.append(edit);
   const login=document.createElement("button");login.type="button";login.className="btn";login.textContent="Send Login Link";actions.append(login);
-  const view=document.createElement("button");view.type="button";view.className="btn alt";view.textContent="Full Details";actions.append(view);
+  const view=document.createElement("button");view.type="button";view.className="btn alt";view.textContent="View All";actions.append(view);
   if(approval==="pending"||approval==="rejected"){const b=document.createElement("button");b.type="button";b.className="btn";b.textContent=approval==="pending"?"Approve Therapist":"Approve Profile";b.onclick=async()=>{if(!confirm("Approve "+t.display_name+"?"))return;try{const d=await edge("admin-set-therapist-approval",{therapist_id:t.id,approval_status:"approved"});alert(d.message);await loadAdmin()}catch(e){alert(e.message)}};actions.append(b)}
   if(approval==="pending"){const b=document.createElement("button");b.type="button";b.className="btn danger";b.textContent="Reject";b.onclick=async()=>{if(!confirm("Reject "+t.display_name+"'s profile?"))return;try{const d=await edge("admin-set-therapist-approval",{therapist_id:t.id,approval_status:"rejected"});alert(d.message);await loadAdmin()}catch(e){alert(e.message)}};actions.append(b)}
   w.append(actions);
