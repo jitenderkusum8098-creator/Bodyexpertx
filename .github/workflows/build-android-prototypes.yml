@@ -1,0 +1,49 @@
+name: Build BodyExpertX Android test APKs
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - android-app-prototype
+    paths:
+      - 'apps/customer-app/**'
+      - 'apps/therapist-app/**'
+      - '.github/workflows/build-android-prototypes.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app-name: customer
+            app-path: apps/customer-app
+          - app-name: therapist
+            app-path: apps/therapist-app
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install app dependencies
+        working-directory: ${{ matrix.app-path }}
+        run: npm install
+      - name: Generate Android project
+        working-directory: ${{ matrix.app-path }}
+        run: npx cap add android
+      - name: Sync native project
+        working-directory: ${{ matrix.app-path }}
+        run: npx cap sync android
+      - name: Build debug APK
+        working-directory: ${{ matrix.app-path }}/android
+        run: chmod +x gradlew && ./gradlew assembleDebug
+      - name: Upload test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: bodyexpertx-${{ matrix.app-name }}-android-test
+          path: ${{ matrix.app-path }}/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
