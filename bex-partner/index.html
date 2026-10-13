@@ -208,6 +208,10 @@ button.stat:hover{transform:translateY(-1px);box-shadow:0 10px 25px #30240c15!im
 .photo-lightbox img#largephoto{width:auto!important;height:auto!important;max-width:calc(100vw - 24px)!important;max-height:calc(100dvh - 185px)!important;object-fit:contain!important;background:transparent!important;border:3px solid #e1c86e!important}
 .photo-lightbox{justify-content:center!important}
 .photo-lightbox img#largephoto{flex:0 0 auto!important}
+
+/* Override inherited avatar dimensions in the photo viewer: use natural image ratio */
+#photolightbox img#largephoto{display:block!important;position:static!important;flex:0 0 auto!important;width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;max-width:calc(100vw - 28px)!important;max-height:calc(100dvh - 170px)!important;object-fit:contain!important;object-position:center!important;aspect-ratio:auto!important;background:transparent!important;}
+#photolightbox{align-items:center!important;justify-content:center!important;}
 </style></head><body><div id="app"></div><script>
 window.onerror=function(message,source,line,col,error){const el=document.getElementById("app");if(el)el.innerHTML='<div style="max-width:560px;margin:10vh auto;padding:24px;font:16px Arial;background:white;color:#152b30;border-radius:16px"><h2>BEX Partner</h2><p>पेज में एक तकनीकी समस्या आई है। यह संदेश स्क्रीन पर दिखाएँ ताकि हम ठीक कर सकें।</p><p style="font-size:12px;color:#a72d23;word-break:break-word">Error: '+String(message)+'<br>Source: '+String(source||'unknown')+'<br>Line: '+String(line||0)+'</p><button onclick="location.reload()" style="padding:12px 18px;background:#087f75;color:white;border:0;border-radius:10px">Refresh</button></div>';return true;};const URL="https://myjstwbpmbrhaiwytpnq.supabase.co",KEY="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy",app=document.getElementById("app");let P=null,D={};
 const authStore={get(){try{return JSON.parse(localStorage.getItem("bex_partner_session")||"null")}catch{return null}},set(v){if(v)localStorage.setItem("bex_partner_session",JSON.stringify(v));else localStorage.removeItem("bex_partner_session")}};
