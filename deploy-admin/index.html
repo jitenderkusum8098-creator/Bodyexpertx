@@ -443,6 +443,46 @@ button,.btn{font-family:inherit!important;font-weight:700!important;min-height:4
 #partnerTools .item-list .empty,#partnerTools .msg{color:#26364c!important;background:#f7f9fc!important;border:1px solid #d8e0eb!important}
 #partnerTools .bpCatFilter{color:#26364c!important}
 @media(max-width:760px){#partnerTools .grid{grid-template-columns:minmax(0,1fr)!important}#partnerTools .bpServiceChoices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#partnerTools .row{gap:8px;flex-wrap:wrap}#partnerTools h2{font-size:20px!important}#partnerTools .field>span{font-size:14px!important}}
+
+/* Therapist directory readability refresh */
+.therapist-directory-card{background:#ffffff!important;border:1px solid #cbd5e1!important;border-left:5px solid #b78a2e!important;border-radius:16px!important;box-shadow:0 7px 22px rgba(15,23,42,.12)!important;color:#172033!important;padding:16px!important}
+.therapist-directory-card,.therapist-directory-card *{text-shadow:none!important}
+.therapist-directory-info h3{color:#111827!important;font-size:21px!important;line-height:1.35!important;font-weight:900!important}
+.therapist-info-line{color:#263449!important;font-size:15px!important;line-height:1.65!important;overflow-wrap:anywhere}
+.therapist-info-line strong,.therapist-directory-card strong{color:#344054!important;font-weight:850!important}
+.therapist-id-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:10px;padding:9px 11px;margin-top:8px;color:#172033!important}
+.therapist-id-value{display:inline-block!important;background:#10243e!important;color:#ffe08a!important;font-size:16px!important;font-weight:950!important;letter-spacing:.07em!important;padding:6px 10px!important;border-radius:7px!important}
+.therapist-directory-photo,.therapist-directory-placeholder{border:2px solid #d5b56d!important;background:#10243e!important}
+.therapist-directory-expanded,.therapist-edit-panel{background:#f8fafc!important;color:#172033!important;border:1px solid #cbd5e1!important;border-radius:12px!important;padding:16px!important}
+.therapist-directory-expanded .therapist-info-line,.therapist-edit-panel .therapist-info-line{color:#263449!important}
+.therapist-action-row{border-top:1px solid #d5dbe5!important;gap:8px!important;padding-top:12px!important}
+.therapist-action-row .btn{font-size:14px!important;line-height:1.35!important;min-height:46px!important;font-weight:850!important;white-space:normal!important}
+.therapist-action-row .btn.alt{background:#e8edf4!important;color:#10243e!important;border:1px solid #c4cfdd!important}
+.therapist-action-row .btn:not(.alt):not(.danger){background:#10243e!important;color:#fff!important;border:1px solid #10243e!important}
+.therapist-action-row .btn.danger{background:#fff1f2!important;color:#991b1b!important;border:1px solid #fecaca!important}
+#therapistListCard>h2,#therapistListCard h3{color:#172033!important}
+#therapistListCard .muted{color:#475569!important}
+@media(max-width:650px){.therapist-directory-card{padding:12px!important}.therapist-directory-info h3{font-size:18px!important}.therapist-info-line{font-size:14px!important}.therapist-action-row .btn{font-size:13px!important;min-height:44px!important}}
+/* Separate full-page therapist application review */
+body.therapist-detail-page{background:#eef2f7!important;color:#172033!important}
+body.therapist-detail-page #adminLayout,body.therapist-detail-page .head{display:none!important}
+body.therapist-detail-page #therapistDetailPage{display:block!important}
+.therapist-detail-shell{max-width:1050px;margin:22px auto;padding:clamp(14px,3vw,30px);background:#fff;border:1px solid #d7deea;border-top:6px solid #b78a2e;border-radius:18px;box-shadow:0 12px 36px #0f172a12;color:#172033}
+.therapist-detail-shell h1{font-size:clamp(25px,4vw,34px);line-height:1.25;color:#10243e;margin:0}
+.therapist-detail-shell h2{font-size:20px;color:#10243e;border-bottom:1px solid #dbe2eb;padding-bottom:8px;margin:24px 0 12px}
+.therapist-detail-top{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.therapist-detail-top img,.therapist-detail-avatar{width:120px;height:140px;object-fit:contain;object-position:center;background:#10243e;border:2px solid #d6b15b;border-radius:12px}
+.therapist-detail-avatar{display:grid;place-items:center;color:#ffe08a;font-size:40px;font-weight:900}
+.therapist-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.therapist-detail-field{background:#f8fafc;border:1px solid #dbe2eb;border-radius:10px;padding:12px;min-width:0;overflow-wrap:anywhere}
+.therapist-detail-field .label{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#64748b;font-weight:850;margin-bottom:4px}
+.therapist-detail-field .value{font-size:16px;color:#172033;font-weight:750;white-space:pre-wrap}
+.therapist-detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.therapist-detail-actions button{min-height:46px;padding:10px 16px;border-radius:10px;border:1px solid #cbd5e1;font-weight:850;background:#10243e;color:white}
+.therapist-detail-actions .gold{background:#b78a2e;color:#111827;border-color:#9b7426}
+.therapist-detail-actions .danger{background:#fff1f2;color:#991b1b;border-color:#fecaca}
+@media(max-width:600px){.therapist-detail-grid{grid-template-columns:1fr}.therapist-detail-top img,.therapist-detail-avatar{width:94px;height:112px}.therapist-detail-shell{margin:10px auto;border-radius:12px}}
+
 </style>
 </head>
 <body><div class="wrap">
@@ -677,7 +717,7 @@ $("boundaryZoneSelect").replaceChildren();const bph=document.createElement("opti
 renderZoneChecks(therapistZones.filter(x=>x.therapist_id===$("zoneTherapist").value).map(x=>x.zone_id));
 $("therapistList").innerHTML=therapists.length?therapists.map(t=>{const names=therapistZones.filter(x=>x.therapist_id===t.id).map(x=>zones.find(z=>z.id===x.zone_id)?.name).filter(Boolean);return ' <div class="item"><h3>'+esc(t.display_name)+'</h3><div class="muted small">Gender: '+esc(t.gender||"NOT SET — set gender before assigning jobs")+'<br>BodyExpertX ID: '+esc(t.therapist_code||t.id)+' · Mobile: '+esc(t.phone||"—")+' · Experience: '+esc(String(t.experience_years??0))+' years · '+(t.available?'Available':'Unavailable')+'<br>Zones: '+esc(names.join(", ")||"अभी zone assign नहीं")+'<br>Services: '+esc((t.service_types||[]).join(", "))+' · Categories: '+esc((t.tiers||[]).join(", "))+'</div>'+(t.photo_url?'<img src="'+esc(t.photo_url)+'" alt="Therapist photo" style="width:76px;height:76px;object-fit:cover;border-radius:12px;margin-top:8px">':"")+'</div>'}).join(""):'<div class="empty">अभी therapist profile नहीं है।</div>';
 $("assignmentList").replaceChildren();if(!assignments.length){$("assignmentList").textContent="अभी कोई assignment record नहीं है।"}else for(const a of assignments){const item=document.createElement("div");item.className="item";const t=therapists.find(x=>x.id===a.therapist_id),z=zones.find(x=>x.id===a.zone_id);const title=document.createElement("strong");title.textContent=a.reference_code+" · "+a.service_name;const detail=document.createElement("p");detail.className="muted small";detail.textContent=(t?.display_name||"Therapist")+" · "+(z?.name||"Zone")+" · "+a.service_type+" / "+a.tier+" · "+(a.appointment_date||"Date pending")+" "+(a.appointment_time||"")+" · "+a.status;item.append(title,detail);$("assignmentList").append(item)}
-renderTherapistDirectory();renderRatings(adminRatings,true);renderAdminOps()}
+renderTherapistDirectory();renderRatings(adminRatings,true);renderAdminOps();renderTherapistDetailPage()}
 
 const bookingStatuses=[
  ["awaiting_whatsapp","Awaiting WhatsApp"],["whatsapp_opened","WhatsApp Opened"],["confirmed","Confirmed"],["reached","Reached"],["completed","Completed"],["cancelled","Cancelled"],["unavailable","Unavailable"]
@@ -688,6 +728,27 @@ function rupee(v){return "₹"+Number(v||0).toLocaleString("en-IN",{maximumFract
 function therapistRating(tid){const rows=adminRatings.filter(r=>r.therapist_id===tid&&r.status==="published");return {avg:rows.length?Math.round(rows.reduce((a,r)=>a+Number(r.rating),0)/rows.length*10)/10:null,count:rows.length,five:rows.filter(r=>Number(r.rating)===5).length}}
 
 function renderNewZoneChecks(){const box=$("newZoneCheckboxes");if(!box)return;box.replaceChildren();const active=zones.filter(z=>z.active);if(!active.length){box.textContent="पहले Zone Management में active zone बनाएं।";return}active.forEach(z=>{const l=document.createElement("label"),i=document.createElement("input");i.type="checkbox";i.value=z.id;l.append(i,document.createTextNode(" "+z.name));box.append(l)})}
+function renderTherapistDetailPage(){
+ const id=new URLSearchParams(location.search).get("therapistDetails");if(!id)return;
+ const t=therapists.find(x=>x.id===id);if(!t)return;
+ document.body.classList.add("therapist-detail-page");
+ let page=document.getElementById("therapistDetailPage");
+ if(!page){page=document.createElement("main");page.id="therapistDetailPage";page.className="therapist-detail-shell";document.querySelector(".wrap").append(page)}
+ const names=therapistZones.filter(x=>x.therapist_id===t.id).map(x=>zones.find(z=>z.id===x.zone_id)?.name).filter(Boolean);
+ const approval=t.approval_status||"approved",status=approval==="pending"?"Pending Approval":approval==="rejected"?"Rejected":"Approved";
+ const field=(label,value)=>'<div class="therapist-detail-field"><div class="label">'+esc(label)+'</div><div class="value">'+esc(value===null||value===undefined||value===""?"Not provided":value)+'</div></div>';
+ const photo=t.photo_url?'<img src="'+esc(t.photo_url)+'" alt="'+esc(t.display_name)+' photo">':'<div class="therapist-detail-avatar">'+esc((t.display_name||"T").trim().charAt(0).toUpperCase())+'</div>';
+ const rating=therapistRating(t.id);
+ page.innerHTML='<div class="therapist-detail-top">'+photo+'<div style="flex:1;min-width:220px"><div style="color:#8a641b;font-weight:900;letter-spacing:.08em;margin-bottom:5px">BODYEXPERTX · THERAPIST APPLICATION</div><h1>'+esc(t.display_name)+'</h1><p style="font-weight:800;color:#475569;margin:8px 0">Application status: <span style="color:'+(approval==="approved"?"#166534":approval==="rejected"?"#b91c1c":"#9a6700")+'">'+esc(status)+'</span></p><div class="therapist-id-line"><strong>Unique ID</strong><span class="therapist-id-value">'+esc(t.therapist_code||"ID not assigned")+'</span></div></div></div>'+
+ '<h2>1. Personal Details</h2><div class="therapist-detail-grid">'+field("Full Name",t.display_name)+field("Age",t.age===null||t.age===undefined?"Not provided":t.age+" years")+field("Gender",t.gender)+field("Mobile Number",t.phone)+field("Email Address",t.email)+field("Experience",Number(t.experience_years||0)+" years")+'</div>'+
+ '<h2>2. Professional Details</h2><div class="therapist-detail-grid">'+field("Services Selected",(t.service_types||[]).join(", "))+field("Categories Selected",(t.tiers||[]).join(", "))+field("Assigned Zones",names.join(", ")||"Not assigned")+field("Availability",t.available?"Available":"Unavailable")+field("Profile Status",status)+field("Application Submitted",t.created_at?new Date(t.created_at).toLocaleString("en-IN"):"Not recorded")+'</div>'+
+ '<h2>3. Profile &amp; Activity</h2><div class="therapist-detail-grid">'+field("BodyExpertX Unique ID",t.therapist_code||"ID not assigned")+field("Published Rating",rating.avg===null?"No rating yet":rating.avg+"/5 ("+rating.count+" reviews)")+field("Completed/Assigned Job Records",assignments.filter(a=>a.therapist_id===t.id).length)+field("Internal Profile Record ID",t.id)+'</div>'+
+ '<div class="therapist-detail-actions"><button type="button" id="therapistDetailBack">← Back to Therapist Profiles</button>'+(approval!=="approved"?'<button type="button" class="gold" id="therapistDetailApprove">Approve Application</button>':"")+(approval==="pending"?'<button type="button" class="danger" id="therapistDetailReject">Reject Application</button>':"")+'<button type="button" class="gold" id="therapistDetailEdit">Edit Profile</button></div><p id="therapistDetailMsg" style="font-weight:700;color:#334155"></p>';
+ $("therapistDetailBack").onclick=()=>{location.href=location.pathname+"#therapistListCard"};
+ const approve=$("therapistDetailApprove");if(approve)approve.onclick=async()=>{if(!confirm("Approve "+t.display_name+"?"))return;approve.disabled=true;try{const d=await edge("admin-set-therapist-approval",{therapist_id:t.id,approval_status:"approved"});$("therapistDetailMsg").textContent=d.message;await loadAdmin()}catch(e){$("therapistDetailMsg").textContent=e.message;approve.disabled=false}};
+ const reject=$("therapistDetailReject");if(reject)reject.onclick=async()=>{if(!confirm("Reject "+t.display_name+"'s application?"))return;reject.disabled=true;try{const d=await edge("admin-set-therapist-approval",{therapist_id:t.id,approval_status:"rejected"});$("therapistDetailMsg").textContent=d.message;await loadAdmin()}catch(e){$("therapistDetailMsg").textContent=e.message;reject.disabled=false}};
+ const edit=$("therapistDetailEdit");if(edit)edit.onclick=()=>{location.href=location.pathname+"?editTherapist="+encodeURIComponent(t.id)+"#therapistListCard";alert("Edit Profile खोलने के लिए वापस Profiles में जाएँ और Edit Profile दबाएँ।")};
+}
 function renderTherapistDirectory(){
  const cardHtml=t=>{
   const rating=therapistRating(t.id),zoneNames=therapistZones.filter(x=>x.therapist_id===t.id).map(x=>zones.find(z=>z.id===x.zone_id)?.name).filter(Boolean),approval=t.approval_status||"approved",status=approval==="pending"?"Pending Approval":approval==="rejected"?"Rejected":"Approved";
@@ -716,7 +777,7 @@ function renderTherapistDirectory(){
   }catch(e){m.textContent=e.message;m.classList.remove("hidden")}finally{b.disabled=false}};
   ed.querySelector(".e-cancel").onclick=()=>ed.classList.add("hidden");
   edit.onclick=()=>{const opening=ed.classList.contains("hidden");if(opening){expand.classList.remove("hidden");full.classList.add("hidden");view.textContent="Full Details";ed.classList.remove("hidden");w.classList.add("therapist-editing-card");edit.textContent="Close Editor";setTimeout(()=>ed.scrollIntoView({behavior:"smooth",block:"start"}),50)}else{ed.classList.add("hidden");w.classList.remove("therapist-editing-card");edit.textContent="Edit Profile"}};
-  view.onclick=()=>{full.classList.toggle("hidden");view.textContent=full.classList.contains("hidden")?"Full Details":"Hide Details"};
+  view.onclick=()=>{window.location.href=location.pathname+"?therapistDetails="+encodeURIComponent(t.id)};
   w.querySelector(".copy-therapist-id").onclick=async()=>{try{await navigator.clipboard.writeText(t.therapist_code||t.id);w.querySelector(".copy-therapist-id").textContent="Copied"}catch(e){alert("ID: "+(t.therapist_code||t.id))}};
   login.onclick=async()=>{let popup=window.open("about:blank","_blank");try{const d=await edge("admin-invite-therapist",{therapist_id:t.id});const url=d.action_link||d.portal_url;const textMsg=d.invite_sent?"नमस्ते "+t.display_name+"! BodyExpertX account setup email "+d.email+" पर भेजा गया है। Email में account setup पूरा करें, फिर यहां login करें: "+d.portal_url:"नमस्ते "+t.display_name+"! BodyExpertX login link: "+url;const digits=String(t.phone||"").replace(/\D/g,""),wa=digits.length===10?"91"+digits:digits;if(popup)popup.location.href="https://wa.me/"+wa+"?text="+encodeURIComponent(textMsg);alert(d.message)}catch(e){if(popup)popup.close();alert(e.message)}};
   expand.append(full,ed);w.append(expand);return w;
