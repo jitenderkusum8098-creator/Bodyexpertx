@@ -1942,6 +1942,13 @@ body[data-bx-flow-stage="booking"] #booking{display:block!important}
   let stage = params.get("stage");
   const guidedOrSpecific = ["source","activity","service","massage","offer"].some(k => params.has(k));
   if (!stage) {
+    // A plain booking-file URL must land on the real homepage, not an orphaned
+    // mid-funnel tier screen. Preserve intentional campaign/referral/service links.
+    const intentionalBookingLink = guidedOrSpecific || ["ref","partner","v","category","addDetailsToCart"].some(k => params.has(k));
+    if (!intentionalBookingLink) {
+      window.location.replace("./index.html");
+      return;
+    }
     params.set("stage", guidedOrSpecific ? "services" : "tier");
     window.location.replace(window.location.pathname + "?" + params.toString() + window.location.hash);
     return;
