@@ -7,7 +7,7 @@ self.addEventListener("push",event=>{
   tag:data.tag||"bodyexpertx-new-job",
   renotify:true,
   requireInteraction:true,
-  vibrate:[300,120,300,120,700],
+  vibrate:[500,150,500,150,1000,250,500,150,1000,250,500,150,1000],
   data:{url:data.url||"https://bodyexpertx-therapist.onrender.com/"}
  };
  event.waitUntil(self.registration.showNotification(title,options));
