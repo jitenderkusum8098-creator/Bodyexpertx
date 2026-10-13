@@ -504,6 +504,16 @@ body.therapist-detail-page #therapistDetailPage{display:block!important}
 .bp-admin-detail .bp-form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 @media(max-width:1050px){#bpPartnerList{grid-template-columns:repeat(3,minmax(0,1fr))}.bp-admin-detail .bp-dash-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){#bpPartnerList{grid-template-columns:repeat(2,minmax(0,1fr))}.bp-admin-detail .bp-form-grid{grid-template-columns:1fr}.bp-admin-detail{padding:12px}}
+#bpPartnerList.bp-category-page{grid-template-columns:repeat(5,minmax(0,1fr));}
+#bpPartnerList.bp-category-page>.bp-partner-card{display:block!important}
+#bpPartnerList.bp-category-page .bp-card-identity{font-size:12px;overflow-wrap:anywhere;margin:8px 0;color:#24324a}
+#bpPartnerList.bp-category-page .bp-card-actions{display:flex;flex-direction:column;gap:7px;width:100%;margin-top:10px}
+#bpPartnerList.bp-category-page .bp-card-actions button{width:100%;white-space:normal}
+#bpPartnerList.bp-directory-hidden{display:none!important}
+#bpPartnerCategoryPage{padding:16px;border:1px solid #d6ad52;border-radius:16px;margin:12px 0;background:#fff;color:#17243a}
+#bpPartnerCategoryPage h2{margin:8px 0 4px}
+@media(max-width:1050px){#bpPartnerList.bp-category-page{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){#bpPartnerList.bp-category-page{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style></head>
 <body><div class="wrap">
 <header class="head"><div><div class="brand">BODYEXPERTX · ADMINISTRATION</div><h1>BodyExpertX Admin Panel</h1><div class="sub">Bookings, Therapists, Reviews & BEX Partners — सभी का मैनेजमेंट एक जगह</div></div><button id="signOut" class="btn alt hidden">Sign out</button></header>
@@ -654,6 +664,19 @@ async function bpLoad(){
  const partners=adminData.partners||[], rules=adminData.rules||[], refs=adminData.referrals||[], comms=adminData.commissions||[],today=new Date();today.setHours(0,0,0,0);const monthStart=new Date(today.getFullYear(),today.getMonth(),1);
  const cats=["Salon","Gym","Kirana Store","Medical Store","Other"],catHindi={"Salon":"सैलून","Gym":"जिम","Kirana Store":"किराना स्टोर","Medical Store":"मेडिकल स्टोर","Other":"अन्य"};
  $("bpCategoryStats").innerHTML=cats.map(cat=>'<button type="button" class="item bpCatFilter" data-category="'+cat+'" style="text-align:left;cursor:pointer;border:2px solid '+(window.bpSelectedCategory===cat?'#d6ad52':'#45464a')+';background:'+(window.bpSelectedCategory===cat?'#282316':'')+'"><strong>'+catHindi[cat]+'</strong><div class="k-value" style="font-size:24px;font-weight:900">'+partners.filter(x=>x.category===cat).length+'</div><span class="small">रजिस्टर्ड पार्टनर · सूची खोलने के लिए दबाएँ</span></button>').join("");
+ const directory=$("bpPartnerList"),categoryStats=$("bpCategoryStats"),rulesSection=$("bpRulesList");
+ let categoryPage=$("bpPartnerCategoryPage");
+ if(!categoryPage){categoryPage=document.createElement("section");categoryPage.id="bpPartnerCategoryPage";directory.parentNode.insertBefore(categoryPage,directory);}
+ if(window.bpSelectedCategory){
+   categoryStats.classList.add("bp-directory-hidden");rulesSection.classList.add("bp-directory-hidden");
+   categoryPage.classList.remove("hidden");
+   categoryPage.innerHTML='<div class="row" style="justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><div class="small muted">BEX PARTNER DIRECTORY</div><h2>'+bpEsc(catHindi[window.bpSelectedCategory]||window.bpSelectedCategory)+' · Registered Partners</h2><div class="small muted">हर Partner का Unique ID और QR / Poster यहीं उपलब्ध है।</div></div><button type="button" class="btn alt" id="bpCategoryBack">← सभी Categories</button></div>';
+   directory.classList.remove("hidden","bp-directory-hidden");directory.classList.add("bp-category-page");
+   $("bpCategoryBack").onclick=()=>{window.bpSelectedCategory=null;bpLoad()};
+ }else{
+   categoryStats.classList.remove("bp-directory-hidden");rulesSection.classList.remove("bp-directory-hidden");
+   categoryPage.classList.add("hidden");directory.classList.add("hidden");directory.classList.remove("bp-category-page");
+ }
  const filtered=window.bpSelectedCategory?partners.filter(x=>x.category===window.bpSelectedCategory):partners;
  if(!filtered.length){
    list.innerHTML='<div class="empty">'+(window.bpSelectedCategory?catHindi[window.bpSelectedCategory]+' श्रेणी में अभी कोई पार्टनर नहीं है।':'अभी कोई पार्टनर रजिस्टर नहीं है।')+'</div>';
@@ -665,7 +688,7 @@ async function bpLoad(){
     return '<article class="bp-partner-card item" data-partner-card="'+bpEsc(x.id)+'" style="padding:15px;border-radius:15px">'+
       '<div class="row" style="align-items:flex-start;gap:12px">'+(x.photo_url?'<img src="'+bpEsc(x.photo_url)+'" alt="" style="width:58px;height:58px;object-fit:cover;border-radius:10px">':'<div style="width:58px;height:58px;display:grid;place-items:center;border-radius:10px;background:#29251b;color:#e6c36b;font-size:24px">🏪</div>')+
       '<div style="flex:1;min-width:0"><h3 style="margin:0 0 4px">'+bpEsc(x.business_name)+'</h3><div class="small"><strong>मालिक:</strong> '+bpEsc(x.owner_name)+'</div><div class="small"><strong>मोबाइल:</strong> '+bpEsc(x.phone)+'</div><div class="small muted">'+bpEsc(catHindi[x.category]||x.category)+' · '+bpEsc(x.status)+'</div></div>'+
-      '<button type="button" class="btn bpViewAll" data-id="'+bpEsc(x.id)+'" aria-expanded="false">View All / पूरी जानकारी</button></div>'+
+      '<div class="bp-card-identity"><b>Unique ID:</b> '+bpEsc(x.login_id||x.partner_code||"अभी नहीं बना")+'</div><div class="bp-card-actions"><button type="button" class="btn bpViewAll" data-id="'+bpEsc(x.id)+'">View All / पूरी जानकारी</button><button type="button" class="btn alt bpCardQr" data-code="'+bpEsc(x.partner_code)+'" data-name="'+bpEsc(x.business_name)+'">QR Code / Poster</button></div></div></div>'+
       '<div class="bpFullDetails hidden" style="margin-top:15px;padding-top:14px;border-top:1px solid #45464a">'+
       '<div class="grid"><div><div class="small muted">व्यवसाय का नाम</div><strong>'+bpEsc(x.business_name)+'</strong></div><div><div class="small muted">श्रेणी</div><strong>'+bpEsc(catHindi[x.category]||x.category)+'</strong></div><div><div class="small muted">मालिक</div><strong>'+bpEsc(x.owner_name)+'</strong></div><div><div class="small muted">मोबाइल नंबर</div><strong>'+bpEsc(x.phone)+'</strong></div><div style="grid-column:1/-1"><div class="small muted">पूरा पता</div><strong>'+bpEsc(x.full_address)+'</strong></div></div>'+
       '<div class="small" style="margin:12px 0">Partner ID: '+bpEsc(x.partner_code)+' · Login ID: '+bpEsc(x.login_id)+' · रजिस्ट्रेशन: '+bpEsc(x.created_at?new Date(x.created_at).toLocaleDateString("en-IN"):"—")+'</div>'+
@@ -676,9 +699,10 @@ async function bpLoad(){
    }).join("");
  }
  rulesBox.innerHTML=rules.map(x=>'<div class="item small">'+bpEsc(x.category)+' · '+bpEsc(x.service_tier)+' · '+bpEsc(x.commission_type)+' '+bpEsc(x.amount)+(x.commission_type==="percent"?"%":" ₹")+' · '+bpEsc(x.rule_mode)+'</div>').join("")||'<div class="empty">Commission rules अभी सेट नहीं हैं।</div>';
- document.querySelectorAll(".bpCatFilter").forEach(btn=>btn.onclick=()=>{window.bpSelectedCategory=window.bpSelectedCategory===btn.dataset.category?null:btn.dataset.category;bpLoad()});
+ document.querySelectorAll(".bpCatFilter").forEach(btn=>btn.onclick=()=>{window.bpSelectedCategory=btn.dataset.category;bpLoad()});
  document.querySelectorAll(".bpViewAll").forEach(btn=>btn.onclick=()=>bpOpenPartnerDashboard(btn.dataset.id));
  document.querySelectorAll(".bpQr").forEach(btn=>btn.onclick=()=>bpOpenQr(btn.dataset.code,btn.dataset.name));
+ document.querySelectorAll(".bpCardQr").forEach(btn=>btn.onclick=()=>bpOpenQr(btn.dataset.code,btn.dataset.name));
  document.querySelectorAll(".bpStatus").forEach(btn=>btn.onclick=async()=>{try{await bpCall({action:"set_partner_status",partner_id:btn.dataset.id,status:btn.dataset.status});await bpLoad()}catch(e){alert(e.message)}});
  document.querySelectorAll(".bpEdit").forEach(btn=>btn.onclick=async()=>{try{const card=btn.closest("[data-partner-card]"),values={};card.querySelectorAll("[data-edit]").forEach(el=>values[el.dataset.edit]=el.value.trim());if(Object.values(values).some(v=>!v))throw new Error("सभी जानकारी भरें।");if(!/^\d{10}$/.test(values.phone.replace(/\D/g,"").slice(-10)))throw new Error("मोबाइल नंबर 10 अंकों का होना चाहिए।");values.phone=values.phone.replace(/\D/g,"").slice(-10);await bpCall({action:"update_partner",partner_id:btn.dataset.id,...values});alert("पार्टनर की जानकारी अपडेट हो गई।");await bpLoad()}catch(e){alert("अपडेट नहीं हुआ: "+e.message)}});
  document.querySelectorAll(".bpCredentials").forEach(btn=>btn.onclick=async()=>{
