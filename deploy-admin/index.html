@@ -340,6 +340,30 @@ a{color:#f0d58e}
 @media(max-width:650px){#therapistList{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.therapist-directory-card{padding:9px!important}.therapist-directory-photo,.therapist-directory-placeholder{height:125px!important}.therapist-directory-info h3{font-size:16px!important}.therapist-action-row .btn{font-size:11px!important}}
 @media(max-width:370px){#therapistList{grid-template-columns:1fr}}
 
+
+/* Dedicated full-page booking details view opened by View All */
+body.booking-detail-page{background:#101113!important}
+body.booking-detail-page .wrap{width:min(1240px,96%)!important}
+body.booking-detail-page #roleMsg,body.booking-detail-page #adminNav,body.booking-detail-page #adminTools,body.booking-detail-page #zoneTools,body.booking-detail-page #assignmentTools,body.booking-detail-page #linkTools,body.booking-detail-page #therapistListCard{display:none!important}
+body.booking-detail-page #adminLayout{display:block!important}
+body.booking-detail-page #adminContent{width:100%!important;max-width:100%!important}
+body.booking-detail-page #bookingManagement{display:block!important;width:100%!important;max-width:100%!important;border-top:3px solid #d6ad52!important}
+body.booking-detail-page #bookingManagement>.row:first-child,body.booking-detail-page #bookingStats,body.booking-detail-page #bookingManagement>hr,body.booking-detail-page #bookingManagement>h2:not(.booking-route-title),body.booking-detail-page .booking-filters,body.booking-detail-page #detailTherapistSelect,body.booking-detail-page #therapistDetail{display:none!important}
+body.booking-detail-page .booking-route-title{display:block!important;font-size:clamp(25px,3vw,34px)!important;color:#f0d58e!important;margin:0 0 18px!important}
+body.booking-detail-page #bookingList{display:block!important;width:100%!important}
+body.booking-detail-page #bookingList>.booking-row{width:100%!important;max-width:100%!important;padding:clamp(16px,2.5vw,28px)!important;margin:0!important;display:block!important}
+body.booking-detail-page #bookingList .booking-top{display:flex!important;flex-direction:row!important;align-items:flex-start!important;justify-content:space-between!important;gap:16px!important}
+body.booking-detail-page #bookingList .booking-summary-customer{font-size:clamp(22px,3vw,30px)!important}
+body.booking-detail-page #bookingList .booking-summary-service{font-size:17px!important}
+body.booking-detail-page #bookingList .booking-summary-price{font-size:24px!important}
+body.booking-detail-page #bookingList .booking-expanded{display:block!important;margin-top:18px!important;padding-top:18px!important;border-top:1px solid #62502d!important}
+body.booking-detail-page #bookingList .booking-view-all{display:none!important}
+body.booking-detail-page #bookingList .booking-detail-expanded{display:block!important;max-width:100%!important;padding:16px!important}
+body.booking-detail-page #bookingList .booking-detail-expanded p{font-size:16px!important;line-height:1.7!important}
+body.booking-detail-page #bookingList .booking-fields{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+body.booking-detail-page #bookingList .booking-actions{flex-direction:row!important;flex-wrap:wrap!important}
+body.booking-detail-page #bookingList .booking-actions .btn{width:auto!important;min-width:160px}
+@media(max-width:650px){body.booking-detail-page #bookingList .booking-fields{grid-template-columns:minmax(0,1fr)!important}body.booking-detail-page #bookingList .booking-top{flex-direction:column!important}body.booking-detail-page #bookingList .booking-actions .btn{width:100%!important}}
 </style>
 </head>
 <body><div class="wrap">
@@ -537,7 +561,9 @@ function renderAdminOps(){
 }
 function renderBookingRows(){
  const list=$("bookingList");const q=$("bookingSearch").value.trim().toLowerCase(),st=$("bookingStatusFilter").value,svc=$("bookingServiceFilter").value;
+ const requestedBookingId=new URLSearchParams(location.search).get("bookingId");
  const rows=assignments.filter(a=>{
+  if(requestedBookingId&&String(a.id)!==requestedBookingId)return false;
   const t=therapists.find(x=>x.id===a.therapist_id),z=zones.find(x=>x.id===a.zone_id);
   const hay=[a.reference_code,a.service_name,t?.display_name,t?.therapist_code,z?.name,a.service_type,a.tier,a.status].join(" ").toLowerCase();
   if(q&&!hay.includes(q))return false;if(svc&&a.service_type!==svc)return false;
@@ -567,8 +593,9 @@ function renderBookingRows(){
   title.append(customerTitle,serviceTitle,priceTitle);
   const pill=document.createElement("span");pill.className="status-pill";pill.textContent=statusLabel(a.status);top.append(title,pill);
   const viewAll=document.createElement("button");viewAll.type="button";viewAll.className="btn alt booking-view-all";viewAll.textContent="View All";
-  const detailsPanel=document.createElement("div");detailsPanel.className="booking-expanded hidden";
-  viewAll.onclick=()=>{detailsPanel.classList.toggle("hidden");viewAll.textContent=detailsPanel.classList.contains("hidden")?"View All":"Hide Details"};
+  const detailsPanel=document.createElement("div");detailsPanel.className="booking-expanded"+(requestedBookingId?"":" hidden");
+  if(requestedBookingId){viewAll.classList.add("hidden");card.classList.add("booking-detail-full-card")}
+  viewAll.onclick=()=>{const url=new URL(location.href);url.searchParams.set("bookingId",String(a.id));window.open(url.toString(),"_blank","noopener");};
   card.append(top,viewAll,detailsPanel);
   if(a.customer_name||a.customer_phone){const cust=document.createElement("p");cust.className="muted small";cust.textContent="Customer: "+(a.customer_name||"Name not saved")+" · "+(a.customer_phone||"Phone not saved")+(a.customer_age?" · Age "+a.customer_age:"")+(a.recipient_gender?" · For "+a.recipient_gender:"")+(a.visit_type?" · "+a.visit_type:"");detailsPanel.append(cust);if(a.customer_address){const addr=document.createElement("p");addr.className="muted small";addr.textContent="Address: "+a.customer_address;detailsPanel.append(addr)}if(a.customer_notes){const note=document.createElement("p");note.className="muted small";note.textContent="Notes: "+a.customer_notes;detailsPanel.append(note)}const prefs=[a.customer_type?"Customer type: "+a.customer_type:"",a.preferred_pressure?"Pressure: "+a.preferred_pressure:"",a.main_concern?"Main reason: "+a.main_concern:""].filter(Boolean);if(prefs.length){const p=document.createElement("p");p.className="muted small";p.textContent=prefs.join(" · ");detailsPanel.append(p)}if(Array.isArray(a.service_details)&&a.service_details.length){const p=document.createElement("p");p.className="muted small";p.textContent="Items: "+a.service_details.map(x=>x.name+" ("+rupee(x.price)+")").join(" · ");detailsPanel.append(p)}if(a.discount_amount){const discount=document.createElement("p");discount.className="muted small";discount.textContent="Discount: "+rupee(a.discount_amount)+(a.coupon_code?" · Coupon "+a.coupon_code:"");detailsPanel.append(discount)}}
   const fields=document.createElement("div");fields.className="booking-fields";
@@ -649,6 +676,12 @@ $("newPhoto").onchange=()=>{const f=$("newPhoto").files[0];if(!f){$("photoPrevie
 $("createTherapist").onclick=async()=>{clearMsg("createMsg");try{const name=$("newName").value.trim(),phone=$("newPhone").value.trim(),age=Number($("newAge").value),email=$("newEmail").value.trim(),experience_years=Number($("newExperience").value),gender=$("newGender").value,service_types=[...($("newServiceMassage").checked?["Massage"]:[]),...($("newServiceSalon").checked?["Salon"]:[])],tiers=[...($("newTierPrime").checked?["Prime"]:[]),...($("newTierLuxe").checked?["Luxe"]:[])],zone_ids=[...$("newZoneCheckboxes").querySelectorAll("input:checked")].map(x=>x.value);if(!name||phone.replace(/\D/g,"").length<10)throw new Error("Therapist का नाम और सही mobile number भरें।");if(!Number.isInteger(age)||age<18||age>100)throw new Error("Age 18 से 100 साल के बीच भरें।");if(!["Male","Female"].includes(gender))throw new Error("Therapist का gender चुनें।");if(!Number.isFinite(experience_years)||experience_years<0||experience_years>60)throw new Error("Experience 0 से 60 साल के बीच भरें।");if(!service_types.length||!tiers.length)throw new Error("कम से कम एक Service और Category चुनें।");if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error("Valid email address भरें।");let photo_url=null,photoWarning="";const file=$("newPhoto").files[0];if(file){if(!file.type.startsWith("image/")||file.size>5242880)throw new Error("Photo 5 MB से छोटी image होनी चाहिए।");const path="therapists/"+Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"_");try{const {error:upErr}=await sb.storage.from("therapist-photos").upload(path,file,{upsert:false,contentType:file.type});if(upErr)throw upErr;photo_url=sb.storage.from("therapist-photos").getPublicUrl(path).data.publicUrl}catch(photoError){console.warn("Therapist photo upload failed; saving profile without photo.",photoError);photoWarning=" Photo upload नहीं हुई, लेकिन profile बिना photo के save हुई है।"}}if(!$("newTherapistCode").value)generateTherapistCode();const d=await edge("admin-create-therapist",{display_name:name,phone,email,age,photo_url,experience_years,gender,service_types,tiers,zone_ids,therapist_code:$("newTherapistCode").value});msg("createMsg",d.message+" Unique ID: "+d.therapist.therapist_code+photoWarning);$("newName").value="";$("newPhone").value="";$("newAge").value="";$("newEmail").value="";$("newGender").value="";$("newExperience").value="0";$("newPhoto").value="";$("newTherapistCode").value="";$("newZoneCheckboxes").querySelectorAll("input").forEach(x=>x.checked=false);$("newServiceMassage").checked=true;$("newServiceSalon").checked=false;$("newTierPrime").checked=true;$("newTierLuxe").checked=true;$("photoPreviewWrap").classList.add("hidden");await loadAdmin()}catch(e){msg("createMsg",e.message)}};$("makeLink").onclick=async()=>{clearMsg("linkMsg");$("linkOutput").classList.add("hidden");try{if(!$("therapistSelect").value)throw new Error("पहले therapist चुनें।");const d=await edge("admin-create-link",{therapist_id:$("therapistSelect").value});const link=location.origin+location.pathname.replace(/[^/]*$/,"")+"therapist-rating.html?token="+d.token;$("linkText").textContent=link;const t=d.therapist;const ratingText=t.average_rating===null?"अभी कोई approved rating नहीं":t.average_rating+"/5 ("+t.rating_count+" ratings)";const shareText="नमस्ते! BodyExpertX Therapist Profile\nName: "+t.display_name+"\nBodyExpertX ID: "+(t.therapist_code||"ID उपलब्ध नहीं")+"\nRating: "+ratingText+"\nExperience: "+Number(t.experience_years||0)+" years\n\nTherapist की photo और पूरी profile देखने तथा private feedback देने के लिए link खोलें: "+link;$("whatsappLink").href="https://wa.me/?text="+encodeURIComponent(shareText);$("linkOutput").classList.remove("hidden");msg("linkMsg","Link तैयार है। इसे customer को WhatsApp पर भेजें।")}catch(e){msg("linkMsg",e.message)}};
 $("copyLink").onclick=async()=>{try{await navigator.clipboard.writeText($("linkText").textContent);$("copyLink").textContent="Copied!"}catch(e){msg("linkMsg","Link को select करके copy करें।")}};
 $("refresh").onclick=async()=>{try{if(role==="admin")await loadAdmin();else if(role==="therapist")await loadTherapist()}catch(e){msg("roleMsg",e.message)}};
+const requestedBookingId=new URLSearchParams(location.search).get("bookingId");
+if(requestedBookingId){
+ document.body.classList.add("booking-detail-page");
+ const heading=document.createElement("h2");heading.className="booking-route-title";heading.textContent="Booking Details";
+ $("bookingManagement").insertBefore(heading,$("bookingManagement").firstChild);
+}
 sb.auth.onAuthStateChange((event,s)=>{session=s;if(event==="PASSWORD_RECOVERY"){$("authCard").classList.add("hidden");$("dashboard").classList.add("hidden");$("recoveryCard").classList.remove("hidden");return}if(s)setTimeout(()=>loadDashboard().catch(e=>msg("roleMsg",e.message)),0)});
 loadDashboard().catch(e=>msg("authMsg",e.message));
 </script></body></html>
