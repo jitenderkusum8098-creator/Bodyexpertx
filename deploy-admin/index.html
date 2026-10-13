@@ -403,7 +403,7 @@ body.booking-detail-page #bookingList .booking-actions .btn{width:auto!important
   <button type="button" data-view="zones"><span class="nav-icon">⌖</span> Zone Management</button>
   <button type="button" data-view="therapists"><span class="nav-icon">♙</span> All Therapists</button>
   <button type="button" data-view="ratings"><span class="nav-icon">★</span> Ratings & Reviews</button>
-  <a class="admin-nav-partner" href="https://bodyexpertx-partner.onrender.com/admin.html" target="_blank" rel="noopener noreferrer"><span class="nav-icon">🤝</span> BEX Partner</a>
+  <button type="button" data-view="partners"><span class="nav-icon">🤝</span> BEX Partner</button>
 </nav>
 <div id="adminContent">
 <section id="adminTools" class="card hidden therapist-create-card">
@@ -442,6 +442,34 @@ body.booking-detail-page #bookingList .booking-actions .btn{width:auto!important
 <div id="therapistDetail"><div class="empty">पूरी job history देखने के लिए therapist चुनें।</div></div>
 </section>
 <section id="linkTools" class="card hidden"><h2>WhatsApp rating link बनाएं</h2><label class="field"><span>Therapist चुनें</span><select id="therapistSelect"><option value="">पहले therapist बनाएं</option></select></label><button id="makeLink" class="btn">Generate private rating link</button><div id="linkMsg" class="msg hidden"></div><div id="linkOutput" class="hidden"><div class="linkbox" id="linkText"></div><div class="row"><button id="copyLink" class="btn alt">Copy link</button><a id="whatsappLink" class="btn" target="_blank" rel="noopener">WhatsApp पर भेजें</a></div><p class="muted small">Link 30 दिन में expire होगा और एक customer rating के बाद इस्तेमाल नहीं हो सकेगा।</p></div></section>
+<section id="partnerTools" class="card hidden">
+<h2>BEX Partner Management</h2>
+<p class="muted small">इसी Admin login से Salon, Gym और Medical Store register करें। अलग login की जरूरत नहीं।</p>
+<div class="grid">
+<label class="field"><span>Business Name *</span><input id="bpBusiness" maxlength="120" placeholder="Salon / Gym / Medical Store"></label>
+<label class="field"><span>Business Category *</span><select id="bpCategory"><option value="Salon">Salon</option><option value="Gym">Gym</option><option value="Medical Store">Medical Store</option><option value="Other">Other</option></select></label>
+<label class="field"><span>Owner Name *</span><input id="bpOwner" maxlength="100" placeholder="Owner full name"></label>
+<label class="field"><span>Mobile Number *</span><input id="bpPhone" type="tel" maxlength="16" placeholder="10 digit mobile"></label>
+<label class="field"><span>Full Business Address *</span><input id="bpAddress" maxlength="500" placeholder="Shop / street / area / city / PIN"></label>
+<label class="field"><span>Business / Owner Photo (optional)</span><input id="bpPhoto" type="file" accept="image/*"></label>
+</div>
+<button id="bpCreate" class="btn">Register Partner</button><div id="bpCreateMsg" class="msg hidden" role="status"></div>
+<hr style="margin:24px 0;border-color:var(--line)">
+<div class="row"><h2>Registered Partners</h2><button id="bpRefresh" class="btn alt right">Refresh partners</button></div>
+<div id="bpPartnerList" class="item-list"><div class="empty">Partners load करने के लिए Refresh दबाएँ।</div></div>
+<hr style="margin:24px 0;border-color:var(--line)">
+<h2>Commission Rules</h2>
+<div class="grid">
+<label class="field"><span>Category</span><select id="bpRuleCategory"><option>Gym</option><option>Salon</option><option>Medical Store</option><option>Other</option></select></label>
+<label class="field"><span>Service Tier</span><select id="bpRuleTier"><option>Prime</option><option>Luxe</option><option>Other</option></select></label>
+<label class="field"><span>Commission Type</span><select id="bpRuleType"><option value="fixed">Fixed ₹</option><option value="percent">Percentage %</option></select></label>
+<label class="field"><span>Amount</span><input id="bpRuleAmount" type="number" min="0" step="0.01" placeholder="50"></label>
+<label class="field"><span>Eligibility</span><select id="bpRuleMode"><option value="first">First completed booking only</option><option value="every" selected>Every eligible booking</option><option value="period">Limited period</option></select></label>
+<label class="field"><span>Validity months (limited period)</span><select id="bpRuleMonths"><option>1</option><option selected>3</option><option>6</option><option>12</option></select></label>
+</div>
+<button id="bpSaveRule" class="btn">Save Commission Rule</button><div id="bpRuleMsg" class="msg hidden"></div>
+<div id="bpRulesList" class="item-list"></div>
+</section>
 <section id="ratingsSection" class="card"><div class="row"><h2 id="ratingHeading">Ratings & reviews</h2><button id="refresh" class="btn alt right">Refresh</button></div><div id="ratingList"><div class="empty">Login के बाद ratings यहां दिखेंगी।</div></div></section>
 <section id="therapistListCard" class="card hidden"><h2>All Therapists</h2><p class="muted small">Review therapist profiles, ratings, contact details and approval status.</p><section class="card"><h3>Pending Therapist Approvals <span id="pendingTherapistCount" class="status-pill">0</span></h3><p class="muted small">New therapist profiles remain unavailable for customer assignment until approved.</p><div id="pendingTherapistList" class="item-list"></div></section><section class="card"><h3>Five-Star Therapists</h3><div id="fiveStarTherapistList" class="item-list"></div></section><section class="card"><h3>All Therapist Profiles</h3><div id="therapistList" class="item-list"></div></section></section>
 </div>
@@ -473,15 +501,31 @@ function showAdminView(view){
   bookings:["bookingManagement"],
   zones:["zoneTools","assignmentTools"],
   therapists:["adminTools","therapistListCard","linkTools"],
-  ratings:["ratingsSection"]
+  ratings:["ratingsSection"],
+  partners:["partnerTools"]
  };
- const all=["bookingManagement","zoneTools","assignmentTools","adminTools","therapistListCard","linkTools","ratingsSection"];
+ const all=["bookingManagement","zoneTools","assignmentTools","adminTools","therapistListCard","linkTools","ratingsSection","partnerTools"];
  all.forEach(id=>{const el=$(id);if(el)el.classList.add("hidden")});
  (groups[view]||groups.bookings).forEach(id=>{const el=$(id);if(el)el.classList.remove("hidden")});
  document.querySelectorAll("#adminNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
  const content=$("adminContent");if(content)content.scrollIntoView({behavior:"smooth",block:"start"});
 }
 document.querySelectorAll("#adminNav [data-view]").forEach(b=>b.addEventListener("click",()=>showAdminView(b.dataset.view)));
+
+async function bpCall(payload){const {data:{session:s}}=await sb.auth.getSession();if(!s)throw new Error("Admin session expired. Dobara login karein.");const r=await fetch(SUPABASE_URL+"/functions/v1/bex-partner-admin",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY,"Authorization":"Bearer "+s.access_token},body:JSON.stringify(payload)});const d=await r.json().catch(()=>({error:"Server response invalid"}));if(!r.ok)throw new Error(d.error||"Request failed");return d}
+function bpEsc(s){return String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
+async function bpLoad(){
+ const list=$("bpPartnerList"),rulesBox=$("bpRulesList");list.innerHTML='<div class="empty">Loading…</div>';
+ const [p,r]=await Promise.all([sb.from("partners").select("id,business_name,owner_name,category,partner_code,login_id,phone,status,full_address").order("created_at",{ascending:false}),sb.from("partner_commission_rules").select("*").order("category").order("service_tier")]);
+ if(p.error||r.error){list.innerHTML='<div class="msg">Load error: '+bpEsc(p.error?.message||r.error?.message)+'</div>';return}
+ list.innerHTML=(p.data||[]).map(x=>'<div class="item"><h3>'+bpEsc(x.business_name)+' <span class="pill">'+bpEsc(x.status)+'</span></h3><div class="muted small">'+bpEsc(x.category)+' · '+bpEsc(x.owner_name)+' · '+bpEsc(x.phone)+'</div><div class="small">Partner ID: '+bpEsc(x.partner_code)+' · Login ID: '+bpEsc(x.login_id)+'</div><div class="small">'+bpEsc(x.full_address)+'</div><div class="row" style="margin-top:8px"><button class="btn alt bpStatus" data-id="'+bpEsc(x.id)+'" data-status="'+(x.status==="active"?"suspended":"active")+'">'+(x.status==="active"?"Suspend":"Activate")+'</button></div></div>').join("")||'<div class="empty">Abhi koi partner register nahi hua.</div>';
+ rulesBox.innerHTML=(r.data||[]).map(x=>'<div class="item small">'+bpEsc(x.category)+' · '+bpEsc(x.service_tier)+' · '+bpEsc(x.commission_type)+' '+bpEsc(x.amount)+' · '+bpEsc(x.rule_mode)+'</div>').join("")||'<div class="empty">Commission rules abhi set nahi hain.</div>';
+ document.querySelectorAll(".bpStatus").forEach(b=>b.onclick=async()=>{try{await bpCall({action:"set_partner_status",partner_id:b.dataset.id,status:b.dataset.status});await bpLoad()}catch(e){alert(e.message)}});
+}
+$("bpCreate").addEventListener("click",async()=>{const msgBox=$("bpCreateMsg");msgBox.classList.remove("hidden");msgBox.textContent="";try{const business_name=$("bpBusiness").value.trim(),owner_name=$("bpOwner").value.trim(),phone=$("bpPhone").value.trim(),full_address=$("bpAddress").value.trim(),category=$("bpCategory").value;if(!business_name||!owner_name||!phone||!full_address)throw new Error("Sabhi required fields bharein.");let photo_url=null;const file=$("bpPhoto").files[0];if(file){if(file.size>5*1024*1024)throw new Error("Photo 5 MB se chhoti honi chahiye.");const ext=(file.name.split(".").pop()||"jpg").toLowerCase(),path="partners/"+crypto.randomUUID()+"."+ext;const {error}=await sb.storage.from("partner-profiles").upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;photo_url=sb.storage.from("partner-profiles").getPublicUrl(path).data.publicUrl;}const login_id=business_name.normalize("NFKD").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,36);const out=await bpCall({action:"create_partner",business_name,owner_name,category,phone,login_id,full_address,photo_url});msgBox.textContent="Partner registered. Login ID: "+out.partner.login_id+" | Initial password (mobile): "+out.initial_password+" | Partner ID: "+out.partner.partner_code+". Pehli login par password change karna hoga.";msgBox.classList.remove("hidden");$("bpBusiness").value="";$("bpOwner").value="";$("bpPhone").value="";$("bpAddress").value="";$("bpPhoto").value="";await bpLoad();}catch(e){msgBox.textContent=e.message;msgBox.classList.remove("hidden");}});
+$("bpRefresh").addEventListener("click",bpLoad);
+$("bpSaveRule").addEventListener("click",async()=>{const m=$("bpRuleMsg");m.classList.remove("hidden");try{const amount=$("bpRuleAmount").value;if(amount==="")throw new Error("Commission amount bharein.");await bpCall({action:"save_commission_rule",category:$("bpRuleCategory").value,partner_id:null,service_tier:$("bpRuleTier").value,commission_type:$("bpRuleType").value,amount,rule_mode:$("bpRuleMode").value,validity_months:$("bpRuleMonths").value});m.textContent="Commission rule saved.";await bpLoad();}catch(e){m.textContent=e.message}});
+
 async function loadDashboard(){const {data:{session:s}}=await sb.auth.getSession();session=s;if(!s){$("dashboard").classList.add("hidden");$("authCard").classList.remove("hidden");$("signOut").classList.add("hidden");return}
 $("authCard").classList.add("hidden");$("dashboard").classList.remove("hidden");$("signOut").classList.remove("hidden");
 const {data:p,error}=await sb.from("user_profiles").select("role").eq("user_id",s.user.id).maybeSingle();
