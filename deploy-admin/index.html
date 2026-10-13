@@ -742,7 +742,7 @@ async function bpOpenPartnerDashboard(partnerId){
    card("इस महीने के Referrals",refs.filter(r=>new Date(r.created_at)>=month).length,"महीने के Referral","monthrefs")+
    card("भुगतान के लिए बाकी",fmt(balance),"Earned कमाई में से भुगतान घटाकर","balance")+card("कुल Paid Amount",fmt(paid),"दर्ज सभी Payments","payments")+
    card("QR Code / Referral Link","खोलें","Partner का QR और Link","qr")+'</div>'+
-   '<div class="row" style="flex-wrap:wrap;margin:12px 0"><button class="btn" id="bpShowAdminBookings">सभी Referral Bookings</button><button class="btn alt" id="bpShowAdminPayments">Payment History</button><button class="btn alt" id="bpShowAdminProfile">Edit / Partner विकल्प</button></div>'+
+   '<div class="row" style="flex-wrap:wrap;margin:12px 0"><button class="btn" id="bpShowAdminBookings">सभी Referral Bookings</button><button class="btn alt" id="bpShowAdminPayments">Payment History</button><button class="btn alt" id="bpShowAdminProfile">Edit / Partner विकल्प</button><button class="btn alt" id="bpDashboardQr">QR Code / Poster</button><button class="btn alt" id="bpDashboardCredentials">Unique ID / Password Generate करें</button><button class="btn alt" id="bpDashboardStatus">'+(p.status==="active"?"Partner Suspend करें":"Partner Activate करें")+'</button><button class="btn danger" id="bpDashboardDelete">Partner Delete करें</button></div>'+
    '<div id="bpPartnerDetailContent"><div class="empty">ऊपर किसी कार्ड पर क्लिक करके विवरण देखें।</div></div>';
   $("bpBackToDirectory").onclick=()=>{page.classList.add("hidden");list.classList.remove("hidden");stats.classList.remove("hidden");rules.classList.remove("hidden");};
   const content=$("bpPartnerDetailContent");
@@ -779,6 +779,10 @@ async function bpOpenPartnerDashboard(partnerId){
   }
   page.querySelectorAll("[data-bp-open]").forEach(b=>b.onclick=()=>{const k=b.dataset.bpOpen;if(["today","month","all"].includes(k))showEarnings(k);else if(["refs","todayrefs","monthrefs"].includes(k))showBookings();else if(k==="payments"||k==="balance")showPayments();else if(k==="qr"){content.innerHTML='<h3>QR Code / Referral Link</h3><div class="linkbox">'+bpEsc("https://jitenderkusum8098-creator.github.io/Bodyexpertx/?partner="+encodeURIComponent(p.partner_code||""))+'</div><button class="btn" id="bpShowQr">QR / पोस्टर खोलें</button>'; $("bpShowQr").onclick=()=>bpOpenQr(p.partner_code,p.business_name);}else showProfile();});
   $("bpShowAdminBookings").onclick=showBookings;$("bpShowAdminPayments").onclick=showPayments;$("bpShowAdminProfile").onclick=showProfile;
+  $("bpDashboardQr").onclick=()=>bpOpenQr(p.partner_code,p.business_name);
+  $("bpDashboardCredentials").onclick=async()=>{if(!confirm("पुराने credentials बंद हो जाएँगे। नए Login ID और Password बनाना है?"))return;try{const x=await bpCall({action:"generate_partner_credentials",partner_id:p.id});alert("Login ID: "+x.login_id+"\\nTemporary Password: "+x.password+"\\nपहली Login पर Password बदलना होगा।");}catch(e){alert("Credentials नहीं बने: "+e.message)}};
+  $("bpDashboardStatus").onclick=async()=>{if(!confirm("Partner की स्थिति बदलनी है?"))return;try{await bpCall({action:"set_partner_status",partner_id:p.id,status:p.status==="active"?"suspended":"active"});alert("Partner की स्थिति अपडेट हो गई।");await bpOpenPartnerDashboard(partnerId)}catch(e){alert("स्थिति अपडेट नहीं हुई: "+e.message)}};
+  $("bpDashboardDelete").onclick=async()=>{if(!confirm("इस Partner को स्थायी रूप से delete करना है?"))return;try{await bpCall({action:"delete_partner",partner_id:p.id});alert("Partner delete हो गया।");await bpLoad()}catch(e){alert("Delete नहीं हुआ: "+e.message)}};
  }catch(e){page.innerHTML='<div class="msg">Dashboard लोड नहीं हुआ: '+bpEsc(e.message)+' <button class="btn alt" onclick="bpLoad()">वापस जाकर Refresh करें</button></div>';}
 }
 
