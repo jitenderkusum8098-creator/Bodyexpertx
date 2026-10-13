@@ -278,8 +278,15 @@ Deno.serve(async (req: Request) => {
       if (attachError) return reply({ error: "Referral record बना, लेकिन Booking से attach नहीं हुआ: " + attachError.message }, 400);
       booking.partner_referral_id = referral.id;
     }
-    const { data: duplicate } = await adminClient.from("partner_commissions").select("id").eq("booking_id", bookingId).limit(1);
-    if (duplicate?.length) return reply({ error: "इस Booking का Commission पहले से मौजूद है।" }, 409);
+    const { data: duplicate, error: duplicateError } = await adminClient.from("partner_commissions").select("id,commission_amount,status").eq("booking_id", bookingId).limit(1);
+    if (duplicateError) return reply({ error: "मौजूदा Commission रिकॉर्ड पढ़ नहीं पाए: " + duplicateError.message }, 400);
+    if (duplicate?.length) {
+      const { error: verifyExistingError } = await adminClient.from("booking_assignments").update({
+        payment_verified: true, payment_verified_at: new Date().toISOString(), payment_verified_by: callerData.user.id
+      }).eq("id", bookingId).eq("payment_verified", false);
+      if (verifyExistingError) return reply({ error: "Commission पहले से जुड़ा है, लेकिन Payment Verification सेव नहीं हुई: " + verifyExistingError.message }, 400);
+      return reply({ ok: true, already_earned: true, commission_exists: true, commission_amount: Number(duplicate[0].commission_amount || 0), message: "Referral Commission पहले ही Job Complete होने पर जुड़ चुका है। Payment Verification सेव हो गई; दोबारा Commission नहीं जोड़ा गया।" });
+    }
 
     let ruleQuery = adminClient.from("partner_commission_rules").select("id,partner_id,commission_type,amount,rule_mode,validity_months,created_at")
       .eq("category", partner.category).eq("service_tier", booking.tier).eq("active", true);
