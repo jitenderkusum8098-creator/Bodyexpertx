@@ -52,7 +52,7 @@ Deno.serve(async (req: Request) => {
     const { data: callerProfile, error: callerProfileError } = await callerClient.from("user_profiles").select("role").eq("user_id", callerData.user.id).maybeSingle();
     if (!callerProfileError && callerProfile?.role === "admin") profileRole = "admin";
   }
-  if (profileRole !== "admin" && !(action === "list_partner_self_data" && profileRole === "partner")) return reply({ error: "Admin access required. Your signed-in account could not be verified as an admin. Sign out and sign in with the authorized Admin account." }, 403);
+  if (profileRole !== "admin" && !(["list_partner_self_data","mark_partner_notifications_read"].includes(action) && profileRole === "partner")) return reply({ error: "Admin access required. Your signed-in account could not be verified as an admin. Sign out and sign in with the authorized Admin account." }, 403);
 
   if (action === "list_admin_data") {
     const [partners, rules, referrals, commissions] = await Promise.all([
@@ -391,6 +391,14 @@ Deno.serve(async (req: Request) => {
     const err=referrals.error||commissions.error||payments.error||allocations.error||bookings.error||notifications.error;
     if(err)return reply({error:err.message},400);
     return reply({ok:true,partner,referrals:referrals.data||[],commissions:commissions.data||[],payments:payments.data||[],allocations:allocations.data||[],bookings:bookings.data||[],notifications:notifications.data||[]});
+  }
+
+  if (action === "mark_partner_notifications_read") {
+    const {data:partner,error:partnerError}=await adminClient.from("partners").select("id").eq("user_id",callerData.user.id).maybeSingle();
+    if(partnerError||!partner)return reply({error:"Partner account नहीं मिला।"},404);
+    const {error:updateError}=await adminClient.from("partner_notifications").update({read_at:new Date().toISOString()}).eq("partner_id",partner.id).is("read_at",null);
+    if(updateError)return reply({error:updateError.message},400);
+    return reply({ok:true});
   }
 
   if (action === "list_partner_self_data") {
