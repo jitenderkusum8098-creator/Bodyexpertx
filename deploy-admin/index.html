@@ -175,6 +175,50 @@ h1,h2,h3,h4{color:#f7f7f8;font-weight:850;letter-spacing:.005em}h2{font-size:cla
 @media(min-width:1000px){.booking-fields{grid-template-columns:repeat(4,minmax(0,1fr))}.booking-row{padding:24px}.booking-top strong{font-size:24px}}
 @media(max-width:600px){.booking-row{padding:14px}.booking-top strong{font-size:18px}.booking-detail-expanded{padding:12px}.booking-detail-expanded p{font-size:15px!important}.booking-fields{grid-template-columns:1fr}.booking-controls-title{font-size:18px}}
 
+
+/* Live admin visual consistency + overflow and null-element safety */
+:root{color-scheme:dark;--bg:#101113;--card:#191a1d;--gold:#d6ad52;--line:#45464a;--muted:#d0d1d3;--surface:#202226}
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+body{background:#101113!important;color:#f5f5f6!important;font-family:Inter,"Segoe UI",system-ui,Arial,sans-serif;font-size:16px;line-height:1.6}
+.wrap{width:min(1240px,96%);max-width:100%;margin-inline:auto}
+.head{min-width:0;flex-wrap:wrap;border-bottom-color:#45464a}
+.head h1{max-width:100%;overflow-wrap:anywhere;color:#f7f7f8;font-weight:900}
+.brand,.eyebrow{color:#e0ba60!important}.sub,.muted{color:#d0d1d3}
+h1,h2,h3,h4{color:#f7f7f8;font-weight:850}
+.card{min-width:0;max-width:100%;background:linear-gradient(145deg,#1c1d20,#151619)!important;border-color:#44464a!important;box-shadow:0 10px 28px rgba(0,0,0,.18)}
+.admin-layout{width:100%;max-width:100%;grid-template-columns:minmax(190px,220px) minmax(0,1fr);gap:16px}
+#adminContent{min-width:0;width:100%;max-width:100%;overflow-wrap:anywhere}
+#adminContent>section{min-width:0;max-width:100%}
+.admin-nav{background:linear-gradient(145deg,#1c1d20,#111214)!important;border:1px solid #45464a;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.admin-nav-title{color:#e0ba60!important;font-size:12px;font-weight:900}
+.admin-nav button{color:#ececef!important;font-size:14px;font-weight:750;overflow-wrap:anywhere}
+.admin-nav button:hover{background:#2b2c30!important;color:#fff!important}
+.admin-nav button.active{background:linear-gradient(120deg,#e8c66e,#c69a3c)!important;color:#171717!important;font-weight:900}
+.admin-nav .nav-icon{color:#e5c36e}
+.field span{color:#e2e3e5;font-size:14px;font-weight:800}
+.field input,.field select,.field textarea{width:100%;max-width:100%;background:#0f1012;border:1px solid #5a5c61;color:#fff;font-size:16px;font-weight:550;min-height:46px}
+.field input::placeholder,.field textarea::placeholder{color:#aeb0b4;opacity:1}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid #d6ad52;outline-offset:1px;border-color:#d6ad52}
+.btn{background:linear-gradient(135deg,#e8c66e,#c69a3c);color:#171717;font-size:14px;font-weight:900;min-height:42px;max-width:100%}
+.btn.alt{border-color:#d6ad52;color:#f0cf7b;background:#222326}.btn.danger{border-color:#ba6666;color:#ffbaba}
+.therapist-create-card{border-top:4px solid #d6ad52!important;background:linear-gradient(145deg,#1c1d20,#121315)!important;padding:clamp(15px,2vw,26px)}
+.therapist-section-heading{align-items:center}.therapist-section-heading h2{font-size:clamp(23px,2.4vw,30px);font-weight:900}.therapist-section-heading .muted{font-size:14px}
+.therapist-row-identity{grid-template-columns:minmax(110px,.85fr) minmax(150px,1.5fr) minmax(72px,.5fr) minmax(105px,.8fr)}
+.therapist-create-card .field{min-width:0}.therapist-create-card .field span{color:#e3c46f;font-size:14px;font-weight:850}
+.therapist-create-card input[type=file]{max-width:100%;font-size:12px}
+.therapist-create-card #photoPreview{object-fit:contain!important;object-position:center top;background:#090a0b;border:1px solid #56585d;width:100px!important;height:125px!important}
+.therapist-create-card .checkrow,.zone-choice-row{min-height:48px;padding:11px;background:#111214;border:1px solid #4c4e52;border-radius:12px}
+.therapist-create-card .checkrow label{color:#f2f2f3;font-size:14px;font-weight:750}
+.id-generator-row{display:flex;gap:8px;min-width:0}.id-generator-row input{min-width:0;flex:1}.id-generator-row .btn{white-space:normal}
+.therapist-directory-card{border:1px solid #4b4c50!important;background:linear-gradient(135deg,#1b1c1f,#121315)!important;padding:clamp(14px,2vw,22px);border-radius:17px}
+.therapist-directory-main{align-items:flex-start;gap:16px;min-width:0}.therapist-directory-photo,.therapist-directory-placeholder{width:112px;height:148px;flex:0 0 112px;object-fit:contain;object-position:center top;border-radius:13px;border:1px solid #55575b;background:#090a0b;padding:3px}
+.therapist-directory-info{min-width:0;flex:1}.therapist-directory-info h3{font-size:clamp(22px,2.4vw,29px);line-height:1.25;color:#f1ce77!important;font-weight:900;overflow-wrap:anywhere}
+.therapist-info-line{font-size:15px;line-height:1.75;color:#f2f2f3;overflow-wrap:anywhere}.therapist-info-line strong{color:#e7c66f;font-weight:850}
+.therapist-id-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.therapist-id-value{font-size:15px;font-weight:900;color:#f0ce78;overflow-wrap:anywhere}
+.therapist-action-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px;padding-top:13px;border-top:1px solid #3e4044}.therapist-action-row .btn{min-height:42px}
+.therapist-edit-panel{min-width:0;max-width:100%;background:#111214!important;border-color:#4b4d51!important}.therapist-edit-panel h4{font-size:19px;color:#e6c36b;font-weight:900}
+@media(max-width:900px){.admin-layout{grid-template-columns:minmax(155px,190px) minmax(0,1fr);gap:12px}.admin-nav{padding:9px}.admin-nav button{font-size:13px;padding:10px 8px}.therapist-row-identity{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.wrap{width:94%;padding-top:14px}.head{align-items:flex-start}.head h1{font-size:clamp(22px,6vw,28px)}.admin-layout{grid-template-columns:minmax(0,1fr)}.admin-nav{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.admin-nav-title{grid-column:1/-1}.admin-nav button{font-size:13px;min-width:0}.therapist-row-identity,.therapist-row-contact,.therapist-row-services{grid-template-columns:minmax(0,1fr)}.therapist-section-heading{align-items:flex-start;flex-direction:column}.therapist-directory-main{gap:11px}.therapist-directory-photo,.therapist-directory-placeholder{width:82px;height:112px;flex-basis:82px}.therapist-directory-info h3{font-size:21px}.therapist-info-line{font-size:14px}.therapist-action-row .btn{flex:1 1 42%;padding:10px}.id-generator-row{flex-direction:column}.grid{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body><div class="wrap">
@@ -263,10 +307,10 @@ function showAdminView(view){
  const groups={
   bookings:["bookingManagement"],
   zones:["zoneTools","assignmentTools"],
-  therapists:["adminTools","serviceIdTools","therapistListCard","linkTools"],
+  therapists:["adminTools","therapistListCard","linkTools"],
   ratings:["ratingsSection"]
  };
- const all=["bookingManagement","zoneTools","assignmentTools","adminTools","serviceIdTools","therapistListCard","linkTools","ratingsSection"];
+ const all=["bookingManagement","zoneTools","assignmentTools","adminTools","therapistListCard","linkTools","ratingsSection"];
  all.forEach(id=>{const el=$(id);if(el)el.classList.add("hidden")});
  (groups[view]||groups.bookings).forEach(id=>{const el=$(id);if(el)el.classList.remove("hidden")});
  document.querySelectorAll("#adminNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
@@ -278,7 +322,7 @@ $("authCard").classList.add("hidden");$("dashboard").classList.remove("hidden");
 const {data:p,error}=await sb.from("user_profiles").select("role").eq("user_id",s.user.id).maybeSingle();
 if(error||!p){role=null;$("roleMsg").textContent="आपका login ठीक है, लेकिन Admin ने अभी इस account को role नहीं दिया है। यदि आप Admin हैं, तो पहले एक बार नीचे दिए गए setup step को पूरा करना होगा; therapist हों तो Admin से आपको जोड़ने को कहें।";$("adminTools").classList.add("hidden");$("linkTools").classList.add("hidden");$("therapistListCard").classList.add("hidden");$("ratingList").innerHTML='<div class="empty">Role assign होने के बाद यहां आपका private dashboard खुलेगा।</div>';return}
 role=p.role;$("roleMsg").textContent=role==="admin"?"Admin access active — सभी therapist और reviews देख सकते हैं।":"Therapist access active — केवल आपकी assigned ratings दिखाई जाएंगी.";
-if(role==="admin"){ $("adminLayout").classList.remove("hidden"); $("adminTools").classList.remove("hidden");$("serviceIdTools").classList.remove("hidden");$("zoneTools").classList.remove("hidden");$("assignmentTools").classList.remove("hidden");$("bookingManagement").classList.remove("hidden");$("linkTools").classList.remove("hidden");$("therapistListCard").classList.remove("hidden");await loadAdmin();showAdminView("bookings")}else if(role==="therapist"){ $("adminLayout").classList.add("hidden"); $("adminTools").classList.add("hidden");$("serviceIdTools").classList.add("hidden");$("zoneTools").classList.add("hidden");$("assignmentTools").classList.add("hidden");$("bookingManagement").classList.add("hidden");$("linkTools").classList.add("hidden");$("therapistListCard").classList.add("hidden");await loadTherapist()}else{ $("ratingList").innerHTML='<div class="empty">इस role को dashboard access नहीं है।</div>'}}
+if(role==="admin"){ $("adminLayout").classList.remove("hidden"); $("adminTools").classList.remove("hidden");$("zoneTools").classList.remove("hidden");$("assignmentTools").classList.remove("hidden");$("bookingManagement").classList.remove("hidden");$("linkTools").classList.remove("hidden");$("therapistListCard").classList.remove("hidden");await loadAdmin();showAdminView("bookings")}else if(role==="therapist"){ $("adminLayout").classList.add("hidden"); $("adminTools").classList.add("hidden");$("zoneTools").classList.add("hidden");$("assignmentTools").classList.add("hidden");$("bookingManagement").classList.add("hidden");$("linkTools").classList.add("hidden");$("therapistListCard").classList.add("hidden");await loadTherapist()}else{ $("ratingList").innerHTML='<div class="empty">इस role को dashboard access नहीं है।</div>'}}
 let zones=[],therapistZones=[],assignments=[];
 function renderZoneChecks(selectedIds=[]){const box=$("zoneCheckboxes");box.replaceChildren();const activeZones=zones.filter(z=>z.active);if(!activeZones.length){box.textContent="पहले एक active zone बनाएं।";return}for(const z of activeZones){const label=document.createElement("label");const input=document.createElement("input");input.type="checkbox";input.value=z.id;input.checked=selectedIds.includes(z.id);label.append(input,document.createTextNode(z.name));box.append(label)}}
 function loadTherapistSettings(){const t=therapists.find(x=>x.id===$("zoneTherapist").value);if(!t)return;$("zoneExperience").value=Number(t.experience_years||0);$("zoneGender").value=t.gender||"";$("therapistAvailable").checked=t.available!==false;$("serviceMassage").checked=(t.service_types||["Massage"]).includes("Massage");$("serviceSalon").checked=(t.service_types||[]).includes("Salon");$("tierPrime").checked=(t.tiers||["Prime","Luxe"]).includes("Prime");$("tierLuxe").checked=(t.tiers||["Prime","Luxe"]).includes("Luxe");renderZoneChecks(therapistZones.filter(x=>x.therapist_id===t.id).map(x=>x.zone_id))}
