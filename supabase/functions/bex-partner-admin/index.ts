@@ -55,7 +55,7 @@ Deno.serve(async (req: Request) => {
     const full_address = String(body.full_address || "").trim();
     const photo_url = body.photo_url ? String(body.photo_url) : null;
     let login_id = slugify(String(body.login_id || business_name));
-    if (!business_name || !owner_name || !phone || phone.length !== 10 || !full_address || !["Salon","Gym","Medical Store","Other"].includes(category) || login_id.length < 3) {
+    if (!business_name || !owner_name || !phone || phone.length !== 10 || !full_address || !["Salon","Gym","Kirana Store","Medical Store","Other"].includes(category) || login_id.length < 3) {
       return reply({ error: "Please complete all required fields with a valid 10-digit mobile number." }, 400);
     }
     const { data: duplicate } = await adminClient.from("partners").select("id").or(`login_id.eq.${login_id},phone.eq.${phone}`).limit(1);
@@ -128,7 +128,7 @@ Deno.serve(async (req: Request) => {
     const amount = Number(body.amount);
     const rule_mode = String(body.rule_mode || "every");
     const validity_months = rule_mode === "period" ? Number(body.validity_months) : null;
-    if (!["Salon","Gym","Medical Store","Other"].includes(category) || !["Prime","Luxe","Other"].includes(service_tier) || !["fixed","percent"].includes(commission_type) || !Number.isFinite(amount) || amount < 0 || !["first","every","period"].includes(rule_mode) || (rule_mode === "period" && (!Number.isInteger(validity_months) || validity_months < 1 || validity_months > 60))) {
+    if (!["Salon","Gym","Kirana Store","Medical Store","Other"].includes(category) || !["Prime","Luxe","Other"].includes(service_tier) || !["fixed","percent"].includes(commission_type) || !Number.isFinite(amount) || amount < 0 || !["first","every","period"].includes(rule_mode) || (rule_mode === "period" && (!Number.isInteger(validity_months) || validity_months < 1 || validity_months > 60))) {
       return reply({ error: "Invalid commission rule values." }, 400);
     }
     let lookup = adminClient.from("partner_commission_rules").select("id").eq("service_tier", service_tier);
