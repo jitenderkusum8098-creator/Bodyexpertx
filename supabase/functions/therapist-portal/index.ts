@@ -186,7 +186,7 @@ Deno.serve(async(req:Request)=>{
     let referralResult:any={earned:false,reason:"no_partner_referral"};
     try{referralResult=await addReferralCommissionOnCompletion(id,therapist.user_id,completedAt);}catch(e){console.error("Referral commission auto-add failed",id,e);referralResult={earned:false,reason:"commission_error",error:e instanceof Error?e.message:"Commission save nahi hua"};}
     const commissionMessage=referralResult.earned
-      ? " Aapka refer safal raha! BEX Partner ki earning mein ₹"+Number(referralResult.amount).toLocaleString("en-IN",{maximumFractionDigits:2})+" turant add ho gaye aur notification bhej di gayi."
+      ? " Aapka refer safal raha! BEX Partner ki earning mein ₹"+Number(referralResult.amount).toLocaleString("en-IN",{maximumFractionDigits:2})+" turant add ho gaye."+(referralResult.notification_created===false?" Lekin Partner notification save nahi hui; Admin Panel mein check karein.":" Partner ko success notification bhej di gayi.")
       : referralResult.reason==="no_partner_referral" ? " Is booking par Partner referral link nahi mila, isliye referral commission nahi bana."
       : referralResult.reason==="already_earned" ? " Is booking ka referral commission pehle hi add ho chuka hai."
       : referralResult.reason==="no_rule" ? " Job complete ho gayi, lekin is Partner/Service ka commission rule set nahi hai. Admin Panel mein rule set karein."
