@@ -415,6 +415,19 @@ button,.btn{font-family:inherit!important;font-weight:700!important;min-height:4
 #partnerTools .bpDetails summary{color:#17345a;padding:8px 0}
 #partnerTools .msg{padding:10px;border-radius:9px;margin-top:10px}
 @media(max-width:760px){body{font-size:16px!important}.wrap{width:96%!important;padding-top:12px!important}.head{padding-bottom:14px!important;margin-bottom:14px!important}#adminNav [data-view]{font-size:13px!important;padding:10px!important}.card{padding:14px!important}#partnerTools .grid{grid-template-columns:minmax(0,1fr)!important}}
+/* BEX Partner Hindi and mobile usability fixes */
+#partnerTools h2,#partnerTools h3{color:#17345a!important}
+#partnerTools .field>span,#partnerTools label.field>span,#partnerTools .field>label{color:#26364c!important;font-weight:750!important;font-size:14px!important;line-height:1.5}
+#partnerTools .muted,#partnerTools small{color:#52627a!important}
+#partnerTools .bpServiceChoices{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#partnerTools .bpServiceChoices label{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #c6d2e1;border-radius:10px;background:#f5f8fc;color:#26364c!important;font-weight:650}
+#partnerTools .bpServiceChoices input{min-height:auto;width:18px;height:18px;accent-color:#17345a}
+#partnerTools #bpServicesField{min-width:0}
+#partnerTools #bpRuleScope,#partnerTools #bpRuleType,#partnerTools #bpRuleMode,#partnerTools #bpRuleMonths{width:100%}
+#partnerTools .bpMonthsField{transition:opacity .15s}
+#partnerTools .item-list .empty,#partnerTools .msg{color:#26364c!important;background:#f7f9fc!important;border:1px solid #d8e0eb!important}
+#partnerTools .bpCatFilter{color:#26364c!important}
+@media(max-width:760px){#partnerTools .grid{grid-template-columns:minmax(0,1fr)!important}#partnerTools .bpServiceChoices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#partnerTools .row{gap:8px;flex-wrap:wrap}#partnerTools h2{font-size:20px!important}#partnerTools .field>span{font-size:14px!important}}
 </style>
 </head>
 <body><div class="wrap">
@@ -475,33 +488,35 @@ button,.btn{font-family:inherit!important;font-weight:700!important;min-height:4
 </section>
 <section id="linkTools" class="card hidden"><h2>WhatsApp rating link बनाएं</h2><label class="field"><span>Therapist चुनें</span><select id="therapistSelect"><option value="">पहले therapist बनाएं</option></select></label><button id="makeLink" class="btn">Generate private rating link</button><div id="linkMsg" class="msg hidden"></div><div id="linkOutput" class="hidden"><div class="linkbox" id="linkText"></div><div class="row"><button id="copyLink" class="btn alt">Copy link</button><a id="whatsappLink" class="btn" target="_blank" rel="noopener">WhatsApp पर भेजें</a></div><p class="muted small">Link 30 दिन में expire होगा और एक customer rating के बाद इस्तेमाल नहीं हो सकेगा।</p></div></section>
 <section id="partnerTools" class="card hidden">
-<h2>BEX Partner Management</h2>
-<p class="muted small">इसी Admin login से Salon, Gym और Medical Store register करें। अलग login की जरूरत नहीं।</p>
+<h2>बीईएक्स पार्टनर प्रबंधन</h2>
+<p class="muted small">मौजूदा Admin लॉगिन से ही पार्टनर जोड़ें। इस काम के लिए अलग Admin लॉगिन नहीं चाहिए।</p>
+<h3>नया पार्टनर रजिस्ट्रेशन</h3>
 <div class="grid">
-<label class="field"><span>Business Name *</span><input id="bpBusiness" maxlength="120" placeholder="Salon / Gym / Medical Store"></label>
-<label class="field"><span>Business Category *</span><select id="bpCategory"><option value="Salon">Salon</option><option value="Gym">Gym</option><option value="Kirana Store">Kirana Store</option><option value="Medical Store">Medical Store</option><option value="Other">Other</option></select></label>
-<label class="field"><span>Owner Name *</span><input id="bpOwner" maxlength="100" placeholder="Owner full name"></label>
-<label class="field"><span>Mobile Number *</span><input id="bpPhone" type="tel" maxlength="16" placeholder="10 digit mobile"></label>
-<label class="field"><span>Full Business Address *</span><input id="bpAddress" maxlength="500" placeholder="Shop / street / area / city / PIN"></label>
-<label class="field"><span>Business / Owner Photo (optional)</span><input id="bpPhoto" type="file" accept="image/*"></label>
+<label class="field"><span>व्यवसाय का नाम *</span><input id="bpBusiness" maxlength="120" placeholder="सैलून / जिम / दुकान का नाम"></label>
+<label class="field"><span>व्यवसाय की श्रेणी *</span><select id="bpCategory"><option value="Salon">सैलून</option><option value="Gym">जिम</option><option value="Kirana Store">किराना स्टोर</option><option value="Medical Store">मेडिकल स्टोर</option><option value="Other">अन्य</option></select></label>
+<label class="field"><span>मालिक का नाम *</span><input id="bpOwner" maxlength="100" placeholder="मालिक का पूरा नाम"></label>
+<label class="field"><span>मोबाइल नंबर *</span><input id="bpPhone" type="tel" maxlength="16" placeholder="10 अंकों का मोबाइल नंबर"></label>
+<label class="field"><span>पूरा व्यवसाय का पता *</span><input id="bpAddress" maxlength="500" placeholder="दुकान, गली, क्षेत्र, शहर, PIN"></label>
+<label class="field"><span>व्यवसाय / मालिक की फोटो (वैकल्पिक)</span><input id="bpPhoto" type="file" accept="image/*"></label>
 </div>
-<button id="bpCreate" class="btn">Save + Register Partner</button><div id="bpCreateMsg" class="msg hidden" role="status"></div>
+<h3>कमीशन की सेटिंग</h3>
+<div class="grid">
+<label class="field"><span>कमीशन का प्रकार</span><select id="bpRuleType"><option value="fixed">फिक्स्ड कमीशन (₹)</option><option value="percent">प्रतिशत कमीशन (%)</option></select></label>
+<label class="field"><span>कमीशन राशि (₹) / प्रतिशत (%)</span><input id="bpRuleAmount" type="number" min="0.01" step="0.01" placeholder="जैसे 50 या 5"></label>
+<label class="field"><span>कमीशन कब मिलेगा?</span><select id="bpRuleMode"><option value="first">ग्राहक की पहली पूरी हुई बुकिंग पर केवल एक बार</option><option value="every" selected>ग्राहक की हर योग्य पूरी हुई बुकिंग पर</option><option value="period">सीमित अवधि तक कमीशन</option></select></label>
+<label class="field bpMonthsField"><span>सीमित अवधि (महीने)</span><select id="bpRuleMonths"><option>1</option><option selected>3</option><option>6</option><option>12</option></select></label>
+<label class="field"><span>कमीशन किन सेवाओं पर लागू होगा?</span><select id="bpRuleScope"><option value="all">सभी सेवाएँ</option><option value="selected">केवल चुनी हुई सेवाएँ</option></select></label>
+<div class="field" id="bpServicesField"><span>सेवाएँ चुनें (एक या दोनों)</span><div class="bpServiceChoices"><label><input type="checkbox" name="bpService" value="Prime"> प्राइम</label><label><input type="checkbox" name="bpService" value="Luxe"> लक्स</label></div><small class="muted">सभी सेवाएँ चुनने पर प्राइम और लक्स अपने-आप शामिल होंगे।</small></div>
+</div>
+<button id="bpCreate" class="btn">सेव करें और पार्टनर रजिस्टर करें</button><div id="bpCreateMsg" class="msg hidden" role="status"></div>
 <hr style="margin:24px 0;border-color:var(--line)">
-<div class="row"><h2>Registered Partners</h2><button id="bpRefresh" class="btn alt right">Refresh partners</button></div>
+<div class="row"><h2>सभी रजिस्टर्ड पार्टनर</h2><button id="bpRefresh" class="btn alt right">सूची रिफ्रेश करें</button></div>
 <div id="bpCategoryStats" class="grid"></div>
-<div id="bpPartnerList" class="item-list"><div class="empty">Partners load करने के लिए Refresh दबाएँ।</div></div>
+<div id="bpPartnerList" class="item-list"><div class="empty">पार्टनर सूची देखने के लिए रिफ्रेश करें।</div></div>
 <hr style="margin:24px 0;border-color:var(--line)">
-<h2>Commission Rules</h2>
-<div class="grid">
-<label class="field"><span>Category</span><select id="bpRuleCategory"><option>Gym</option><option>Salon</option><option>Kirana Store</option><option>Medical Store</option><option>Other</option></select></label>
-<label class="field"><span>Commission applies to</span><select id="bpRuleScope"><option value="all">All services</option><option value="selected">Selected services only</option></select></label>
-<label class="field"><span>Select services (multi-select)</span><select id="bpRuleTier" multiple size="2"><option value="Prime">Prime</option><option value="Luxe">Luxe</option></select><small class="muted">Selected services ke liye Ctrl (computer) ya tap (mobile) se select karein. All services choose karne par selection ignore hoga.</small></label>
-<label class="field"><span>Commission Type</span><select id="bpRuleType"><option value="fixed">Fixed ₹</option><option value="percent">Percentage %</option></select></label>
-<label class="field"><span>Commission Amount / Percentage</span><input id="bpRuleAmount" type="number" min="0" step="0.01" placeholder="जैसे 50 या 5"></label>
-<label class="field"><span>Commission frequency</span><select id="bpRuleMode"><option value="first">Customer की पहली completed booking पर एक बार</option><option value="every" selected>Customer की हर eligible completed booking पर</option><option value="period">Limited Period</option></select></label>
-<label class="field"><span>Limited Period (months)</span><select id="bpRuleMonths"><option>1</option><option selected>3</option><option>6</option><option>12</option></select></label>
-</div>
-<button id="bpSaveRule" class="btn">Save Commission Rule</button><div id="bpRuleMsg" class="msg hidden"></div>
+<h3>डिफ़ॉल्ट कमीशन नियम</h3>
+<p class="muted small">यह नियम ऊपर चुनी गई व्यवसाय श्रेणी के लिए लागू होगा।</p>
+<button id="bpSaveRule" class="btn">इस श्रेणी का डिफ़ॉल्ट कमीशन सेव करें</button><div id="bpRuleMsg" class="msg hidden"></div>
 <div id="bpRulesList" class="item-list"></div>
 </section>
 <section id="ratingsSection" class="card"><div class="row"><h2 id="ratingHeading">Ratings & reviews</h2><button id="refresh" class="btn alt right">Refresh</button></div><div id="ratingList"><div class="empty">Login के बाद ratings यहां दिखेंगी।</div></div></section>
@@ -546,7 +561,7 @@ function showAdminView(view){
 }
 document.querySelectorAll("#adminNav [data-view]").forEach(b=>b.addEventListener("click",()=>{showAdminView(b.dataset.view);if(b.dataset.view==="partners")bpLoad()}));
 
-async function bpCall(payload){const {data:{session:s}}=await sb.auth.getSession();if(!s)throw new Error("Admin session expired. Dobara login karein.");const r=await fetch(SUPABASE_URL+"/functions/v1/bex-partner-admin",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY,"Authorization":"Bearer "+s.access_token},body:JSON.stringify(payload)});const d=await r.json().catch(()=>({error:"Server response invalid"}));if(!r.ok)throw new Error(d.error||"Request failed");return d}
+async function bpCall(payload){const {data:{session:s}}=await sb.auth.getSession();if(!s)throw new Error("आपका Admin लॉगिन समाप्त हुआ है। कृपया एक बार दोबारा लॉगिन करें।");const r=await fetch(SUPABASE_URL+"/functions/v1/bex-partner-admin",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY,"Authorization":"Bearer "+s.access_token},body:JSON.stringify(payload)});const d=await r.json().catch(()=>({error:"Server response invalid"}));if(!r.ok)throw new Error(d.error||"Request failed");return d}
 function bpEsc(s){return String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
 async function bpLoad(){
  const list=$("bpPartnerList"),rulesBox=$("bpRulesList");list.innerHTML='<div class="empty">Loading…</div>';
@@ -559,7 +574,7 @@ async function bpLoad(){
  if(p.error||r.error||ref.error||comm.error){list.innerHTML='<div class="msg">Load error: '+bpEsc(p.error?.message||r.error?.message||ref.error?.message||comm.error?.message)+'</div>';return}
  const partners=p.data||[],refs=ref.data||[],comms=comm.data||[],today=new Date();today.setHours(0,0,0,0);const monthStart=new Date(today.getFullYear(),today.getMonth(),1);
  const cats=["Salon","Gym","Kirana Store","Medical Store","Other"];
- $("bpCategoryStats").innerHTML=cats.map(cat=>'<button type="button" class="item bpCatFilter" data-category="'+cat+'" style="text-align:left;cursor:pointer"><strong>'+cat+'</strong><div class="k-value" style="font-size:24px;font-weight:900">'+partners.filter(x=>x.category===cat).length+'</div><span class="small">Registered partners</span></button>').join("");
+ $("bpCategoryStats").innerHTML=cats.map(cat=>'<button type="button" class="item bpCatFilter" data-category="'+cat+'" style="text-align:left;cursor:pointer"><strong>'+({"Salon":"सैलून","Gym":"जिम","Kirana Store":"किराना स्टोर","Medical Store":"मेडिकल स्टोर","Other":"अन्य"}[cat]||cat)+'</strong><div class="k-value" style="font-size:24px;font-weight:900">'+partners.filter(x=>x.category===cat).length+'</div><span class="small">रजिस्टर्ड पार्टनर</span></button>').join("");
  const filtered=window.bpSelectedCategory?partners.filter(x=>x.category===window.bpSelectedCategory):partners;
  list.innerHTML=filtered.map(x=>{
   const rr=refs.filter(y=>y.partner_id===x.id),cc=comms.filter(y=>y.partner_id===x.id),sum=(rows,field)=>rows.reduce((a,z)=>a+Number(z[field]||0),0);
@@ -575,9 +590,9 @@ async function bpLoad(){
  document.querySelectorAll(".bpEdit").forEach(b=>b.onclick=async()=>{try{const card=b.closest(".item"),values={};card.querySelectorAll("[data-edit]").forEach(el=>values[el.dataset.edit]=el.value.trim());if(Object.values(values).some(v=>!v))throw new Error("Sabhi details bharein.");const {error}=await sb.from("partners").update({...values,updated_at:new Date().toISOString()}).eq("id",b.dataset.id);if(error)throw error;alert("Partner details updated.");await bpLoad()}catch(e){alert("Update failed: "+e.message)}});
  document.querySelectorAll(".bpCatFilter").forEach(b=>b.onclick=()=>{window.bpSelectedCategory=window.bpSelectedCategory===b.dataset.category?null:b.dataset.category;bpLoad()});
 }
-$("bpCreate").addEventListener("click",async()=>{const msgBox=$("bpCreateMsg");msgBox.classList.remove("hidden");msgBox.textContent="";try{const business_name=$("bpBusiness").value.trim(),owner_name=$("bpOwner").value.trim(),phone=$("bpPhone").value.trim(),full_address=$("bpAddress").value.trim(),category=$("bpCategory").value;if(!business_name||!owner_name||!phone||!full_address)throw new Error("Sabhi required fields bharein.");const ruleAmount=$("bpRuleAmount").value;if(ruleAmount===""||Number(ruleAmount)<0)throw new Error("Commission amount pehle bharein.");if($("bpRuleScope").value==="selected"&&!$("bpRuleTier").selectedOptions.length)throw new Error("Prime, Luxe ya dono services select karein.");let photo_url=null;const file=$("bpPhoto").files[0];if(file){if(file.size>5*1024*1024)throw new Error("Photo 5 MB se chhoti honi chahiye.");const ext=(file.name.split(".").pop()||"jpg").toLowerCase(),path="partners/"+crypto.randomUUID()+"."+ext;const {error}=await sb.storage.from("partner-profiles").upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;photo_url=sb.storage.from("partner-profiles").getPublicUrl(path).data.publicUrl;}const login_id=business_name.normalize("NFKD").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,36);const out=await bpCall({action:"create_partner",business_name,owner_name,category,phone,login_id,full_address,photo_url});try{const chosenTiers=Array.from($("bpRuleTier").selectedOptions).map(o=>o.value);const tiers=$("bpRuleScope").value==="all"?["Prime","Luxe"]:chosenTiers;if(!tiers.length)throw new Error("Prime, Luxe ya All services choose karein.");for(const tier of tiers){await bpCall({action:"save_commission_rule",category,partner_id:out.partner.id,service_tier:tier,commission_type:$("bpRuleType").value,amount:ruleAmount,rule_mode:$("bpRuleMode").value,validity_months:$("bpRuleMode").value==="period"?$("bpRuleMonths").value:null});}}catch(ruleError){throw new Error("Partner register ho gaya, lekin commission rule save nahi hua: "+ruleError.message+" | Login ID: "+out.partner.login_id)}msgBox.textContent="Partner + Commission Rule saved. Login ID: "+out.partner.login_id+" | Initial password (mobile): "+out.initial_password+" | Partner ID: "+out.partner.partner_code+". Pehli login par password change karein.";msgBox.classList.remove("hidden");$("bpBusiness").value="";$("bpOwner").value="";$("bpPhone").value="";$("bpAddress").value="";$("bpPhoto").value="";await bpLoad();}catch(e){msgBox.textContent=e.message;msgBox.classList.remove("hidden");}});
+$("bpCreate").addEventListener("click",async()=>{const msgBox=$("bpCreateMsg");msgBox.classList.remove("hidden");msgBox.textContent="";try{const business_name=$("bpBusiness").value.trim(),owner_name=$("bpOwner").value.trim(),phone=$("bpPhone").value.trim(),full_address=$("bpAddress").value.trim(),category=$("bpCategory").value;if(!business_name||!owner_name||!phone||!full_address)throw new Error("कृपया सभी ज़रूरी जानकारी भरें।");const ruleAmount=$("bpRuleAmount").value;if(ruleAmount===""||Number(ruleAmount)<0)throw new Error("Commission amount pehle bharein.");if($("bpRuleScope").value==="selected"&&!document.querySelector('input[name="bpService"]:checked'))throw new Error("कम से कम एक सेवा चुनें।");let photo_url=null;const file=$("bpPhoto").files[0];if(file){if(file.size>5*1024*1024)throw new Error("Photo 5 MB se chhoti honi chahiye.");const ext=(file.name.split(".").pop()||"jpg").toLowerCase(),path="partners/"+crypto.randomUUID()+"."+ext;const {error}=await sb.storage.from("partner-profiles").upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;photo_url=sb.storage.from("partner-profiles").getPublicUrl(path).data.publicUrl;}const login_id=business_name.normalize("NFKD").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,36);const out=await bpCall({action:"create_partner",business_name,owner_name,category,phone,login_id,full_address,photo_url});try{const chosenTiers=Array.from(document.querySelectorAll('input[name="bpService"]:checked')).map(o=>o.value);const tiers=$("bpRuleScope").value==="all"?["Prime","Luxe"]:chosenTiers;if(!tiers.length)throw new Error("कम से कम एक सेवा चुनें।");for(const tier of tiers){await bpCall({action:"save_commission_rule",category,partner_id:out.partner.id,service_tier:tier,commission_type:$("bpRuleType").value,amount:ruleAmount,rule_mode:$("bpRuleMode").value,validity_months:$("bpRuleMode").value==="period"?$("bpRuleMonths").value:null});}}catch(ruleError){throw new Error("Partner register ho gaya, lekin commission rule save nahi hua: "+ruleError.message+" | Login ID: "+out.partner.login_id)}msgBox.textContent="Partner + Commission Rule saved. Login ID: "+out.partner.login_id+" | Initial password (mobile): "+out.initial_password+" | Partner ID: "+out.partner.partner_code+". Pehli login par password change karein.";msgBox.classList.remove("hidden");$("bpBusiness").value="";$("bpOwner").value="";$("bpPhone").value="";$("bpAddress").value="";$("bpPhoto").value="";await bpLoad();}catch(e){msgBox.textContent=e.message;msgBox.classList.remove("hidden");}});
 $("bpRefresh").addEventListener("click",bpLoad);
-$("bpSaveRule").addEventListener("click",async()=>{const m=$("bpRuleMsg");m.classList.remove("hidden");try{const amount=$("bpRuleAmount").value;if(amount==="")throw new Error("Commission amount bharein.");const tiers=$("bpRuleScope").value==="all"?["Prime","Luxe"]:Array.from($("bpRuleTier").selectedOptions).map(o=>o.value);if(!tiers.length)throw new Error("Prime, Luxe ya All services choose karein.");for(const tier of tiers){await bpCall({action:"save_commission_rule",category:$("bpRuleCategory").value,partner_id:null,service_tier:tier,commission_type:$("bpRuleType").value,amount,rule_mode:$("bpRuleMode").value,validity_months:$("bpRuleMode").value==="period"?$("bpRuleMonths").value:null});}m.textContent="Default commission rules saved.";await bpLoad();}catch(e){m.textContent=e.message}});
+$("bpSaveRule").addEventListener("click",async()=>{const m=$("bpRuleMsg");m.classList.remove("hidden");try{const amount=$("bpRuleAmount").value;if(amount===""||Number(amount)<=0)throw new Error("कमीशन की राशि या प्रतिशत भरें।");const tiers=$("bpRuleScope").value==="all"?["Prime","Luxe"]:Array.from(document.querySelectorAll('input[name="bpService"]:checked')).map(o=>o.value);if(!tiers.length)throw new Error("कम से कम एक सेवा चुनें।");for(const tier of tiers){await bpCall({action:"save_commission_rule",category:$("bpCategory").value,partner_id:null,service_tier:tier,commission_type:$("bpRuleType").value,amount,rule_mode:$("bpRuleMode").value,validity_months:$("bpRuleMode").value==="period"?$("bpRuleMonths").value:null});}m.textContent="कमीशन के नियम सेव हो गए।";await bpLoad();}catch(e){m.textContent="सेव नहीं हुआ: "+e.message}});
 
 async function loadDashboard(){const {data:{session:s}}=await sb.auth.getSession();session=s;if(!s){$("dashboard").classList.add("hidden");$("authCard").classList.remove("hidden");$("signOut").classList.add("hidden");return}
 $("authCard").classList.add("hidden");$("dashboard").classList.remove("hidden");$("signOut").classList.remove("hidden");
