@@ -58,7 +58,7 @@ $("pushEnable").addEventListener("click",enablePhonePush);
 
 let regStep=0,regZonesCache=[];
 function updateRegStep(){document.querySelectorAll(".onboard-step").forEach((s,i)=>s.classList.toggle("active",i===regStep));$("onboardProgressText").textContent="Step "+(regStep+1)+" of 4 · "+["Personal Details","City & Services","Work Preference & Training","Experience & Certificate"][regStep];$("onboardProgressBar").style.width=((regStep+1)*25)+"%";$("regBack").classList.toggle("hidden",regStep===0);$("regNext").classList.toggle("hidden",regStep===3);$("submitRegistration").classList.toggle("hidden",regStep!==3);$("registerMsg").classList.add("hidden");}
-function showRegistration(){ $("registerCard").classList.remove("hidden");regStep=0;updateRegStep();$("regName").focus();loadRegZones(); }
+function showRegistration(){ location.href="/register.html"; }
 $("showRegister").onclick=showRegistration;$("hideRegister").onclick=()=> $("registerCard").classList.add("hidden");
 function picked(name){return document.querySelector('input[name="'+name+'"]:checked')?.value||""}
 function validateRegStep(){const req=(id,msg)=>{const el=$(id);if(!el.value.trim()){el.focus();throw new Error(msg)}};
