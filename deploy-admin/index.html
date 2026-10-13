@@ -484,7 +484,27 @@ body.therapist-detail-page #therapistDetailPage{display:block!important}
 @media(max-width:600px){.therapist-detail-grid{grid-template-columns:1fr}.therapist-detail-top img,.therapist-detail-avatar{width:94px;height:112px}.therapist-detail-shell{margin:10px auto;border-radius:12px}}
 
 </style>
-</head>
+
+<style>
+#bpPartnerList{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+#bpPartnerList>.bp-partner-card{min-width:0;margin:0!important;padding:12px!important}
+#bpPartnerList .bp-partner-card>.row{display:flex;flex-direction:column;align-items:stretch!important}
+#bpPartnerList .bp-partner-card>.row img,#bpPartnerList .bp-partner-card>.row>div:first-child{width:64px!important;height:64px!important}
+#bpPartnerList .bp-partner-card .bpViewAll{width:100%;margin-top:8px}
+.bp-admin-detail{background:#fff;color:#17243a;border:1px solid #dfe6ef;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 8px 22px #17243a0d}
+.bp-admin-detail h2,.bp-admin-detail h3{color:#17243a}
+.bp-admin-detail .bp-dash-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.bp-admin-detail .bp-dash-card{background:#f6f8fb;border:1px solid #e0e6ef;border-radius:12px;padding:13px;text-align:left;cursor:pointer;color:#17243a}
+.bp-admin-detail .bp-dash-card strong{display:block;font-size:22px;color:#132c4c;margin:5px 0}
+.bp-admin-detail .bp-dash-card span{font-size:12px;color:#66758a}
+.bp-admin-detail .bp-table{width:100%;border-collapse:collapse}
+.bp-admin-detail .bp-table th,.bp-admin-detail .bp-table td{padding:10px;border-bottom:1px solid #e4e9f0;text-align:left;font-size:13px}
+.bp-admin-detail input,.bp-admin-detail select{background:#fff;color:#17243a;border:1px solid #ccd5e2;border-radius:8px;padding:10px;width:100%;min-width:0}
+.bp-admin-detail label{display:block;font-size:12px;font-weight:800;margin:8px 0;color:#44546b}
+.bp-admin-detail .bp-form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media(max-width:1050px){#bpPartnerList{grid-template-columns:repeat(3,minmax(0,1fr))}.bp-admin-detail .bp-dash-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){#bpPartnerList{grid-template-columns:repeat(2,minmax(0,1fr))}.bp-admin-detail .bp-form-grid{grid-template-columns:1fr}.bp-admin-detail{padding:12px}}
+</style></head>
 <body><div class="wrap">
 <header class="head"><div><div class="brand">BODYEXPERTX · ADMINISTRATION</div><h1>BodyExpertX Admin Panel</h1><div class="sub">Bookings, Therapists, Reviews & BEX Partners — सभी का मैनेजमेंट एक जगह</div></div><button id="signOut" class="btn alt hidden">Sign out</button></header>
 <section id="authCard" class="card">
@@ -657,7 +677,7 @@ async function bpLoad(){
  }
  rulesBox.innerHTML=rules.map(x=>'<div class="item small">'+bpEsc(x.category)+' · '+bpEsc(x.service_tier)+' · '+bpEsc(x.commission_type)+' '+bpEsc(x.amount)+(x.commission_type==="percent"?"%":" ₹")+' · '+bpEsc(x.rule_mode)+'</div>').join("")||'<div class="empty">Commission rules अभी सेट नहीं हैं।</div>';
  document.querySelectorAll(".bpCatFilter").forEach(btn=>btn.onclick=()=>{window.bpSelectedCategory=window.bpSelectedCategory===btn.dataset.category?null:btn.dataset.category;bpLoad()});
- document.querySelectorAll(".bpViewAll").forEach(btn=>btn.onclick=()=>{const details=btn.closest("[data-partner-card]").querySelector(".bpFullDetails"),opening=details.classList.contains("hidden");details.classList.toggle("hidden",!opening);btn.setAttribute("aria-expanded",String(opening));btn.textContent=opening?"जानकारी बंद करें":"View All / पूरी जानकारी"});
+ document.querySelectorAll(".bpViewAll").forEach(btn=>btn.onclick=()=>bpOpenPartnerDashboard(btn.dataset.id));
  document.querySelectorAll(".bpQr").forEach(btn=>btn.onclick=()=>bpOpenQr(btn.dataset.code,btn.dataset.name));
  document.querySelectorAll(".bpStatus").forEach(btn=>btn.onclick=async()=>{try{await bpCall({action:"set_partner_status",partner_id:btn.dataset.id,status:btn.dataset.status});await bpLoad()}catch(e){alert(e.message)}});
  document.querySelectorAll(".bpEdit").forEach(btn=>btn.onclick=async()=>{try{const card=btn.closest("[data-partner-card]"),values={};card.querySelectorAll("[data-edit]").forEach(el=>values[el.dataset.edit]=el.value.trim());if(Object.values(values).some(v=>!v))throw new Error("सभी जानकारी भरें।");if(!/^\d{10}$/.test(values.phone.replace(/\D/g,"").slice(-10)))throw new Error("मोबाइल नंबर 10 अंकों का होना चाहिए।");values.phone=values.phone.replace(/\D/g,"").slice(-10);await bpCall({action:"update_partner",partner_id:btn.dataset.id,...values});alert("पार्टनर की जानकारी अपडेट हो गई।");await bpLoad()}catch(e){alert("अपडेट नहीं हुआ: "+e.message)}});
@@ -680,6 +700,63 @@ async function bpLoad(){
  });
  document.querySelectorAll(".bpDelete").forEach(btn=>btn.onclick=async()=>{if(!confirm('क्या "'+btn.dataset.name+'" को स्थायी रूप से delete करना है? यह वापस नहीं होगा।'))return;try{await bpCall({action:"delete_partner",partner_id:btn.dataset.id});alert("पार्टनर delete हो गया।");await bpLoad()}catch(e){alert("Delete नहीं हुआ: "+e.message)}});
 }
+
+async function bpOpenPartnerDashboard(partnerId){
+ const list=$("bpPartnerList"),stats=$("bpCategoryStats"),rules=$("bpRulesList");
+ let page=$("bpPartnerDashboard");if(!page){page=document.createElement("section");page.id="bpPartnerDashboard";page.className="bp-admin-detail";list.parentNode.insertBefore(page,list);}
+ list.classList.add("hidden");stats.classList.add("hidden");rules.classList.add("hidden");page.classList.remove("hidden");page.innerHTML='<div class="empty">Partner का Dashboard लोड हो रहा है…</div>';
+ try{
+  const d=await bpCall({action:"list_partner_admin_detail",partner_id:partnerId}),p=d.partner,refs=d.referrals||[],cs=d.commissions||[],payments=d.payments||[],bookings=d.bookings||[],allocs=d.allocations||[];
+  const now=new Date();now.setHours(0,0,0,0);const month=new Date(now.getFullYear(),now.getMonth(),1);
+  const valid=cs.filter(c=>c.status!=="void"),sum=a=>a.reduce((n,x)=>n+Number(x.commission_amount||0),0),earned=sum(valid),dayEarn=sum(valid.filter(c=>new Date(c.earned_at||c.created_at)>=now)),monthEarn=sum(valid.filter(c=>new Date(c.earned_at||c.created_at)>=month)),paid=payments.filter(x=>x.status==="paid").reduce((n,x)=>n+Number(x.amount||0),0),balance=Math.max(0,earned-paid);
+  const fmt=n=>"₹"+Number(n||0).toLocaleString("en-IN",{maximumFractionDigits:2});
+  const head='<div class="row" style="justify-content:space-between;flex-wrap:wrap"><div><div class="muted small">BEX PARTNER · पूरा Admin Dashboard</div><h2 style="margin:5px 0">'+bpEsc(p.business_name)+'</h2><div>Unique ID: <b>'+bpEsc(p.login_id||"—")+'</b> · Partner ID: '+bpEsc(p.partner_code||"—")+'</div></div><button class="btn alt" id="bpBackToDirectory">← सभी Partners</button></div>';
+  const card=(title,value,sub,key)=>'<button class="bp-dash-card" data-bp-open="'+key+'">'+title+'<strong>'+value+'</strong><span>'+sub+'</span></button>';
+  page.innerHTML=head+'<div class="bp-dash-grid" style="margin:16px 0">'+card("आज की कमाई",fmt(dayEarn),"आज Earned Commission","today")+
+   card("इस महीने की कमाई",fmt(monthEarn),"चालू महीने","month")+card("All Earnings",fmt(earned),"अब तक कुल Earned Commission","all")+
+   card("कुल Referrals",refs.length,"सभी Referral Records","refs")+card("आज के Referrals",refs.filter(r=>new Date(r.created_at)>=now).length,"आज के Referral","todayrefs")+
+   card("इस महीने के Referrals",refs.filter(r=>new Date(r.created_at)>=month).length,"महीने के Referral","monthrefs")+
+   card("भुगतान के लिए बाकी",fmt(balance),"Earned कमाई में से भुगतान घटाकर","balance")+card("कुल Paid Amount",fmt(paid),"दर्ज सभी Payments","payments")+
+   card("QR Code / Referral Link","खोलें","Partner का QR और Link","qr")+'</div>'+
+   '<div class="row" style="flex-wrap:wrap;margin:12px 0"><button class="btn" id="bpShowAdminBookings">सभी Referral Bookings</button><button class="btn alt" id="bpShowAdminPayments">Payment History</button><button class="btn alt" id="bpShowAdminProfile">Edit / Partner विकल्प</button></div>'+
+   '<div id="bpPartnerDetailContent"><div class="empty">ऊपर किसी कार्ड पर क्लिक करके विवरण देखें।</div></div>';
+  $("bpBackToDirectory").onclick=()=>{page.classList.add("hidden");list.classList.remove("hidden");stats.classList.remove("hidden");rules.classList.remove("hidden");};
+  const content=$("bpPartnerDetailContent");
+  function showEarnings(filter){
+   const rows=valid.filter(c=>filter==="today"?new Date(c.earned_at||c.created_at)>=now:filter==="month"?new Date(c.earned_at||c.created_at)>=month:true);
+   const html=rows.map(c=>{const b=bookings.find(x=>x.id===c.booking_id),r=refs.find(x=>x.id===c.referral_id);return '<tr><td>'+bpEsc(b?.customer_name||r?.customer_name||"ग्राहक")+'</td><td>'+fmt(c.commission_amount)+'</td><td>'+bpEsc(b?.reference_code||c.booking_id||"—")+'</td><td>'+bpEsc(b?.service_name||c.service_tier||"—")+'</td><td>'+new Date(c.earned_at||c.created_at).toLocaleString("hi-IN")+'</td><td>'+bpEsc(c.status)+'</td></tr>'}).join("");
+   content.innerHTML='<h3>'+({today:"आज की कमाई",month:"इस महीने की कमाई",all:"All Earnings — अब तक की पूरी कमाई"}[filter]||"Earnings")+'</h3><div class="tablewrap"><table class="bp-table"><thead><tr><th>ग्राहक</th><th>कमाई</th><th>Booking ID</th><th>Service</th><th>तारीख</th><th>स्थिति</th></tr></thead><tbody>'+html+'</tbody></table></div>'+(rows.length?"":'<div class="empty">इस अवधि में Earned Commission रिकॉर्ड नहीं है।</div>');
+  }
+  function showBookings(){
+   content.innerHTML='<h3>Referral Bookings — Admin की पूरी जानकारी</h3><div class="muted small">Partner को केवल ग्राहक का नाम और कमाई दिखाई जाती है। यह पूरी जानकारी केवल Admin के लिए है।</div>'+bookings.map(b=>'<details class="item"><summary><b>'+bpEsc(b.customer_name||"ग्राहक")+'</b> · '+bpEsc(b.reference_code||"Booking")+' · '+bpEsc(b.status)+'</summary><div class="grid" style="margin-top:12px"><div>ग्राहक का मोबाइल: <b>'+bpEsc(b.customer_phone||"—")+'</b></div><div>Service: <b>'+bpEsc(b.service_name||"—")+'</b></div><div>तारीख/समय: <b>'+bpEsc((b.appointment_date||"—")+" "+(b.appointment_time||""))+'</b></div><div>Booking राशि: <b>'+fmt(b.booking_amount)+'</b></div><div>पता: <b>'+bpEsc(b.customer_address||"—")+'</b></div><div>Therapist ID: <b>'+bpEsc(b.therapist_id||"—")+'</b></div><div>Payment Verified: <b>'+((b.payment_verified)?"हाँ":"नहीं")+'</b></div><div>Commission: <b>'+fmt(sum(valid.filter(c=>c.booking_id===b.id)))+'</b></div><div>Referral ID: <b>'+bpEsc(b.partner_referral_id||"—")+'</b></div></div></details>').join("")||'<div class="empty">अभी कोई Referral Booking नहीं।</div>';
+  }
+  function showPayments(){
+   content.innerHTML='<h3>Payment History</h3><div class="bp-form-grid"><label>भुगतान राशि (₹)<input id="bpPayAmount" type="number" min="0.01" step="0.01" placeholder="जैसे 200"></label><label>Payment ID / UTR<input id="bpPayTxn" maxlength="120" placeholder="Transaction ID"></label><label>भुगतान का तरीका<select id="bpPayMethod"><option>UPI</option><option>Bank Transfer</option><option>Cash</option><option>Other</option></select></label><label>भुगतान की तारीख<input id="bpPayDate" type="datetime-local" value="'+new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16)+'"></label><label>Payment Screenshot / Proof<input id="bpPayFile" type="file" accept="image/png,image/jpeg,image/webp,application/pdf"></label><label>नोट (वैकल्पिक)<input id="bpPayNotes" maxlength="300" placeholder="वैकल्पिक"></label></div><div class="bp-form-grid"><label>भुगतान प्रकार<select id="bpPayType"><option value="general">कुल बाकी राशि में से भुगतान</option><option value="specific">विशिष्ट Commission को भुगतान</option></select></label><label>Commission चुनें (वैकल्पिक)<select id="bpPayCommission"><option value="">Commission चुनें</option>'+valid.filter(c=>c.status==="earned").map(c=>'<option value="'+bpEsc(c.id)+'">'+bpEsc((bookings.find(b=>b.id===c.booking_id)?.customer_name||"ग्राहक")+" · "+fmt(c.commission_amount)+" · "+String(c.booking_id||"").slice(0,8))+'</option>').join("")+'</select></label><label>इस Commission से भुगतान राशि<input id="bpPayAllocAmount" type="number" min="0.01" step="0.01" placeholder="आंशिक या पूरी राशि"></label></div><p class="muted small">Payment दर्ज करने से पहले Transaction ID और प्रमाण जाँचें। Screenshot निजी Storage में रखा जाएगा।</p><button class="btn" id="bpSavePayment">Payment सेव करें</button><div id="bpPaymentMsg" class="msg hidden"></div><h3 style="margin-top:22px">पुराने Payments</h3><div class="tablewrap"><table class="bp-table"><thead><tr><th>तारीख</th><th>राशि</th><th>Payment ID</th><th>तरीका</th><th>Proof</th></tr></thead><tbody>'+payments.map(x=>'<tr><td>'+new Date(x.payment_date).toLocaleString("hi-IN")+'</td><td>'+fmt(x.amount)+'</td><td>'+bpEsc(x.transaction_id)+'</td><td>'+bpEsc(x.payment_method)+'</td><td>'+bpEsc(x.screenshot_path?"Screenshot saved":"—")+'</td></tr>').join("")+'</tbody></table></div>';
+   $("bpSavePayment").onclick=async()=>{
+    const m=$("bpPaymentMsg");m.classList.remove("hidden");m.textContent="";
+    try{
+     const amount=Number($("bpPayAmount").value),transaction_id=$("bpPayTxn").value.trim();if(!Number.isFinite(amount)||amount<=0||!transaction_id)throw new Error("सही राशि और Payment ID भरें।");
+     const file=$("bpPayFile").files[0];let screenshot_path=null;
+     if(file){if(file.size>5242880)throw new Error("Screenshot अधिकतम 5 MB होना चाहिए।");if(!["image/png","image/jpeg","image/webp","application/pdf"].includes(file.type))throw new Error("PNG, JPG, WEBP या PDF चुनें।");const {data:{session}}=await sb.auth.getSession();if(!session)throw new Error("Admin session expire हो गया।");screenshot_path=p.id+"/"+Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"_");const {error:upErr}=await sb.storage.from("partner-payment-proofs").upload(screenshot_path,file,{upsert:false,contentType:file.type});if(upErr)throw upErr;}
+     const allocations=[];if($("bpPayType").value==="specific"){const commission_id=$("bpPayCommission").value,allocAmount=Number($("bpPayAllocAmount").value);if(!commission_id||!Number.isFinite(allocAmount)||allocAmount<=0)throw new Error("Specific Commission और भुगतान राशि चुनें।");if(allocAmount>amount)throw new Error("Commission Allocation Payment राशि से अधिक नहीं हो सकती।");allocations.push({commission_id,amount:allocAmount});}
+     const d=await bpCall({action:"create_partner_payment",partner_id:p.id,amount,transaction_id,payment_method:$("bpPayMethod").value,payment_date:new Date($("bpPayDate").value).toISOString(),screenshot_path,notes:$("bpPayNotes").value,allocations});
+     m.textContent="Payment History सेव हो गई।";await bpOpenPartnerDashboard(partnerId);
+    }catch(e){m.textContent="Payment सेव नहीं हुई: "+e.message;}
+   };
+  }
+  function showProfile(){
+   content.innerHTML='<h3>Partner विकल्प / जानकारी Edit करें</h3><div class="bp-form-grid"><label>व्यवसाय का नाम<input id="bpEditName" value="'+bpEsc(p.business_name)+'"></label><label>मालिक का नाम<input id="bpEditOwner" value="'+bpEsc(p.owner_name)+'"></label><label>मोबाइल नंबर<input id="bpEditPhone" value="'+bpEsc(p.phone)+'"></label><label>श्रेणी<select id="bpEditCategory">'+["Salon","Gym","Kirana Store","Medical Store","Other"].map(c=>'<option '+(p.category===c?'selected':'')+'>'+c+'</option>').join("")+'</select></label><label style="grid-column:1/-1">पूरा पता<input id="bpEditAddress" value="'+bpEsc(p.full_address)+'"></label></div><div class="row" style="flex-wrap:wrap;margin-top:12px"><button class="btn" id="bpSavePartnerEdit">बदलाव सेव करें</button><button class="btn alt" id="bpPartnerQr">QR / पोस्टर</button><button class="btn alt" id="bpPartnerStatus">'+(p.status==="active"?"Partner Suspend करें":"Partner Activate करें")+'</button><button class="btn alt" id="bpPartnerCredentials">Unique ID / Password Generate करें</button><button class="btn danger" id="bpPartnerDelete">Partner Delete करें</button></div><div id="bpEditMsg" class="msg hidden"></div>';
+   $("bpSavePartnerEdit").onclick=async()=>{try{await bpCall({action:"update_partner",partner_id:p.id,business_name:$("bpEditName").value.trim(),owner_name:$("bpEditOwner").value.trim(),phone:$("bpEditPhone").value.trim(),category:$("bpEditCategory").value,full_address:$("bpEditAddress").value.trim()});alert("जानकारी सेव हो गई।");await bpOpenPartnerDashboard(partnerId)}catch(e){alert(e.message)}};
+   $("bpPartnerQr").onclick=()=>bpOpenQr(p.partner_code,p.business_name);
+   $("bpPartnerStatus").onclick=async()=>{try{await bpCall({action:"set_partner_status",partner_id:p.id,status:p.status==="active"?"suspended":"active"});await bpOpenPartnerDashboard(partnerId)}catch(e){alert(e.message)}};
+   $("bpPartnerCredentials").onclick=async()=>{if(!confirm("पुराने credentials बंद करके नए बनाने हैं?"))return;try{const x=await bpCall({action:"generate_partner_credentials",partner_id:p.id});alert("Login ID: "+x.login_id+"\nTemporary Password: "+x.password+"\nपहली login पर password बदलना होगा।")}catch(e){alert(e.message)}};
+   $("bpPartnerDelete").onclick=async()=>{if(!confirm("Partner delete करना है? Referral/Payment history होने पर deletion रोका जाएगा।"))return;try{await bpCall({action:"delete_partner",partner_id:p.id});alert("Partner delete हो गया।");await bpLoad()}catch(e){alert(e.message)}};
+  }
+  page.querySelectorAll("[data-bp-open]").forEach(b=>b.onclick=()=>{const k=b.dataset.bpOpen;if(["today","month","all"].includes(k))showEarnings(k);else if(["refs","todayrefs","monthrefs"].includes(k))showBookings();else if(k==="payments"||k==="balance")showPayments();else if(k==="qr"){content.innerHTML='<h3>QR Code / Referral Link</h3><div class="linkbox">'+bpEsc("https://jitenderkusum8098-creator.github.io/Bodyexpertx/?partner="+encodeURIComponent(p.partner_code||""))+'</div><button class="btn" id="bpShowQr">QR / पोस्टर खोलें</button>'; $("bpShowQr").onclick=()=>bpOpenQr(p.partner_code,p.business_name);}else showProfile();});
+  $("bpShowAdminBookings").onclick=showBookings;$("bpShowAdminPayments").onclick=showPayments;$("bpShowAdminProfile").onclick=showProfile;
+ }catch(e){page.innerHTML='<div class="msg">Dashboard लोड नहीं हुआ: '+bpEsc(e.message)+' <button class="btn alt" onclick="bpLoad()">वापस जाकर Refresh करें</button></div>';}
+}
+
 function bpOpenQr(code,name){
  const link="https://jitenderkusum8098-creator.github.io/Bodyexpertx/"+"?partner="+encodeURIComponent(code);
  let modal=document.getElementById("bpQrModal");
