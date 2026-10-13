@@ -93,6 +93,22 @@ Deno.serve(async (req: Request) => {
     return reply({ ok: true });
   }
 
+  if (action === "verify_booking_payment") {
+    const bookingId = String(body.booking_id || "");
+    if (!bookingId) return reply({ error: "Booking ID is required." }, 400);
+    const { data: booking, error: bookingError } = await adminClient.from("booking_assignments")
+      .select("id,status,partner_id,partner_referral_id,payment_verified").eq("id", bookingId).maybeSingle();
+    if (bookingError || !booking) return reply({ error: bookingError?.message || "Booking not found." }, 404);
+    if (booking.status !== "completed") return reply({ error: "Only completed jobs can have payment verified." }, 409);
+    if (!booking.partner_id || !booking.partner_referral_id) return reply({ error: "This booking has no verified partner referral attached." }, 409);
+    if (booking.payment_verified) return reply({ ok: true, already_verified: true });
+    const { error } = await adminClient.from("booking_assignments").update({
+      payment_verified: true, payment_verified_at: new Date().toISOString(), payment_verified_by: callerData.user.id
+    }).eq("id", bookingId);
+    if (error) return reply({ error: error.message }, 400);
+    return reply({ ok: true });
+  }
+
   if (action === "mark_commission_paid") {
     const commissionId = String(body.commission_id || "");
     const payment_reference = String(body.payment_reference || "").trim();
@@ -115,12 +131,18 @@ Deno.serve(async (req: Request) => {
     if (!["Salon","Gym","Medical Store","Other"].includes(category) || !["Prime","Luxe","Other"].includes(service_tier) || !["fixed","percent"].includes(commission_type) || !Number.isFinite(amount) || amount < 0 || !["first","every","period"].includes(rule_mode) || (rule_mode === "period" && (!Number.isInteger(validity_months) || validity_months < 1 || validity_months > 60))) {
       return reply({ error: "Invalid commission rule values." }, 400);
     }
-    const { data, error } = await adminClient.from("partner_commission_rules").upsert({
-      category, service_tier, partner_id, commission_type, amount, rule_mode, validity_months,
-      active: true, created_by: callerData.user.id, updated_at: new Date().toISOString()
-    }, { onConflict: partner_id ? "partner_id,service_tier" : "category,service_tier" }).select().single();
-    if (error) return reply({ error: error.message }, 400);
-    return reply({ ok: true, rule: data });
+    let lookup = adminClient.from("partner_commission_rules").select("id").eq("service_tier", service_tier);
+    if (partner_id) lookup = lookup.eq("partner_id", partner_id);
+    else lookup = lookup.is("partner_id", null).eq("category", category);
+    const { data: existingRule, error: lookupError } = await lookup.maybeSingle();
+    if (lookupError) return reply({ error: lookupError.message }, 400);
+    const ruleValues = { category, service_tier, partner_id, commission_type, amount, rule_mode, validity_months,
+      active: true, created_by: callerData.user.id, updated_at: new Date().toISOString() };
+    const saved = existingRule
+      ? await adminClient.from("partner_commission_rules").update(ruleValues).eq("id", existingRule.id).select().single()
+      : await adminClient.from("partner_commission_rules").insert(ruleValues).select().single();
+    if (saved.error) return reply({ error: saved.error.message }, 400);
+    return reply({ ok: true, rule: saved.data });
   }
 
   return reply({ error: "Unknown action" }, 400);
