@@ -747,7 +747,7 @@ function renderTherapistDetailPage(){
  $("therapistDetailBack").onclick=()=>{location.href=location.pathname+"#therapistListCard"};
  const approve=$("therapistDetailApprove");if(approve)approve.onclick=async()=>{if(!confirm("Approve "+t.display_name+"?"))return;approve.disabled=true;try{const d=await edge("admin-set-therapist-approval",{therapist_id:t.id,approval_status:"approved"});$("therapistDetailMsg").textContent=d.message;await loadAdmin()}catch(e){$("therapistDetailMsg").textContent=e.message;approve.disabled=false}};
  const reject=$("therapistDetailReject");if(reject)reject.onclick=async()=>{if(!confirm("Reject "+t.display_name+"'s application?"))return;reject.disabled=true;try{const d=await edge("admin-set-therapist-approval",{therapist_id:t.id,approval_status:"rejected"});$("therapistDetailMsg").textContent=d.message;await loadAdmin()}catch(e){$("therapistDetailMsg").textContent=e.message;reject.disabled=false}};
- const edit=$("therapistDetailEdit");if(edit)edit.onclick=()=>{location.href=location.pathname+"?editTherapist="+encodeURIComponent(t.id)+"#therapistListCard";alert("Edit Profile खोलने के लिए वापस Profiles में जाएँ और Edit Profile दबाएँ।")};
+ const edit=$("therapistDetailEdit");if(edit)edit.onclick=()=>{location.href=location.pathname+"#therapistListCard"};
 }
 function renderTherapistDirectory(){
  const cardHtml=t=>{
