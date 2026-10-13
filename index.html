@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="hi">
 <head>
+<link rel="manifest" href="/Bodyexpertx/manifest.webmanifest">
+<link rel="icon" href="/Bodyexpertx/bex-app-icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0a0a0a">
+
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BodyExpertX | प्रीमियम मसाज और सैलून बुकिंग</title>
 <meta name="description" content="BodyExpertX पर प्रीमियम मसाज और सैलून सेवाएँ चुनें। PRIME और LUXE विकल्पों के साथ आसान ऑनलाइन बुकिंग।">
@@ -1314,4 +1318,5 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
 })();
 </script>
 <script src="./hindi-ui.js" defer></script>
+<script id="bex-pwa-home-install">(function(){let deferred=null;const key="bex_customer_install_done";const standalone=()=>matchMedia("(display-mode: standalone)").matches||matchMedia("(display-mode: fullscreen)").matches||navigator.standalone===true;function hide(){document.getElementById("bexInstallApp")?.remove()}function add(){if(standalone()||localStorage.getItem(key)==="1"||document.getElementById("bexInstallApp"))return;const b=document.createElement("button");b.id="bexInstallApp";b.textContent="📲 Home Screen par Add karein";b.style.cssText="position:fixed;z-index:99999;right:12px;bottom:14px;background:#080808;color:#d6b35a;border:1px solid #c8c8c8;border-radius:999px;padding:12px 15px;font:700 13px system-ui;box-shadow:0 4px 18px #0003";b.onclick=async()=>{if(deferred){deferred.prompt();const c=await deferred.userChoice;deferred=null;if(c&&c.outcome==="accepted"){localStorage.setItem(key,"1");hide()}return}alert("Chrome ke menu ⋮ mein 'Add to Home screen' ya 'Install app' chunein.")};document.body.appendChild(b)}addEventListener("beforeinstallprompt",e=>{if(standalone()||localStorage.getItem(key)==="1")return;e.preventDefault();deferred=e;add()});addEventListener("appinstalled",()=>{localStorage.setItem(key,"1");hide()});if(standalone())hide();if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("/Bodyexpertx/sw.js",{scope:"/Bodyexpertx/"}).catch(()=>{}))})();</script>
 </body></html>
