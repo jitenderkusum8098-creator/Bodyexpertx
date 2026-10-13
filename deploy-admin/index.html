@@ -143,6 +143,38 @@ h1,h2,h3,h4{color:#f7f7f8;font-weight:850;letter-spacing:.005em}h2{font-size:cla
 .therapist-directory-expanded{width:100%}
 @media(max-width:900px){.therapist-row-identity{grid-template-columns:minmax(120px,.8fr) minmax(180px,1.5fr)}.therapist-row-identity .field{min-width:0}.therapist-directory-photo{width:112px;height:145px;flex-basis:112px}}
 @media(max-width:620px){body{font-size:15px}.wrap{width:94%;padding-top:14px}.therapist-row-identity,.therapist-row-contact,.therapist-row-services{grid-template-columns:minmax(0,1fr)}.therapist-section-heading{align-items:flex-start;flex-direction:column}.therapist-directory-main{gap:12px}.therapist-directory-photo,.therapist-directory-placeholder{width:88px;height:116px;flex-basis:88px}.therapist-directory-placeholder{height:88px}.therapist-directory-info h3{font-size:22px}.therapist-info-line{font-size:14px}.therapist-action-row .btn{flex:1 1 42%;padding:10px 11px}.id-generator-row{flex-direction:column}.therapist-create-card .field input[type=file]{font-size:11px}}
+
+/* BodyExpertX Luxury booking redesign: black, metallic silver, champagne gold */
+:root{--bx-black:#101114;--bx-charcoal:#202226;--bx-silver:#d9dce1;--bx-gold:#c6a45b;--bx-gold-light:#f0d99a;--bx-text:#15171b;--bx-muted:#424b58}
+.head{background:linear-gradient(110deg,#070809 0%,#17181b 72%,#29251d 100%);border:1px solid #393632;box-shadow:0 8px 26px #10111422}
+.brand{color:#f0d99a;font-size:15px;letter-spacing:.1em}
+.head h1{font-weight:900;letter-spacing:-.4px}
+.admin-nav{background:linear-gradient(180deg,#111214,#202125);border:1px solid #393a3e}
+.admin-nav-title{color:#f0d99a;font-size:13px}
+.admin-nav button{font-size:15px;font-weight:800;color:#f3f4f6;padding:14px 11px}
+.admin-nav button.active{background:linear-gradient(120deg,#f1d58f,#c6a45b);color:#111214}
+.booking-row{background:#fff;border:1px solid #d8dbe0;border-radius:18px;padding:22px;box-shadow:0 8px 24px #10111412}
+.booking-top{padding-bottom:15px;border-bottom:1px solid #e4e6e9;margin-bottom:14px}
+.booking-top strong{font-size:22px;font-weight:900;color:#111318;overflow-wrap:anywhere}
+.booking-top>div>div:not(.muted){font-size:18px;font-weight:800;color:#252932;margin-top:4px}
+.booking-top .muted{font-size:15px!important;font-weight:650;color:#4c5562!important;margin-top:5px}
+.status-pill{background:#f8f0dc;border:1px solid #dfc27d;color:#624716;font-size:14px;font-weight:900;padding:7px 12px}
+.booking-detail-expanded{background:#f8f9fb;border:1px solid #dfe3e8;border-radius:14px;padding:18px;margin:14px 0;color:#202630;font-size:17px;line-height:1.75}
+.booking-detail-expanded p{font-size:17px!important;color:#29313c!important;margin:9px 0!important}
+.booking-detail-expanded strong{font-weight:900;color:#111318}
+.booking-row>.btn.alt{font-size:15px;font-weight:850;border-color:#c6a45b;color:#302819;background:#fffdf8}
+.booking-controls-title{margin:22px 0 12px;padding:13px 16px;border-radius:12px;background:linear-gradient(110deg,#111214,#292a2d);border:1px solid #45464a;color:#f0d99a;font-size:21px;font-weight:900;letter-spacing:.01em}
+.booking-fields{background:#f2f3f5;border:1px solid #d7dbe1;border-radius:14px;padding:14px;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.booking-field{font-size:16px!important;font-weight:850!important;color:#222831!important}
+.booking-field span{font-size:16px!important;font-weight:900!important;color:#222831!important;margin-bottom:7px}
+.booking-row select,.booking-row input{font-size:17px!important;font-weight:700;padding:13px 14px;background:#fff;border:1px solid #bfc5ce;color:#15171b;border-radius:10px;min-height:48px}
+.booking-actions{border:1px solid #d9dce1;border-radius:14px;padding:14px;background:#f5f6f8;gap:10px}
+.booking-actions .btn{font-size:15px;font-weight:900;min-height:48px;border-radius:10px}
+.booking-actions .btn:not(.danger){background:linear-gradient(120deg,#f1d58f,#c6a45b);color:#171717;border:1px solid #b38e42}
+.booking-actions .btn.danger{background:#fff1f1;color:#a32121;border-color:#e2aaaa}
+@media(min-width:1000px){.booking-fields{grid-template-columns:repeat(4,minmax(0,1fr))}.booking-row{padding:24px}.booking-top strong{font-size:24px}}
+@media(max-width:600px){.booking-row{padding:14px}.booking-top strong{font-size:18px}.booking-detail-expanded{padding:12px}.booking-detail-expanded p{font-size:15px!important}.booking-fields{grid-template-columns:1fr}.booking-controls-title{font-size:18px}}
+
 </style>
 </head>
 <body><div class="wrap">
@@ -377,13 +409,14 @@ function renderBookingRows(){
   therapists.filter(x=>x.active&&x.available&&x.approval_status==="approved").forEach(x=>{const rating=therapistRating(x.id);tSel.append(new Option(x.display_name+" · "+(x.therapist_code||"ID")+(rating.avg===null?" · No rating":" · ★"+rating.avg+"/5"),x.id))});tSel.value=a.therapist_id||"";tSel.disabled=cancelled;therapistWrap.append(tSel);
   const amountWrap=document.createElement("label");amountWrap.className="booking-field";amountWrap.innerHTML="<span>Booking amount (₹)</span>";
   const amount=document.createElement("input");amount.type="number";amount.min="0";amount.step="0.01";amount.max="10000000";amount.value=Number(a.booking_amount||0);amount.disabled=cancelled;amountWrap.append(amount);
-  fields.append(statusWrap,zoneWrap,therapistWrap,amountWrap);card.append(fields);
+  fields.append(statusWrap,zoneWrap,therapistWrap,amountWrap);
   const detailToggle=document.createElement("button");detailToggle.type="button";detailToggle.className="btn alt";detailToggle.textContent="View Job";
   const fullDetails=document.createElement("div");fullDetails.className="booking-detail-expanded hidden";
   const details=[["Booking ID",a.reference_code],["Service",a.service_name],["Service Type",a.service_type],["Category",a.tier],["Booking Status",statusLabel(a.status)],["Customer Name",a.customer_name||"Not provided"],["Customer Mobile",a.customer_phone||"Not provided"],["Customer Age",a.customer_age??"Not provided"],["Booking For",a.recipient_gender||"Not provided"],["Visit Type",a.visit_type||"Not provided"],["Customer Address",a.customer_address||"Not provided"],["Appointment Date",a.appointment_date||"Not provided"],["Appointment Time",a.appointment_time||"Not provided"],["Zone",z?.name||"Not assigned"],["Assigned Therapist",t?.display_name||"Not assigned"],["Therapist ID",t?.therapist_code||"Not assigned"],["Booking Amount",rupee(a.booking_amount)],["Discount",rupee(a.discount_amount)],["Coupon Code",a.coupon_code||"None"],["Customer Type",a.customer_type||"Not provided"],["Main Concern",a.main_concern||"Not provided"],["Pressure Preference",a.preferred_pressure||"Not provided"],["Customer Notes",a.customer_notes||"None"],["Service Items",Array.isArray(a.service_details)&&a.service_details.length?a.service_details.map(x=>x.name+" ("+rupee(x.price)+")").join(", "):"Not provided"],["Created At",a.created_at?new Date(a.created_at).toLocaleString("en-IN"):"Not recorded"],["Cancelled At",a.cancelled_at?new Date(a.cancelled_at).toLocaleString("en-IN"):"—"],["Cancellation Reason",a.cancel_reason||"—"]];
   details.forEach(([k,v])=>{const p=document.createElement("p");p.className="muted small";p.style.margin="7px 0";const b=document.createElement("strong");b.textContent=k+": ";p.append(b,document.createTextNode(String(v)));fullDetails.append(p)});
   detailToggle.onclick=()=>{fullDetails.classList.toggle("hidden");detailToggle.textContent=fullDetails.classList.contains("hidden")?"View Job":"Hide Job Details"};
   card.append(detailToggle,fullDetails);
+  const controlsTitle=document.createElement("h3");controlsTitle.className="booking-controls-title";controlsTitle.textContent="Booking Controls";card.append(controlsTitle,fields);
   if(cancelled){const note=document.createElement("p");note.className="muted small";note.textContent="Cancelled booking history is preserved and cannot be reactivated."+(a.cancelled_at?" Cancelled: "+new Date(a.cancelled_at).toLocaleString("en-IN"):"")+(a.cancel_reason?" · Reason: "+a.cancel_reason:"");card.append(note)}
   const actions=document.createElement("div");actions.className="booking-actions";
   const save=document.createElement("button");save.className="btn";save.textContent="Save booking changes";save.disabled=cancelled;save.onclick=async()=>{try{const body={booking_id:a.id,status:statusSel.value,zone_id:zSel.value,therapist_id:tSel.value,booking_amount:amount.value};if(body.status==="cancelled"&&!confirm("इस booking को Cancelled करना है? यह history में रहेगी और active jobs से हट जाएगी।"))return;const result=await edge("admin-update-booking",body);alert(result.message||"Booking saved");await loadAdmin()}catch(e){alert(e.message)}};
