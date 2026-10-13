@@ -1,0 +1,18 @@
+{
+  "name": "bodyexpertx-customer-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "BodyExpertX customer Android prototype using the existing booking website and Supabase backend.",
+  "scripts": {
+    "android:add": "cap add android",
+    "android:sync": "cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3",
+    "typescript": "^5.8.3"
+  }
+}
