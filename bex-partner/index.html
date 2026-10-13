@@ -221,7 +221,41 @@ button.stat:hover{transform:translateY(-1px);box-shadow:0 10px 25px #30240c15!im
 #photolightbox img#largephoto{display:block!important;position:static!important;flex:0 1 auto!important;width:min(92vw,620px)!important;height:min(70dvh,820px)!important;min-width:0!important;min-height:0!important;max-width:calc(100vw - 28px)!important;max-height:calc(100dvh - 165px)!important;object-fit:cover!important;object-position:center top!important;aspect-ratio:3/4!important;background:#080b0c!important;border:3px solid #e1c86e!important;border-radius:18px!important;box-sizing:border-box!important;margin:0 auto!important}
 #photolightbox .photo-close{position:fixed!important;top:max(10px,env(safe-area-inset-top))!important;right:12px!important;width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;z-index:2147483001!important}
 @media(max-width:560px){#photolightbox img#largephoto{width:calc(100vw - 28px)!important;height:min(68dvh,760px)!important;object-fit:cover!important;object-position:center top!important;border-radius:15px!important}#photolightbox .photo-caption{font-size:19px!important}}
-.loading-screen{min-height:65vh;display:grid;place-items:center;padding:24px;background:#f5f4ef}.loading-card{width:min(420px,100%);padding:30px;text-align:center;background:#fff;border:1px solid #e1d5a9;border-radius:22px;box-shadow:0 12px 35px #1111;color:#182528}.spinner{width:38px;height:38px;margin:0 auto 16px;border:4px solid #e9dfbd;border-top-color:#087f75;border-radius:50%;animation:bexspin .8s linear infinite}@keyframes bexspin{to{transform:rotate(360deg)}}</style></head><body><div id="app"></div><script>
+.loading-screen{min-height:65vh;display:grid;place-items:center;padding:24px;background:#f5f4ef}.loading-card{width:min(420px,100%);padding:30px;text-align:center;background:#fff;border:1px solid #e1d5a9;border-radius:22px;box-shadow:0 12px 35px #1111;color:#182528}.spinner{width:38px;height:38px;margin:0 auto 16px;border:4px solid #e9dfbd;border-top-color:#087f75;border-radius:50%;animation:bexspin .8s linear infinite}@keyframes bexspin{to{transform:rotate(360deg)}}
+/* Final partner-card polish: balanced photo, clear name/ID, compact premium teal + champagne */
+.partner-hero{background:linear-gradient(135deg,#102321 0%,#163632 58%,#0b2422 100%)!important;border:1.5px solid #c9aa58!important;color:#fff!important;box-shadow:0 16px 36px rgba(7,40,35,.18)!important}
+.partner-hero:before{width:6px!important;background:linear-gradient(180deg,#f5e7a7,#b38a2e,#f5e7a7)!important}
+.partner-hero:after{color:#f0d98b!important}
+.partner-hero .partner-kicker{color:#f0d98b!important}
+.partner-hero .grow h2.partner-name{color:#fff!important;font-weight:900!important;text-shadow:0 1px 0 #0002}
+.partner-hero .grow .partner-category{color:#dce9e5!important}
+.partner-hero .photo-hint{color:#f0d98b!important}
+.partner-avatar.photo-zoom{width:clamp(112px,19vw,172px)!important;height:clamp(112px,19vw,172px)!important;aspect-ratio:1/1!important;overflow:hidden!important;background:#0b5f56!important;border-color:#e4cc7b!important}
+.partner-avatar.photo-zoom img{width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;object-position:center 35%!important}
+.partner-id-panel{background:linear-gradient(135deg,#173a35,#102b28)!important;border-color:#d9bf70!important}
+.partner-id-label{color:#f0d98b!important}
+.partner-id-value{color:#fff0b4!important;font-weight:900!important}
+.partner-card-actions #copyid{background:#fff7df!important;color:#3e3519!important;border-color:#e2c875!important}
+.partner-card-actions .pill{background:#dff8eb!important;color:#126647!important;border-color:#6fc7a4!important}
+.photo-lightbox{position:fixed!important;inset:0!important;z-index:999999!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:12px!important;padding:72px 14px 24px!important;background:rgba(5,12,13,.96)!important;overflow:auto!important}
+.photo-lightbox[hidden]{display:none!important}
+.photo-lightbox img{display:block!important;width:auto!important;height:auto!important;max-width:calc(100vw - 28px)!important;max-height:calc(100dvh - 145px)!important;object-fit:contain!important;object-position:center!important;background:transparent!important;border:3px solid #e4cc7b!important;border-radius:16px!important}
+.photo-close{position:fixed!important;right:14px!important;top:14px!important;z-index:1000000!important;width:48px!important;height:48px!important;display:grid!important;place-items:center!important;padding:0!important;border-radius:50%!important;background:#fff!important;color:#102321!important;border:2px solid #e4cc7b!important;font-size:28px!important;line-height:1!important;box-shadow:0 4px 18px #0006!important}
+.photo-caption{margin:0!important;color:#fff!important;font-size:19px!important;font-weight:900!important;text-align:center!important}
+@media(max-width:560px){
+ .partner-hero{padding:18px 14px!important}
+ .partner-hero-row{grid-template-columns:104px minmax(0,1fr)!important;gap:13px!important}
+ .partner-avatar.photo-zoom{width:104px!important;height:104px!important}
+ .partner-hero .grow h2.partner-name{font-size:clamp(24px,6.5vw,32px)!important;overflow-wrap:anywhere!important}
+ .partner-id-panel{padding:16px 12px!important}
+ .partner-id-value{font-size:clamp(25px,7vw,35px)!important;letter-spacing:.2px!important}
+ .partner-card-actions{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;gap:8px!important}
+ .partner-card-actions #copyid,.partner-card-actions .pill{flex:1!important;min-width:0!important;padding:8px 7px!important;font-size:13px!important}
+ .photo-lightbox{padding:68px 10px 18px!important}
+ .photo-lightbox img{max-width:calc(100vw - 20px)!important;max-height:calc(100dvh - 125px)!important}
+}
+
+</style></head><body><div id="app"></div><script>
 window.onerror=function(message,source,line,col,error){const el=document.getElementById("app");if(el)el.innerHTML='<div style="max-width:560px;margin:10vh auto;padding:24px;font:16px Arial;background:white;color:#152b30;border-radius:16px"><h2>BEX Partner</h2><p>पेज में एक तकनीकी समस्या आई है। यह संदेश स्क्रीन पर दिखाएँ ताकि हम ठीक कर सकें।</p><p style="font-size:12px;color:#a72d23;word-break:break-word">Error: '+String(message)+'<br>Source: '+String(source||'unknown')+'<br>Line: '+String(line||0)+'</p><button onclick="location.reload()" style="padding:12px 18px;background:#087f75;color:white;border:0;border-radius:10px">Refresh</button></div>';return true;};const URL="https://myjstwbpmbrhaiwytpnq.supabase.co",KEY="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy",app=document.getElementById("app");let P=null,D={};
 const authStore={get(){try{return JSON.parse(localStorage.getItem("bex_partner_session")||"null")}catch{return null}},set(v){if(v)localStorage.setItem("bex_partner_session",JSON.stringify(v));else localStorage.removeItem("bex_partner_session")}};
 const db={auth:{
