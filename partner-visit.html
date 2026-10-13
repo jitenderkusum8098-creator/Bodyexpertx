@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#101010"><title>BodyExpertX — Opening booking</title>
+<style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#101010;color:#f7f2e5;font:16px/1.5 system-ui,Arial,sans-serif;padding:24px}.box{width:min(440px,100%);padding:28px;border:1px solid #b99332;border-radius:18px;text-align:center;background:#191919}h1{font-size:23px;margin:0 0 12px;color:#d9b44a}p{color:#ddd}.spin{width:28px;height:28px;border:3px solid #555;border-top-color:#d9b44a;border-radius:50%;animation:s 1s linear infinite;margin:20px auto}@keyframes s{to{transform:rotate(360deg)}}button,a{display:inline-block;background:#d9b44a;color:#17130a;border:0;border-radius:8px;padding:12px 18px;font-weight:800;text-decoration:none;margin:6px;cursor:pointer}</style></head>
+<body><main class="box"><h1>BodyExpertX</h1><p id="status">आपका referral link जाँचा जा रहा है…</p><div class="spin" id="spin"></div><div id="actions"></div></main>
+<script>
+(async function(){
+ const p=new URLSearchParams(location.search),code=(p.get("partner")||"").trim().toUpperCase(),source=p.get("source")==="qr"?"qr":"link";
+ const status=document.getElementById("status"),spin=document.getElementById("spin"),actions=document.getElementById("actions");
+ const booking="https://jitenderkusum8098-creator.github.io/Bodyexpertx/massage.html?partner="+encodeURIComponent(code)+(source==="qr"?"&source=qr":"");
+ function showFallback(message){status.textContent=message;spin.hidden=true;actions.innerHTML='<button id="retry">फिर से कोशिश करें</button> <a id="continue" href="'+booking+'">बुकिंग खोलें</a>';document.getElementById("retry").onclick=track}
+ if(!/^[A-Z0-9_-]{3,32}$/.test(code)){showFallback("यह referral link सही नहीं है।");return}
+ let visitor="";try{visitor=localStorage.getItem("bexVisitor")||"";if(!/^[a-f0-9-]{16,64}$/i.test(visitor)){visitor=crypto.randomUUID?crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==="x"?r:(r&3|8)).toString(16)});localStorage.setItem("bexVisitor",visitor)}}catch(e){}
+ async function track(){
+  status.textContent="आपका referral सुरक्षित किया जा रहा है…";spin.hidden=false;actions.innerHTML="";
+  try{
+   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);let response;
+   try{response=await fetch("https://myjstwbpmbrhaiwytpnq.supabase.co/functions/v1/bex-partner-admin",{method:"POST",mode:"cors",cache:"no-store",headers:{"Content-Type":"application/json","apikey":"sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy"},body:JSON.stringify({action:"record_partner_visit",partner_code:code,visitor_key:visitor,source_type:source,landing_path:"/Bodyexpertx/massage.html"}),signal:controller.signal})}finally{clearTimeout(timer)}
+   const data=await response.json().catch(()=>({}));if(!response.ok||data.ok!==true)throw new Error(data.error||("HTTP "+response.status));
+   try{sessionStorage.setItem("bex_partner_ref",code);sessionStorage.setItem("bex_partner_visit_at_"+code,String(Date.now()))}catch(e){}
+   status.textContent="Referral link तैयार है। बुकिंग पेज खोला जा रहा है…";spin.hidden=true;location.replace(booking);
+  }catch(e){showFallback("Visit अभी रिकॉर्ड नहीं हो पाया। "+(e.name==="AbortError"?"कनेक्शन में देर हो रही है।":(e.message||"कृपया फिर कोशिश करें।")))}
+ }
+ await track();
+})();
+</script></body></html>
