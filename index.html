@@ -1260,6 +1260,7 @@ try{
   headers:{"Content-Type":"application/json","apikey":"sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy"},
   body:JSON.stringify({
    action:"public-create-booking-request",
+   partner_code:window.bexPartnerCode||sessionStorage.getItem("bex_partner_ref")||new URLSearchParams(location.search).get("partner")||null,
    customer_name:document.getElementById("name").value.trim(),
    customer_phone:document.getElementById("phone").value.trim(),
    customer_age:document.getElementById("age").value||null,
@@ -1310,11 +1311,22 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
 
 <script>
 (function(){
- let partner=new URLSearchParams(location.search).get("partner");
+ const params=new URLSearchParams(location.search);
+ const incoming=params.get("partner")||"";
+ let partner=incoming;
  try{if(partner&&/^[A-Za-z0-9_-]{3,80}$/.test(partner))sessionStorage.setItem("bex_partner_ref",partner);else partner=sessionStorage.getItem("bex_partner_ref")||"";}catch(e){}
  if(!partner)return;
- document.addEventListener("click",function(e){const a=e.target.closest&&e.target.closest("a[href]");if(!a)return;try{const u=new URL(a.href,location.href);if(u.origin!==location.origin)return;if(!u.searchParams.has("partner"))u.searchParams.set("partner",partner);a.href=u.toString();}catch(e){}},true);
  window.bexPartnerCode=partner;
+ document.addEventListener("click",function(e){const a=e.target.closest&&e.target.closest("a[href]");if(!a)return;try{const u=new URL(a.href,location.href);if(u.origin!==location.origin)return;if(!u.searchParams.has("partner"))u.searchParams.set("partner",partner);const src=params.get("source");if(src&&!u.searchParams.has("source"))u.searchParams.set("source",src);a.href=u.toString();}catch(e){}},true);
+ if(incoming&&/^[A-Za-z0-9_-]{3,80}$/.test(incoming)){
+  const visitKey="bex_partner_visit_at_"+partner;
+  let last=0;try{last=Number(sessionStorage.getItem(visitKey)||0)}catch(e){}
+  if(Date.now()-last>30*60*1000){
+   try{sessionStorage.setItem(visitKey,String(Date.now()))}catch(e){}
+   let visitorKey="";try{visitorKey=localStorage.getItem("bexVisitor")||"";if(!/^[a-f0-9-]{16,64}$/i.test(visitorKey)){visitorKey=crypto.randomUUID?crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==="x"?r:(r&3|8)).toString(16)});localStorage.setItem("bexVisitor",visitorKey)}}catch(e){}
+   fetch("https://myjstwbpmbrhaiwytpnq.supabase.co/functions/v1/bex-partner-admin",{method:"POST",headers:{"Content-Type":"application/json","apikey":"sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy"},body:JSON.stringify({action:"record_partner_visit",partner_code:partner,visitor_key:visitorKey,source_type:params.get("source")==="qr"?"qr":"link",landing_path:location.pathname})}).catch(()=>{});
+  }
+ }
 })();
 </script>
 <script src="./hindi-ui.js" defer></script>
