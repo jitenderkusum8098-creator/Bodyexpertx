@@ -219,6 +219,73 @@ h1,h2,h3,h4{color:#f7f7f8;font-weight:850}
 .therapist-edit-panel{min-width:0;max-width:100%;background:#111214!important;border-color:#4b4d51!important}.therapist-edit-panel h4{font-size:19px;color:#e6c36b;font-weight:900}
 @media(max-width:900px){.admin-layout{grid-template-columns:minmax(155px,190px) minmax(0,1fr);gap:12px}.admin-nav{padding:9px}.admin-nav button{font-size:13px;padding:10px 8px}.therapist-row-identity{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.wrap{width:94%;padding-top:14px}.head{align-items:flex-start}.head h1{font-size:clamp(22px,6vw,28px)}.admin-layout{grid-template-columns:minmax(0,1fr)}.admin-nav{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.admin-nav-title{grid-column:1/-1}.admin-nav button{font-size:13px;min-width:0}.therapist-row-identity,.therapist-row-contact,.therapist-row-services{grid-template-columns:minmax(0,1fr)}.therapist-section-heading{align-items:flex-start;flex-direction:column}.therapist-directory-main{gap:11px}.therapist-directory-photo,.therapist-directory-placeholder{width:82px;height:112px;flex-basis:82px}.therapist-directory-info h3{font-size:21px}.therapist-info-line{font-size:14px}.therapist-action-row .btn{flex:1 1 42%;padding:10px}.id-generator-row{flex-direction:column}.grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Unified BodyExpertX identity: graphite black, brushed silver and champagne gold */
+:root{color-scheme:dark;--bg:#101113;--card:#191a1d;--gold:#d6ad52;--gold-light:#f0d58e;--silver:#d9dadd;--line:#46484d;--muted:#c4c6ca;--surface:#222428;--ink:#f7f7f8}
+html{background:#101113;color-scheme:dark;scroll-behavior:smooth}
+body{margin:0!important;background:radial-gradient(ellipse at 50% -15%,#29251b 0,#151619 36%,#101113 72%)!important;color:var(--ink)!important;font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif!important;font-size:16px!important;line-height:1.6!important;letter-spacing:.005em}
+.wrap{width:min(1320px,96%)!important;max-width:100%;padding:24px 0 56px!important}
+.head{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:16px 0 22px!important;margin-bottom:20px!important;border-bottom:1px solid #65512b!important}
+.head h1,h1{color:#fafafa!important;font-size:clamp(25px,3vw,36px)!important;line-height:1.18!important;font-weight:900!important;letter-spacing:-.025em!important;text-wrap:balance}
+.head .brand,.brand,.eyebrow{color:var(--gold-light)!important;font-weight:900!important;letter-spacing:.12em!important}
+.sub,.muted{color:var(--muted)!important}
+h2{color:#fafafa!important;font-size:clamp(21px,2.1vw,28px)!important;line-height:1.25!important;font-weight:850!important;letter-spacing:-.012em}
+h3,h4{color:#f2d48a!important;font-weight:850!important}
+p{overflow-wrap:anywhere}
+.card,.item,.linkbox,.kpi,.booking-row,.rating-row,.therapist-edit-panel{background:linear-gradient(145deg,#202124 0%,#17181a 100%)!important;color:#f5f5f6!important;border:1px solid #45464a!important;border-radius:16px!important;box-shadow:0 12px 28px rgba(0,0,0,.18)!important}
+.card{padding:clamp(15px,2vw,25px)!important}
+.admin-layout{grid-template-columns:minmax(190px,225px) minmax(0,1fr)!important;gap:18px!important}
+.admin-nav{background:linear-gradient(155deg,#202124,#121315)!important;border:1px solid #46484d!important;border-radius:17px!important;padding:12px!important}
+.admin-nav-title{color:var(--gold-light)!important;font-size:12px!important;font-weight:900!important;letter-spacing:.16em!important}
+.admin-nav button{font-family:inherit!important;color:#e0e1e3!important;font-size:14px!important;font-weight:750!important;line-height:1.35!important;border:1px solid transparent!important;border-radius:11px!important;padding:12px!important;transition:background .15s ease,color .15s ease}
+.admin-nav button:hover{background:#2c2d30!important;color:#fff!important;border-color:#5a4b2d!important}
+.admin-nav button.active{background:linear-gradient(120deg,#f0d58e,#c59a42)!important;color:#161616!important;border-color:#f0d58e!important;font-weight:900!important;box-shadow:0 4px 12px #0004}
+.admin-nav .nav-icon{color:var(--gold-light)!important;background:#d6ad521c!important}
+.admin-nav button.active .nav-icon{color:#171717!important;background:#17171714!important}
+#adminContent{min-width:0!important;width:100%;max-width:100%;color:#f5f5f6!important}
+#adminContent>section{min-width:0;max-width:100%}
+.field{min-width:0}
+.field>span,.field label,.booking-field,.booking-field span{color:#e5c878!important;font-size:14px!important;font-weight:850!important;letter-spacing:.005em}
+input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea{background:#101113!important;color:#f8f8f8!important;border:1px solid #57595e!important;border-radius:10px!important;font:600 15px/1.45 Inter,"Segoe UI",Arial,sans-serif!important;min-height:45px;max-width:100%;box-shadow:none!important}
+input::placeholder,textarea::placeholder{color:#aeb0b5!important;opacity:1!important}
+input:focus,select:focus,textarea:focus{outline:2px solid #d6ad52!important;outline-offset:1px!important;border-color:#e1bd65!important}
+input[type=checkbox],input[type=radio]{accent-color:#d6ad52}
+input[type=file]{background:#101113!important;color:#dedfe1!important;border:1px solid #57595e!important;border-radius:10px!important;padding:9px!important}
+button,.btn{font-family:inherit!important;letter-spacing:.005em}
+.btn{background:linear-gradient(125deg,#f0d58e,#c59a42)!important;color:#171717!important;border:1px solid #d6ad52!important;border-radius:10px!important;font-size:14px!important;font-weight:900!important;box-shadow:0 4px 12px #0003!important}
+.btn:hover{filter:brightness(1.06)}
+.btn.alt{background:#232427!important;color:#f0d58e!important;border:1px solid #a88743!important}
+.btn.danger{background:#2a191a!important;color:#ffbcbc!important;border:1px solid #a85a5a!important}
+.msg{background:#252116!important;color:#f0d58e!important;border:1px solid #6a542b!important;border-radius:12px!important;font-weight:700}
+.empty{color:#c4c6ca!important;border-color:#55575c!important}
+.pill{background:#3a301b!important;color:#f0d58e!important;border:1px solid #756037!important;font-weight:850!important}
+.rating{color:#f0d58e!important}
+.kpi-grid{gap:13px!important}.kpi{padding:16px!important}.kpi strong,.kpi .value{color:#f0d58e!important;font-weight:900!important}
+.booking-controls-title{background:linear-gradient(110deg,#111214,#292a2d)!important;border:1px solid #65512b!important;color:#f0d58e!important;border-radius:12px!important}
+.booking-fields,.booking-actions{background:#191a1d!important;border:1px solid #45464a!important;border-radius:13px!important;color:#f5f5f6!important}
+.booking-field,.booking-field span{color:#e5c878!important}
+.booking-row select,.booking-row input,.booking-row textarea{background:#101113!important;color:#f8f8f8!important;border-color:#57595e!important}
+.booking-actions .btn:not(.danger){background:linear-gradient(120deg,#f0d58e,#c59a42)!important;color:#171717!important;border-color:#d6ad52!important}
+.booking-actions .btn.danger{background:#2a191a!important;color:#ffbcbc!important;border-color:#a85a5a!important}
+.booking-detail-expanded{background:#111214!important;color:#f3f3f4!important;border:1px solid #4b4d51!important;border-radius:12px!important}
+.booking-detail-expanded strong{color:#f0d58e!important}
+table,thead,tbody,tr,td,th{color:#ececee}
+th{color:#f0d58e!important}
+hr{border-color:#45464a!important}
+.therapist-create-card{border-top:4px solid #d6ad52!important}
+.therapist-create-card .field span{color:#e5c878!important}
+.therapist-create-card .checkrow,.zone-choice-row,.therapist-edit-panel .checkrow{background:#111214!important;border-color:#4b4d51!important}
+.therapist-create-card .checkrow label{color:#f0f0f1!important;font-weight:750!important}
+.therapist-directory-card{background:linear-gradient(145deg,#202124,#141517)!important;border-color:#4b4d51!important}
+.therapist-directory-info h3{color:#f0d58e!important;font-weight:900!important}
+.therapist-info-line{color:#ededee!important}.therapist-info-line strong{color:#f0d58e!important}
+.therapist-directory-photo,.therapist-directory-placeholder{object-fit:contain!important;object-position:center top!important;background:#08090a!important;border-color:#57595e!important}
+.therapist-id-value{color:#f0d58e!important}
+.therapist-action-row{border-top-color:#45464a!important}
+a{color:#f0d58e}
+:focus-visible{outline:2px solid #f0d58e!important;outline-offset:3px}
+@media(max-width:900px){.admin-layout{grid-template-columns:minmax(155px,190px) minmax(0,1fr)!important;gap:12px!important}}
+@media(max-width:680px){.wrap{width:94%!important;padding-top:13px!important}.admin-layout{grid-template-columns:minmax(0,1fr)!important}.admin-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;position:static}.admin-nav-title{grid-column:1/-1}.admin-nav button{font-size:13px!important;padding:10px!important}.card{padding:15px!important}.head h1{font-size:clamp(23px,6vw,30px)!important}.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.booking-fields{grid-template-columns:minmax(0,1fr)!important}}
 </style>
 </head>
 <body><div class="wrap">
