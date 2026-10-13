@@ -444,6 +444,15 @@ document.getElementById("restart").addEventListener("click",()=>{need="";activit
 document.querySelectorAll("[data-back]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.back)));
 </script>
 
+<script>
+(function(){
+ let partner=new URLSearchParams(location.search).get("partner");
+ try{if(partner&&/^[A-Za-z0-9_-]{3,80}$/.test(partner))sessionStorage.setItem("bex_partner_ref",partner);else partner=sessionStorage.getItem("bex_partner_ref")||"";}catch(e){}
+ if(!partner)return;
+ document.addEventListener("click",function(e){const a=e.target.closest&&e.target.closest("a[href]");if(!a)return;try{const u=new URL(a.href,location.href);if(u.origin!==location.origin)return;if(!u.searchParams.has("partner"))u.searchParams.set("partner",partner);a.href=u.toString();}catch(e){}},true);
+ window.bexPartnerCode=partner;
+})();
+</script>
 <script src="./hindi-ui.js" defer></script>
 </body>
 </html>
