@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="hi">
 <head>
+<link rel="manifest" href="/Bodyexpertx/manifest.webmanifest">
+<link rel="icon" href="/Bodyexpertx/bex-app-icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0a0a0a">
+
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BodyExpertX Massage Booking</title>
 <meta name="description" content="Explore BodyExpertX Massage and Salon services in Kishangarh, Mehrauli, New Delhi. PRIME and LUXE options, massage bookings, salon haircuts and massage therapy courses.">
@@ -2083,5 +2087,6 @@ body[data-bx-flow-stage="booking"] #booking{display:block!important}
   if (feedback) feedback.textContent = "स्वीडिश मसाज कार्ट में जोड़ दी गई है। अब मौजूदा बुकिंग प्रक्रिया जारी रखें।";
 })();
 </script>
+<script id="bex-pwa-install">(function(){let deferred=null;function addInstall(){if(document.getElementById("bexInstallApp"))return;const b=document.createElement("button");b.id="bexInstallApp";b.type="button";b.textContent="📲 Home Screen par Add karein";b.setAttribute("aria-label","BodyExpertX ko home screen par add karein");b.style.cssText="position:fixed;z-index:99999;right:12px;bottom:14px;background:#0a0a0a;color:#d6b35a;border:1px solid #c8c8c8;border-radius:999px;padding:12px 15px;font:700 13px system-ui;box-shadow:0 4px 18px #0003";b.onclick=async()=>{if(deferred){deferred.prompt();await deferred.userChoice;deferred=null;b.remove();return}alert("Chrome ke menu ⋮ mein jaakar 'Add to Home screen' ya 'Install app' chunein.");};document.body.appendChild(b)}window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferred=e;addInstall()});window.addEventListener("appinstalled",()=>document.getElementById("bexInstallApp")?.remove());if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("/Bodyexpertx/sw.js",{scope:"/Bodyexpertx/"}).catch(()=>{}));addInstall()})();</script>
 </body>
 </html>
