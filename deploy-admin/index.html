@@ -300,6 +300,29 @@ function renderBookingRows(){
   const actions=document.createElement("div");actions.className="booking-actions";
   const save=document.createElement("button");save.className="btn";save.textContent="Save booking changes";save.disabled=cancelled;save.onclick=async()=>{try{const body={booking_id:a.id,status:statusSel.value,zone_id:zSel.value,therapist_id:tSel.value,booking_amount:amount.value};if(body.status==="cancelled"&&!confirm("इस booking को Cancelled करना है? यह history में रहेगी और active jobs से हट जाएगी।"))return;const result=await edge("admin-update-booking",body);alert(result.message||"Booking saved");await loadAdmin()}catch(e){alert(e.message)}};
   const cancel=document.createElement("button");cancel.className="btn danger";cancel.textContent="Cancel booking";cancel.disabled=cancelled;cancel.onclick=async()=>{if(!confirm("Booking cancel करें? History सुरक्षित रहेगी और active job count से हट जाएगी।"))return;const reason=prompt("Cancellation reason (optional):")||"";try{const result=await edge("admin-update-booking",{booking_id:a.id,status:"cancelled",cancel_reason:reason});alert(result.message||"Booking cancelled");await loadAdmin()}catch(e){alert(e.message)}};
+  if(a.status==="completed"&&a.therapist_id&&a.customer_phone){
+   const rateBtn=document.createElement("button");rateBtn.className="btn";rateBtn.textContent="⭐ WhatsApp rating link bhejein";
+   rateBtn.onclick=async()=>{
+    if(rateBtn.disabled)return;
+    const phone=String(a.customer_phone||"").replace(/\\D/g,"");
+    if(!phone){alert("Customer mobile number saved nahi hai.");return}
+    const waPhone=phone.length===10?"91"+phone:phone.startsWith("0")&&phone.length===11?"91"+phone.slice(1):phone;
+    const waWindow=window.open("about:blank","_blank");
+    rateBtn.disabled=true;rateBtn.textContent="Rating link ban raha hai…";
+    try{
+     const result=await edge("admin-create-link",{therapist_id:a.therapist_id});
+     const ratingUrl="https://jitenderkusum8098-creator.github.io/Bodyexpertx/therapist-rating.html?token="+encodeURIComponent(result.token);
+     const therapistName=result.therapist?.display_name||t?.display_name||"aapke therapist";
+     const message="Namaste "+(a.customer_name||"ji")+"! 🙏\\n\\nBodyExpertX ki "+(a.service_name||"service")+" complete ho gayi hai. Aapki service karne wale therapist "+therapistName+" ko rating dene ke liye is link par tap karein (1–5 stars):\\n"+ratingUrl+"\\n\\nAapka feedback hamari service behtar banane mein madad karega. Dhanyavaad! — BodyExpertX";
+     const waUrl="https://wa.me/"+waPhone+"?text="+encodeURIComponent(message);
+     if(waWindow){waWindow.location.href=waUrl}else{const fallback=document.createElement("a");fallback.href=waUrl;fallback.target="_blank";fallback.rel="noopener";fallback.click()}
+     rateBtn.textContent="⭐ Rating link WhatsApp mein khula";
+    }catch(err){if(waWindow)waWindow.close();alert(err.message||"Rating link nahi ban saka.");rateBtn.disabled=false;rateBtn.textContent="⭐ WhatsApp rating link bhejein"}
+   };
+   actions.append(rateBtn);
+  }else if(a.status==="completed"&&a.therapist_id&&!a.customer_phone){
+   const missing=document.createElement("span");missing.className="muted small";missing.textContent="Customer ka mobile number saved nahi hai — rating WhatsApp link nahi bhej sakte.";actions.append(missing);
+  }
   actions.append(save,cancel);card.append(actions);list.append(card);
  }
 }
