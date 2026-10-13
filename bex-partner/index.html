@@ -262,6 +262,14 @@ button.stat:hover{transform:translateY(-1px);box-shadow:0 10px 25px #30240c15!im
 .photo-lightbox img{width:auto!important;height:auto!important;max-width:calc(100vw - 28px)!important;max-height:calc(100dvh - 145px)!important;object-fit:contain!important;object-position:center center!important}
 @media(max-width:560px){.partner-avatar.photo-zoom img{object-fit:contain!important;object-position:center center!important}.photo-lightbox img{max-width:calc(100vw - 20px)!important;max-height:calc(100dvh - 125px)!important;object-fit:contain!important}}
 
+
+/* Final photo sizing fix: fill the partner thumbnail edge-to-edge, keep heads visible */
+.partner-avatar.photo-zoom{display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;background:#075e57!important}
+.partner-avatar.photo-zoom img{display:block!important;width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;max-width:none!important;max-height:none!important;flex:1 1 100%!important;object-fit:cover!important;object-position:50% 22%!important;margin:0!important;padding:0!important;border:0!important}
+.photo-lightbox{padding:14px!important}
+.photo-lightbox img{display:block!important;width:auto!important;height:auto!important;max-width:calc(100vw - 28px)!important;max-height:calc(100dvh - 125px)!important;object-fit:contain!important;object-position:center!important;background:#101719!important}
+@media(max-width:560px){.partner-avatar.photo-zoom img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:50% 22%!important}.photo-lightbox img{max-width:calc(100vw - 20px)!important;max-height:calc(100dvh - 110px)!important;object-fit:contain!important}}
+
 </style></head><body><div id="app"></div><script>
 window.onerror=function(message,source,line,col,error){const el=document.getElementById("app");if(el)el.innerHTML='<div style="max-width:560px;margin:10vh auto;padding:24px;font:16px Arial;background:white;color:#152b30;border-radius:16px"><h2>BEX Partner</h2><p>पेज में एक तकनीकी समस्या आई है। यह संदेश स्क्रीन पर दिखाएँ ताकि हम ठीक कर सकें।</p><p style="font-size:12px;color:#a72d23;word-break:break-word">Error: '+String(message)+'<br>Source: '+String(source||'unknown')+'<br>Line: '+String(line||0)+'</p><button onclick="location.reload()" style="padding:12px 18px;background:#087f75;color:white;border:0;border-radius:10px">Refresh</button></div>';return true;};const URL="https://myjstwbpmbrhaiwytpnq.supabase.co",KEY="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy",app=document.getElementById("app");let P=null,D={};
 const authStore={get(){try{return JSON.parse(localStorage.getItem("bex_partner_session")||"null")}catch{return null}},set(v){if(v)localStorage.setItem("bex_partner_session",JSON.stringify(v));else localStorage.removeItem("bex_partner_session")}};
