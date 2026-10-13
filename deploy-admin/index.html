@@ -511,7 +511,7 @@ function showAdminView(view){
  document.querySelectorAll("#adminNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
  const content=$("adminContent");if(content)content.scrollIntoView({behavior:"smooth",block:"start"});
 }
-document.querySelectorAll("#adminNav [data-view]").forEach(b=>b.addEventListener("click",()=>showAdminView(b.dataset.view)));
+document.querySelectorAll("#adminNav [data-view]").forEach(b=>b.addEventListener("click",()=>{showAdminView(b.dataset.view);if(b.dataset.view==="partners")bpLoad()}));
 
 async function bpCall(payload){const {data:{session:s}}=await sb.auth.getSession();if(!s)throw new Error("Admin session expired. Dobara login karein.");const r=await fetch(SUPABASE_URL+"/functions/v1/bex-partner-admin",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY,"Authorization":"Bearer "+s.access_token},body:JSON.stringify(payload)});const d=await r.json().catch(()=>({error:"Server response invalid"}));if(!r.ok)throw new Error(d.error||"Request failed");return d}
 function bpEsc(s){return String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
