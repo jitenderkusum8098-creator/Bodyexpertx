@@ -639,10 +639,10 @@ body.therapist-detail-page #therapistDetailPage{display:block!important}
 const SUPABASE_URL="https://myjstwbpmbrhaiwytpnq.supabase.co";
 const SUPABASE_KEY="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy";
 // Use Supabase JS default project-scoped auth storage key. Do not copy legacy sessions: a stale refresh token can force SIGNED_OUT after refresh.
+const $=id=>document.getElementById(id);
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 // Keep login hidden while Supabase restores the saved session after refresh.
 $("authCard").classList.add("hidden");
-const $=id=>document.getElementById(id);
 let session=null,role=null,therapists=[],adminRatings=[],selectedJobFilter="all",selectedAdminBookingFilter="";
 function msg(id,text){$(id).textContent=text;$(id).classList.remove("hidden")}
 function clearMsg(id){$(id).classList.add("hidden");$(id).textContent=""}
