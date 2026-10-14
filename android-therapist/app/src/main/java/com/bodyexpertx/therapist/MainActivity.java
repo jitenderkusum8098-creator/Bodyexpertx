@@ -31,11 +31,12 @@ public class MainActivity extends Activity {
         web.loadUrl("https://bodyexpertx-therapist.onrender.com/?nativeAlarm=1");
     }
     private class NativeBridge {
-        @JavascriptInterface public void syncSession(String token, boolean available) {
+        @JavascriptInterface public void syncSession(String token, String refreshToken, boolean available) {
             if (token == null || token.length() < 20) return;
             Intent i = new Intent(MainActivity.this, AlertService.class);
             i.setAction(available ? AlertService.ACTION_START : AlertService.ACTION_DUTY_OFF);
             i.putExtra("token", token);
+            if (refreshToken != null && refreshToken.length() > 20) i.putExtra("refresh_token", refreshToken);
             if (Build.VERSION.SDK_INT >= 26) startForegroundService(i); else startService(i);
         }
         @JavascriptInterface public void stopAlarm() {
