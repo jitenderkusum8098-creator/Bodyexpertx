@@ -683,6 +683,11 @@ function showAdminView(view,options={}){
  const all=["bookingManagement","zoneTools","assignmentTools","adminTools","therapistListCard","linkTools","ratingsSection","partnerTools"];
  all.forEach(id=>{const el=$(id);if(el)el.classList.add("hidden")});
  (groups[view]||groups.bookings).forEach(id=>{const el=$(id);if(el)el.classList.remove("hidden")});
+ if(view==="zones"){
+  const zoneSection=$("zoneTools");
+  if(zoneSection)zoneSection.classList.remove("hidden");
+  requestAnimationFrame(()=>{if(!window.L){const m=$("mapBoundaryMsg");if(m)msg("mapBoundaryMsg","Map library load नहीं हुई। Internet connection जाँचकर Refresh करें।");return;}try{initZoneMap();if(zoneMap)zoneMap.invalidateSize(true)}catch(e){console.error("Zone map init failed",e);const m=$("mapBoundaryMsg");if(m)msg("mapBoundaryMsg","Map खुलने में समस्या: "+(e.message||e))}});
+ }
  document.querySelectorAll("#adminNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
  try{sessionStorage.setItem("bexSuperAdminCurrentView",view)}catch(e){}
  if(!options.fromRestore){try{history.replaceState({...(history.state||{}),bexAdminView:view},"",location.href)}catch(e){}}
