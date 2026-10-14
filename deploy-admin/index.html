@@ -638,7 +638,10 @@ body.therapist-detail-page #therapistDetailPage{display:block!important}
 <script>
 const SUPABASE_URL="https://myjstwbpmbrhaiwytpnq.supabase.co";
 const SUPABASE_KEY="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy";
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage,storageKey:"bodyexpertx-admin-auth"}});
+const DEFAULT_AUTH_STORAGE_KEY="sb-myjstwbpmbrhaiwytpnq-auth-token";
+const CUSTOM_AUTH_STORAGE_KEY="bodyexpertx-admin-auth";
+try{if(!localStorage.getItem(DEFAULT_AUTH_STORAGE_KEY)&&localStorage.getItem(CUSTOM_AUTH_STORAGE_KEY)){localStorage.setItem(DEFAULT_AUTH_STORAGE_KEY,localStorage.getItem(CUSTOM_AUTH_STORAGE_KEY));}}catch(e){console.warn("Auth storage migration skipped",e)}
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage,storageKey:DEFAULT_AUTH_STORAGE_KEY}});
 const $=id=>document.getElementById(id);
 let session=null,role=null,therapists=[],adminRatings=[],selectedJobFilter="all",selectedAdminBookingFilter="";
 function msg(id,text){$(id).textContent=text;$(id).classList.remove("hidden")}
