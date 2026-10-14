@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Therapist Feedback | BodyExpertX</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+:root{color-scheme:dark;--bg:#0b0b0d;--card:#151517;--gold:#f2c75b;--line:#49391c;--muted:#c2bdb0}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#241b0b,#0b0b0d 48%);color:#f7f3e8;font:16px/1.55 system-ui,Arial,sans-serif;min-height:100vh;display:grid;place-items:center;padding:22px}.card{width:min(100%,560px);background:#151517;border:1px solid var(--line);border-radius:22px;padding:clamp(22px,5vw,36px);box-shadow:0 20px 70px #0008}.profile-card{border:1px solid #6d5420;background:linear-gradient(145deg,#1e1a10,#111113);border-radius:18px;padding:18px;margin:18px 0;text-align:center}.profile-photo{display:block;width:min(100%,250px);height:250px;object-fit:cover;object-position:center;border-radius:16px;margin:0 auto 15px;border:2px solid var(--gold);background:#29251d}.profile-placeholder{width:170px;height:170px;border-radius:50%;margin:0 auto 15px;display:grid;place-items:center;background:#302511;border:2px solid var(--gold);font-size:54px;color:var(--gold);font-weight:900}.profile-name{font-size:25px;font-weight:900;color:#fff;margin:8px 0 2px}.profile-id{font-size:14px;color:#e7d9b5;letter-spacing:.07em;overflow-wrap:anywhere}.profile-rating{font-size:18px;color:var(--gold);font-weight:900;margin:12px 0 3px}.profile-meta{font-size:12px;color:var(--muted)}.profile-review{text-align:left;padding:10px 12px;border:1px solid #49391c;border-radius:10px;margin-top:9px;font-size:13px}.brand{font-size:12px;letter-spacing:.22em;color:var(--gold);font-weight:900}.mark{width:54px;height:54px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:24px;margin:0 0 18px}h1{font-size:clamp(27px,6vw,36px);line-height:1.15;margin:12px 0}p{color:var(--muted)}label{display:block;font-weight:700;font-size:14px;margin:18px 0 8px}select,textarea{width:100%;border:1px solid #51442c;border-radius:12px;padding:13px;background:#0e0e10;color:#fff;font:inherit}textarea{min-height:115px;resize:vertical}.btn{border:0;border-radius:999px;padding:14px 20px;background:linear-gradient(135deg,#f5d16e,#c18a1d);font-weight:900;color:#17120a;width:100%;margin-top:18px;cursor:pointer}.btn:disabled{opacity:.55;cursor:not-allowed}.msg{margin-top:16px;padding:12px;border-radius:10px;background:#211a0d;color:#f7d981}.fine{font-size:12px;color:#9c9689}.hidden{display:none!important}
+</style>
+</head>
+<body><main class="card">
+<div class="mark">✦</div><div class="brand">BODYEXPERTX · PRIVATE FEEDBACK</div>
+<h1>आपका अनुभव कैसा रहा?</h1>
+<p id="intro">आपकी प्रतिक्रिया सीधे BodyExpertX टीम को भेजी जाएगी। यह rating सार्वजनिक वेबसाइट पर नहीं दिखाई जाएगी।</p>
+<div id="formArea" class="hidden">
+<section class="profile-card" aria-label="Assigned therapist profile">
+<img id="therapistPhoto" class="profile-photo hidden" alt="Therapist photo">
+<div id="therapistPlaceholder" class="profile-placeholder">BEX</div>
+<div class="brand">BODYEXPERTX · VERIFIED PROFILE</div>
+<div id="therapist" class="profile-name">लोड हो रहा है…</div>
+<div id="therapistCode" class="profile-id">लोड हो रहा है…</div>
+<div id="therapistRating" class="profile-rating">Rating लोड हो रही है…</div>
+<div id="therapistExperience" class="profile-meta"></div>
+<div id="therapistReviews"></div>
+</section>
+<form id="ratingForm">
+<label for="rating">आपकी rating</label>
+<select id="rating" required><option value="">Rating चुनें</option><option value="5">★★★★★ — बहुत बढ़िया (5)</option><option value="4">★★★★☆ — अच्छा (4)</option><option value="3">★★★☆☆ — ठीक (3)</option><option value="2">★★☆☆☆ — बेहतर हो सकता है (2)</option><option value="1">★☆☆☆☆ — खराब (1)</option></select>
+<label for="review">अपना अनुभव लिखें (वैकल्पिक)</label><textarea id="review" maxlength="1000" placeholder="Therapist के व्यवहार और सेवा के बारे में बताएं…"></textarea>
+<button class="btn" id="submitBtn" type="submit">Rating भेजें</button>
+</form></div>
+<div id="message" class="msg hidden" role="status"></div>
+<p class="fine">यह लिंक निजी है और एक बार इस्तेमाल होने के बाद दोबारा rating नहीं ली जा सकेगी।</p>
+</main>
+<script>
+const SUPABASE_URL="https://myjstwbpmbrhaiwytpnq.supabase.co";
+const SUPABASE_KEY="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy";
+const token=new URLSearchParams(location.search).get("token")||"";
+const area=document.getElementById("formArea"),msg=document.getElementById("message"),intro=document.getElementById("intro");
+async function call(action,extra={}){const r=await fetch(SUPABASE_URL+"/functions/v1/therapist-ratings",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY},body:JSON.stringify({action,token,...extra})});const d=await r.json().catch(()=>({error:"Server response समझ नहीं आया।"}));if(!r.ok)throw new Error(d.error||"Request पूरा नहीं हुआ।");return d}
+function showError(e){msg.textContent=e.message||"कुछ गलत हुआ।";msg.classList.remove("hidden")}
+(async()=>{if(!token){showError(new Error("यह rating link अधूरा है। कृपया BodyExpertX से नया link लें।"));return}try{const d=await call("public-profile"),t=d.therapist;document.getElementById("therapist").textContent=t.display_name;document.getElementById("therapistCode").textContent="BodyExpertX ID: "+(t.therapist_code||"ID उपलब्ध नहीं");const photo=document.getElementById("therapistPhoto"),placeholder=document.getElementById("therapistPlaceholder");if(t.photo_url){photo.src=t.photo_url;photo.classList.remove("hidden");placeholder.classList.add("hidden")}else{placeholder.textContent=(t.display_name||"B").trim().charAt(0).toUpperCase()||"B"}document.getElementById("therapistRating").textContent=t.average_rating===null?"★ अभी कोई approved rating नहीं":"★ "+t.average_rating+"/5 · "+t.rating_count+" approved "+(t.rating_count===1?"rating":"ratings");document.getElementById("therapistExperience").textContent="Experience: "+Number(t.experience_years||0)+" years";const reviews=document.getElementById("therapistReviews");for(const r of (t.reviews||[])){const item=document.createElement("div");item.className="profile-review";item.textContent="★ "+r.rating+"/5 — "+r.review;reviews.append(item)}area.classList.remove("hidden")}catch(e){showError(e);intro.textContent="इस link से rating नहीं ली जा सकती।"} })();
+document.getElementById("ratingForm").addEventListener("submit",async e=>{e.preventDefault();const btn=document.getElementById("submitBtn");btn.disabled=true;btn.textContent="भेज रहे हैं…";msg.classList.add("hidden");try{const d=await call("submit-rating",{rating:Number(document.getElementById("rating").value),review:document.getElementById("review").value});area.classList.add("hidden");msg.textContent=d.message;msg.classList.remove("hidden");}catch(err){showError(err);btn.disabled=false;btn.textContent="Rating भेजें"}});
+</script>
+<script src="./hindi-ui.js" defer></script>
+</body></html>
