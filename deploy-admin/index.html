@@ -594,7 +594,7 @@ body.therapist-detail-page #therapistDetailPage{display:block!important}
 <section id="partnerTools" class="card hidden">
 <h2>बीईएक्स पार्टनर प्रबंधन</h2>
 <p class="muted small">मौजूदा Admin लॉगिन से ही पार्टनर जोड़ें। इस काम के लिए अलग Admin लॉगिन नहीं चाहिए।</p>
-<h3>नया पार्टनर रजिस्ट्रेशन</h3>
+<div id="bpRegistrationPage" class="hidden"><div class="row" style="justify-content:space-between;align-items:center;gap:10px"><h2>नया पार्टनर रजिस्ट्रेशन</h2><button type="button" class="btn alt" id="bpBackFromRegistration">← वापस</button></div>
 <div class="grid">
 <label class="field"><span>व्यवसाय का नाम *</span><input id="bpBusiness" maxlength="120" placeholder="सैलून / जिम / दुकान का नाम"></label>
 <label class="field"><span>व्यवसाय की श्रेणी *</span><select id="bpCategory"><option value="Massage">मसाज सर्विस</option><option value="Salon">सैलून</option><option value="Hotel">होटल</option><option value="Gym">जिम</option><option value="Kirana Store">किराना स्टोर</option><option value="Medical Store">मेडिकल स्टोर</option><option value="Other">अन्य</option></select></label>
@@ -621,7 +621,7 @@ body.therapist-detail-page #therapistDetailPage{display:block!important}
 <label class="field"><span>कमीशन नियम</span><select id="bpLuxeMode"><option value="first">पहली योग्य पूरी बुकिंग पर एक बार</option><option value="every" selected>हर योग्य पूरी बुकिंग पर</option><option value="period">सीमित अवधि</option></select></label>
 <label class="field bpMonthsField"><span>LUXE अवधि (महीने)</span><select id="bpLuxeMonths"><option>1</option><option selected>3</option><option>6</option><option>12</option></select></label>
 </div></div></div>
-<button id="bpCreate" class="btn">सेव करें और पार्टनर रजिस्टर करें</button><div id="bpCreateMsg" class="msg hidden" role="status"></div>
+<button id="bpCreate" class="btn">सेव करें और पार्टनर रजिस्टर करें</button><div id="bpCreateMsg" class="msg hidden" role="status"></div></div>
 <hr style="margin:24px 0;border-color:var(--line)">
 <div class="row"><h2>सभी रजिस्टर्ड पार्टनर</h2><button id="bpRefresh" class="btn alt right">सूची रिफ्रेश करें</button></div>
 <div id="bpCategoryStats" class="grid"></div>
@@ -724,7 +724,8 @@ async function bpLoad(){
    }).join("");
  }
  rulesBox.innerHTML=rules.map(x=>'<div class="item small">'+bpEsc(x.category)+' · '+bpEsc(x.service_tier)+' · '+bpEsc(x.commission_type)+' '+bpEsc(x.amount)+(x.commission_type==="percent"?"%":" ₹")+' · '+bpEsc(x.rule_mode)+'</div>').join("")||'<div class="empty">Commission rules अभी सेट नहीं हैं।</div>';
- document.querySelectorAll(".bpOverviewCard").forEach(btn=>btn.onclick=()=>{const cat=btn.dataset.category;if(cat==="__new"){window.bpSelectedCategory=null;const form=$("bpBusiness")?.closest(".grid")?.parentElement;if(form){form.scrollIntoView({behavior:"smooth",block:"start"});$("bpBusiness")?.focus();}return;}window.bpSelectedCategory=cat==="__total"?"__total":cat;bpLoad();});
+ document.querySelectorAll(".bpOverviewCard").forEach(btn=>btn.onclick=()=>{const cat=btn.dataset.category;if(cat==="__new"){window.bpSelectedCategory=null;categoryStats.classList.add("bp-directory-hidden");rulesSection.classList.add("bp-directory-hidden");categoryPage.classList.add("hidden");const reg=$("bpRegistrationPage");if(reg){reg.classList.remove("hidden");reg.scrollIntoView({behavior:"smooth",block:"start"});$("bpBusiness")?.focus();}return;}const reg=$("bpRegistrationPage");if(reg)reg.classList.add("hidden");window.bpSelectedCategory=cat==="__total"?"__total":cat;bpLoad();});
+ const backRegistration=$("bpBackFromRegistration");if(backRegistration)backRegistration.onclick=()=>{const reg=$("bpRegistrationPage");if(reg)reg.classList.add("hidden");window.bpSelectedCategory=null;bpLoad();};
  document.querySelectorAll(".bpViewAll").forEach(btn=>btn.onclick=()=>bpOpenPartnerDashboard(btn.dataset.id));
  document.querySelectorAll(".bpQr").forEach(btn=>btn.onclick=()=>bpOpenQr(btn.dataset.code,btn.dataset.name));
  document.querySelectorAll(".bpCardQr").forEach(btn=>btn.onclick=()=>bpOpenQr(btn.dataset.code,btn.dataset.name));
