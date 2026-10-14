@@ -194,7 +194,7 @@ body[data-current-page="zones"] #page-zones .cardhead{display:flex!important;ali
 <script>
 const SUPABASE_URL="https://myjstwbpmbrhaiwytpnq.supabase.co";
 const SUPABASE_KEY="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy";
-const $=id=>document.getElementById(id);
+function $(id){return document.getElementById(id);}
 
 let registeredCustomerRows=[];
 function showCustomerMessage(m,err=false){$("customerMsg").textContent=m||"";$("customerMsg").style.color=err?"#ff9b9b":""}
