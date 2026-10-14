@@ -1422,16 +1422,25 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
 })();
 </script>
 
-<script id="bex-hide-therapist-profile-booking-button">
+<script id="bex-hide-booking-confirmation-extras">
 (function(){
- const removeTherapistButton=()=>{
+ const clean=()=>{
+  document.querySelectorAll('label').forEach(el=>{
+   const t=(el.innerText||el.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+   if(t.includes('main confirm karta/karti')||t.includes('di gayi jaankari meri jaankari')) el.remove();
+  });
   document.querySelectorAll('a,button,[role="button"]').forEach(el=>{
-   const label=(el.innerText||el.textContent||"").replace(/\\s+/g," ").trim();
-   if(/therapist\\s+profile/i.test(label)&&/देखें|view|profile/i.test(label)) el.remove();
+   const t=(el.innerText||el.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+   if(t.includes('therapist profile')&&t.includes('dekhein')) el.remove();
+  });
+  document.querySelectorAll('input[type="checkbox"]').forEach(el=>{
+   const label=el.closest('label');
+   const t=(label?.innerText||el.parentElement?.innerText||'').toLowerCase();
+   if(t.includes('main confirm karta/karti')||t.includes('di gayi jaankari')) label?.remove();
   });
  };
- if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",removeTherapistButton);else removeTherapistButton();
- new MutationObserver(removeTherapistButton).observe(document.documentElement,{childList:true,subtree:true});
+ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',clean); else clean();
+ new MutationObserver(clean).observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
 </body></html>
