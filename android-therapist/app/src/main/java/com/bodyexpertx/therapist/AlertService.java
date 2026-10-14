@@ -40,6 +40,9 @@ public class AlertService extends Service {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private volatile String token = "";
+    private volatile String refreshToken = "";
+    private final android.content.SharedPreferences prefs;
+    private final Runnable wakeRenewal = new Runnable() { @Override public void run() { if (dutyOn) { try { if (wakeLock != null && !wakeLock.isHeld()) wakeLock.acquire(10 * 60 * 1000L); } catch (Exception e) { Log.w("BEXAlarm", "WakeLock renewal failed", e); } handler.postDelayed(this, 9 * 60 * 1000L); } } };
     private volatile boolean dutyOn = false;
     private volatile boolean pollInFlight = false;
     private MediaPlayer player;
@@ -65,6 +68,10 @@ public class AlertService extends Service {
 
     @Override public void onCreate() {
         super.onCreate();
+        prefs = getSharedPreferences("bex_alarm", MODE_PRIVATE);
+        token = prefs.getString("access_token", "");
+        refreshToken = prefs.getString("refresh_token", "");
+        dutyOn = prefs.getBoolean("duty_on", false);
         createChannel();
         PowerManager pm = (PowerManager)getSystemService(POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "BodyExpertX:BookingAlert");
@@ -78,41 +85,38 @@ public class AlertService extends Service {
             if (ACTION_STOP_ALARM.equals(action)) { stopAlarm(); return START_STICKY; }
             if (ACTION_DUTY_OFF.equals(action)) {
                 dutyOn = false; token = intent.getStringExtra("token") == null ? token : intent.getStringExtra("token");
-                handler.removeCallbacks(poller); stopAlarm();
+                prefs.edit().putBoolean("duty_on", false).putString("access_token", token).apply();
+                handler.removeCallbacks(poller); handler.removeCallbacks(wakeRenewal); stopAlarm();
+                if (wakeLock != null && wakeLock.isHeld()) wakeLock.release();
                 updateStatus("Duty OFF — alarm monitoring paused");
                 return START_STICKY;
             }
             String newToken = intent.getStringExtra("token");
+            String newRefreshToken = intent.getStringExtra("refresh_token");
             if (newToken != null && newToken.length() > 20) token = newToken;
+            if (newRefreshToken != null && newRefreshToken.length() > 20) refreshToken = newRefreshToken;
+            if (newToken != null || newRefreshToken != null) prefs.edit().putString("access_token", token).putString("refresh_token", refreshToken).apply();
             if (ACTION_START.equals(action)) {
                 dutyOn = true;
-                if (!wakeLock.isHeld()) wakeLock.acquire(10 * 60 * 1000L);
+                prefs.edit().putBoolean("duty_on", true).apply();
+                if (wakeLock != null && !wakeLock.isHeld()) wakeLock.acquire(10 * 60 * 1000L);
+                handler.removeCallbacks(wakeRenewal); handler.postDelayed(wakeRenewal, 9 * 60 * 1000L);
                 handler.removeCallbacks(poller);
                 handler.post(poller);
                 updateStatus("Duty ON — checking for new jobs");
             }
         }
+        if (intent == null && dutyOn && !token.isEmpty()) {
+            try { if (wakeLock != null && !wakeLock.isHeld()) wakeLock.acquire(10 * 60 * 1000L); } catch (Exception ignored) {}
+            handler.removeCallbacks(wakeRenewal); handler.postDelayed(wakeRenewal, 9 * 60 * 1000L);
+            handler.removeCallbacks(poller); handler.post(poller);
+        }
         return START_STICKY;
     }
 
     private void checkBookings() throws Exception {
-        HttpURLConnection c = (HttpURLConnection)new URL(API).openConnection();
-        c.setRequestMethod("POST");
-        c.setConnectTimeout(10000); c.setReadTimeout(12000); c.setDoOutput(true);
-        c.setRequestProperty("Content-Type", "application/json");
-        c.setRequestProperty("apikey", API_KEY);
-        c.setRequestProperty("Authorization", "Bearer " + token);
-        byte[] body = "{\"action\":\"dashboard\"}".getBytes(StandardCharsets.UTF_8);
-        c.getOutputStream().write(body);
-        int status = c.getResponseCode();
-        InputStream stream = status >= 200 && status < 300 ? c.getInputStream() : c.getErrorStream();
-        StringBuilder out = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
-            String line; while ((line = br.readLine()) != null) out.append(line);
-        }
-        c.disconnect();
-        if (status < 200 || status >= 300) throw new Exception("Dashboard HTTP " + status + ": " + out);
-        JSONObject json = new JSONObject(out.toString());
+        JSONObject json = requestDashboard();
+        if (json == null) return;
         JSONArray jobs = json.optJSONArray("jobs");
         if (jobs == null) return;
         Set<String> now = new HashSet<>();
@@ -128,9 +132,55 @@ public class AlertService extends Service {
         boolean fresh = false;
         for (String id : now) if (!known.contains(id)) fresh = true;
         known.clear(); known.addAll(now);
-        if (fresh && dutyOn) {
-            handler.post(() -> { startAlarm(); updateStatus("NEW JOB — alarm ringing until you stop it"); });
+        if (fresh && dutyOn) handler.post(() -> { startAlarm(); updateStatus("NEW JOB — alarm ringing until you stop it"); });
+    }
+
+    private JSONObject requestDashboard() throws Exception {
+        HttpURLConnection c = (HttpURLConnection)new URL(API).openConnection();
+        c.setRequestMethod("POST");
+        c.setConnectTimeout(10000); c.setReadTimeout(12000); c.setDoOutput(true);
+        c.setRequestProperty("Content-Type", "application/json");
+        c.setRequestProperty("apikey", API_KEY);
+        c.setRequestProperty("Authorization", "Bearer " + token);
+        byte[] body = "{\"action\":\"dashboard\"}".getBytes(StandardCharsets.UTF_8);
+        c.getOutputStream().write(body);
+        int status = c.getResponseCode();
+        InputStream stream = status >= 200 && status < 300 ? c.getInputStream() : c.getErrorStream();
+        StringBuilder out = new StringBuilder();
+        if (stream != null) try (BufferedReader br = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+            String line; while ((line = br.readLine()) != null) out.append(line);
         }
+        c.disconnect();
+        if ((status == 400 || status == 401 || status == 403) && !refreshToken.isEmpty() && refreshSession()) return requestDashboard();
+        if (status < 200 || status >= 300) throw new Exception("Dashboard HTTP " + status + ": " + out);
+        return new JSONObject(out.toString());
+    }
+
+    private boolean refreshSession() {
+        HttpURLConnection c = null;
+        try {
+            c = (HttpURLConnection)new URL("https://myjstwbpmbrhaiwytpnq.supabase.co/auth/v1/token?grant_type=refresh_token").openConnection();
+            c.setRequestMethod("POST"); c.setConnectTimeout(10000); c.setReadTimeout(12000); c.setDoOutput(true);
+            c.setRequestProperty("Content-Type", "application/json"); c.setRequestProperty("apikey", API_KEY);
+            byte[] body = new JSONObject().put("refresh_token", refreshToken).toString().getBytes(StandardCharsets.UTF_8);
+            c.getOutputStream().write(body);
+            int status = c.getResponseCode();
+            InputStream stream = status >= 200 && status < 300 ? c.getInputStream() : c.getErrorStream();
+            if (stream == null || status < 200 || status >= 300) return false;
+            StringBuilder out = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+                String line; while ((line = br.readLine()) != null) out.append(line);
+            }
+            JSONObject session = new JSONObject(out.toString());
+            String access = session.optString("access_token", "");
+            String refresh = session.optString("refresh_token", refreshToken);
+            if (access.length() < 20) return false;
+            token = access; refreshToken = refresh;
+            prefs.edit().putString("access_token", token).putString("refresh_token", refreshToken).apply();
+            Log.i("BEXAlarm", "Therapist session refreshed successfully");
+            return true;
+        } catch (Exception e) { Log.w("BEXAlarm", "Session refresh failed", e); return false; }
+        finally { if (c != null) c.disconnect(); }
     }
 
     private void startAlarm() {
@@ -192,7 +242,7 @@ public class AlertService extends Service {
         if (Build.VERSION.SDK_INT >= 26) getSystemService(NotificationManager.class).notify(NOTIFICATION_ID, buildStatusNotification(message));
     }
     @Override public void onDestroy() {
-        dutyOn = false; handler.removeCallbacks(poller); stopAlarm();
+        dutyOn = false; handler.removeCallbacks(poller); handler.removeCallbacks(wakeRenewal); stopAlarm();
         if (wakeLock != null && wakeLock.isHeld()) wakeLock.release();
         worker.shutdownNow(); super.onDestroy();
     }
