@@ -640,6 +640,8 @@ const SUPABASE_URL="https://myjstwbpmbrhaiwytpnq.supabase.co";
 const SUPABASE_KEY="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy";
 // Use Supabase JS default project-scoped auth storage key. Do not copy legacy sessions: a stale refresh token can force SIGNED_OUT after refresh.
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+// Keep login hidden while Supabase restores the saved session after refresh.
+$("authCard").classList.add("hidden");
 const $=id=>document.getElementById(id);
 let session=null,role=null,therapists=[],adminRatings=[],selectedJobFilter="all",selectedAdminBookingFilter="";
 function msg(id,text){$(id).textContent=text;$(id).classList.remove("hidden")}
@@ -1120,6 +1122,20 @@ if(requestedBookingId){
  $("bookingManagement").insertBefore(heading,$("bookingManagement").firstChild);
 }
 let dashboardLoadQueued=false;
+// Fallback for slow mobile connections if session restoration event is delayed.
+let authRestoreFallbackStarted=false;
+setTimeout(async()=>{
+ if(authRestoreFallbackStarted)return;
+ authRestoreFallbackStarted=true;
+ try{
+  const {data:{session:s}}=await sb.auth.getSession();
+  if(s){session=s;await loadDashboard();}
+  else $("authCard").classList.remove("hidden");
+ }catch(e){
+  console.warn("Admin session restore check failed",e);
+  $("authCard").classList.remove("hidden");
+ }
+},1800);
 sb.auth.onAuthStateChange((event,s)=>{
  session=s;
  if(event==="PASSWORD_RECOVERY"){$("authCard").classList.add("hidden");$("dashboard").classList.add("hidden");$("recoveryCard").classList.remove("hidden");return;}
