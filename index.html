@@ -1308,7 +1308,7 @@ function refreshBexTimeSlots(){
   option.hidden=blocked;option.disabled=blocked;
   if(option.selected&&!blocked)chosenStillValid=true;
  });
- if(timeEl.tagName==="SELECT"&&!chosenStillValid){timeEl.value="";const first=Array.from(timeEl.options).find(o=>o.value&&!o.disabled&&!o.hidden);if(first)timeEl.value=first.value}
+ if(timeEl.tagName==="SELECT"&&!chosenStillValid){timeEl.value="";const first=Array.from(timeEl.options).find(o=>o.value&&!o.disabled&&!o.hidden);if(first)timeEl.value=first.value}else if(timeEl.tagName==="INPUT"&&timeEl.type==="time"){if(isToday){const earliest=new Date(cutoff);const mins=earliest.getUTCHours()*60+earliest.getUTCMinutes()+330;const localMins=((mins%1440)+1440)%1440;timeEl.min=String(Math.floor(localMins/60)).padStart(2,"0")+":"+String(localMins%60).padStart(2,"0")}else{timeEl.removeAttribute("min")}}
 }
 document.getElementById("date")?.addEventListener("change",refreshBexTimeSlots);
 document.getElementById("time")?.addEventListener("focus",refreshBexTimeSlots);
