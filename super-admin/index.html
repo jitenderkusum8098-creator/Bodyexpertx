@@ -244,7 +244,7 @@ async function loadCommissionRules(){
 }
 $("reloadRulesBtn").onclick=()=>loadCommissionRules().catch(e=>showMsg("ruleMsg",e.message,true));
 document.addEventListener("click",e=>{if(e.target&&e.target.closest("#refreshPayouts"))loadData().catch(err=>showMsg("globalMsg",err.message,true))});
-async function startApp(){ $("loginBtn").disabled=true;try{await loadData();$("loginView").classList.add("hidden");$("appView").classList.remove("hidden")}catch(e){$("appView").classList.add("hidden");$("loginView").classList.remove("hidden");showMsg("loginMsg","Login हुआ, लेकिन Admin डेटा लोड नहीं हुआ: "+(e.message||"अनजान समस्या")+". यह permission/configuration की समस्या हो सकती है; दोबारा पासवर्ड बदलने की जरूरत नहीं।",true);throw e}finally{$("loginBtn").disabled=false} }
+async function startApp(){ $("loginBtn").disabled=true; $("loginView").classList.add("hidden"); $("appView").classList.remove("hidden"); clearMsg("loginMsg"); try{await loadData();}catch(e){showMsg("globalMsg","आपका Login बना हुआ है, लेकिन Dashboard डेटा लोड नहीं हुआ: "+(e.message||"अनजान समस्या")+". Refresh करने से लॉगआउट नहीं होना चाहिए; डेटा/API की समस्या अलग से जाँचें।",true);}finally{$("loginBtn").disabled=false} }
 async function openPaymentProof(path){
  try{const {data,error}=await db.storage.from("partner-payment-proofs").createSignedUrl(path,300);if(error||!data?.signedUrl)throw error||Error("Screenshot link नहीं बना।");window.open(data.signedUrl,"_blank","noopener,noreferrer")}catch(e){showMsg("globalMsg","Screenshot नहीं खुला: "+e.message,true)}
 }
