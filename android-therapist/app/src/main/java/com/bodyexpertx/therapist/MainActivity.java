@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
     private WebView web;
+    private String pendingRefreshToken = "";
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
         if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
@@ -31,12 +32,21 @@ public class MainActivity extends Activity {
         web.loadUrl("https://bodyexpertx-therapist.onrender.com/?nativeAlarm=1");
     }
     private class NativeBridge {
-        @JavascriptInterface public void syncSession(String token, String refreshToken, boolean available) {
+        @JavascriptInterface public void syncSession(String token, boolean available) {
             if (token == null || token.length() < 20) return;
             Intent i = new Intent(MainActivity.this, AlertService.class);
             i.setAction(available ? AlertService.ACTION_START : AlertService.ACTION_DUTY_OFF);
             i.putExtra("token", token);
-            if (refreshToken != null && refreshToken.length() > 20) i.putExtra("refresh_token", refreshToken);
+            if (pendingRefreshToken.length() > 20) i.putExtra("refresh_token", pendingRefreshToken);
+            if (Build.VERSION.SDK_INT >= 26) startForegroundService(i); else startService(i);
+        }
+        @JavascriptInterface public void syncRefreshToken(String refreshToken) {
+            if (refreshToken == null || refreshToken.length() < 20) return;
+            pendingRefreshToken = refreshToken;
+            getSharedPreferences("bex_alarm", MODE_PRIVATE).edit().putString("refresh_token", refreshToken).apply();
+            Intent i = new Intent(MainActivity.this, AlertService.class);
+            i.setAction(AlertService.ACTION_UPDATE_REFRESH);
+            i.putExtra("refresh_token", refreshToken);
             if (Build.VERSION.SDK_INT >= 26) startForegroundService(i); else startService(i);
         }
         @JavascriptInterface public void stopAlarm() {
