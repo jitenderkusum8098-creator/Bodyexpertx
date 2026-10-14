@@ -312,7 +312,7 @@ function renderDetailTab(){
  }
  if(activeDetail==="qr"){
   const q=$("qr");if(q)new QRCode(q,{text:$("refLink").value,width:190,height:190});
-  $("copyRefLink").onclick=async()=>{try{await navigator.clipboard.writeText(shareLink);$("copyRefLink").textContent="Referral Link Copied"}catch{$("refLink").value=shareLink;$("copyRefLink").textContent="Link ऊपर दिखाया है — कॉपी करें"}};
+  $("copyRefLink").onclick=async()=>{const referralUrl=$("refLink").value.replace("&source=qr","&source=link");try{await navigator.clipboard.writeText(referralUrl);$("copyRefLink").textContent="Referral Link Copied"}catch{$("refLink").value=referralUrl;$("copyRefLink").textContent="Link ऊपर दिखाया है — कॉपी करें"}};
  }
  if(activeDetail==="contact"){
   const cardText="BodyExpertX Partner Contact Card\nBusiness: "+(p.business_name||"")+"\nOwner: "+(p.owner_name||"")+"\nPartner ID: "+(p.partner_code||"")+"\nPhone: "+(p.phone||"")+"\nCity: "+(p.city||"");
