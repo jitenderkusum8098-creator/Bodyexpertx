@@ -168,9 +168,11 @@ Deno.serve(async(req:Request)=>{
   if(action==="duty"){const available=body.available===true;const {data,error}=await db.from("therapists").update({available}).eq("id",therapist.id).select("id,available").single();if(error)throw error;return json({success:true,available:data.available})}
   if(action==="completion-rating-link"){
    const id=String(body.booking_id??"");if(!/^[0-9a-f-]{36}$/i.test(id))return json({error:"Invalid booking."},400);
-   const {data:job,error:jError}=await db.from("booking_assignments").select("id,therapist_id,status,reference_code,service_name,customer_name,customer_phone").eq("id",id).maybeSingle();if(jError)throw jError;
+   const {data:job,error:jError}=await db.from("booking_assignments").select("id,therapist_id,status,reference_code,service_name,customer_name,customer_phone,rating_reissue_count").eq("id",id).maybeSingle();if(jError)throw jError;
    if(!job||job.therapist_id!==therapist.id||job.status!=="completed")return json({error:"Only your completed jobs can create a rating link."},403);
+    const ratingLinksUsed=Number(job.rating_reissue_count||0);if(ratingLinksUsed>=3)return json({error:"Rating link pehle bheja ja chuka hai aur 2 correction chances bhi use ho gaye hain."},429);
    const token=randomToken();const {error}=await db.rpc("bex_create_rating_link_token",{p_token_hash:await hashToken(token),p_therapist_id:therapist.id,p_created_by:therapist.user_id});if(error)throw error;
+    const {error:countError}=await db.from("booking_assignments").update({rating_reissue_count:ratingLinksUsed+1}).eq("id",id).eq("therapist_id",therapist.id);if(countError)throw countError;
    return json({success:true,token,therapist_name:therapist.display_name,customer_name:job.customer_name,customer_phone:job.customer_phone,service_name:job.service_name,reference_code:job.reference_code,rating_url:"https://jitenderkusum8098-creator.github.io/Bodyexpertx/therapist-rating.html?token="+token});
   }
   if(action==="job"){
