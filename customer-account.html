@@ -27,7 +27,7 @@ $("profileForm").addEventListener("submit",e=>{e.preventDefault();saveProfile()}
 const p=read("bex_customer_profile",{});$("name").value=p.name||"";$("phone").value=p.phone||"";$("address").value=p.address||"";if(p.name)showSavedProfile(p);
 $("editProfile").addEventListener("click",editProfile);
 $("cancelEdit").addEventListener("click",()=>{const current=read("bex_customer_profile",{});if(current.name)showSavedProfile(current);else{$("profileForm").classList.remove("hidden");$("cancelEdit").classList.add("hidden");$("profileStatus").textContent="Apni details bharein aur save karein."}});
-async function fetchBooking(item){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","apikey":KEY},body:JSON.stringify({action:"public-customer-booking-status",tracking_token:item.trackingToken})});const d=await r.json();|item.createdAt},localService:item.service||""}}
+async function fetchBooking(item){const response=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","apikey":KEY},body:JSON.stringify({action:"public-customer-booking-status",tracking_token:item.trackingToken})});const data=await response.json();if(!response.ok)throw new Error(data.error||"Booking unavailable");return {...item,...data,booking:{...data.booking,created_at:(data.booking&&data.booking.created_at)||item.createdAt},localService:item.service||""}}
 function renderBookings(){
 const box=$("bookingList");box.replaceChildren();
 if(!records.length){box.innerHTML='<div class="empty" style="grid-column:1/-1">Abhi is browser mein booking history nahi mili.<br><br><a href="./index.html#booking">Pehli booking karein</a></div>';return}
