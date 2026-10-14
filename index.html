@@ -1422,7 +1422,7 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
    header.appendChild(a);
   }
   const mobileGreeting=header&&header.querySelector("[data-bex-account-mobile]");
-  if(mobileGreeting){mobileGreeting.textContent=makeGreeting()||"My Account";mobileGreeting.style.display="inline-flex";mobileGreeting.style.order="3";mobileGreeting.style.padding="8px 10px";mobileGreeting.style.fontSize="11px";mobileGreeting.style.whiteSpace="nowrap"}
+  if(mobileGreeting){mobileGreeting.textContent=makeGreeting()||"My Account";mobileGreeting.style.order="3";mobileGreeting.style.padding="8px 10px";mobileGreeting.style.fontSize="11px";mobileGreeting.style.whiteSpace="nowrap";const syncAccountButtons=()=>{mobileGreeting.style.display=window.matchMedia("(max-width:560px)").matches?"inline-flex":"none"};syncAccountButtons();window.addEventListener("resize",syncAccountButtons)}
  }catch(e){}
 })();
 </script>
