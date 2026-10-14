@@ -95,6 +95,8 @@ tr:hover td{background:#fcf8ee}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
 
+#statsGrid{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media(max-width:980px){#statsGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* Super Admin: stronger table row names */
 .tablewrap tbody td:first-child{
   font-size:15px;
@@ -124,6 +126,7 @@ tr:hover td{background:#fcf8ee}
 <div id="globalMsg" class="msg hidden" role="status"></div>
 <section id="page-overview">
 <div class="grid" id="statsGrid"></div>
+<div class="card" id="dailyPayoutCard"><div class="cardhead"><div><h3>आज का Referral Commission & Payment</h3><p class="small muted" style="margin:4px 0 0">आज की कमाई और पहले से बाकी भुगतान — यहीं से भुगतान खोलें।</p></div><button type="button" id="refreshPayouts" class="btn">↻ हिसाब Refresh</button></div><div id="payoutSummary" class="grid"></div><div id="payoutList"><div class="empty">कमीशन का हिसाब लोड हो रहा है…</div></div></div>
 <div class="card"><div class="cardhead"><h3>हाल के BEX Partners</h3><button class="btn" data-jump="partners">सभी देखें →</button></div><div id="recentPartners" class="empty">डेटा लोड हो रहा है…</div></div>
 <div class="card"><div class="cardhead"><h3>System notes</h3></div><p class="muted">Dashboard का हर आँकड़ा Supabase के मौजूदा रिकॉर्ड से आएगा। कोई demo या नकली कमाई नहीं दिखाई जाएगी।</p></div>
 </section>
@@ -219,7 +222,8 @@ async function loadCommissionRules(){
  document.querySelectorAll("[data-edit-rule]").forEach(b=>b.onclick=()=>{const r=rules.find(x=>x.id===b.dataset.editRule);if(!r)return;$("rulePartner").value=r.partner_id||"";$("ruleCategory").value=r.category;$("ruleTier").value=r.service_tier;$("ruleType").value=r.commission_type;$("ruleAmount").value=r.amount;$("ruleMode").value=r.rule_mode;$("ruleValidity").value=String(r.validity_months||3);$("ruleValidityWrap").classList.toggle("hidden",r.rule_mode!=="period");$("saveRuleBtn").dataset.ruleId=r.id;window.scrollTo({top:0,behavior:"smooth"})});
 }
 $("reloadRulesBtn").onclick=()=>loadCommissionRules().catch(e=>showMsg("ruleMsg",e.message,true));
-async function startApp(){ $("loginView").classList.add("hidden");$("appView").classList.remove("hidden");await loadData() }
+async document.addEventListener("click",e=>{if(e.target&&e.target.closest("#refreshPayouts"))loadData()});
+function startApp(){ $("loginView").classList.add("hidden");$("appView").classList.remove("hidden");await loadData() }
 async function openPaymentProof(path){
  try{const {data,error}=await db.storage.from("partner-payment-proofs").createSignedUrl(path,300);if(error||!data?.signedUrl)throw error||Error("Screenshot link नहीं बना।");window.open(data.signedUrl,"_blank","noopener,noreferrer")}catch(e){showMsg("globalMsg","Screenshot नहीं खुला: "+e.message,true)}
 }
@@ -227,7 +231,7 @@ async function loadAllPayments(){
  const tableEl=$("paymentsTable");if(!tableEl)return;
  tableEl.innerHTML='<div class="empty">Payment History लोड हो रही है…</div>';
  try{
-  const d=await api({action:"list_all_partner_payments"}),all=d.payments||[];
+  const d=await api({action:"list_all_partner_payments"}),all=d.payments||[];allPartnerPayments=all;renderPayoutCard();
   const select=$("globalPaymentPartner"),chosen=select.value;
   select.innerHTML='<option value="">Partner चुनें…</option>'+partners.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.business_name)+' · '+esc(p.partner_code||"")+'</option>').join("");
   if(chosen)select.value=chosen;
@@ -240,7 +244,22 @@ function partnerEarned(id){return commissions.filter(c=>c.partner_id===id&&c.sta
 function partnerPaid(id){if(!detail||detail.partner?.id!==id)return 0;return (detail.payments||[]).filter(p=>p.status==="paid").reduce((n,p)=>n+(Number(p.amount)||0),0)}
 function stat(label,value,foot){return '<div class="stat"><div class="label">'+label+'</div><div class="value">'+value+'</div><div class="foot">'+foot+'</div></div>'}
 function renderAll(){renderStats();renderPartnerCategoryCards();if(selectedPartnerCategory!==null||!$("partnerResults").classList.contains("hidden"))renderPartners();renderRecent();renderEarnings();renderReferrals()}
-function renderStats(){const active=partners.filter(p=>p.status==="active").length;const earned=commissions.filter(c=>c.status!=="void").reduce((n,c)=>n+(Number(c.commission_amount)||0),0);const today=new Date();today.setHours(0,0,0,0);const month=new Date(today.getFullYear(),today.getMonth(),1);const todayRefs=referrals.filter(r=>new Date(r.created_at)>=today).length;const monthRefs=referrals.filter(r=>new Date(r.created_at)>=month).length;$("statsGrid").innerHTML=stat("TOTAL PARTNERS",partners.length,"सभी रजिस्टर्ड पार्टनर")+stat("ACTIVE PARTNERS",active,"अभी सक्रिय")+stat("TOTAL REFERRALS",referrals.length,"आज "+todayRefs+" · इस महीने "+monthRefs)+stat("TOTAL COMMISSION",money(earned),"दर्ज कमीशन");}
+function renderStats(){const active=partners.filter(p=>p.status==="active").length;const earned=commissions.filter(c=>c.status!=="void").reduce((n,c)=>n+(Number(c.commission_amount)||0),0);const today=new Date();today.setHours(0,0,0,0);const month=new Date(today.getFullYear(),today.getMonth(),1);const todayRefs=referrals.filter(r=>new Date(r.created_at)>=today).length;const monthRefs=referrals.filter(r=>new Date(r.created_at)>=month).length;const todayEarned=commissions.filter(c=>c.status!=="void"&&new Date(c.earned_at||c.created_at)>=today).reduce((n,c)=>n+(Number(c.commission_amount)||0),0);$("statsGrid").innerHTML=stat("TOTAL PARTNERS",partners.length,"सभी रजिस्टर्ड पार्टनर")+stat("ACTIVE PARTNERS",active,"अभी सक्रिय")+stat("TOTAL REFERRALS",referrals.length,"आज "+todayRefs+" · इस महीने "+monthRefs)+stat("TOTAL COMMISSION",money(earned),"दर्ज कमीशन")+'<button type="button" class="stat" id="todayCommissionJump" style="text-align:left;width:100%;cursor:pointer"><div class="label">AAJ KA COMMISSION</div><div class="value">'+money(todayEarned)+'</div><div class="foot">भुगतान सूची खोलें ↓</div></button>';const jump=$("todayCommissionJump");if(jump)jump.onclick=()=>$("dailyPayoutCard").scrollIntoView({behavior:"smooth",block:"start"});renderPayoutCard();}
+function renderPayoutCard(){
+ const box=$("payoutList"),summary=$("payoutSummary");if(!box||!summary)return;
+ const now=new Date(),start=new Date(now.getFullYear(),now.getMonth(),now.getDate()),end=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);
+ const valid=commissions.filter(c=>c.status!=="void");
+ const earnedToday=valid.filter(c=>{const d=new Date(c.earned_at||c.created_at);return d>=start&&d<end}).reduce((n,c)=>n+(Number(c.commission_amount)||0),0);
+ const earnedTotal=valid.reduce((n,c)=>n+(Number(c.commission_amount)||0),0);
+ const paidTotal=allPartnerPayments.filter(p=>p.status==="paid").reduce((n,p)=>n+(Number(p.amount)||0),0);
+ const pendingTotal=Math.max(0,Math.round((earnedTotal-paidTotal)*100)/100);
+ const paidToday=allPartnerPayments.filter(p=>p.status==="paid"&&new Date(p.payment_date||p.created_at)>=start&&new Date(p.payment_date||p.created_at)<end).reduce((n,p)=>n+(Number(p.amount)||0),0);
+ summary.innerHTML=stat("आज का कमीशन",money(earnedToday),"आज दर्ज हुआ")+stat("कुल बकाया",money(pendingTotal),"पुराना + आज का बाकी")+stat("आज भुगतान",money(paidToday),"आज दर्ज भुगतान");
+ const rows=partners.map(p=>{const todayRows=valid.filter(c=>c.partner_id===p.id&&new Date(c.earned_at||c.created_at)>=start&&new Date(c.earned_at||c.created_at)<end);const todayAmount=todayRows.reduce((n,c)=>n+(Number(c.commission_amount)||0),0);const total=valid.filter(c=>c.partner_id===p.id).reduce((n,c)=>n+(Number(c.commission_amount)||0),0);const paid=allPartnerPayments.filter(x=>x.partner_id===p.id&&x.status==="paid").reduce((n,x)=>n+(Number(x.amount)||0),0);const pending=Math.max(0,Math.round((total-paid)*100)/100);return {p,todayAmount,todayCount:todayRows.length,pending}}).filter(x=>x.todayAmount>0||x.pending>0).sort((a,b)=>b.pending-a.pending);
+ box.innerHTML=rows.length?table(["Partner","आज के Referral","आज का Commission","कुल बाकी भुगतान","Action"],rows.map(x=>[esc(x.p.business_name||"Partner")+"<br><span class=\"small muted\">"+esc(x.p.partner_code||"—")+"</span>",String(x.todayCount),money(x.todayAmount),"<b>"+money(x.pending)+"</b>",x.pending>0?'<button type="button" class="primary" data-payout-partner="'+esc(x.p.id)+'">भुगतान करें / Paid अपडेट</button>':'<span class="pill">Paid</span>'])):'<div class="empty">आज कोई कमीशन या बकाया भुगतान नहीं है।</div>';
+ box.querySelectorAll("[data-payout-partner]").forEach(b=>b.onclick=async()=>{b.disabled=true;try{await openPartner(b.dataset.payoutPartner,true);if(detail&&detail.partner){activeDetail="payments";document.querySelectorAll("[data-detail]").forEach(x=>{x.classList.toggle("active",x.dataset.detail==="payments");x.setAttribute("aria-pressed",String(x.dataset.detail==="payments"))});renderDetailTab();window.scrollTo({top:0,behavior:"smooth"})}}finally{b.disabled=false}});
+}
+
 function renderRecent(){const list=[...partners].slice(0,6);$("recentPartners").innerHTML=list.length?table(["Business","Partner ID","Category","Status","Action"],list.map(p=>[esc(p.business_name),esc(p.partner_code||"—"),esc(p.category||"—"),'<span class="pill '+(p.status==="active"?"":"off")+'">'+esc(p.status||"unknown")+'</span>','<button class="primary" data-open="'+esc(p.id)+'">View Dashboard</button>'])):'<div class="empty">अभी कोई Partner रिकॉर्ड नहीं है।</div>';bindOpen()}
 function table(headers,rows){return rows.length?'<div class="tablewrap"><table><thead><tr>'+headers.map(h=>'<th>'+h+'</th>').join("")+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(cell=>'<td>'+cell+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>':'<div class="empty">कोई रिकॉर्ड उपलब्ध नहीं है।</div>'}
 let selectedPartnerCategory=null;
