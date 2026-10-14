@@ -1,4 +1,5 @@
 name: Build BodyExpertX Therapist APK
+# Rebuild after locked-screen alarm reliability fixes (wake lock + token refresh).
 on:
   workflow_dispatch:
   push:
