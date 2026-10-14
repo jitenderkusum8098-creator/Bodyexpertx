@@ -674,6 +674,28 @@ document.querySelectorAll("#adminNav [data-view]").forEach(b=>b.addEventListener
 async function bpCall(payload){const {data:{session:s}}=await sb.auth.getSession();if(!s)throw new Error("आपका Admin लॉगिन समाप्त हुआ है। कृपया एक बार दोबारा लॉगिन करें।");const r=await fetch(SUPABASE_URL+"/functions/v1/bex-partner-admin",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY,"Authorization":"Bearer "+s.access_token},body:JSON.stringify(payload)});const d=await r.json().catch(()=>({error:"Server response invalid"}));if(!r.ok)throw new Error(d.error||"Request failed");return d}
 function bpEsc(s){return String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
 window.bpSelectedCategory=null;
+// Bind category clicks before network/render work so an error cannot disable the whole section.
+(function(){
+ const host=document.getElementById("bpCategoryStats");
+ if(!host||host.dataset.clickDelegated==="1")return;
+ host.dataset.clickDelegated="1";
+ host.addEventListener("click",event=>{
+  const btn=event.target.closest(".bpOverviewCard");if(!btn)return;
+  const cat=btn.dataset.category;
+  if(cat==="__new"){
+   window.bpSelectedCategory=null;
+   document.getElementById("bpCategoryStats")?.classList.add("bp-directory-hidden");
+   document.getElementById("bpRulesList")?.classList.add("bp-directory-hidden");
+   document.getElementById("bpPartnerCategoryPage")?.classList.add("hidden");
+   const reg=document.getElementById("bpRegistrationPage");
+   if(reg){reg.classList.remove("hidden");reg.scrollIntoView({behavior:"smooth",block:"start"});document.getElementById("bpBusiness")?.focus();}
+   return;
+  }
+  const reg=document.getElementById("bpRegistrationPage");if(reg)reg.classList.add("hidden");
+  window.bpSelectedCategory=cat==="__total"?"__total":cat;
+  bpLoad();
+ });
+})();
 let bpLoadInFlight=false;
 async function bpLoad(){
  if(bpLoadInFlight)return;
@@ -684,7 +706,8 @@ async function bpLoad(){
  catch(e){list.innerHTML='<div class="msg">सूची लोड नहीं हुई: '+bpEsc(e.message)+' <button type="button" class="btn alt" onclick="bpLoad()">दोबारा कोशिश करें</button></div>';bpLoadInFlight=false;return}
  // Network request succeeded; unlock now so a later UI-render error cannot disable all category cards.
  bpLoadInFlight=false;
- const partners=adminData.partners||[], rules=adminData.rules||[], refs=adminData.referrals||[], comms=adminData.commissions||[],today=new Date();today.setHours(0,0,0,0);const monthStart=new Date(today.getFullYear(),today.getMonth(),1);
+ try {
+  const partners=Array.isArray(adminData.partners)?adminData.partners:[], rules=Array.isArray(adminData.rules)?adminData.rules:[], refs=Array.isArray(adminData.referrals)?adminData.referrals:[], comms=Array.isArray(adminData.commissions)?adminData.commissions:[],today=new Date();today.setHours(0,0,0,0);const monthStart=new Date(today.getFullYear(),today.getMonth(),1);
  const cats=["Salon","Hotel","Kirana Store","Gym","Medical Store","Other"],catHindi={"Massage":"मसाज सर्विस","Salon":"सैलून","Hotel":"होटल","Gym":"जिम","Kirana Store":"किराना स्टोर","Medical Store":"मेडिकल स्टोर","Other":"अन्य"};
  const totalPartners=partners.length;
  const catLabels=[["__new","नया रजिस्ट्रेशन","➕"],["__total","Total Partner","🤝"],...cats.map(cat=>[cat,catHindi[cat]||cat,"🏪"])];
@@ -755,6 +778,11 @@ async function bpLoad(){
   }catch(e){alert("Credentials नहीं बने: "+e.message)}finally{btn.disabled=false;btn.textContent=original}
  });
  document.querySelectorAll(".bpDelete").forEach(btn=>btn.onclick=async()=>{if(!confirm('क्या "'+btn.dataset.name+'" को स्थायी रूप से delete करना है? यह वापस नहीं होगा।'))return;try{await bpCall({action:"delete_partner",partner_id:btn.dataset.id});alert("पार्टनर delete हो गया।");await bpLoad()}catch(e){alert("Delete नहीं हुआ: "+e.message)}});
+  } catch(renderError) {
+   console.error("BEX Partner render failed",renderError);
+   const target=document.getElementById("bpPartnerList");
+   if(target)target.innerHTML='<div class="msg">पार्टनर सूची दिखाने में समस्या आई: '+bpEsc(renderError?.message||"अज्ञात त्रुटि")+' <button type="button" class="btn alt" onclick="bpLoad()">दोबारा कोशिश करें</button></div>';
+  }
 }
 
 if(!window.bpPartnerAdminRefreshTimer)window.bpPartnerAdminRefreshTimer=setInterval(()=>{
