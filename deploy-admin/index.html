@@ -638,10 +638,8 @@ body.therapist-detail-page #therapistDetailPage{display:block!important}
 <script>
 const SUPABASE_URL="https://myjstwbpmbrhaiwytpnq.supabase.co";
 const SUPABASE_KEY="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy";
-const DEFAULT_AUTH_STORAGE_KEY="sb-myjstwbpmbrhaiwytpnq-auth-token";
-const CUSTOM_AUTH_STORAGE_KEY="bodyexpertx-admin-auth";
-try{if(!localStorage.getItem(DEFAULT_AUTH_STORAGE_KEY)&&localStorage.getItem(CUSTOM_AUTH_STORAGE_KEY)){localStorage.setItem(DEFAULT_AUTH_STORAGE_KEY,localStorage.getItem(CUSTOM_AUTH_STORAGE_KEY));}}catch(e){console.warn("Auth storage migration skipped",e)}
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage,storageKey:DEFAULT_AUTH_STORAGE_KEY}});
+// Use Supabase JS default project-scoped auth storage key. Do not copy legacy sessions: a stale refresh token can force SIGNED_OUT after refresh.
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const $=id=>document.getElementById(id);
 let session=null,role=null,therapists=[],adminRatings=[],selectedJobFilter="all",selectedAdminBookingFilter="";
 function msg(id,text){$(id).textContent=text;$(id).classList.remove("hidden")}
@@ -1089,8 +1087,16 @@ if(requestedBookingId){
  const heading=document.createElement("h2");heading.className="booking-route-title";heading.textContent="Booking Details";
  $("bookingManagement").insertBefore(heading,$("bookingManagement").firstChild);
 }
-sb.auth.onAuthStateChange((event,s)=>{session=s;if(event==="PASSWORD_RECOVERY"){$("authCard").classList.add("hidden");$("dashboard").classList.add("hidden");$("recoveryCard").classList.remove("hidden");return}if(s)setTimeout(()=>loadDashboard().catch(e=>msg("roleMsg",e.message)),0)});
-loadDashboard().catch(e=>msg("authMsg",e.message));
+let dashboardLoadQueued=false;
+sb.auth.onAuthStateChange((event,s)=>{
+ session=s;
+ if(event==="PASSWORD_RECOVERY"){$("authCard").classList.add("hidden");$("dashboard").classList.add("hidden");$("recoveryCard").classList.remove("hidden");return;}
+ if(event==="SIGNED_OUT"){$("dashboard").classList.add("hidden");$("authCard").classList.remove("hidden");$("signOut").classList.add("hidden");return;}
+ if(s&&(event==="INITIAL_SESSION"||event==="SIGNED_IN"||event==="TOKEN_REFRESHED")){
+  if(dashboardLoadQueued)return;dashboardLoadQueued=true;
+  setTimeout(()=>loadDashboard().catch(e=>msg("roleMsg",e.message)).finally(()=>{dashboardLoadQueued=false;}),0);
+ }
+});
 
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(err => console.warn("App offline support unavailable", err)));
