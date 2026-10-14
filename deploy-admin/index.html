@@ -718,7 +718,7 @@ async function bpLoad(){
  overview.style.gridTemplateColumns="repeat(3,minmax(0,1fr))";
  overview.innerHTML=catLabels.map(([cat,label,icon])=>'<button type="button" class="bpOverviewCard '+(cat==="__new"?"bpNewPartnerCard":"")+'" data-category="'+cat+'"><span class="bpOverviewIcon">'+icon+'</span><strong>'+bpEsc(label)+'</strong><b>'+(cat==="__new"?"नई ID बनाएँ":cat==="__total"?totalPartners:partners.filter(x=>x.category===cat).length)+'</b><small>'+(cat==="__new"?"नया पार्टनर जोड़ें":cat==="__total"?"सभी रजिस्टर्ड पार्टनर":"पार्टनर देखने के लिए क्लिक करें")+'</small></button>').join("");
 
- const directory=$("bpPartnerList"),categoryStats=$("bpCategoryStats"),rulesSection=$("bpRulesList");
+ const directory=$("bpPartnerList"),categoryStats=$("bpCategoryStats"),rulesSection=$("bpRulesList"),rulesBox=$("bpRulesList");
  let categoryPage=$("bpPartnerCategoryPage");
  if(!categoryPage&&directory?.parentNode){categoryPage=document.createElement("section");categoryPage.id="bpPartnerCategoryPage";directory.parentNode.insertBefore(categoryPage,directory);}
  if(window.bpSelectedCategory){
@@ -753,7 +753,7 @@ async function bpLoad(){
    }).join("");
  }
  bpLoadInFlight=false;
- rulesBox.innerHTML=rules.map(x=>'<div class="item small">'+bpEsc(x.category)+' · '+bpEsc(x.service_tier)+' · '+bpEsc(x.commission_type)+' '+bpEsc(x.amount)+(x.commission_type==="percent"?"%":" ₹")+' · '+bpEsc(x.rule_mode)+'</div>').join("")||'<div class="empty">Commission rules अभी सेट नहीं हैं।</div>';
+ if(rulesBox)rulesBox.innerHTML=rules.map(x=>'<div class="item small">'+bpEsc(x.category)+' · '+bpEsc(x.service_tier)+' · '+bpEsc(x.commission_type)+' '+bpEsc(x.amount)+(x.commission_type==="percent"?"%":" ₹")+' · '+bpEsc(x.rule_mode)+'</div>').join("")||'<div class="empty">Commission rules अभी सेट नहीं हैं।</div>';
  const statsHost=$("bpCategoryStats");
  if(statsHost&&!statsHost.dataset.clickDelegated){statsHost.dataset.clickDelegated="1";statsHost.addEventListener("click",event=>{const btn=event.target.closest(".bpOverviewCard");if(!btn)return;const cat=btn.dataset.category;if(cat==="__new"){window.bpSelectedCategory=null;$("bpCategoryStats")?.classList.add("bp-directory-hidden");$("bpRulesList")?.classList.add("bp-directory-hidden");$("bpPartnerCategoryPage")?.classList.add("hidden");const reg=$("bpRegistrationPage");if(reg){reg.classList.remove("hidden");reg.scrollIntoView({behavior:"smooth",block:"start"});$("bpBusiness")?.focus();}return;}const reg=$("bpRegistrationPage");if(reg)reg.classList.add("hidden");window.bpSelectedCategory=cat==="__total"?"__total":cat;bpLoad();});}
  const backRegistration=$("bpBackFromRegistration");if(backRegistration)backRegistration.onclick=()=>{const reg=$("bpRegistrationPage");if(reg)reg.classList.add("hidden");window.bpSelectedCategory=null;bpLoad();};
