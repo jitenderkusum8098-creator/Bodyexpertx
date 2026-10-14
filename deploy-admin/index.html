@@ -717,16 +717,16 @@ async function bpLoad(){
 
  const directory=$("bpPartnerList"),categoryStats=$("bpCategoryStats"),rulesSection=$("bpRulesList");
  let categoryPage=$("bpPartnerCategoryPage");
- if(!categoryPage){categoryPage=document.createElement("section");categoryPage.id="bpPartnerCategoryPage";directory.parentNode.insertBefore(categoryPage,directory);}
+ if(!categoryPage&&directory?.parentNode){categoryPage=document.createElement("section");categoryPage.id="bpPartnerCategoryPage";directory.parentNode.insertBefore(categoryPage,directory);}
  if(window.bpSelectedCategory){
-   categoryStats.classList.add("bp-directory-hidden");rulesSection.classList.add("bp-directory-hidden");
-   categoryPage.classList.remove("hidden");
+   categoryStats?.classList.add("bp-directory-hidden");rulesSection?.classList.add("bp-directory-hidden");
+   categoryPage?.classList.remove("hidden");
    categoryPage.innerHTML='<div class="row" style="justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><div class="small muted">BEX PARTNER DIRECTORY</div><h2>'+bpEsc(catHindi[window.bpSelectedCategory]||window.bpSelectedCategory)+' · Registered Partners</h2><div class="small muted">हर Partner का Unique ID और QR / Poster यहीं उपलब्ध है।</div></div><button type="button" class="btn alt" id="bpCategoryBack">← सभी Categories</button></div>';
-   directory.classList.remove("hidden","bp-directory-hidden");directory.classList.add("bp-category-page");
+   directory?.classList.remove("hidden","bp-directory-hidden");directory?.classList.add("bp-category-page");
    $("bpCategoryBack").onclick=()=>{window.bpSelectedCategory=null;bpLoad()};
  }else{
-   categoryStats.classList.remove("bp-directory-hidden");rulesSection.classList.remove("bp-directory-hidden");
-   categoryPage.classList.add("hidden");directory.classList.add("hidden");directory.classList.remove("bp-category-page");
+   categoryStats?.classList.remove("bp-directory-hidden");rulesSection?.classList.remove("bp-directory-hidden");
+   categoryPage?.classList.add("hidden");directory?.classList.add("hidden");directory?.classList.remove("bp-category-page");
  }
  const filtered=window.bpSelectedCategory?(window.bpSelectedCategory==="__total"?partners:partners.filter(x=>x.category===window.bpSelectedCategory)):partners;
  if(!filtered.length){
@@ -752,8 +752,8 @@ async function bpLoad(){
  bpLoadInFlight=false;
  rulesBox.innerHTML=rules.map(x=>'<div class="item small">'+bpEsc(x.category)+' · '+bpEsc(x.service_tier)+' · '+bpEsc(x.commission_type)+' '+bpEsc(x.amount)+(x.commission_type==="percent"?"%":" ₹")+' · '+bpEsc(x.rule_mode)+'</div>').join("")||'<div class="empty">Commission rules अभी सेट नहीं हैं।</div>';
  const statsHost=$("bpCategoryStats");
- if(statsHost&&!statsHost.dataset.clickDelegated){statsHost.dataset.clickDelegated="1";statsHost.addEventListener("click",event=>{const btn=event.target.closest(".bpOverviewCard");if(!btn)return;const cat=btn.dataset.category;if(cat==="__new"){window.bpSelectedCategory=null;$("bpCategoryStats").classList.add("bp-directory-hidden");$("bpRulesList").classList.add("bp-directory-hidden");$("bpPartnerCategoryPage")?.classList.add("hidden");const reg=$("bpRegistrationPage");if(reg){reg.classList.remove("hidden");reg.scrollIntoView({behavior:"smooth",block:"start"});$("bpBusiness")?.focus();}return;}const reg=$("bpRegistrationPage");if(reg)reg.classList.add("hidden");window.bpSelectedCategory=cat==="__total"?"__total":cat;bpLoad();});}
- document.querySelectorAll(".bpOverviewCard").forEach(btn=>btn.onclick=()=>{const cat=btn.dataset.category;if(cat==="__new"){window.bpSelectedCategory=null;categoryStats.classList.add("bp-directory-hidden");rulesSection.classList.add("bp-directory-hidden");categoryPage.classList.add("hidden");const reg=$("bpRegistrationPage");if(reg){reg.classList.remove("hidden");reg.scrollIntoView({behavior:"smooth",block:"start"});$("bpBusiness")?.focus();}return;}const reg=$("bpRegistrationPage");if(reg)reg.classList.add("hidden");window.bpSelectedCategory=cat==="__total"?"__total":cat;bpLoad();});
+ if(statsHost&&!statsHost.dataset.clickDelegated){statsHost.dataset.clickDelegated="1";statsHost.addEventListener("click",event=>{const btn=event.target.closest(".bpOverviewCard");if(!btn)return;const cat=btn.dataset.category;if(cat==="__new"){window.bpSelectedCategory=null;$("bpCategoryStats")?.classList.add("bp-directory-hidden");$("bpRulesList")?.classList.add("bp-directory-hidden");$("bpPartnerCategoryPage")?.classList.add("hidden");const reg=$("bpRegistrationPage");if(reg){reg.classList.remove("hidden");reg.scrollIntoView({behavior:"smooth",block:"start"});$("bpBusiness")?.focus();}return;}const reg=$("bpRegistrationPage");if(reg)reg.classList.add("hidden");window.bpSelectedCategory=cat==="__total"?"__total":cat;bpLoad();});}
+ document.querySelectorAll(".bpOverviewCard").forEach(btn=>btn.onclick=()=>{const cat=btn.dataset.category;if(cat==="__new"){window.bpSelectedCategory=null;categoryStats?.classList.add("bp-directory-hidden");rulesSection?.classList.add("bp-directory-hidden");categoryPage?.classList.add("hidden");const reg=$("bpRegistrationPage");if(reg){reg.classList.remove("hidden");reg.scrollIntoView({behavior:"smooth",block:"start"});$("bpBusiness")?.focus();}return;}const reg=$("bpRegistrationPage");if(reg)reg.classList.add("hidden");window.bpSelectedCategory=cat==="__total"?"__total":cat;bpLoad();});
  const backRegistration=$("bpBackFromRegistration");if(backRegistration)backRegistration.onclick=()=>{const reg=$("bpRegistrationPage");if(reg)reg.classList.add("hidden");window.bpSelectedCategory=null;bpLoad();};
  document.querySelectorAll(".bpViewAll").forEach(btn=>btn.onclick=()=>bpOpenPartnerDashboard(btn.dataset.id));
  document.querySelectorAll(".bpQr").forEach(btn=>btn.onclick=()=>bpOpenQr(btn.dataset.code,btn.dataset.name));
