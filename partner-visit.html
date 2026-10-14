@@ -6,7 +6,7 @@
 (async function(){
  const p=new URLSearchParams(location.search),code=(p.get("partner")||"").trim().toUpperCase(),source=p.get("source")==="qr"?"qr":"link";
  const status=document.getElementById("status"),spin=document.getElementById("spin"),actions=document.getElementById("actions");
- const booking="https://jitenderkusum8098-creator.github.io/Bodyexpertx/massage.html?partner="+encodeURIComponent(code)+(source==="qr"?"&source=qr":"");
+ const booking="https://jitenderkusum8098-creator.github.io/Bodyexpertx/?partner="+encodeURIComponent(code)+(source==="qr"?"&source=qr":"&source=link");
  function showFallback(message){status.textContent=message;spin.hidden=true;actions.innerHTML='<button id="retry">फिर से कोशिश करें</button> <a id="continue" href="'+booking+'">बुकिंग खोलें</a>';document.getElementById("retry").onclick=track}
  if(!/^[A-Z0-9_-]{3,32}$/.test(code)){showFallback("यह referral link सही नहीं है।");return}
  let visitor="";try{visitor=localStorage.getItem("bexVisitor")||"";if(!/^[a-f0-9-]{16,64}$/i.test(visitor)){visitor=crypto.randomUUID?crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==="x"?r:(r&3|8)).toString(16)});localStorage.setItem("bexVisitor",visitor)}}catch(e){}
@@ -14,7 +14,7 @@
   status.textContent="आपका referral सुरक्षित किया जा रहा है…";spin.hidden=false;actions.innerHTML="";
   try{
    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);let response;
-   try{response=await fetch("https://myjstwbpmbrhaiwytpnq.supabase.co/functions/v1/bex-partner-admin",{method:"POST",mode:"cors",cache:"no-store",headers:{"Content-Type":"application/json","apikey":"sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy"},body:JSON.stringify({action:"record_partner_visit",partner_code:code,visitor_key:visitor,source_type:source,landing_path:"/Bodyexpertx/massage.html"}),signal:controller.signal})}finally{clearTimeout(timer)}
+   try{response=await fetch("https://myjstwbpmbrhaiwytpnq.supabase.co/functions/v1/bex-partner-admin",{method:"POST",mode:"cors",cache:"no-store",headers:{"Content-Type":"application/json","apikey":"sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy"},body:JSON.stringify({action:"record_partner_visit",partner_code:code,visitor_key:visitor,source_type:source,landing_path:"/Bodyexpertx/"}),signal:controller.signal})}finally{clearTimeout(timer)}
    const data=await response.json().catch(()=>({}));if(!response.ok||data.ok!==true)throw new Error(data.error||("HTTP "+response.status));
    try{sessionStorage.setItem("bex_partner_ref",code);sessionStorage.setItem("bex_partner_visit_at_"+code,String(Date.now()))}catch(e){}
    status.textContent="Referral link तैयार है। बुकिंग पेज खोला जा रहा है…";spin.hidden=true;location.replace(booking);
