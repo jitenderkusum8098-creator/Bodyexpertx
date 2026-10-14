@@ -1260,6 +1260,7 @@ try{
   headers:{"Content-Type":"application/json","apikey":"sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy"},
   body:JSON.stringify({
    action:"public-create-booking-request",
+   preferred_therapist_id:localStorage.getItem("bex_rebook_therapist_id")||new URLSearchParams(location.search).get("rebookTherapist")||null,
    partner_code:window.bexPartnerCode||sessionStorage.getItem("bex_partner_ref")||new URLSearchParams(location.search).get("partner")||null,
    customer_name:document.getElementById("name").value.trim(),
    customer_phone:document.getElementById("phone").value.trim(),
@@ -1285,6 +1286,18 @@ try{
  const result=await response.json().catch(()=>({}));
  if(!response.ok)throw new Error(result.error||"Dashboard save failed");
  bookingReference=result.reference_code||"";bookingTrackingToken=result.tracking_token||"";
+ try{
+  const profile={name:document.getElementById("name").value.trim(),phone:document.getElementById("phone").value.trim(),address:document.getElementById("visit").value==="Home service"?document.getElementById("address").value.trim():"",updatedAt:new Date().toISOString()};
+  localStorage.setItem("bex_customer_profile",JSON.stringify(profile));
+  if(bookingTrackingToken){
+   const history=JSON.parse(localStorage.getItem("bex_customer_bookings")||"[]");
+   history.unshift({trackingToken:bookingTrackingToken,reference:bookingReference,createdAt:new Date().toISOString(),service:cart.map(x=>x.name).join(" + "),serviceType:selectedDepartment==="SALON"?"Salon":"Massage",tier:selectedCategory==="LUXE"?"Luxe":"Prime",appointmentDate:date,appointmentTime:document.getElementById("time").value});
+   const unique=history.filter((item,index,array)=>item.trackingToken&&array.findIndex(other=>other.trackingToken===item.trackingToken)===index).slice(0,100);
+   localStorage.setItem("bex_customer_bookings",JSON.stringify(unique));
+  }
+  localStorage.removeItem("bex_rebook_therapist_id");localStorage.removeItem("bex_rebook_service_type");localStorage.removeItem("bex_rebook_tier");
+ }catch(storageError){console.warn("Customer account local save skipped",storageError)}
+
  if(bookingReference)details+="\n🔖 *Booking Reference:* "+bookingReference;
 }catch(saveError){
  status.textContent="WhatsApp booking flow जारी है, लेकिन Admin Panel में save नहीं हो पाया: "+(saveError.message||"Please retry later.");
@@ -1378,4 +1391,17 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
 </script>
 <script src="./hindi-ui.js" defer></script>
 <script id="bex-pwa-home-install">(function(){let deferred=null;const key="bex_customer_install_done";const standalone=()=>matchMedia("(display-mode: standalone)").matches||matchMedia("(display-mode: fullscreen)").matches||navigator.standalone===true;function hide(){document.getElementById("bexInstallApp")?.remove()}function add(){if(standalone()||localStorage.getItem(key)==="1"||document.getElementById("bexInstallApp"))return;const b=document.createElement("button");b.id="bexInstallApp";b.textContent="📲 Home Screen par Add karein";b.style.cssText="position:fixed;z-index:99999;right:12px;bottom:14px;background:#080808;color:#d6b35a;border:1px solid #c8c8c8;border-radius:999px;padding:12px 15px;font:700 13px system-ui;box-shadow:0 4px 18px #0003";b.onclick=async()=>{if(deferred){deferred.prompt();const c=await deferred.userChoice;deferred=null;if(c&&c.outcome==="accepted"){localStorage.setItem(key,"1");hide()}return}alert("Chrome ke menu ⋮ mein 'Add to Home screen' ya 'Install app' chunein.")};document.body.appendChild(b)}addEventListener("beforeinstallprompt",e=>{if(standalone()||localStorage.getItem(key)==="1")return;e.preventDefault();deferred=e;add()});addEventListener("appinstalled",()=>{localStorage.setItem(key,"1");hide()});if(standalone())hide();if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("/Bodyexpertx/sw.js",{scope:"/Bodyexpertx/"}).catch(()=>{}))})();</script>
+
+<script id="bex-customer-account-entry">
+(function(){
+ try{
+  const profile=JSON.parse(localStorage.getItem("bex_customer_profile")||"{}");
+  const rebook=new URLSearchParams(location.search).get("rebookTherapist");
+  if(rebook)localStorage.setItem("bex_rebook_therapist_id",rebook);\n  const params=new URLSearchParams(location.search);\n  const wantedService=params.get("rebookService")||localStorage.getItem("bex_rebook_service_type");\n  const wantedTier=params.get("rebookTier")||localStorage.getItem("bex_rebook_tier");\n  if(wantedService&&typeof selectDepartment==="function")selectDepartment(wantedService.toUpperCase());\n  if(wantedTier&&typeof selectCategory==="function")selectCategory(wantedTier.toUpperCase(),false);
+  [["name",profile.name],["phone",profile.phone],["address",profile.address]].forEach(([id,value])=>{const el=document.getElementById(id);if(el&&value&&!el.value)el.value=value});
+  const links=document.querySelector("header .links");
+  if(links&&!links.querySelector("[data-bex-account-link]")){const a=document.createElement("a");a.href="./customer-account.html";a.textContent="मेरा अकाउंट";a.setAttribute("data-bex-account-link","1");links.insertBefore(a,links.firstChild)}
+ }catch(e){}
+})();
+</script>
 </body></html>
