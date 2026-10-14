@@ -2241,6 +2241,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
 
 <script id="bex-cart-flow-safety-fix">
 (function(){
+  try { Object.defineProperty(window,"cart",{configurable:true,get:()=>cart,set:value=>{if(Array.isArray(value))cart=value;}}); } catch(e) {}
   // Keep this fix scoped to the service-selection cart; preserve the existing
   // booking form, prices, address options, and admin submission flow.
   function refreshVisibleCart(){
