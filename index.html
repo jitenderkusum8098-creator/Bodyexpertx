@@ -1317,26 +1317,33 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
  const REFERRAL_TTL=30*24*60*60*1000;
  let partner="";
  try{
+  const rawSaved=localStorage.getItem(referralKey);
+  let saved=null;
+  try{saved=rawSaved?JSON.parse(rawSaved):null}catch(e){}
+  const savedValid=!!(saved&&saved.code&&/^[A-Za-z0-9_-]{3,80}$/.test(saved.code)&&Number(saved.savedAt)>0&&Date.now()-Number(saved.savedAt)<REFERRAL_TTL);
   if(incoming&&/^[A-Za-z0-9_-]{3,80}$/.test(incoming)){
    partner=incoming;
-   localStorage.setItem(referralKey,JSON.stringify({code:partner,savedAt:Date.now()}));
+   if(!(savedValid&&saved.code===incoming)){
+    localStorage.setItem(referralKey,JSON.stringify({code:partner,savedAt:Date.now()}));
+   }
    try{sessionStorage.setItem("bex_partner_ref",partner)}catch(e){}
-  }else{
-   const saved=JSON.parse(localStorage.getItem(referralKey)||"null");
-   if(saved&&saved.code&&/^[A-Za-z0-9_-]{3,80}$/.test(saved.code)&&Number(saved.savedAt)>0&&Date.now()-Number(saved.savedAt)<REFERRAL_TTL){
-    partner=saved.code;
-   }else{
-    localStorage.removeItem(referralKey);
-    partner=sessionStorage.getItem("bex_partner_ref")||"";
-    if(partner&&/^[A-Za-z0-9_-]{3,80}$/.test(partner)){
+  }else if(savedValid){
+   partner=saved.code;
+  }else if(rawSaved===null){
+   try{
+    const legacy=sessionStorage.getItem("bex_partner_ref")||"";
+    if(legacy&&/^[A-Za-z0-9_-]{3,80}$/.test(legacy)){
+     partner=legacy;
      localStorage.setItem(referralKey,JSON.stringify({code:partner,savedAt:Date.now()}));
     }
-   }
+   }catch(e){}
+  }else{
+   localStorage.removeItem(referralKey);
+   try{sessionStorage.removeItem("bex_partner_ref")}catch(e){}
   }
  }catch(e){try{partner=incoming||sessionStorage.getItem("bex_partner_ref")||""}catch(_e){}}
  if(!partner||!/^[A-Za-z0-9_-]{3,80}$/.test(partner))return;
  window.bexPartnerCode=partner;
- document.addEventListener("click",function(e){const a=e.target.closest&&e.target.closest("a[href]");if(!a)return;try{const u=new URL(a.href,location.href);if(u.origin!==location.origin)return;if(!u.searchParams.has("partner"))u.searchParams.set("partner",partner);const src=params.get("source");if(src&&!u.searchParams.has("source"))u.searchParams.set("source",src);a.href=u.toString();}catch(e){}},true);
  if(incoming&&/^[A-Za-z0-9_-]{3,80}$/.test(incoming)){
   const visitKey="bex_partner_visit_at_"+partner;
   let last=0;try{last=Number(sessionStorage.getItem(visitKey)||0)}catch(e){}
