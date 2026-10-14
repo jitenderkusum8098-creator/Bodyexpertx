@@ -6,19 +6,20 @@ on:
       - 'android-therapist/**'
       - '.github/workflows/build-therapist-android.yml'
 permissions:
-  contents: read
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: render-therapist-live
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
       - name: Install Android SDK packages
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
       - uses: gradle/actions/setup-gradle@v4
@@ -26,6 +27,19 @@ jobs:
           gradle-version: '8.9'
       - name: Build debug APK
         run: gradle -p android-therapist assembleDebug
+      - name: Publish APK to therapist website
+        run: |
+          mkdir -p deploy-therapist
+          cp android-therapist/app/build/outputs/apk/debug/app-debug.apk deploy-therapist/therapist-alarm.apk
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add deploy-therapist/therapist-alarm.apk
+          if git diff --cached --quiet; then
+            echo "APK unchanged; no publish commit needed."
+          else
+            git commit -m "Publish therapist alarm APK"
+            git push origin HEAD:render-therapist-live
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: bodyexpertx-therapist-debug-apk
