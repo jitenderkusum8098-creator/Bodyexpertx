@@ -2206,5 +2206,37 @@ let addressLookupTimer=null,addressLookupSeq=0;$("address").addEventListener("in
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close()});
 })();
 </script>
+
+<script id="bex-cart-click-recovery">
+(function(){
+  // Keep the booking flow resilient if a mobile browser fails to run an inline
+  // onclick handler on a dynamically-rendered service button.
+  document.addEventListener("click", function(event){
+    const button = event.target && event.target.closest
+      ? event.target.closest("#serviceCards button[onclick], #addonCards button[onclick], #narnaulPainServices button[onclick]")
+      : null;
+    if (!button) return;
+    const code = button.getAttribute("onclick") || "";
+    const match = code.match(/^\s*(addService|addAddon|addSalonService|addPainService|addMuscleRecoveryService|addKickFitService|addRunFitService)\((.*)\)\s*;?\s*$/);
+    if (!match || typeof window[match[1]] !== "function") return;
+    let args;
+    try { args = Function('"use strict"; return [' + match[2] + '];')(); }
+    catch (_) { return; }
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    try {
+      window[match[1]].apply(window, args);
+      if (typeof window.refreshStepCart === "function") window.refreshStepCart();
+      const status = document.getElementById("flowCartFeedback") || document.getElementById("formStatus");
+      if (status && !status.textContent.trim()) status.textContent = "Service cart mein add ho gayi hai.";
+    } catch (error) {
+      const status = document.getElementById("flowCartFeedback") || document.getElementById("formStatus");
+      if (status) status.textContent = "Cart update nahi ho paaya. Page refresh karke dobara try karein.";
+      console.error("BodyExpertX cart click failed", error);
+    }
+  }, true);
+})();
+</script>
+
 </body>
 </html>
