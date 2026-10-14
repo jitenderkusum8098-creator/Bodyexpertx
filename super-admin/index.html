@@ -45,8 +45,8 @@
 <form id="commissionRuleForm">
 <div class="formgrid">
 <div><label for="rulePartner">किस Partner के लिए?</label><select id="rulePartner"><option value="">सभी Partners के लिए default</option></select></div>
-<div><label for="ruleCategory">Partner Category</label><select id="ruleCategory" required><option>Salon</option><option>Hotel</option><option>Gym</option><option>Kirana Store</option><option>Medical Store</option><option>Other</option></select></div>
-<div><label for="ruleTier">Service Tier</label><select id="ruleTier" required><option value="Prime">Prime Massage</option><option value="Luxe">Luxe Massage</option><option value="Other">Other Service</option></select></div>
+<div><label for="ruleCategory">Service Category</label><select id="ruleCategory" required><option value="Massage">Massage</option><option value="Salon">Salon</option></select></div>
+<div><label for="ruleTier">Service Tier</label><select id="ruleTier" required><option value="Prime">Prime Massage</option><option value="Luxe">Luxe Massage</option></select></div>
 <div><label for="ruleType">Commission कैसे देना है?</label><select id="ruleType"><option value="fixed">Fix Amount (₹)</option><option value="percent">Booking Amount का %</option></select></div>
 <div><label for="ruleAmount">Commission Amount / Percentage</label><input id="ruleAmount" type="number" min="0.01" step="0.01" value="100" required></div>
 <div><label for="ruleMode">Commission कब देना है?</label><select id="ruleMode"><option value="every">Customer की हर eligible booking पर</option><option value="first">केवल पहली booking पर एक बार</option><option value="period">सीमित समय तक हर eligible booking पर</option></select></div>
@@ -82,7 +82,7 @@ $("backPartners").onclick=()=>nav("partners");
 document.querySelectorAll("[data-detail]").forEach(b=>b.onclick=()=>{activeDetail=b.dataset.detail;document.querySelectorAll("[data-detail]").forEach(x=>x.classList.toggle("active",x===b));renderDetailTab()});
 
 function fillRulePartners(){const el=$("rulePartner");const chosen=el.value;el.innerHTML='<option value="">सभी Partners के लिए default</option>'+partners.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.business_name)+' · '+esc(p.partner_code||"")+'</option>').join("");if(chosen)el.value=chosen}
-function resetRuleForm(){ $("commissionRuleForm").reset();$("rulePartner").value="e5f593d5-5105-4d10-b7a6-76ef94302401";$("ruleCategory").value="Salon";$("ruleTier").value="Prime";$("ruleType").value="fixed";$("ruleAmount").value="100";$("ruleMode").value="every";$("ruleValidity").value="3";$("ruleValidityWrap").classList.add("hidden");$("saveRuleBtn").dataset.ruleId=""}
+function resetRuleForm(){ $("commissionRuleForm").reset();$("rulePartner").value="e5f593d5-5105-4d10-b7a6-76ef94302401";$("ruleCategory").value="Massage";$("ruleTier").value="Prime";$("ruleType").value="fixed";$("ruleAmount").value="100";$("ruleMode").value="every";$("ruleValidity").value="3";$("ruleValidityWrap").classList.add("hidden");$("saveRuleBtn").dataset.ruleId=""}
 async function loadCommissionRules(){
  clearMsg("ruleMsg");$("commissionRulesList").innerHTML='<div class="empty">Commission Rules लोड हो रहे हैं…</div>';fillRulePartners();
  const d=await api({action:"list_commission_rules"});rules=d.rules||[];
@@ -90,7 +90,7 @@ async function loadCommissionRules(){
  document.querySelectorAll("[data-edit-rule]").forEach(b=>b.onclick=()=>{const r=rules.find(x=>x.id===b.dataset.editRule);if(!r)return;$("rulePartner").value=r.partner_id||"";$("ruleCategory").value=r.category;$("ruleTier").value=r.service_tier;$("ruleType").value=r.commission_type;$("ruleAmount").value=r.amount;$("ruleMode").value=r.rule_mode;$("ruleValidity").value=String(r.validity_months||3);$("ruleValidityWrap").classList.toggle("hidden",r.rule_mode!=="period");$("saveRuleBtn").dataset.ruleId=r.id;window.scrollTo({top:0,behavior:"smooth"})});
 }
 $("ruleMode").onchange=()=> $("ruleValidityWrap").classList.toggle("hidden",$("ruleMode").value!=="period");
-$("rulePartner").onchange=()=>{const p=partners.find(x=>x.id===$("rulePartner").value);if(p)$("ruleCategory").value=p.category||"Salon"};
+$("rulePartner").onchange=()=>{const p=partners.find(x=>x.id===$("rulePartner").value);if(p)$("ruleCategory").value="Massage"};
 $("resetRuleBtn").onclick=resetRuleForm;
 $("reloadRulesBtn").onclick=()=>loadCommissionRules().catch(e=>showMsg("ruleMsg",e.message,true));
 $("commissionRuleForm").onsubmit=async e=>{e.preventDefault();$("saveRuleBtn").disabled=true;clearMsg("ruleMsg");try{const payload={action:"save_commission_rule",partner_id:$("rulePartner").value||null,category:$("ruleCategory").value,service_tier:$("ruleTier").value,commission_type:$("ruleType").value,amount:Number($("ruleAmount").value),rule_mode:$("ruleMode").value,validity_months:$("ruleMode").value==="period"?Number($("ruleValidity").value):null};const d=await api(payload);showMsg("ruleMsg","Commission Rule सेव हो गया। नई eligible bookings पर यही नियम लागू होगा।");await loadCommissionRules();resetRuleForm()}catch(e){showMsg("ruleMsg",e.message,true)}finally{$("saveRuleBtn").disabled=false}};
