@@ -456,8 +456,18 @@ db.auth.getSession().then(async({data})=>{if(data.session){session=data.session;
 db.auth.onAuthStateChange((event,s)=>{session=s;if(event==="SIGNED_OUT"){$("appView").classList.add("hidden");$("loginView").classList.remove("hidden")}});
 </script>
 <script>
-/* Login recovery handler: attach after the dashboard script so an earlier script error cannot leave the form submitting/reloading natively. */
+/* Initialize a globally reachable Supabase client before login/dashboard handlers run. */
 (function(){
+ const URL="https://myjstwbpmbrhaiwytpnq.supabase.co";
+ const KEY="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy";
+ if(!window.bexDb){
+  if(!window.supabase||!window.supabase.createClient){
+   const msg=document.getElementById("loginMsg"); if(msg){msg.textContent="Supabase library load nahi hui. Internet connection check karke page refresh karein.";msg.classList.remove("hidden");msg.classList.add("error");}
+   return;
+  }
+  window.bexDb=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ }
+ window.db=window.bexDb;
  const form=document.getElementById("loginForm");
  if(!form)return;
  form.onsubmit=async function(ev){
@@ -466,13 +476,11 @@ db.auth.onAuthStateChange((event,s)=>{session=s;if(event==="SIGNED_OUT"){$("appV
   const btn=document.getElementById("loginBtn"), msg=document.getElementById("loginMsg");
   btn.disabled=true; msg.classList.remove("hidden","error"); msg.textContent="Logging in…";
   try{
-   const client=(typeof db!=="undefined")?db:window.supabase.createClient("https://myjstwbpmbrhaiwytpnq.supabase.co","sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-   const result=await client.auth.signInWithPassword({email:email.value.trim(),password:password.value});
+   const result=await window.bexDb.auth.signInWithPassword({email:email.value.trim(),password:password.value});
    if(result.error)throw result.error;
    if(!result.data||!result.data.session)throw new Error("Login session nahi bani. Email/password dobara check karein.");
    msg.textContent="Login successful. Dashboard khol rahe hain…";
-   if(typeof startApp==="function"){session=result.data.session;await startApp();}
-   else {document.getElementById("loginView").classList.add("hidden");document.getElementById("appView").classList.remove("hidden");msg.textContent="Login ho gaya, lekin dashboard script load nahi hui. Page refresh karein.";}
+   window.location.reload();
   }catch(err){msg.textContent=err&&err.message?err.message:"Login nahi ho paya. Dobara koshish karein.";msg.classList.remove("hidden");msg.classList.add("error");}
   finally{btn.disabled=false;}
  };
