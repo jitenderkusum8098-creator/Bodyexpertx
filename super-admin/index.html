@@ -288,7 +288,8 @@ function renderDetailTab(){
   html=ns.length?ns.map(n=>'<div class="detailitem" style="margin-bottom:8px"><b>'+esc(n.title||"Notification")+'</b><p>'+esc(n.message||"")+'</p><span class="small muted">'+date(n.created_at)+' · '+(n.read_at?"Read":"Unread")+'</span></div>').join(""):'<div class="empty">अभी नोटिफिकेशन रिकॉर्ड नहीं है।</div>';
  }else if(activeDetail==="qr"){
   const link="https://jitenderkusum8098-creator.github.io/Bodyexpertx/massage.html?partner="+encodeURIComponent(p.partner_code||"")+"&source=qr";
-  html='<div class="qrbox"><h3>'+esc(p.business_name)+'</h3><p>Unique Partner ID: <b>'+esc(p.partner_code||"—")+'</b></p><div id="qr"></div><input readonly id="refLink" value="'+esc(link)+'"><button id="copyRefLink" class="primary" style="margin-top:10px">Copy Referral Link</button><p class="small muted">यह लिंक Customer Website के booking page पर खुलेगा और Partner Code को booking तक ले जाएगा। Share करने से पहले link खोलकर जाँच लें।</p></div>';
+  const shareLink=link.replace("&source=qr","&source=link");
+  html='<div class="qrbox"><h3>'+esc(p.business_name)+'</h3><p>Unique Partner ID: <b>'+esc(p.partner_code||"—")+'</b></p><div id="qr"></div><label for="refLink" class="small muted">QR Code का लिंक</label><input readonly id="refLink" value="'+esc(link)+'"><button id="copyRefLink" class="primary" style="margin-top:10px">Copy Referral Link (Share)</button><p class="small muted">QR Code स्कैन करने पर Visit को QR में गिना जाएगा। यह Share बटन अलग Referral Link कॉपी करेगा, जिसकी Visit Link में गिनी जाएगी। दोनों लिंक Customer Website खोलेंगे और Partner Code साथ ले जाएँगे।</p></div>';
  }else if(activeDetail==="contact"){
   html='<h3>Share Contact Card</h3><div class="detailgrid">'+[["Business",p.business_name],["Owner",p.owner_name],["Partner ID",p.partner_code],["Mobile",p.phone],["Category",p.category],["City",p.city]].map(x=>'<div class="detailitem"><div class="k">'+x[0]+'</div><div class="v">'+esc(x[1]||"—")+'</div></div>').join("")+'</div><button id="shareContactCard" class="primary" style="margin-top:14px">Share Contact Card</button> <button id="copyContactCard" class="btn" style="margin-top:14px">Copy Contact Details</button><p id="contactStatus" class="small muted"></p>';
  }else if(activeDetail==="profile"){
@@ -311,7 +312,7 @@ function renderDetailTab(){
  }
  if(activeDetail==="qr"){
   const q=$("qr");if(q)new QRCode(q,{text:$("refLink").value,width:190,height:190});
-  $("copyRefLink").onclick=async()=>{try{await navigator.clipboard.writeText($("refLink").value);$("copyRefLink").textContent="Copied"}catch{}};
+  $("copyRefLink").onclick=async()=>{try{await navigator.clipboard.writeText(shareLink);$("copyRefLink").textContent="Referral Link Copied"}catch{$("refLink").value=shareLink;$("copyRefLink").textContent="Link ऊपर दिखाया है — कॉपी करें"}};
  }
  if(activeDetail==="contact"){
   const cardText="BodyExpertX Partner Contact Card\nBusiness: "+(p.business_name||"")+"\nOwner: "+(p.owner_name||"")+"\nPartner ID: "+(p.partner_code||"")+"\nPhone: "+(p.phone||"")+"\nCity: "+(p.city||"");
