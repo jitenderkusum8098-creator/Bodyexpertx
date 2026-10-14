@@ -361,7 +361,28 @@ function renderDetailTab(){
   $("shareContactCard").onclick=async()=>{try{if(navigator.share)await navigator.share({title:(p.business_name||"Partner")+" — BodyExpertX",text:cardText});else{await navigator.clipboard.writeText(cardText);$("contactStatus").textContent="Sharing unavailable; contact details copied."}}catch(e){if(e.name!=="AbortError")$("contactStatus").textContent="Share नहीं हो पाया; Copy Contact Details दबाएँ।"}};
  }
 }
-if (location.protocol==="https:" && "serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(()=>{}));
+// Login form mobile input recovery: remove stale service workers/caches that can keep an old broken page.
+if ("serviceWorker" in navigator) window.addEventListener("load", async()=>{
+  try {
+    const regs=await navigator.serviceWorker.getRegistrations();
+    await Promise.all(regs.filter(r=>new URL(r.scope).pathname.includes("/super-admin/")).map(r=>r.unregister()));
+  } catch (_) {}
+});
+window.addEventListener("pageshow",()=>{
+  ["email","password"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.disabled=false; el.readOnly=false; el.removeAttribute("readonly");
+    el.style.pointerEvents="auto"; el.style.userSelect="text"; el.style.webkitUserSelect="text";
+  });
+});
+document.addEventListener("DOMContentLoaded",()=>{
+  const form=document.getElementById("loginForm");
+  if(!form)return;
+  form.querySelectorAll("input").forEach(el=>{
+    el.addEventListener("touchend",()=>{el.focus({preventScroll:true});},{passive:true});
+  });
+});
 db.auth.getSession().then(async({data})=>{if(data.session){session=data.session;try{await startApp()}catch(e){showMsg("globalMsg",e.message,true)}}}).catch(()=>{});
 db.auth.onAuthStateChange((event,s)=>{session=s;if(event==="SIGNED_OUT"){$("appView").classList.add("hidden");$("loginView").classList.remove("hidden")}});
 </script>
