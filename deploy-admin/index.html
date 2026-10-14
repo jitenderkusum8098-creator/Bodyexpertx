@@ -702,7 +702,7 @@ let bpLoadInFlight=false;
 async function bpLoad(){
  if(bpLoadInFlight)return;
  bpLoadInFlight=true;
- const list=$("bpPartnerList"),rulesBox=$("bpRulesList");list.innerHTML='<div class="empty">सूची लोड हो रही है…</div>';
+ const list=$("bpPartnerList"),rulesBox=$("bpRulesList");if(!list||!rulesBox){bpLoadInFlight=false;console.error("BEX Partner directory elements missing",{list:!!list,rulesBox:!!rulesBox});return;}list.innerHTML='<div class="empty">सूची लोड हो रही है…</div>';
  let adminData;
  try { adminData=await Promise.race([bpCall({action:"list_admin_data"}),new Promise((_,reject)=>setTimeout(()=>reject(new Error("सर्वर से जवाब आने में समय लग रहा है। कृपया दोबारा कोशिश करें।")),15000))]); }
  catch(e){list.innerHTML='<div class="msg">सूची लोड नहीं हुई: '+bpEsc(e.message)+' <button type="button" class="btn alt" onclick="bpLoad()">दोबारा कोशिश करें</button></div>';bpLoadInFlight=false;return}
@@ -713,9 +713,10 @@ async function bpLoad(){
  const cats=["Salon","Hotel","Kirana Store","Gym","Medical Store","Other"],catHindi={"Massage":"मसाज सर्विस","Salon":"सैलून","Hotel":"होटल","Gym":"जिम","Kirana Store":"किराना स्टोर","Medical Store":"मेडिकल स्टोर","Other":"अन्य"};
  const totalPartners=partners.length;
  const catLabels=[["__new","नया रजिस्ट्रेशन","➕"],["__total","Total Partner","🤝"],...cats.map(cat=>[cat,catHindi[cat]||cat,"🏪"])];
- $("bpCategoryStats").style.display="grid";
- $("bpCategoryStats").style.gridTemplateColumns="repeat(3,minmax(0,1fr))";
- $("bpCategoryStats").innerHTML=catLabels.map(([cat,label,icon])=>'<button type="button" class="bpOverviewCard '+(cat==="__new"?"bpNewPartnerCard":"")+'" data-category="'+cat+'"><span class="bpOverviewIcon">'+icon+'</span><strong>'+bpEsc(label)+'</strong><b>'+(cat==="__new"?"नई ID बनाएँ":cat==="__total"?totalPartners:partners.filter(x=>x.category===cat).length)+'</b><small>'+(cat==="__new"?"नया पार्टनर जोड़ें":cat==="__total"?"सभी रजिस्टर्ड पार्टनर":"पार्टनर देखने के लिए क्लिक करें")+'</small></button>').join("");
+ const overview=$("bpCategoryStats");if(!overview)throw new Error("Partner category cards का container नहीं मिला। पेज को दोबारा खोलें।");
+ overview.style.display="grid";
+ overview.style.gridTemplateColumns="repeat(3,minmax(0,1fr))";
+ overview.innerHTML=catLabels.map(([cat,label,icon])=>'<button type="button" class="bpOverviewCard '+(cat==="__new"?"bpNewPartnerCard":"")+'" data-category="'+cat+'"><span class="bpOverviewIcon">'+icon+'</span><strong>'+bpEsc(label)+'</strong><b>'+(cat==="__new"?"नई ID बनाएँ":cat==="__total"?totalPartners:partners.filter(x=>x.category===cat).length)+'</b><small>'+(cat==="__new"?"नया पार्टनर जोड़ें":cat==="__total"?"सभी रजिस्टर्ड पार्टनर":"पार्टनर देखने के लिए क्लिक करें")+'</small></button>').join("");
 
  const directory=$("bpPartnerList"),categoryStats=$("bpCategoryStats"),rulesSection=$("bpRulesList");
  let categoryPage=$("bpPartnerCategoryPage");
@@ -755,7 +756,6 @@ async function bpLoad(){
  rulesBox.innerHTML=rules.map(x=>'<div class="item small">'+bpEsc(x.category)+' · '+bpEsc(x.service_tier)+' · '+bpEsc(x.commission_type)+' '+bpEsc(x.amount)+(x.commission_type==="percent"?"%":" ₹")+' · '+bpEsc(x.rule_mode)+'</div>').join("")||'<div class="empty">Commission rules अभी सेट नहीं हैं।</div>';
  const statsHost=$("bpCategoryStats");
  if(statsHost&&!statsHost.dataset.clickDelegated){statsHost.dataset.clickDelegated="1";statsHost.addEventListener("click",event=>{const btn=event.target.closest(".bpOverviewCard");if(!btn)return;const cat=btn.dataset.category;if(cat==="__new"){window.bpSelectedCategory=null;$("bpCategoryStats")?.classList.add("bp-directory-hidden");$("bpRulesList")?.classList.add("bp-directory-hidden");$("bpPartnerCategoryPage")?.classList.add("hidden");const reg=$("bpRegistrationPage");if(reg){reg.classList.remove("hidden");reg.scrollIntoView({behavior:"smooth",block:"start"});$("bpBusiness")?.focus();}return;}const reg=$("bpRegistrationPage");if(reg)reg.classList.add("hidden");window.bpSelectedCategory=cat==="__total"?"__total":cat;bpLoad();});}
- document.querySelectorAll(".bpOverviewCard").forEach(btn=>btn.onclick=()=>{const cat=btn.dataset.category;if(cat==="__new"){window.bpSelectedCategory=null;categoryStats?.classList.add("bp-directory-hidden");rulesSection?.classList.add("bp-directory-hidden");categoryPage?.classList.add("hidden");const reg=$("bpRegistrationPage");if(reg){reg.classList.remove("hidden");reg.scrollIntoView({behavior:"smooth",block:"start"});$("bpBusiness")?.focus();}return;}const reg=$("bpRegistrationPage");if(reg)reg.classList.add("hidden");window.bpSelectedCategory=cat==="__total"?"__total":cat;bpLoad();});
  const backRegistration=$("bpBackFromRegistration");if(backRegistration)backRegistration.onclick=()=>{const reg=$("bpRegistrationPage");if(reg)reg.classList.add("hidden");window.bpSelectedCategory=null;bpLoad();};
  document.querySelectorAll(".bpViewAll").forEach(btn=>btn.onclick=()=>bpOpenPartnerDashboard(btn.dataset.id));
  document.querySelectorAll(".bpQr").forEach(btn=>btn.onclick=()=>bpOpenQr(btn.dataset.code,btn.dataset.name));
