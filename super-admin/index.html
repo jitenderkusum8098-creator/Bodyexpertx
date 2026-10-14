@@ -285,7 +285,7 @@ function renderDetailTab(){
  }else if(activeDetail==="notifications"){
   html=ns.length?ns.map(n=>'<div class="detailitem" style="margin-bottom:8px"><b>'+esc(n.title||"Notification")+'</b><p>'+esc(n.message||"")+'</p><span class="small muted">'+date(n.created_at)+' · '+(n.read_at?"Read":"Unread")+'</span></div>').join(""):'<div class="empty">अभी नोटिफिकेशन रिकॉर्ड नहीं है।</div>';
  }else if(activeDetail==="qr"){
-  const link="https://jitenderkusum8098-creator.github.io/Bodyexpertx/massage.html?partner="+encodeURIComponent(p.partner_code||"");
+  const link="https://jitenderkusum8098-creator.github.io/Bodyexpertx/massage.html?partner="+encodeURIComponent(p.partner_code||"")+"&source=qr";
   html='<div class="qrbox"><h3>'+esc(p.business_name)+'</h3><p>Unique Partner ID: <b>'+esc(p.partner_code||"—")+'</b></p><div id="qr"></div><input readonly id="refLink" value="'+esc(link)+'"><button id="copyRefLink" class="primary" style="margin-top:10px">Copy Referral Link</button><p class="small muted">यह लिंक Customer Website के booking page पर खुलेगा और Partner Code को booking तक ले जाएगा। Share करने से पहले link खोलकर जाँच लें।</p></div>';
  }else if(activeDetail==="contact"){
   html='<h3>Share Contact Card</h3><div class="detailgrid">'+[["Business",p.business_name],["Owner",p.owner_name],["Partner ID",p.partner_code],["Mobile",p.phone],["Category",p.category],["City",p.city]].map(x=>'<div class="detailitem"><div class="k">'+x[0]+'</div><div class="v">'+esc(x[1]||"—")+'</div></div>').join("")+'</div><button id="shareContactCard" class="primary" style="margin-top:14px">Share Contact Card</button> <button id="copyContactCard" class="btn" style="margin-top:14px">Copy Contact Details</button><p id="contactStatus" class="small muted"></p>';
