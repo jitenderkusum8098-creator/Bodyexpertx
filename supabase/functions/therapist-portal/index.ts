@@ -159,11 +159,11 @@ Deno.serve(async(req:Request)=>{
   }
   const therapist=await therapistUser(req);
   if(action==="dashboard"){
-   const {data:jobs,error}=await db.from("booking_assignments").select("id,reference_code,zone_id,therapist_id,service_type,tier,service_name,appointment_date,appointment_time,status,booking_amount,customer_name,customer_phone,customer_address,customer_landmark,customer_latitude,customer_longitude,customer_gps_accuracy_meters,customer_notes,service_details,visit_type,created_at,updated_at").eq("therapist_id",therapist.id).order("created_at",{ascending:false}).limit(500);if(error)throw error;
+   const {data:jobs,error}=await db.from("booking_assignments").select("id,reference_code,zone_id,therapist_id,service_type,tier,service_name,appointment_date,appointment_time,status,booking_amount,customer_name,customer_phone,customer_address,customer_landmark,customer_latitude,customer_longitude,customer_gps_accuracy_meters,customer_notes,service_details,visit_type,created_at,updated_at,job_started_at,completion_otp_hash,completion_otp_expires_at,completion_otp_attempts,rating_reissue_count").eq("therapist_id",therapist.id).order("created_at",{ascending:false}).limit(500);if(error)throw error;
    const rows=jobs??[],zids=[...new Set(rows.map((j:any)=>j.zone_id).filter(Boolean))];
    const [{data:zones,error:zError},{data:ratings,error:rError}]=await Promise.all([zids.length?db.from("zones").select("id,name").in("id",zids):Promise.resolve({data:[],error:null}),db.from("therapist_ratings").select("rating,review,booking_reference,created_at,status").eq("therapist_id",therapist.id).eq("status","published").order("created_at",{ascending:false})]);if(zError)throw zError;if(rError)throw rError;
    const day=today(),month=day.slice(0,7),completed=rows.filter((j:any)=>j.status==="completed");
-   return json({therapist:{id:therapist.id,name:therapist.display_name,code:therapist.therapist_code,available:therapist.available,phone:therapist.phone,photo_url:therapist.photo_url},jobs:rows.map((j:any)=>{const details=Array.isArray(j.service_details)?j.service_details:[];const parsed=coordsFromAddress(j.customer_address);const lat=j.customer_latitude??parsed.lat;const lng=j.customer_longitude??parsed.lng;const duration=details.reduce((sum:number,item:any)=>sum+Math.max(0,Number(item?.duration)||0),0);return {...j,zone_name:(zones??[]).find((z:any)=>z.id===j.zone_id)?.name??"Zone not set",service_duration_minutes:duration||null,customer_latitude:lat,customer_longitude:lng,customer_landmark:j.customer_landmark||landmarkFromAddress(j.customer_address),customer_gps_accuracy_meters:j.customer_gps_accuracy_meters??null,customer_map_url:lat!==null&&lng!==null&&lng!==undefined&&lat!==undefined?"https://www.google.com/maps/dir/?api=1&destination="+lat+","+lng:(j.customer_address?"https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(j.customer_address):null)}}),ratings:ratings??[],stats:{earning_day:completed.filter((j:any)=>(j.updated_at??j.created_at??"").slice(0,10)===day).reduce((s:number,j:any)=>s+Number(j.booking_amount||0),0),earning_month:completed.filter((j:any)=>(j.updated_at??j.created_at??"").slice(0,7)===month).reduce((s:number,j:any)=>s+Number(j.booking_amount||0),0),jobs_day:rows.filter((j:any)=>(j.created_at??"").slice(0,10)===day).length,jobs_month:rows.filter((j:any)=>(j.created_at??"").slice(0,7)===month).length,rating_count:(ratings??[]).length,rating_average:(ratings??[]).length?Math.round((ratings??[]).reduce((s:number,r:any)=>s+Number(r.rating),0)/(ratings??[]).length*10)/10:null}});
+   return json({therapist:{id:therapist.id,name:therapist.display_name,code:therapist.therapist_code,available:therapist.available,phone:therapist.phone,photo_url:therapist.photo_url},jobs:rows.map((j:any)=>{const details=Array.isArray(j.service_details)?j.service_details:[];const parsed=coordsFromAddress(j.customer_address);const lat=j.customer_latitude??parsed.lat;const lng=j.customer_longitude??parsed.lng;const duration=details.reduce((sum:number,item:any)=>sum+Math.max(0,Number(item?.duration)||0),0);const done=j.status==="completed";return {...j,completion_otp_hash:undefined,completion_otp_expires_at:undefined,completion_otp_attempts:undefined,zone_name:(zones??[]).find((z:any)=>z.id===j.zone_id)?.name??"Zone not set",service_duration_minutes:duration||null,customer_name:done?null:j.customer_name,customer_phone:done?null:j.customer_phone,customer_address:done?null:j.customer_address,customer_notes:done?null:j.customer_notes,customer_landmark:done?null:(j.customer_landmark||landmarkFromAddress(j.customer_address)),customer_latitude:done?null:lat,customer_longitude:done?null:lng,customer_gps_accuracy_meters:done?null:(j.customer_gps_accuracy_meters??null),customer_map_url:done?null:(lat!==null&&lng!==null&&lng!==undefined&&lat!==undefined?"https://www.google.com/maps/dir/?api=1&destination="+lat+","+lng:(j.customer_address?"https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(j.customer_address):null))}}),ratings:ratings??[],stats:{earning_day:completed.filter((j:any)=>(j.updated_at??j.created_at??"").slice(0,10)===day).reduce((s:number,j:any)=>s+Number(j.booking_amount||0),0),earning_month:completed.filter((j:any)=>(j.updated_at??j.created_at??"").slice(0,7)===month).reduce((s:number,j:any)=>s+Number(j.booking_amount||0),0),jobs_day:rows.filter((j:any)=>(j.created_at??"").slice(0,10)===day).length,jobs_month:rows.filter((j:any)=>(j.created_at??"").slice(0,7)===month).length,rating_count:(ratings??[]).length,rating_average:(ratings??[]).length?Math.round((ratings??[]).reduce((s:number,r:any)=>s+Number(r.rating),0)/(ratings??[]).length*10)/10:null}});
   }
   if(action==="duty"){const available=body.available===true;const {data,error}=await db.from("therapists").update({available}).eq("id",therapist.id).select("id,available").single();if(error)throw error;return json({success:true,available:data.available})}
   if(action==="completion-rating-link"){
@@ -174,15 +174,39 @@ Deno.serve(async(req:Request)=>{
    return json({success:true,token,therapist_name:therapist.display_name,customer_name:job.customer_name,customer_phone:job.customer_phone,service_name:job.service_name,reference_code:job.reference_code,rating_url:"https://jitenderkusum8098-creator.github.io/Bodyexpertx/therapist-rating.html?token="+token});
   }
   if(action==="job"){
-   const id=String(body.booking_id??""),decision=String(body.decision??"");if(!/^[0-9a-f-]{36}$/i.test(id)||!["accept","reject","complete","cancel"].includes(decision))return json({error:"Invalid job action."},400);
-   const {data:job,error:jError}=await db.from("booking_assignments").select("id,therapist_id,zone_id,service_type,tier,status,reference_code,service_name,customer_name,customer_phone,customer_address,booking_amount,partner_id,partner_referral_id").eq("id",id).maybeSingle();if(jError)throw jError;if(!job||job.therapist_id!==therapist.id)return json({error:"This job is not assigned to your account."},403);
+   const id=String(body.booking_id??""),decision=String(body.decision??"");if(!/^[0-9a-f-]{36}$/i.test(id)||!["accept","reject","start","request-end-otp","verify-end-otp","cancel"].includes(decision))return json({error:"Invalid job action."},400);
+   const {data:job,error:jError}=await db.from("booking_assignments").select("id,therapist_id,zone_id,service_type,tier,status,reference_code,service_name,customer_name,customer_phone,customer_address,booking_amount,partner_id,partner_referral_id,completion_otp_hash,completion_otp_expires_at,completion_otp_attempts,job_started_at,rating_reissue_count").eq("id",id).maybeSingle();if(jError)throw jError;if(!job||job.therapist_id!==therapist.id)return json({error:"This job is not assigned to your account."},403);
    if(decision==="accept"){if(!["awaiting_whatsapp","whatsapp_opened"].includes(job.status))return json({error:"This job is no longer waiting for acceptance."},409);const {error}=await db.from("booking_assignments").update({status:"confirmed",updated_at:new Date().toISOString()}).eq("id",id).eq("therapist_id",therapist.id);if(error)throw error;return json({success:true,message:"Job accepted. Admin record updated."})}
-   if(decision==="complete"){
-    if(!["confirmed","reached"].includes(job.status))return json({error:"Only an accepted job can be marked complete."},409);
-    const completedAt=new Date().toISOString();
-    const {data:changed,error}=await db.from("booking_assignments").update({status:"completed",updated_at:completedAt}).eq("id",id).eq("therapist_id",therapist.id).in("status",["confirmed","reached"]).select("id").maybeSingle();
+   if(decision==="start"){
+    if(job.status!=="confirmed")return json({error:"Pehle job accept honi chahiye. Sirf accepted job start ho sakti hai."},409);
+    const startedAt=new Date().toISOString();
+    const {data:changed,error}=await db.from("booking_assignments").update({status:"reached",job_started_at:startedAt,updated_at:startedAt}).eq("id",id).eq("therapist_id",therapist.id).eq("status","confirmed").select("id").maybeSingle();
+    if(error)throw error;if(!changed)return json({error:"Job status badal chuka hai. Refresh karke dobara dekhein."},409);
+    return json({success:true,message:"Job start ho gayi. Service poori hone par Customer OTP verify karke End Job karein."});
+   }
+   if(decision==="request-end-otp"){
+    if(job.status!=="reached")return json({error:"Pehle Start Job dabayein; OTP sirf in-progress job ke liye milega."},409);
+    if(!job.customer_phone)return json({error:"Customer ka mobile number saved nahi hai. Admin se number update karwayein."},409);
+    const n=crypto.getRandomValues(new Uint32Array(1))[0]%1000000,otp=String(n).padStart(6,"0"),expiresAt=new Date(Date.now()+10*60*1000).toISOString();
+    const {error}=await db.from("booking_assignments").update({completion_otp_hash:await hashToken(id+":"+otp),completion_otp_expires_at:expiresAt,completion_otp_attempts:0,updated_at:new Date().toISOString()}).eq("id",id).eq("therapist_id",therapist.id).eq("status","reached");
     if(error)throw error;
-    if(!changed)return json({error:"Job status abhi badal chuka hai. Refresh karke dobara check karein."},409);
+    const digits=String(job.customer_phone).replace(/\D/g,""),waPhone=digits.length===10?"91"+digits:digits.startsWith("0")&&digits.length===11?"91"+digits.slice(1):digits;
+    const message="BodyExpertX: Aapki "+(job.service_name||"service")+" booking ("+(job.reference_code||"")+") complete karne ka OTP hai: "+otp+". Yeh code sirf service poori hone par therapist ko batayein. OTP 10 minute mein expire ho jayega.";
+    return json({success:true,message:"Customer ko WhatsApp par OTP message bhejein. OTP 10 minute valid rahega.",whatsapp_url:"https://wa.me/"+waPhone+"?text="+encodeURIComponent(message),expires_at:expiresAt});
+   }
+   if(decision==="verify-end-otp"){
+    if(job.status!=="reached")return json({error:"Sirf in-progress job End Job ho sakti hai."},409);
+    const otp=String(body.otp??"").trim();
+    if(!/^\d{6}$/.test(otp))return json({error:"6 digit Customer OTP daalein."},400);
+    if(Number(job.completion_otp_attempts||0)>=5)return json({error:"OTP ke 5 galat attempts ho chuke hain. Naya OTP mangwayein."},429);
+    if(!job.completion_otp_hash||!job.completion_otp_expires_at||Date.parse(job.completion_otp_expires_at)<Date.now())return json({error:"OTP expire ho gaya hai ya mangwaya nahi gaya. Naya OTP bhejein."},410);
+    if(await hashToken(id+":"+otp)!==job.completion_otp_hash){
+     const {error}=await db.from("booking_assignments").update({completion_otp_attempts:Number(job.completion_otp_attempts||0)+1}).eq("id",id).eq("therapist_id",therapist.id).eq("status","reached");
+     if(error)throw error;return json({error:"OTP galat hai. Customer se dobara check karein."},400);
+    }
+    const completedAt=new Date().toISOString();
+    const {data:changed,error}=await db.from("booking_assignments").update({status:"completed",completion_otp_hash:null,completion_otp_expires_at:null,updated_at:completedAt}).eq("id",id).eq("therapist_id",therapist.id).eq("status","reached").select("id").maybeSingle();
+    if(error)throw error;if(!changed)return json({error:"Job status badal chuka hai. Refresh karke dobara dekhein."},409);
     let referralResult:any={earned:false,reason:"no_partner_referral"};
     try{referralResult=await addReferralCommissionOnCompletion(id,therapist.user_id,completedAt);}catch(e){console.error("Referral commission auto-add failed",id,e);referralResult={earned:false,reason:"commission_error",error:e instanceof Error?e.message:"Commission save nahi hua"};}
     const commissionMessage=referralResult.earned
@@ -192,7 +216,7 @@ Deno.serve(async(req:Request)=>{
       : referralResult.reason==="no_rule" ? " Job complete ho gayi, lekin is Partner/Service ka commission rule set nahi hai. Admin Panel mein rule set karein."
       : referralResult.reason==="not_eligible" ? " Job complete ho gayi, lekin is referral ka commission rule eligible nahi tha."
       : " Job complete ho gayi. Referral commission auto-add nahi ho saka; Admin Panel mein is booking ko check karein.";
-    return json({success:true,message:"Job marked completed. Admin record updated."+commissionMessage,referral_commission:referralResult});
+    return json({success:true,message:"Customer OTP verified. Job completed. Customer details ab hide rahengi."+commissionMessage,referral_commission:referralResult});
    }
    if(decision==="cancel"&&!["confirmed","reached"].includes(job.status))return json({error:"Only an accepted job can be cancelled."},409);
    if(decision==="reject"&&!["awaiting_whatsapp","whatsapp_opened"].includes(job.status))return json({error:"Only a waiting job can be rejected."},409);
