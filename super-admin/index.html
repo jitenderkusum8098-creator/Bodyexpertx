@@ -167,7 +167,8 @@ tr:hover td{background:#fcf8ee}
 const SUPABASE_URL="https://myjstwbpmbrhaiwytpnq.supabase.co";
 const SUPABASE_KEY="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-let session=null, partners=[], rules=[], referrals=[], commissions=[], detail=null, activePartner=null, activeDetail="summary", allPartnerPayments=[];
+let session=null, partners=[], rules=[], referrals=[], commissions=[], detail=null, activePartner=null, activeDetail="summary";
+window.allPartnerPayments=window.allPartnerPayments||[];
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const money=v=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:2}).format(Number(v)||0);
@@ -231,7 +232,7 @@ async function loadAllPayments(){
  const tableEl=$("paymentsTable");if(!tableEl)return;
  tableEl.innerHTML='<div class="empty">Payment History लोड हो रही है…</div>';
  try{
-  const d=await api({action:"list_all_partner_payments"}),all=d.payments||[];allPartnerPayments=all;renderPayoutCard();
+  const d=await api({action:"list_all_partner_payments"}),all=d.payments||[];window.allPartnerPayments=all;renderPayoutCard();
   const select=$("globalPaymentPartner"),chosen=select.value;
   select.innerHTML='<option value="">Partner चुनें…</option>'+partners.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.business_name)+' · '+esc(p.partner_code||"")+'</option>').join("");
   if(chosen)select.value=chosen;
@@ -251,11 +252,11 @@ function renderPayoutCard(){
  const valid=commissions.filter(c=>c.status!=="void");
  const earnedToday=valid.filter(c=>{const d=new Date(c.earned_at||c.created_at);return d>=start&&d<end}).reduce((n,c)=>n+(Number(c.commission_amount)||0),0);
  const earnedTotal=valid.reduce((n,c)=>n+(Number(c.commission_amount)||0),0);
- const paidTotal=allPartnerPayments.filter(p=>p.status==="paid").reduce((n,p)=>n+(Number(p.amount)||0),0);
+ const paidTotal=(window.allPartnerPayments||[]).filter(p=>p.status==="paid").reduce((n,p)=>n+(Number(p.amount)||0),0);
  const pendingTotal=Math.max(0,Math.round((earnedTotal-paidTotal)*100)/100);
- const paidToday=allPartnerPayments.filter(p=>p.status==="paid"&&new Date(p.payment_date||p.created_at)>=start&&new Date(p.payment_date||p.created_at)<end).reduce((n,p)=>n+(Number(p.amount)||0),0);
+ const paidToday=(window.allPartnerPayments||[]).filter(p=>p.status==="paid"&&new Date(p.payment_date||p.created_at)>=start&&new Date(p.payment_date||p.created_at)<end).reduce((n,p)=>n+(Number(p.amount)||0),0);
  summary.innerHTML=stat("आज का कमीशन",money(earnedToday),"आज दर्ज हुआ")+stat("कुल बकाया",money(pendingTotal),"पुराना + आज का बाकी")+stat("आज भुगतान",money(paidToday),"आज दर्ज भुगतान");
- const rows=partners.map(p=>{const todayRows=valid.filter(c=>c.partner_id===p.id&&new Date(c.earned_at||c.created_at)>=start&&new Date(c.earned_at||c.created_at)<end);const todayAmount=todayRows.reduce((n,c)=>n+(Number(c.commission_amount)||0),0);const total=valid.filter(c=>c.partner_id===p.id).reduce((n,c)=>n+(Number(c.commission_amount)||0),0);const paid=allPartnerPayments.filter(x=>x.partner_id===p.id&&x.status==="paid").reduce((n,x)=>n+(Number(x.amount)||0),0);const pending=Math.max(0,Math.round((total-paid)*100)/100);return {p,todayAmount,todayCount:todayRows.length,pending}}).filter(x=>x.todayAmount>0||x.pending>0).sort((a,b)=>b.pending-a.pending);
+ const rows=partners.map(p=>{const todayRows=valid.filter(c=>c.partner_id===p.id&&new Date(c.earned_at||c.created_at)>=start&&new Date(c.earned_at||c.created_at)<end);const todayAmount=todayRows.reduce((n,c)=>n+(Number(c.commission_amount)||0),0);const total=valid.filter(c=>c.partner_id===p.id).reduce((n,c)=>n+(Number(c.commission_amount)||0),0);const paid=(window.allPartnerPayments||[]).filter(x=>x.partner_id===p.id&&x.status==="paid").reduce((n,x)=>n+(Number(x.amount)||0),0);const pending=Math.max(0,Math.round((total-paid)*100)/100);return {p,todayAmount,todayCount:todayRows.length,pending}}).filter(x=>x.todayAmount>0||x.pending>0).sort((a,b)=>b.pending-a.pending);
  box.innerHTML=rows.length?table(["Partner","आज के Referral","आज का Commission","कुल बाकी भुगतान","Action"],rows.map(x=>[esc(x.p.business_name||"Partner")+"<br><span class=\"small muted\">"+esc(x.p.partner_code||"—")+"</span>",String(x.todayCount),money(x.todayAmount),"<b>"+money(x.pending)+"</b>",x.pending>0?'<button type="button" class="primary" data-payout-partner="'+esc(x.p.id)+'">भुगतान करें / Paid अपडेट</button>':'<span class="pill">Paid</span>'])):'<div class="empty">आज कोई कमीशन या बकाया भुगतान नहीं है।</div>';
  box.querySelectorAll("[data-payout-partner]").forEach(b=>b.onclick=async()=>{b.disabled=true;try{await openPartner(b.dataset.payoutPartner,true);if(detail&&detail.partner){activeDetail="payments";document.querySelectorAll("[data-detail]").forEach(x=>{x.classList.toggle("active",x.dataset.detail==="payments");x.setAttribute("aria-pressed",String(x.dataset.detail==="payments"))});renderDetailTab();window.scrollTo({top:0,behavior:"smooth"})}}finally{b.disabled=false}});
 }
