@@ -222,8 +222,8 @@ async function loadCommissionRules(){
  document.querySelectorAll("[data-edit-rule]").forEach(b=>b.onclick=()=>{const r=rules.find(x=>x.id===b.dataset.editRule);if(!r)return;$("rulePartner").value=r.partner_id||"";$("ruleCategory").value=r.category;$("ruleTier").value=r.service_tier;$("ruleType").value=r.commission_type;$("ruleAmount").value=r.amount;$("ruleMode").value=r.rule_mode;$("ruleValidity").value=String(r.validity_months||3);$("ruleValidityWrap").classList.toggle("hidden",r.rule_mode!=="period");$("saveRuleBtn").dataset.ruleId=r.id;window.scrollTo({top:0,behavior:"smooth"})});
 }
 $("reloadRulesBtn").onclick=()=>loadCommissionRules().catch(e=>showMsg("ruleMsg",e.message,true));
-async document.addEventListener("click",e=>{if(e.target&&e.target.closest("#refreshPayouts"))loadData()});
-function startApp(){ $("loginView").classList.add("hidden");$("appView").classList.remove("hidden");await loadData() }
+document.addEventListener("click",e=>{if(e.target&&e.target.closest("#refreshPayouts"))loadData().catch(err=>showMsg("globalMsg",err.message,true))});
+async function startApp(){ $("loginView").classList.add("hidden");$("appView").classList.remove("hidden");await loadData() }
 async function openPaymentProof(path){
  try{const {data,error}=await db.storage.from("partner-payment-proofs").createSignedUrl(path,300);if(error||!data?.signedUrl)throw error||Error("Screenshot link नहीं बना।");window.open(data.signedUrl,"_blank","noopener,noreferrer")}catch(e){showMsg("globalMsg","Screenshot नहीं खुला: "+e.message,true)}
 }
