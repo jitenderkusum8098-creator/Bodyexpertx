@@ -2238,5 +2238,65 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
 })();
 </script>
 
+
+<script id="bex-cart-flow-safety-fix">
+(function(){
+  // Keep this fix scoped to the service-selection cart; preserve the existing
+  // booking form, prices, address options, and admin submission flow.
+  function refreshVisibleCart(){
+    try {
+      if (Array.isArray(window.cart) && typeof window.refreshStepCart === "function") {
+        window.refreshStepCart();
+      }
+      const section = document.getElementById("flowServicesCartSection");
+      const panel = document.getElementById("flowServicesCart");
+      const items = document.getElementById("flowServicesCartItems");
+      if (!section || !panel || !items) return;
+      const stage = new URLSearchParams(location.search).get("stage");
+      if (stage !== "services" || !Array.isArray(window.cart)) return;
+      section.hidden = false;
+      panel.hidden = window.cart.length === 0;
+      const count = document.getElementById("flowServicesCartCount");
+      const total = document.getElementById("flowServicesCartTotal");
+      if (count) count.textContent = window.cart.length + " सर्विस";
+      if (total) total.textContent = "₹" + window.cart.reduce((sum,item)=>sum+(Number(item.price)||0),0).toLocaleString("en-IN");
+      if (window.cart.length && !items.querySelector(".flow-cart-row")) {
+        items.innerHTML = window.cart.map((item,index) =>
+          '<div class="flow-cart-row"><div class="flow-cart-row-info"><h3></h3><p></p></div><strong class="flow-cart-row-price"></strong><button type="button" class="flow-cart-remove" data-bex-cart-remove="'+index+'">हटाएँ</button></div>'
+        ).join("");
+        items.querySelectorAll(".flow-cart-row").forEach((row,index)=>{
+          row.querySelector("h3").textContent = window.cart[index].name || "Selected service";
+          row.querySelector("p").textContent = (Number(window.cart[index].duration)||0) + " मिनट का सत्र";
+          row.querySelector(".flow-cart-row-price").textContent = "₹" + (Number(window.cart[index].price)||0).toLocaleString("en-IN");
+        });
+        items.querySelectorAll("[data-bex-cart-remove]").forEach(button=>button.addEventListener("click",()=>{
+          const index=Number(button.getAttribute("data-bex-cart-remove"));
+          if (!Number.isInteger(index) || index<0 || index>=window.cart.length) return;
+          window.cart.splice(index,1);
+          try { sessionStorage.setItem("bodyexpertxMassageFlowCart",JSON.stringify(window.cart)); } catch(e) {}
+          refreshVisibleCart();
+        }));
+      }
+      if (window.cart.length) panel.scrollIntoView({behavior:"smooth",block:"nearest"});
+    } catch(e) { console.warn("BodyExpertX cart refresh skipped",e); }
+  }
+  ["addService","addAddon","addSalonService","addPainService","addMuscleRecoveryService","addRunFitService","addKickFitService"].forEach(name=>{
+    const original = window[name];
+    if (typeof original !== "function" || original.__bexCartWrapped) return;
+    const wrapped = function(){
+      try { return original.apply(this,arguments); }
+      finally {
+        setTimeout(()=>{
+          try { sessionStorage.setItem("bodyexpertxMassageFlowCart",JSON.stringify(window.cart||[])); } catch(e) {}
+          refreshVisibleCart();
+        },0);
+      }
+    };
+    wrapped.__bexCartWrapped = true;
+    window[name] = wrapped;
+  });
+})();
+</script>
+
 </body>
 </html>
