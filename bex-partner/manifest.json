@@ -1,0 +1,19 @@
+{
+  "name": "BEX Partner | Bodyexpertx",
+  "short_name": "BEX Partner",
+  "description": "Bodyexpertx Business Partner Dashboard",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f7f6",
+  "theme_color": "#087f75",
+  "icons": [
+    {
+      "src": "/icons/bex-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
