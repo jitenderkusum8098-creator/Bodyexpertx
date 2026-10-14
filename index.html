@@ -1398,7 +1398,12 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
  try{
   const profile=JSON.parse(localStorage.getItem("bex_customer_profile")||"{}");
   const rebook=new URLSearchParams(location.search).get("rebookTherapist");
-  if(rebook)localStorage.setItem("bex_rebook_therapist_id",rebook);\n  const params=new URLSearchParams(location.search);\n  const wantedService=params.get("rebookService")||localStorage.getItem("bex_rebook_service_type");\n  const wantedTier=params.get("rebookTier")||localStorage.getItem("bex_rebook_tier");\n  if(wantedService&&typeof selectDepartment==="function")selectDepartment(wantedService.toUpperCase());\n  if(wantedTier&&typeof selectCategory==="function")selectCategory(wantedTier.toUpperCase(),false);
+  if(rebook)localStorage.setItem("bex_rebook_therapist_id",rebook);
+  const params=new URLSearchParams(location.search);
+  const wantedService=params.get("rebookService")||localStorage.getItem("bex_rebook_service_type");
+  const wantedTier=params.get("rebookTier")||localStorage.getItem("bex_rebook_tier");
+  if(wantedService&&typeof selectDepartment==="function")selectDepartment(wantedService.toUpperCase());
+  if(wantedTier&&typeof selectCategory==="function")selectCategory(wantedTier.toUpperCase(),false);
   [["name",profile.name],["phone",profile.phone],["address",profile.address]].forEach(([id,value])=>{const el=document.getElementById(id);if(el&&value&&!el.value)el.value=value});
   const header=document.querySelector("header .nav");
   const links=document.querySelector("header .links");
