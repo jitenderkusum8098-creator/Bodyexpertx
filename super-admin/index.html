@@ -107,6 +107,14 @@ tr:hover td{background:#fcf8ee}
 @media(max-width:600px){
   .tablewrap tbody td:first-child{font-size:14px}
 }
+
+/* Login input touch/focus reliability on Android */
+#loginView{position:relative;isolation:isolate}
+#loginView .login-card{position:relative;z-index:2}
+#loginForm{position:relative;z-index:3}
+#loginForm label,#loginForm input,#loginForm button{position:relative;z-index:4;pointer-events:auto;touch-action:manipulation}
+#loginForm input{display:block;min-height:48px;user-select:text;-webkit-user-select:text;-webkit-appearance:none;appearance:none}
+#loginForm input:focus{outline:3px solid #d4af6580;outline-offset:1px}
 </style>
 </head>
 <body>
