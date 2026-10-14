@@ -702,7 +702,7 @@ let bpLoadInFlight=false;
 async function bpLoad(){
  if(bpLoadInFlight)return;
  bpLoadInFlight=true;
- const list=$("bpPartnerList");if(!list){bpLoadInFlight=false;console.error("BEX Partner directory element missing");return;}list.innerHTML='<div class="empty">सूची लोड हो रही है…</div>';
+ const list=$("bpPartnerList");if(!list){bpLoadInFlight=false;console.error("BEX Partner directory element missing");return;}list.innerHTML='<div class="empty">सूची लोड हो रही है…</div>';const earlyStats=$("bpCategoryStats");if(earlyStats&&!earlyStats.innerHTML.trim()){const earlyCats=[["__new","नया रजिस्ट्रेशन","➕"],["__total","Total Partner","🤝"],["Salon","सैलून","🏪"],["Hotel","होटल","🏪"],["Kirana Store","किराना स्टोर","🏪"],["Gym","जिम","🏪"],["Medical Store","मेडिकल स्टोर","🏪"],["Other","अन्य","🏪"]];earlyStats.innerHTML=earlyCats.map(([cat,label,icon])=>'<button type="button" class="bpOverviewCard" data-category="'+cat+'"><span class="bpOverviewIcon">'+icon+'</span><strong>'+label+'</strong><b>—</b><small>पार्टनर देखने के लिए क्लिक करें</small></button>').join("");}
  let adminData;
  try { adminData=await Promise.race([bpCall({action:"list_admin_data"}),new Promise((_,reject)=>setTimeout(()=>reject(new Error("सर्वर से जवाब आने में समय लग रहा है। कृपया दोबारा कोशिश करें।")),15000))]); }
  catch(e){list.innerHTML='<div class="msg">सूची लोड नहीं हुई: '+bpEsc(e.message)+' <button type="button" class="btn alt" onclick="bpLoad()">दोबारा कोशिश करें</button></div>';bpLoadInFlight=false;return}
