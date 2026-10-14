@@ -1292,7 +1292,28 @@ try{
 const waUrl="https://wa.me/917838675115?text="+encodeURIComponent(details);
 if(waWindow){waWindow.location.href=waUrl;}else{window.open(waUrl,"_blank","noopener");}
 status.textContent=bookingReference?"Booking "+bookingReference+" Admin Panel में save हो गई। WhatsApp में Send दबाएँ; booking confirmation team के reply के बाद होगी.":"WhatsApp opened with your request. Press Send there, then wait for our confirmation.";});
-function setMinDate(){document.getElementById("date").min=new Date().toISOString().slice(0,10)}
+function bexLocalDateString(d=new Date()){return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(d)}
+function setMinDate(){const dateEl=document.getElementById("date");if(!dateEl)return;dateEl.min=bexLocalDateString();if(!dateEl.value||dateEl.value<dateEl.min)dateEl.value=dateEl.min;refreshBexTimeSlots()}
+function refreshBexTimeSlots(){
+ const dateEl=document.getElementById("date"),timeEl=document.getElementById("time");if(!dateEl||!timeEl)return;
+ const today=bexLocalDateString(),isToday=dateEl.value===today,cutoff=Date.now()+3*60*60*1000;
+ let chosenStillValid=false;
+ Array.from(timeEl.options||[]).forEach(option=>{
+  if(!option.value)return;
+  const m=String(option.value).match(/^(\\d{1,2}):(\\d{2})/);
+  if(!m){option.hidden=false;option.disabled=false;return}
+  const hh=Number(m[1]),mm=Number(m[2]);
+  const slotStart=new Date(dateEl.value+"T"+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":00+05:30").getTime();
+  const blocked=!dateEl.value||!Number.isFinite(slotStart)||(isToday&&slotStart<cutoff);
+  option.hidden=blocked;option.disabled=blocked;
+  if(option.selected&&!blocked)chosenStillValid=true;
+ });
+ if(timeEl.tagName==="SELECT"&&!chosenStillValid){timeEl.value="";const first=Array.from(timeEl.options).find(o=>o.value&&!o.disabled&&!o.hidden);if(first)timeEl.value=first.value}
+}
+document.getElementById("date")?.addEventListener("change",refreshBexTimeSlots);
+document.getElementById("time")?.addEventListener("focus",refreshBexTimeSlots);
+document.getElementById("time")?.addEventListener("click",refreshBexTimeSlots);
+setInterval(refreshBexTimeSlots,30000);
 renderServices();renderCart();setMinDate();updateCouponAvailability();
 </script>
 <script>
