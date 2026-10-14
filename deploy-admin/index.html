@@ -1062,7 +1062,7 @@ function renderBookingRows(){
   const zSel=document.createElement("select");zSel.append(new Option("— Zone चुनें —",""));
   zones.filter(x=>x.active).forEach(x=>zSel.append(new Option(x.name,x.id)));zSel.value=a.zone_id||"";zSel.disabled=cancelled;zoneWrap.append(zSel);
   const tSel=document.createElement("select");tSel.append(new Option("— Not assigned —",""));
-  therapists.filter(x=>x.active&&x.available&&x.approval_status==="approved").forEach(x=>{const rating=therapistRating(x.id);tSel.append(new Option(x.display_name+" · "+(x.therapist_code||"ID")+(rating.avg===null?" · No rating":" · ★"+rating.avg+"/5"),x.id))});tSel.value=a.therapist_id||"";tSel.disabled=cancelled;therapistWrap.append(tSel);
+  therapists.filter(x=>x.active||x.id===a.therapist_id).sort((x,y)=>String(x.display_name||"").localeCompare(String(y.display_name||""),"hi")).forEach(x=>{const rating=therapistRating(x.id);const flags=[x.available?"Available":"Unavailable",x.approval_status==="approved"?"Approved":(x.approval_status||"Approval pending")];tSel.append(new Option(x.display_name+" · "+(x.therapist_code||"ID")+" · "+flags.join(" / ")+(rating.avg===null?"":" · ★"+rating.avg+"/5"),x.id))});tSel.value=a.therapist_id||"";tSel.disabled=cancelled;therapistWrap.append(tSel);
   const amountWrap=document.createElement("label");amountWrap.className="booking-field";amountWrap.innerHTML="<span>Booking amount (₹)</span>";
   const amount=document.createElement("input");amount.type="number";amount.min="0";amount.step="0.01";amount.max="10000000";amount.value=Number(a.booking_amount||0);amount.disabled=cancelled;amountWrap.append(amount);
   fields.append(statusWrap,zoneWrap,therapistWrap,amountWrap);
