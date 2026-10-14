@@ -173,7 +173,7 @@ Deno.serve(async(req:Request)=>{
     const ratingLinksUsed=Number(job.rating_reissue_count||0);if(ratingLinksUsed>=3)return json({error:"Rating link pehle bheja ja chuka hai aur 2 correction chances bhi use ho gaye hain."},429);
    const token=randomToken();const {error}=await db.rpc("bex_create_rating_link_token",{p_token_hash:await hashToken(token),p_therapist_id:therapist.id,p_created_by:therapist.user_id});if(error)throw error;
     const {error:countError}=await db.from("booking_assignments").update({rating_reissue_count:ratingLinksUsed+1}).eq("id",id).eq("therapist_id",therapist.id);if(countError)throw countError;
-   return json({success:true,token,therapist_name:therapist.display_name,customer_name:job.customer_name,customer_phone:job.customer_phone,service_name:job.service_name,reference_code:job.reference_code,rating_url:"https://jitenderkusum8098-creator.github.io/Bodyexpertx/therapist-rating.html?token="+token});
+   return json({success:true,token,therapist_name:therapist.display_name,service_name:job.service_name,reference_code:job.reference_code,rating_url:"https://jitenderkusum8098-creator.github.io/Bodyexpertx/therapist-rating.html?token="+token});
   }
   if(action==="job"){
    const id=String(body.booking_id??""),decision=String(body.decision??"");if(!/^[0-9a-f-]{36}$/i.test(id)||!["accept","reject","start","request-end-otp","verify-end-otp","cancel"].includes(decision))return json({error:"Invalid job action."},400);
