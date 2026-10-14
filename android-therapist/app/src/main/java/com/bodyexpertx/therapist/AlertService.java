@@ -135,7 +135,9 @@ public class AlertService extends Service {
         if (fresh && dutyOn) handler.post(() -> { startAlarm(); updateStatus("NEW JOB — alarm ringing until you stop it"); });
     }
 
-    private JSONObject requestDashboard() throws Exception {
+    private JSONObject requestDashboard() throws Exception { return requestDashboard(true); }
+
+    private JSONObject requestDashboard(boolean allowRefresh) throws Exception {
         HttpURLConnection c = (HttpURLConnection)new URL(API).openConnection();
         c.setRequestMethod("POST");
         c.setConnectTimeout(10000); c.setReadTimeout(12000); c.setDoOutput(true);
@@ -151,7 +153,7 @@ public class AlertService extends Service {
             String line; while ((line = br.readLine()) != null) out.append(line);
         }
         c.disconnect();
-        if ((status == 400 || status == 401 || status == 403) && !refreshToken.isEmpty() && refreshSession()) return requestDashboard();
+        if (allowRefresh && (status == 400 || status == 401 || status == 403) && !refreshToken.isEmpty() && refreshSession()) return requestDashboard(false);
         if (status < 200 || status >= 300) throw new Exception("Dashboard HTTP " + status + ": " + out);
         return new JSONObject(out.toString());
     }
