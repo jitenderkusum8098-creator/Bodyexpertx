@@ -1400,8 +1400,24 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
   const rebook=new URLSearchParams(location.search).get("rebookTherapist");
   if(rebook)localStorage.setItem("bex_rebook_therapist_id",rebook);\n  const params=new URLSearchParams(location.search);\n  const wantedService=params.get("rebookService")||localStorage.getItem("bex_rebook_service_type");\n  const wantedTier=params.get("rebookTier")||localStorage.getItem("bex_rebook_tier");\n  if(wantedService&&typeof selectDepartment==="function")selectDepartment(wantedService.toUpperCase());\n  if(wantedTier&&typeof selectCategory==="function")selectCategory(wantedTier.toUpperCase(),false);
   [["name",profile.name],["phone",profile.phone],["address",profile.address]].forEach(([id,value])=>{const el=document.getElementById(id);if(el&&value&&!el.value)el.value=value});
+  const header=document.querySelector("header .nav");
   const links=document.querySelector("header .links");
-  if(links&&!links.querySelector("[data-bex-account-link]")){const a=document.createElement("a");a.href="./customer-account.html";a.textContent="My Account";a.setAttribute("data-bex-account-link","1");a.className="btn small bx-nav-account";links.insertBefore(a,links.firstChild)}
+  function makeGreeting(){
+   const name=(profile.name||"").trim().split(/\\s+/)[0];
+   return name ? "Hi, "+name+" 👋" : "";
+  }
+  if(links&&!links.querySelector("[data-bex-account-link]")){
+   const a=document.createElement("a");a.href="./customer-account.html";a.textContent="My Account";a.setAttribute("data-bex-account-link","1");a.className="btn small bx-nav-account";
+   links.insertBefore(a,links.firstChild);
+   const greeting=document.createElement("span");greeting.setAttribute("data-bex-account-greeting","1");greeting.textContent=makeGreeting();greeting.style.cssText="font-size:13px;font-weight:800;color:#f2c75b;white-space:nowrap";
+   if(greeting.textContent)links.insertBefore(greeting,a);
+  }
+  if(header&&!header.querySelector("[data-bex-account-mobile]")){
+   const a=document.createElement("a");a.href="./customer-account.html";a.textContent=makeGreeting()||"My Account";a.setAttribute("data-bex-account-mobile","1");a.className="btn small bx-nav-account-mobile";a.style.cssText="display:none";
+   header.appendChild(a);
+  }
+  const mobileGreeting=header&&header.querySelector("[data-bex-account-mobile]");
+  if(mobileGreeting){mobileGreeting.textContent=makeGreeting()||"My Account";mobileGreeting.style.display="inline-flex";mobileGreeting.style.order="3";mobileGreeting.style.padding="8px 10px";mobileGreeting.style.fontSize="11px";mobileGreeting.style.whiteSpace="nowrap"}
  }catch(e){}
 })();
 </script>
