@@ -578,14 +578,14 @@ body.therapist-detail-page #therapistDetailPage{display:block!important}
 <h3>नया पार्टनर रजिस्ट्रेशन</h3>
 <div class="grid">
 <label class="field"><span>व्यवसाय का नाम *</span><input id="bpBusiness" maxlength="120" placeholder="सैलून / जिम / दुकान का नाम"></label>
-<label class="field"><span>व्यवसाय की श्रेणी *</span><select id="bpCategory"><option value="Salon">सैलून</option><option value="Gym">जिम</option><option value="Kirana Store">किराना स्टोर</option><option value="Medical Store">मेडिकल स्टोर</option><option value="Other">अन्य</option></select></label>
+<label class="field"><span>व्यवसाय की श्रेणी *</span><select id="bpCategory"><option value="Massage">मसाज सर्विस</option><option value="Salon">सैलून</option><option value="Gym">जिम</option><option value="Kirana Store">किराना स्टोर</option><option value="Medical Store">मेडिकल स्टोर</option><option value="Other">अन्य</option></select></label>
 <label class="field"><span>मालिक का नाम *</span><input id="bpOwner" maxlength="100" placeholder="मालिक का पूरा नाम"></label>
 <label class="field"><span>मोबाइल नंबर *</span><input id="bpPhone" type="tel" maxlength="16" placeholder="10 अंकों का मोबाइल नंबर"></label>
 <label class="field"><span>पूरा व्यवसाय का पता *</span><input id="bpAddress" maxlength="500" placeholder="दुकान, गली, क्षेत्र, शहर, PIN"></label>
 <label class="field"><span>व्यवसाय / मालिक की फोटो (वैकल्पिक)</span><input id="bpPhoto" type="file" accept="image/*"></label>
 </div>
 <h3>कमीशन सेटिंग — हर सर्विस का अलग कमीशन</h3>
-<p class="muted small">All Services चुनने पर सभी सर्विस शामिल होंगी, लेकिन हर सर्विस की राशि और नियम अलग सेट होंगे। Selected Services में केवल चुनी हुई सर्विस के नियम भरें।</p>
+<p class="muted small">मसाज सर्विस और सैलून की श्रेणी अलग चुनें। PRIME और LUXE की राशि/प्रतिशत और नियम अलग-अलग सेट होंगे। सीमित अवधि में 1, 3, 6 या 12 महीने चुनें।</p>
 <div class="item small" style="border-left:4px solid #d6ad52;margin:10px 0 14px;padding:12px"><strong>Referral Commission का हिसाब:</strong> Fixed में हर योग्य booking पर तय ₹ राशि; Percentage में Booking Amount × प्रतिशत ÷ 100 (2 decimal तक)। Job Completed होते ही योग्य Referral Commission Partner Earnings और Admin Dashboard दोनों में अपने-आप जुड़ जाएगा; Admin की Payment Verification का इंतज़ार नहीं होगा। एक Booking पर दोबारा commission नहीं बनेगा।</div>
 <div class="grid"><label class="field"><span>कमीशन किन सर्विस पर लागू होगा?</span><select id="bpRuleScope"><option value="all">All Services — सभी सर्विस</option><option value="selected">Selected Services — चुनी हुई सर्विस</option></select></label>
 <div class="field" id="bpServicesField"><span>सर्विस चुनें</span><div class="bpServiceChoices"><label><input type="checkbox" name="bpService" value="Prime"> PRIME</label><label><input type="checkbox" name="bpService" value="Luxe"> LUXE</label></div></div></div>
@@ -609,7 +609,7 @@ body.therapist-detail-page #therapistDetailPage{display:block!important}
 <div id="bpPartnerList" class="item-list"><div class="empty">पार्टनर सूची देखने के लिए रिफ्रेश करें।</div></div>
 <hr style="margin:24px 0;border-color:var(--line)">
 <h3>डिफ़ॉल्ट कमीशन नियम</h3>
-<p class="muted small">यह नियम ऊपर चुनी गई व्यवसाय श्रेणी के लिए लागू होगा।</p>
+<p class="muted small">यह नियम ऊपर चुनी गई व्यवसाय श्रेणी (मसाज सर्विस या सैलून) और PRIME/LUXE सर्विस के लिए अलग-अलग लागू होगा।</p>
 <button id="bpSaveRule" class="btn">इस श्रेणी का डिफ़ॉल्ट कमीशन सेव करें</button><div id="bpRuleMsg" class="msg hidden"></div>
 <div id="bpRulesList" class="item-list"></div>
 </section>
@@ -663,7 +663,7 @@ async function bpLoad(){
  try { adminData=await bpCall({action:"list_admin_data"}); }
  catch(e){list.innerHTML='<div class="msg">सूची लोड नहीं हुई: '+bpEsc(e.message)+' <button type="button" class="btn alt" onclick="bpLoad()">दोबारा कोशिश करें</button></div>';return}
  const partners=adminData.partners||[], rules=adminData.rules||[], refs=adminData.referrals||[], comms=adminData.commissions||[],today=new Date();today.setHours(0,0,0,0);const monthStart=new Date(today.getFullYear(),today.getMonth(),1);
- const cats=["Salon","Gym","Kirana Store","Medical Store","Other"],catHindi={"Salon":"सैलून","Gym":"जिम","Kirana Store":"किराना स्टोर","Medical Store":"मेडिकल स्टोर","Other":"अन्य"};
+ const cats=["Massage","Salon","Gym","Kirana Store","Medical Store","Other"],catHindi={"Massage":"मसाज सर्विस","Salon":"सैलून","Gym":"जिम","Kirana Store":"किराना स्टोर","Medical Store":"मेडिकल स्टोर","Other":"अन्य"};
  $("bpCategoryStats").innerHTML=cats.map(cat=>'<button type="button" class="item bpCatFilter" data-category="'+cat+'" style="text-align:left;cursor:pointer;border:2px solid '+(window.bpSelectedCategory===cat?'#d6ad52':'#45464a')+';background:'+(window.bpSelectedCategory===cat?'#282316':'')+'"><strong>'+catHindi[cat]+'</strong><div class="k-value" style="font-size:24px;font-weight:900">'+partners.filter(x=>x.category===cat).length+'</div><span class="small">रजिस्टर्ड पार्टनर · सूची खोलने के लिए दबाएँ</span></button>').join("");
  const directory=$("bpPartnerList"),categoryStats=$("bpCategoryStats"),rulesSection=$("bpRulesList");
  let categoryPage=$("bpPartnerCategoryPage");
