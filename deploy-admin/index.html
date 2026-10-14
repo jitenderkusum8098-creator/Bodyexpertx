@@ -724,7 +724,7 @@ async function bpLoad(){
    }).join("");
  }
  rulesBox.innerHTML=rules.map(x=>'<div class="item small">'+bpEsc(x.category)+' · '+bpEsc(x.service_tier)+' · '+bpEsc(x.commission_type)+' '+bpEsc(x.amount)+(x.commission_type==="percent"?"%":" ₹")+' · '+bpEsc(x.rule_mode)+'</div>').join("")||'<div class="empty">Commission rules अभी सेट नहीं हैं।</div>';
- document.querySelectorAll(".bpOverviewCard").forEach(btn=>btn.onclick=()=>{const cat=btn.dataset.category;if(cat==="__new"){window.bpSelectedCategory=null;const form=$("bpBusiness")?.closest(".grid")?.parentElement;if(form){form.scrollIntoView({behavior:"smooth",block:"start");$("bpBusiness")?.focus();}return;}window.bpSelectedCategory=cat==="__total"?"__total":cat;bpLoad();});
+ document.querySelectorAll(".bpOverviewCard").forEach(btn=>btn.onclick=()=>{const cat=btn.dataset.category;if(cat==="__new"){window.bpSelectedCategory=null;const form=$("bpBusiness")?.closest(".grid")?.parentElement;if(form){form.scrollIntoView({behavior:"smooth",block:"start"});$("bpBusiness")?.focus();}return;}window.bpSelectedCategory=cat==="__total"?"__total":cat;bpLoad();});
  document.querySelectorAll(".bpViewAll").forEach(btn=>btn.onclick=()=>bpOpenPartnerDashboard(btn.dataset.id));
  document.querySelectorAll(".bpQr").forEach(btn=>btn.onclick=()=>bpOpenQr(btn.dataset.code,btn.dataset.name));
  document.querySelectorAll(".bpCardQr").forEach(btn=>btn.onclick=()=>bpOpenQr(btn.dataset.code,btn.dataset.name));
