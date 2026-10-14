@@ -38,7 +38,26 @@
 <section id="page-referrals" class="hidden"><div class="card"><div class="cardhead"><h3>सभी Referrals</h3></div><div id="referralsTable" class="empty">डेटा लोड हो रहा है…</div></div></section>
 <section id="page-payments" class="hidden"><div class="card"><div class="cardhead"><h3>सभी Partner Payments</h3></div><div id="paymentsTable" class="empty">पार्टनर विवरण से भुगतान इतिहास देख सकते हैं।</div></div></section>
 <section id="page-qr" class="hidden"><div class="card"><h3>Partner QR & Referral Links</h3><p class="muted">किसी पार्टनर का QR देखने के लिए Partner Directory में View Dashboard खोलें।</p><button class="primary" data-jump="partners">Partner Directory खोलें</button></div></section>
-<section id="page-settings" class="hidden"><div class="card"><h3>Admin Settings</h3><p>यह अलग टेस्ट पैनल है। फिलहाल केवल BEX Partner के मौजूदा admin API से सुरक्षित read-only डेटा लोड होता है।</p><div class="notice">कमीशन नियम, भुगतान या स्थिति बदलने जैसी लिखने वाली कार्रवाइयाँ अगले चरण में अलग-अलग जाँच के बाद जोड़ी जाएँगी।</div></div></section>
+<section id="page-settings" class="hidden">
+<div class="card"><div class="cardhead"><h3>Partner Referral Commission Settings</h3><button id="reloadRulesBtn" class="btn">↻ नियम Refresh</button></div>
+<p class="muted">Partner के referral link/QR से आई eligible booking पर Therapist के Job Complete करने के बाद commission rule लागू होगा। Rule को बाद में edit करके बदला जा सकता है।</p>
+<div id="ruleMsg" class="msg hidden" role="status"></div>
+<form id="commissionRuleForm">
+<div class="formgrid">
+<div><label for="rulePartner">किस Partner के लिए?</label><select id="rulePartner"><option value="">सभी Partners के लिए default</option></select></div>
+<div><label for="ruleCategory">Partner Category</label><select id="ruleCategory" required><option>Salon</option><option>Hotel</option><option>Gym</option><option>Kirana Store</option><option>Medical Store</option><option>Other</option></select></div>
+<div><label for="ruleTier">Service Tier</label><select id="ruleTier" required><option value="Prime">Prime Massage</option><option value="Luxe">Luxe Massage</option><option value="Other">Other Service</option></select></div>
+<div><label for="ruleType">Commission कैसे देना है?</label><select id="ruleType"><option value="fixed">Fix Amount (₹)</option><option value="percent">Booking Amount का %</option></select></div>
+<div><label for="ruleAmount">Commission Amount / Percentage</label><input id="ruleAmount" type="number" min="0.01" step="0.01" value="100" required></div>
+<div><label for="ruleMode">Commission कब देना है?</label><select id="ruleMode"><option value="every">Customer की हर eligible booking पर</option><option value="first">केवल पहली booking पर एक बार</option><option value="period">सीमित समय तक हर eligible booking पर</option></select></div>
+<div id="ruleValidityWrap" class="hidden"><label for="ruleValidity">सीमित अवधि</label><select id="ruleValidity"><option value="1">1 महीना</option><option value="3">3 महीने</option><option value="6">6 महीने</option></select></div>
+</div>
+<p class="small muted">Percentage चुनने पर commission booking amount के हिसाब से निकलेगा। अवधि referral register होने की तारीख से गिनी जाएगी।</p>
+<button id="saveRuleBtn" type="submit" class="primary">Save Commission Rule</button>
+<button id="resetRuleBtn" type="button" class="btn">नया नियम</button>
+</form></div>
+<div class="card"><h3>मौजूदा Commission Rules</h3><div id="commissionRulesList"><div class="empty">नियम लोड हो रहे हैं…</div></div></div>
+</section>
 </main></div>
 <script>
 const SUPABASE_URL="https://myjstwbpmbrhaiwytpnq.supabase.co";
@@ -53,7 +72,7 @@ function showMsg(id,s,error=false){const el=$(id);el.textContent=s;el.classList.
 function clearMsg(id){$(id).classList.add("hidden");$(id).textContent=""}
 async function api(payload){const {data:{session:s}}=await db.auth.getSession();if(!s)throw Error("Admin session समाप्त है। दोबारा लॉगिन करें।");const r=await fetch(SUPABASE_URL+"/functions/v1/bex-partner-admin",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY,"Authorization":"Bearer "+s.access_token},body:JSON.stringify(payload)});const d=await r.json().catch(()=>({error:"Server response पढ़ नहीं पाए।"}));if(!r.ok)throw Error(d.error||"Request असफल हुई।");return d}
 function nav(page){const pages=["overview","partners","partnerDetail","earnings","referrals","payments","qr","settings"];pages.forEach(p=>$("page-"+p).classList.toggle("hidden",p!==page));document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page||(page==="partnerDetail"&&b.dataset.page==="partners")));const titles={overview:"Dashboard",partners:"BEX Partner Management",partnerDetail:"Partner Dashboard",earnings:"Partner Earnings",referrals:"Referrals",payments:"Payments",qr:"QR & Referral Links",settings:"Settings"};$("pageTitle").textContent=titles[page]||"Dashboard";window.scrollTo({top:0,behavior:"instant"})}
-document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>{nav(b.dataset.page);if(["overview","partners","earnings","referrals","payments"].includes(b.dataset.page))renderAll()});
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>{nav(b.dataset.page);if(["overview","partners","earnings","referrals","payments"].includes(b.dataset.page))renderAll();if(b.dataset.page==="settings")loadCommissionRules().catch(e=>showMsg("ruleMsg",e.message,true))});
 document.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>{nav(b.dataset.jump);renderAll()});
 $("loginForm").onsubmit=async e=>{e.preventDefault();$("loginBtn").disabled=true;clearMsg("loginMsg");try{const {data,error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error)throw error;session=data.session;await startApp()}catch(e){showMsg("loginMsg",e.message,true)}finally{$("loginBtn").disabled=false}};
 $("logoutBtn").onclick=async()=>{await db.auth.signOut();session=null;$("appView").classList.add("hidden");$("loginView").classList.remove("hidden")};
@@ -61,6 +80,20 @@ $("refreshBtn").onclick=()=>loadData().catch(e=>showMsg("globalMsg",e.message,tr
 $("partnerSearch").oninput=renderPartners;$("statusFilter").onchange=renderPartners;
 $("backPartners").onclick=()=>nav("partners");
 document.querySelectorAll("[data-detail]").forEach(b=>b.onclick=()=>{activeDetail=b.dataset.detail;document.querySelectorAll("[data-detail]").forEach(x=>x.classList.toggle("active",x===b));renderDetailTab()});
+
+function fillRulePartners(){const el=$("rulePartner");const chosen=el.value;el.innerHTML='<option value="">सभी Partners के लिए default</option>'+partners.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.business_name)+' · '+esc(p.partner_code||"")+'</option>').join("");if(chosen)el.value=chosen}
+function resetRuleForm(){ $("commissionRuleForm").reset();$("rulePartner").value="e5f593d5-5105-4d10-b7a6-76ef94302401";$("ruleCategory").value="Salon";$("ruleTier").value="Prime";$("ruleType").value="fixed";$("ruleAmount").value="100";$("ruleMode").value="every";$("ruleValidity").value="3";$("ruleValidityWrap").classList.add("hidden");$("saveRuleBtn").dataset.ruleId=""}
+async function loadCommissionRules(){
+ clearMsg("ruleMsg");$("commissionRulesList").innerHTML='<div class="empty">Commission Rules लोड हो रहे हैं…</div>';fillRulePartners();
+ const d=await api({action:"list_commission_rules"});rules=d.rules||[];
+ $("commissionRulesList").innerHTML=rules.length?'<div class="tablewrap"><table><thead><tr><th>Partner</th><th>Category / Service</th><th>Commission</th><th>Rule</th><th>Status</th><th>Action</th></tr></thead><tbody>'+rules.map(r=>{const p=partners.find(x=>x.id===r.partner_id);const mode=r.rule_mode==="first"?"पहली booking":r.rule_mode==="period"?"हर booking · "+r.validity_months+" महीने":"हर eligible booking";return '<tr><td>'+esc(p?p.business_name:"All Partners default")+'</td><td>'+esc(r.category)+' / '+esc(r.service_tier)+'</td><td>'+(r.commission_type==="percent"?esc(r.amount)+"%":"₹"+esc(r.amount))+'</td><td>'+esc(mode)+'</td><td><span class="pill">Active</span></td><td><button class="btn" data-edit-rule="'+esc(r.id)+'">Edit</button></td></tr>'}).join("")+'</tbody></table></div>':'<div class="empty">अभी कोई Commission Rule नहीं है।</div>';
+ document.querySelectorAll("[data-edit-rule]").forEach(b=>b.onclick=()=>{const r=rules.find(x=>x.id===b.dataset.editRule);if(!r)return;$("rulePartner").value=r.partner_id||"";$("ruleCategory").value=r.category;$("ruleTier").value=r.service_tier;$("ruleType").value=r.commission_type;$("ruleAmount").value=r.amount;$("ruleMode").value=r.rule_mode;$("ruleValidity").value=String(r.validity_months||3);$("ruleValidityWrap").classList.toggle("hidden",r.rule_mode!=="period");$("saveRuleBtn").dataset.ruleId=r.id;window.scrollTo({top:0,behavior:"smooth"})});
+}
+$("ruleMode").onchange=()=> $("ruleValidityWrap").classList.toggle("hidden",$("ruleMode").value!=="period");
+$("rulePartner").onchange=()=>{const p=partners.find(x=>x.id===$("rulePartner").value);if(p)$("ruleCategory").value=p.category||"Salon"};
+$("resetRuleBtn").onclick=resetRuleForm;
+$("reloadRulesBtn").onclick=()=>loadCommissionRules().catch(e=>showMsg("ruleMsg",e.message,true));
+$("commissionRuleForm").onsubmit=async e=>{e.preventDefault();$("saveRuleBtn").disabled=true;clearMsg("ruleMsg");try{const payload={action:"save_commission_rule",partner_id:$("rulePartner").value||null,category:$("ruleCategory").value,service_tier:$("ruleTier").value,commission_type:$("ruleType").value,amount:Number($("ruleAmount").value),rule_mode:$("ruleMode").value,validity_months:$("ruleMode").value==="period"?Number($("ruleValidity").value):null};const d=await api(payload);showMsg("ruleMsg","Commission Rule सेव हो गया। नई eligible bookings पर यही नियम लागू होगा।");await loadCommissionRules();resetRuleForm()}catch(e){showMsg("ruleMsg",e.message,true)}finally{$("saveRuleBtn").disabled=false}};
 async function startApp(){ $("loginView").classList.add("hidden");$("appView").classList.remove("hidden");await loadData() }
 async function loadData(){clearMsg("globalMsg");$("statsGrid").innerHTML='<div class="card">डेटा लोड हो रहा है…</div>';try{const d=await api({action:"list_admin_data"});partners=d.partners||[];rules=d.rules||[];referrals=d.referrals||[];commissions=d.commissions||[];renderAll();if(activePartner){await openPartner(activePartner.id,true)}}catch(e){showMsg("globalMsg",e.message,true);$("statsGrid").innerHTML='<div class="card">डेटा लोड नहीं हुआ। ऊपर Refresh दबाकर दोबारा कोशिश करें।</div>';throw e}}
 function partnerEarned(id){return commissions.filter(c=>c.partner_id===id&&c.status!=="void").reduce((n,c)=>n+(Number(c.commission_amount)||0),0)}
