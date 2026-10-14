@@ -33,6 +33,7 @@ public class AlertService extends Service {
     public static final String ACTION_START = "com.bodyexpertx.therapist.START";
     public static final String ACTION_DUTY_OFF = "com.bodyexpertx.therapist.DUTY_OFF";
     public static final String ACTION_STOP_ALARM = "com.bodyexpertx.therapist.STOP_ALARM";
+    public static final String ACTION_UPDATE_REFRESH = "com.bodyexpertx.therapist.UPDATE_REFRESH";
     private static final String CHANNEL = "bex_duty_alerts";
     private static final int NOTIFICATION_ID = 4401;
     private static final String API = "https://myjstwbpmbrhaiwytpnq.supabase.co/functions/v1/therapist-portal";
@@ -83,6 +84,11 @@ public class AlertService extends Service {
         if (intent != null) {
             String action = intent.getAction();
             if (ACTION_STOP_ALARM.equals(action)) { stopAlarm(); return START_STICKY; }
+            if (ACTION_UPDATE_REFRESH.equals(action)) {
+                String rt = intent.getStringExtra("refresh_token");
+                if (rt != null && rt.length() > 20) { refreshToken = rt; prefs.edit().putString("refresh_token", rt).apply(); }
+                return START_STICKY;
+            }
             if (ACTION_DUTY_OFF.equals(action)) {
                 dutyOn = false; token = intent.getStringExtra("token") == null ? token : intent.getStringExtra("token");
                 prefs.edit().putBoolean("duty_on", false).putString("access_token", token).apply();
