@@ -1417,12 +1417,9 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
    const greeting=document.createElement("span");greeting.setAttribute("data-bex-account-greeting","1");greeting.textContent=makeGreeting();greeting.style.cssText="font-size:13px;font-weight:800;color:#f2c75b;white-space:nowrap";
    if(greeting.textContent)links.insertBefore(greeting,a);
   }
-  if(header&&!header.querySelector("[data-bex-account-mobile]")){
-   const a=document.createElement("a");a.href="./customer-account.html";a.textContent=makeGreeting()||"My Account";a.setAttribute("data-bex-account-mobile","1");a.className="btn small bx-nav-account-mobile";a.style.cssText="display:none";
-   header.appendChild(a);
-  }
-  const mobileGreeting=header&&header.querySelector("[data-bex-account-mobile]");
-  if(mobileGreeting){mobileGreeting.textContent=makeGreeting()||"My Account";mobileGreeting.style.order="3";mobileGreeting.style.padding="8px 10px";mobileGreeting.style.fontSize="11px";mobileGreeting.style.whiteSpace="nowrap";const syncAccountButtons=()=>{mobileGreeting.style.display=window.matchMedia("(max-width:560px)").matches?"inline-flex":"none"};syncAccountButtons();window.addEventListener("resize",syncAccountButtons)}
+  const mobileGreeting=header&&header.querySelector(".bx-nav-account-mobile");
+
+  if(mobileGreeting){mobileGreeting.textContent=makeGreeting()||"My Account";mobileGreeting.removeAttribute("data-bex-account-mobile");mobileGreeting.style.order="3";mobileGreeting.style.padding="8px 10px";mobileGreeting.style.fontSize="11px";mobileGreeting.style.whiteSpace="nowrap"}
  }catch(e){}
 })();
 </script>
