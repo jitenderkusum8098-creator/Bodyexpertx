@@ -1424,23 +1424,23 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
 
 <script id="bex-hide-booking-confirmation-extras">
 (function(){
- const clean=()=>{
-  document.querySelectorAll('label').forEach(el=>{
-   const t=(el.innerText||el.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
-   if(t.includes('main confirm karta/karti')||t.includes('di gayi jaankari meri jaankari')) el.remove();
+ function cleanBookingExtras(){
+  document.querySelectorAll('a,button,[role="button"]').forEach(function(el){
+   var label=(el.innerText||el.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+   if(label.includes('therapist profile') || (label.includes('therapist') && label.includes('देखें'))) el.remove();
   });
-  document.querySelectorAll('a,button,[role="button"]').forEach(el=>{
-   const t=(el.innerText||el.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
-   if(t.includes('therapist profile')&&t.includes('dekhein')) el.remove();
+  document.querySelectorAll('input[type="checkbox"]').forEach(function(el){
+   var wrap=el.closest('label') || el.parentElement;
+   var label=(wrap && (wrap.innerText||wrap.textContent)||'').replace(/\s+/g,' ').trim().toLowerCase();
+   var section=el.closest('section,form,.panel,[class*="step"],[class*="card"]');
+   var context=((section && (section.innerText||section.textContent))||label).toLowerCase();
+   if(label.includes('main confirm') || label.includes('di gayi jaankari') || (context.includes('booking request') && context.includes('confirm'))) {
+    if(wrap && wrap.tagName.toLowerCase()==='label') wrap.remove(); else el.remove();
+   }
   });
-  document.querySelectorAll('input[type="checkbox"]').forEach(el=>{
-   const label=el.closest('label');
-   const t=(label?.innerText||el.parentElement?.innerText||'').toLowerCase();
-   if(t.includes('main confirm karta/karti')||t.includes('di gayi jaankari')) label?.remove();
-  });
- };
- if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',clean); else clean();
- new MutationObserver(clean).observe(document.documentElement,{childList:true,subtree:true});
+ }
+ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',cleanBookingExtras); else cleanBookingExtras();
+ new MutationObserver(cleanBookingExtras).observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
 </body></html>
