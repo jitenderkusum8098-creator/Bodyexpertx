@@ -1421,4 +1421,17 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
  }catch(e){}
 })();
 </script>
+
+<script id="bex-hide-therapist-profile-booking-button">
+(function(){
+ const removeTherapistButton=()=>{
+  document.querySelectorAll('a,button,[role="button"]').forEach(el=>{
+   const label=(el.innerText||el.textContent||"").replace(/\\s+/g," ").trim();
+   if(/therapist\\s+profile/i.test(label)&&/देखें|view|profile/i.test(label)) el.remove();
+  });
+ };
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",removeTherapistButton);else removeTherapistButton();
+ new MutationObserver(removeTherapistButton).observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
 </body></html>
