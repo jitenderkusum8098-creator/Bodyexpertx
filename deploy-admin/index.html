@@ -799,11 +799,12 @@ async function bpOpenPartnerDashboard(partnerId){
  const preserveView=window.bpCurrentPartnerId===partnerId;
  window.bpCurrentPartnerId=partnerId;
  if(!preserveView)window.bpCurrentPartnerDetailView=null;
- const list=$("bpPartnerList"),stats=$("bpCategoryStats"),rules=$("bpRulesList");
+ const list=$("bpPartnerList"),stats=$("bpCategoryStats"),rules=$("bpRulesList"),categoryPage=$("bpPartnerCategoryPage");
+ if(!list){alert("Partner सूची नहीं मिली। पहले सभी Partners खोलें।");return;}
  let page=$("bpPartnerDashboard");if(!page){page=document.createElement("section");page.id="bpPartnerDashboard";page.className="bp-admin-detail";list.parentNode.insertBefore(page,list);}
- list.classList.add("hidden");stats.classList.add("hidden");rules.classList.add("hidden");page.classList.remove("hidden");page.innerHTML='<div class="empty">Partner का Dashboard लोड हो रहा है…</div>';
+ list.classList.add("hidden");stats?.classList.add("hidden");rules?.classList.add("hidden");categoryPage?.classList.add("hidden");page.classList.remove("hidden");page.innerHTML='<div class="empty">Partner का Dashboard लोड हो रहा है…</div>';page.scrollIntoView({behavior:"smooth",block:"start"});
  try{
-  const d=await bpCall({action:"list_partner_admin_detail",partner_id:partnerId}),p=d.partner,refs=d.referrals||[],cs=d.commissions||[],payments=d.payments||[],bookings=d.bookings||[],allocs=d.allocations||[];
+  const d=await Promise.race([bpCall({action:"list_partner_admin_detail",partner_id:partnerId}),new Promise((_,reject)=>setTimeout(()=>reject(new Error("Dashboard डेटा आने में 15 सेकंड से अधिक लग रहे हैं। दोबारा कोशिश करें।")),15000))]);if(!d.partner)throw new Error(d.error||"Partner का विवरण नहीं मिला।");const p=d.partner,refs=d.referrals||[],cs=d.commissions||[],payments=d.payments||[],bookings=d.bookings||[],allocs=d.allocations||[];
   const now=new Date();now.setHours(0,0,0,0);const month=new Date(now.getFullYear(),now.getMonth(),1);
   const valid=cs.filter(c=>c.status!=="void"),sum=a=>a.reduce((n,x)=>n+Number(x.commission_amount||0),0),earned=sum(valid),dayEarn=sum(valid.filter(c=>new Date(c.earned_at||c.created_at)>=now)),monthEarn=sum(valid.filter(c=>new Date(c.earned_at||c.created_at)>=month)),paid=payments.filter(x=>x.status==="paid").reduce((n,x)=>n+Number(x.amount||0),0),balance=Math.max(0,earned-paid);
   const fmt=n=>"₹"+Number(n||0).toLocaleString("en-IN",{maximumFractionDigits:2});
@@ -857,7 +858,7 @@ async function bpOpenPartnerDashboard(partnerId){
   $("bpDashboardStatus").onclick=async()=>{if(!confirm("Partner की स्थिति बदलनी है?"))return;try{await bpCall({action:"set_partner_status",partner_id:p.id,status:p.status==="active"?"suspended":"active"});alert("Partner की स्थिति अपडेट हो गई।");await bpOpenPartnerDashboard(partnerId)}catch(e){alert("स्थिति अपडेट नहीं हुई: "+e.message)}};
   $("bpDashboardDelete").onclick=async()=>{if(!confirm("इस Partner को स्थायी रूप से delete करना है?"))return;try{await bpCall({action:"delete_partner",partner_id:p.id});window.bpCurrentPartnerId=null;window.bpCurrentPartnerDetailView=null;alert("Partner delete हो गया।");await bpLoad()}catch(e){alert("Delete नहीं हुआ: "+e.message)}};
   if(preserveView&&window.bpCurrentPartnerDetailView){const v=window.bpCurrentPartnerDetailView;if(["today","month","all","refs","todayrefs","monthrefs","payments","balance","qr"].includes(v))page.querySelector('[data-bp-open="'+v+'"]')?.click();else if(v==="bookings")$("bpShowAdminBookings").click();else if(v==="profile")$("bpShowAdminProfile").click();}
- }catch(e){page.innerHTML='<div class="msg">Dashboard लोड नहीं हुआ: '+bpEsc(e.message)+' <button class="btn alt" onclick="bpLoad()">वापस जाकर Refresh करें</button></div>';}
+ }catch(e){console.error("BEX partner dashboard load failed",e);page.innerHTML='<div class="msg">Dashboard नहीं खुला: '+bpEsc(e.message)+' <div class="row" style="margin-top:10px;gap:8px;flex-wrap:wrap"><button type="button" class="btn alt" id="bpRetryDashboard">दोबारा कोशिश करें</button><button type="button" class="btn alt" id="bpBackFromDashboard">← सभी Partners</button></div></div>';const retry=$("bpRetryDashboard");if(retry)retry.onclick=()=>bpOpenPartnerDashboard(partnerId);const back=$("bpBackFromDashboard");if(back)back.onclick=()=>{$("bpBackToDirectory")?.click();if(!$("bpBackToDirectory")){window.bpCurrentPartnerId=null;window.bpCurrentPartnerDetailView=null;page.classList.add("hidden");list.classList.remove("hidden");stats?.classList.remove("hidden");rules?.classList.remove("hidden");categoryPage?.classList.remove("hidden");}};}
 }
 
 function bpOpenQr(code,name){
