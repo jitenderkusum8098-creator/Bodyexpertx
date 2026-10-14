@@ -483,6 +483,25 @@ body.therapist-detail-page #therapistDetailPage{display:block!important}
 .therapist-detail-actions .danger{background:#fff1f2;color:#991b1b;border-color:#fecaca}
 @media(max-width:600px){.therapist-detail-grid{grid-template-columns:1fr}.therapist-detail-top img,.therapist-detail-avatar{width:94px;height:112px}.therapist-detail-shell{margin:10px auto;border-radius:12px}}
 
+/* BEX Partner admin overview and directory cards */
+#bpCategoryStats.bp-directory-hidden{display:none!important}
+#bpCategoryStats .bpOverviewCard{min-width:0;min-height:145px;padding:16px 12px;border-radius:16px;border:1px solid #d5ddeb;background:#fff;color:#17243a;display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;box-shadow:0 5px 15px #10243e12;cursor:pointer}
+#bpCategoryStats .bpOverviewCard:hover{border-color:#d6ad52;transform:translateY(-1px)}
+#bpCategoryStats .bpOverviewCard strong{font-size:15px;line-height:1.3;overflow-wrap:anywhere}
+#bpCategoryStats .bpOverviewCard b{font-size:26px;color:#173b8f}
+#bpCategoryStats .bpOverviewCard small{font-size:11px;line-height:1.4;color:#53627a}
+#bpCategoryStats .bpOverviewIcon{font-size:24px}
+#bpCategoryStats .bpNewPartnerCard{background:#fff4d2;border:2px solid #d6ad52}
+#bpPartnerList.bp-category-page{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px}
+#bpPartnerList.bp-category-page .bp-partner-card{display:flex!important;flex-direction:column;background:#fff!important;color:#17243a!important;border:1px solid #d5ddeb!important;box-shadow:0 5px 18px #10243e12}
+#bpPartnerList.bp-category-page .bp-partner-card .row{display:flex;flex-direction:column;align-items:stretch!important}
+#bpPartnerList.bp-category-page .bp-partner-card img{width:100%!important;height:150px!important;object-fit:cover;border-radius:12px}
+#bpPartnerList.bp-category-page .bp-partner-card h3{color:#17345a!important;font-size:18px}
+#bpPartnerList.bp-category-page .bp-partner-card .small{color:#39485e}
+#bpPartnerList.bp-category-page .bp-card-identity{background:#f1f5f9;padding:8px;border-radius:8px}
+#bpPartnerList.bp-category-page .bp-card-actions{display:flex;flex-direction:column;gap:8px;width:100%;margin-top:auto;padding-top:12px}
+@media(max-width:760px){#bpCategoryStats{grid-template-columns:repeat(2,minmax(0,1fr))!important}#bpPartnerList.bp-category-page{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:460px){#bpPartnerList.bp-category-page{grid-template-columns:1fr!important}}
 </style>
 
 <style>
@@ -578,7 +597,7 @@ body.therapist-detail-page #therapistDetailPage{display:block!important}
 <h3>नया पार्टनर रजिस्ट्रेशन</h3>
 <div class="grid">
 <label class="field"><span>व्यवसाय का नाम *</span><input id="bpBusiness" maxlength="120" placeholder="सैलून / जिम / दुकान का नाम"></label>
-<label class="field"><span>व्यवसाय की श्रेणी *</span><select id="bpCategory"><option value="Massage">मसाज सर्विस</option><option value="Salon">सैलून</option><option value="Gym">जिम</option><option value="Kirana Store">किराना स्टोर</option><option value="Medical Store">मेडिकल स्टोर</option><option value="Other">अन्य</option></select></label>
+<label class="field"><span>व्यवसाय की श्रेणी *</span><select id="bpCategory"><option value="Massage">मसाज सर्विस</option><option value="Salon">सैलून</option><option value="Hotel">होटल</option><option value="Gym">जिम</option><option value="Kirana Store">किराना स्टोर</option><option value="Medical Store">मेडिकल स्टोर</option><option value="Other">अन्य</option></select></label>
 <label class="field"><span>मालिक का नाम *</span><input id="bpOwner" maxlength="100" placeholder="मालिक का पूरा नाम"></label>
 <label class="field"><span>मोबाइल नंबर *</span><input id="bpPhone" type="tel" maxlength="16" placeholder="10 अंकों का मोबाइल नंबर"></label>
 <label class="field"><span>पूरा व्यवसाय का पता *</span><input id="bpAddress" maxlength="500" placeholder="दुकान, गली, क्षेत्र, शहर, PIN"></label>
@@ -663,8 +682,13 @@ async function bpLoad(){
  try { adminData=await bpCall({action:"list_admin_data"}); }
  catch(e){list.innerHTML='<div class="msg">सूची लोड नहीं हुई: '+bpEsc(e.message)+' <button type="button" class="btn alt" onclick="bpLoad()">दोबारा कोशिश करें</button></div>';return}
  const partners=adminData.partners||[], rules=adminData.rules||[], refs=adminData.referrals||[], comms=adminData.commissions||[],today=new Date();today.setHours(0,0,0,0);const monthStart=new Date(today.getFullYear(),today.getMonth(),1);
- const cats=["Massage","Salon","Gym","Kirana Store","Medical Store","Other"],catHindi={"Massage":"मसाज सर्विस","Salon":"सैलून","Gym":"जिम","Kirana Store":"किराना स्टोर","Medical Store":"मेडिकल स्टोर","Other":"अन्य"};
- $("bpCategoryStats").innerHTML=cats.map(cat=>'<button type="button" class="item bpCatFilter" data-category="'+cat+'" style="text-align:left;cursor:pointer;border:2px solid '+(window.bpSelectedCategory===cat?'#d6ad52':'#45464a')+';background:'+(window.bpSelectedCategory===cat?'#282316':'')+'"><strong>'+catHindi[cat]+'</strong><div class="k-value" style="font-size:24px;font-weight:900">'+partners.filter(x=>x.category===cat).length+'</div><span class="small">रजिस्टर्ड पार्टनर · सूची खोलने के लिए दबाएँ</span></button>').join("");
+ const cats=["Salon","Hotel","Kirana Store","Gym","Medical Store","Other"],catHindi={"Massage":"मसाज सर्विस","Salon":"सैलून","Hotel":"होटल","Gym":"जिम","Kirana Store":"किराना स्टोर","Medical Store":"मेडिकल स्टोर","Other":"अन्य"};
+ const totalPartners=partners.length;
+ const catLabels=[["__new","नया रजिस्ट्रेशन","➕"],["__total","Total Partner","🤝"],...cats.map(cat=>[cat,catHindi[cat]||cat,"🏪"])];
+ $("bpCategoryStats").style.display="grid";
+ $("bpCategoryStats").style.gridTemplateColumns="repeat(3,minmax(0,1fr))";
+ $("bpCategoryStats").innerHTML=catLabels.map(([cat,label,icon])=>'<button type="button" class="bpOverviewCard '+(cat==="__new"?"bpNewPartnerCard":"")+'" data-category="'+cat+'"><span class="bpOverviewIcon">'+icon+'</span><strong>'+bpEsc(label)+'</strong><b>'+(cat==="__new"?"नई ID बनाएँ":cat==="__total"?totalPartners:partners.filter(x=>x.category===cat).length)+'</b><small>'+(cat==="__new"?"नया पार्टनर जोड़ें":cat==="__total"?"सभी रजिस्टर्ड पार्टनर":"पार्टनर देखने के लिए क्लिक करें")+'</small></button>').join("");
+
  const directory=$("bpPartnerList"),categoryStats=$("bpCategoryStats"),rulesSection=$("bpRulesList");
  let categoryPage=$("bpPartnerCategoryPage");
  if(!categoryPage){categoryPage=document.createElement("section");categoryPage.id="bpPartnerCategoryPage";directory.parentNode.insertBefore(categoryPage,directory);}
@@ -678,9 +702,9 @@ async function bpLoad(){
    categoryStats.classList.remove("bp-directory-hidden");rulesSection.classList.remove("bp-directory-hidden");
    categoryPage.classList.add("hidden");directory.classList.add("hidden");directory.classList.remove("bp-category-page");
  }
- const filtered=window.bpSelectedCategory?partners.filter(x=>x.category===window.bpSelectedCategory):partners;
+ const filtered=window.bpSelectedCategory?(window.bpSelectedCategory==="__total"?partners:partners.filter(x=>x.category===window.bpSelectedCategory)):partners;
  if(!filtered.length){
-   list.innerHTML='<div class="empty">'+(window.bpSelectedCategory?catHindi[window.bpSelectedCategory]+' श्रेणी में अभी कोई पार्टनर नहीं है।':'अभी कोई पार्टनर रजिस्टर नहीं है।')+'</div>';
+   list.innerHTML='<div class="empty">'+(window.bpSelectedCategory?(window.bpSelectedCategory==='__total'?'अभी कोई पार्टनर रजिस्टर नहीं है।':catHindi[window.bpSelectedCategory]+' श्रेणी में अभी कोई पार्टनर नहीं है।'):'अभी कोई पार्टनर रजिस्टर नहीं है।')+'</div>';
  } else {
    list.innerHTML=filtered.map(x=>{
     const rr=refs.filter(y=>y.partner_id===x.id),cc=comms.filter(y=>y.partner_id===x.id),sum=(rows,field)=>rows.reduce((acc,z)=>acc+Number(z[field]||0),0);
@@ -700,7 +724,7 @@ async function bpLoad(){
    }).join("");
  }
  rulesBox.innerHTML=rules.map(x=>'<div class="item small">'+bpEsc(x.category)+' · '+bpEsc(x.service_tier)+' · '+bpEsc(x.commission_type)+' '+bpEsc(x.amount)+(x.commission_type==="percent"?"%":" ₹")+' · '+bpEsc(x.rule_mode)+'</div>').join("")||'<div class="empty">Commission rules अभी सेट नहीं हैं।</div>';
- document.querySelectorAll(".bpCatFilter").forEach(btn=>btn.onclick=()=>{window.bpSelectedCategory=btn.dataset.category;bpLoad()});
+ document.querySelectorAll(".bpOverviewCard").forEach(btn=>btn.onclick=()=>{const cat=btn.dataset.category;if(cat==="__new"){window.bpSelectedCategory=null;const form=$("bpBusiness")?.closest(".grid")?.parentElement;if(form){form.scrollIntoView({behavior:"smooth",block:"start");$("bpBusiness")?.focus();}return;}window.bpSelectedCategory=cat==="__total"?"__total":cat;bpLoad();});
  document.querySelectorAll(".bpViewAll").forEach(btn=>btn.onclick=()=>bpOpenPartnerDashboard(btn.dataset.id));
  document.querySelectorAll(".bpQr").forEach(btn=>btn.onclick=()=>bpOpenQr(btn.dataset.code,btn.dataset.name));
  document.querySelectorAll(".bpCardQr").forEach(btn=>btn.onclick=()=>bpOpenQr(btn.dataset.code,btn.dataset.name));
