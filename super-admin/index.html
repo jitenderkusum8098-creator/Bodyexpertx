@@ -2,7 +2,7 @@
 <html lang="hi">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#171717"><title>BodyExpertX Super Admin</title>
+<meta name="theme-color" content="#171717"><meta name="application-name" content="BodyExpertX Super Admin"><link rel="manifest" href="./manifest.json"><link rel="icon" href="./icon.svg" type="image/svg+xml"><title>BodyExpertX Super Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
@@ -396,5 +396,8 @@ db.auth.onAuthStateChange((event,s)=>{session=s;if(event==="SIGNED_OUT"){$("appV
  document.addEventListener("click",function(e){const target=e.target.closest("[data-preview-src]");if(target){e.preventDefault();show(target.getAttribute("data-preview-src"),target.getAttribute("data-preview-title")||target.getAttribute("alt")||"Photo");}});
  close.addEventListener("click",hide);modal.addEventListener("click",e=>{if(e.target===modal)hide();});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&modal.classList.contains("open"))hide();});
 })();
+</script>
+<script>
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(err=>console.warn("BEX offline shell registration failed",err));});}
 </script>
 </body></html>
