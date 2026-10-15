@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jitenderkusum8098-creator.github.io/Bodyexpertx/sitemap.xml
