@@ -54,21 +54,7 @@ records.forEach(r=>{
  div.innerHTML=statusBox+th+details+timerHtml+rate+'<div class="actions"><a class="btn secondary" href="./customer-dashboard.html?tracking='+encodeURIComponent(r.trackingToken)+'">Booking kholein</a><button type="button" class="btn secondary" data-customer-change="reschedule">📅 Reschedule Booking</button><button type="button" class="btn secondary" data-customer-change="cancel" style="background:#421b1b;color:#ffd7d7;border-color:#743737">✖ Cancel Booking</button></div>';
  const canChange=!["completed","cancelled","reached","unavailable"].includes(status);
  if(!canChange)div.querySelectorAll("[data-customer-change]").forEach(x=>x.remove());
- div.querySelectorAll("[data-customer-change]").forEach(btn=>btn.addEventListener("click",async()=>{
-  const change=btn.dataset.customerChange;
-  if(change==="cancel"&&!confirm("Kya aap is booking ko cancel karna chahte hain?"))return;
-  let payload={action:"public-customer-change-booking",tracking_token:r.trackingToken,change};
-  if(change==="reschedule"){
-   const date=prompt("Nayi date likhein (YYYY-MM-DD)",b.appointment_date||"");if(!date)return;
-   if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||Number.isNaN(new Date(date+"T00:00:00").getTime())){alert("Date YYYY-MM-DD format mein likhein.");return}
-   const time=prompt("Naya time 24-hour format mein (HH:MM)",b.appointment_time||"");if(!time)return;
-   if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)){alert("Time HH:MM format mein likhein, jaise 18:30.");return}
-   payload.appointment_date=date;payload.appointment_time=time;
-  }
-  btn.disabled=true;
-  try{const response=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","apikey":KEY},body:JSON.stringify(payload)});const result=await response.json();if(!response.ok)throw Error(result.error||(change==="cancel"?"Cancel nahi hua":"Reschedule nahi hua"));alert(result.message||(change==="cancel"?"Booking cancel ho gayi.":"Nayi date aur time save ho gaye."));await init()}
-  catch(e){alert(e.message||"Booking update nahi ho saki.");btn.disabled=false}
- }));
+ div.querySelectorAll("[data-customer-change]").forEach(btn=>btn.addEventListener("click",()=>{const change=btn.dataset.customerChange;window.location.href="./customer-dashboard.html?tracking="+encodeURIComponent(r.trackingToken)+"&action="+encodeURIComponent(change)}));
  box.append(div);
  const timer=div.querySelector(".service-timer");if(timer){const tick=()=>{const start=Date.parse(timer.dataset.start||""),end=timer.dataset.end?Date.parse(timer.dataset.end):Date.now(),duration=Math.max(0,Number(timer.dataset.duration)||0)*60;if(!Number.isFinite(start))return;const elapsed=Math.max(0,Math.floor((end-start)/1000)),left=Math.max(0,duration-elapsed);const out=timer.querySelector(".timer-countdown");if(out)out.textContent=String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0")};tick();setInterval(tick,1000)}
 })
