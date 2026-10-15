@@ -2399,7 +2399,7 @@ const defaultPoint=[28.5245,77.1588];
 function setMapPreview(label,detail){const title=$("bexMapSelectedAddress"),sub=$("bexMapDistance");if(title)title.textContent=label||"Selected service location";if(sub)sub.textContent=detail||"Pin ko exact ghar/building par rakhein."}
 function scheduleMapPreview(lat,lon){clearTimeout(previewTimer);const seq=++previewSeq;previewTimer=setTimeout(async()=>{try{const label=await reverseAddress(lat,lon);if(seq!==previewSeq)return;if(label){selectedMapLabel=label;setMapPreview(label,"Map pin ke neeche wali location select hai.");}}catch(e){}},650)}
 function pin(lat,lon,label){if(!map)return;map.setView([lat,lon],17);selectedMapLabel=label||"";if(label)setMapPreview(label,"Search result. Exact ghar/building par pin set karein.");else{setMapPreview("Location update ho rahi hai…","Map par exact location set karein.");scheduleMapPreview(lat,lon)}mapStatus.textContent="Map ko move karke center pin exact service location par set karein."}
-function openMap(lat,lon,acc,src,msg){if(!window.L){status.textContent="Map load nahi hua. Internet check karke dobara try karein.";return}accuracy=acc||"";source=src||"map";$("bexMapAddressSearch").value=$("address").value.trim();$("bexMapHouseDetails").value="";selectedMapLabel="";modal.hidden=false;requestAnimationFrame(()=>{if(!map){map=L.map("bexLocationMap",{zoomControl:true}).setView([lat,lon],16);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"&copy; OpenStreetMap contributors"}).addTo(map);map.on("click",e=>pin(e.latlng.lat,e.latlng.lng));map.on("moveend",()=>{if(!modal.hidden){const p=map.getCenter();scheduleMapPreview(p.lat,p.lng)}})}else map.setView([lat,lon],16);map.invalidateSize();pin(lat,lon,msg&&src==="address-search"?msg:"");if(msg)mapStatus.textContent=msg})}
+function openMap(lat,lon,acc,src,msg){if(!window.L){status.textContent="Map load nahi hua. Internet check karke dobara try karein.";return}accuracy=acc||"";source=src||"map";$("bexMapAddressSearch").value=$("address").value.trim();$("bexMapHouseDetails").value="";selectedMapLabel="";modal.hidden=false;requestAnimationFrame(()=>{if(!map){map=L.map("bexLocationMap",{zoomControl:true}).setView([lat,lon],16);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"&copy; OpenStreetMap contributors"}).addTo(map);map.on("click",e=>pin(e.latlng.lat,e.latlng.lng));map.on("moveend",()=>{if(!modal.hidden){const p=map.getCenter();scheduleMapPreview(p.lat,p.lng)}})}else map.setView([lat,lon],16);map.invalidateSize();pin(lat,lon,src==="address-search"?$("address").value.trim():"");if(msg)mapStatus.textContent=msg})}
 let suggestionTimer=null,suggestionRequest=0;
 const suggestionBox=$("bexMapSearchResults"),searchInput=$("bexMapAddressSearch");
 function hideSuggestions(){suggestionBox.hidden=true;suggestionBox.replaceChildren()}
@@ -2532,37 +2532,40 @@ function refreshSavedAddresses(){const items=readSavedAddresses();savedAddressCo
 saveAddressButton.addEventListener("click",()=>{const address=addressInput.value.trim(),lat=Number($("bexLatitude").value),lon=Number($("bexLongitude").value);if(address.length<5){status.textContent="Pehle poora address likhein.";addressInput.focus();return}if(!lat||!lon){status.textContent="Address save karne se pehle Current Location ya Map se pin confirm karein.";return}const items=readSavedAddresses(),entry={title:address.split(",")[0].trim().slice(0,80),address,landmark:$("landmark").value.trim(),lat,lon,savedAt:Date.now()};const existing=items.findIndex(x=>x.address.toLowerCase()===address.toLowerCase());if(existing>=0)items.splice(existing,1);items.unshift(entry);if(writeSavedAddresses(items)){refreshSavedAddresses();savedAddressBox.hidden=false;status.textContent="✓ Address is phone ke browser mein save ho gaya.";if(addressPicker.dataset.open==="1")openAddressPicker()}});
 savedAddressToggle.addEventListener("click",()=>openAddressPicker());refreshSavedAddresses();
 async function searchAddress(q){
- q=String(q||"").trim();
- if(!q)return null;
- const clean=q.replace(/\\b(house|h\\.?)\\s*(no\\.?|number)?\\s*/ig," ").replace(/\\b(apartment|appart|flat)\\b/ig," ").replace(/\\s+/g," ").trim();
- const queries=[q,clean].filter((v,i,a)=>v&&a.indexOf(v)===i).slice(0,2);
- const fetchJson=async(url,ms=5000)=>{
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),ms);
-  try{const r=await fetch(url,{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});if(!r.ok)return null;return await r.json()}
-  finally{clearTimeout(timer)}
- };
- // Nominatim first for full street addresses; each request is time-limited.
+ q=String(q||"").trim();if(!q)return null;
+ const clean=q.replace(/\b(house|h\.?)\s*(no\.?|number)?\s*/ig," ").replace(/\b(apartment|appart|flat)\b/ig," ").replace(/\s+/g," ").trim();
+ const variants=[q,clean];
+ if(!/kishangarh|mehrauli|vasant kunj|delhi|1100\d{2}/i.test(q))variants.push(q+", Mehrauli, New Delhi, India",q+", Delhi, India");
+ else if(/kishangarh|mehrauli/i.test(q))variants.push(q+", Mehrauli, New Delhi, India",q.replace(/^\s*\d+[\/-]?\w*\s*/,"")+", Kishangarh, Mehrauli, New Delhi, India");
+ else if(!/delhi|1100\d{2}/i.test(q))variants.push(q+", New Delhi, India");
+ const queries=variants.filter((v,i,a)=>v&&a.indexOf(v)===i).slice(0,4);
+ const fetchJson=async(url,ms=4500)=>{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),ms);try{const r=await fetch(url,{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});if(!r.ok)return null;return await r.json()}finally{clearTimeout(timer)}};
+ const score=(label)=>{let n=0;const s=String(label||"").toLowerCase();if(/new delhi|delhi/.test(s))n+=10;if(/kishangarh/.test(q)&&/kishangarh/.test(s))n+=8;if(/mehrauli/.test(q)&&/mehrauli/.test(s))n+=5;if(/vasant kunj/.test(q)&&/vasant kunj/.test(s))n+=8;if(/india/.test(s))n+=1;return n};
+ // Photon gives quick, CORS-friendly results. Try the full address and nearby-area variants.
  for(const query of queries){
   try{
-   const a=await fetchJson("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=in&addressdetails=1&q="+encodeURIComponent(query));
-   if(Array.isArray(a)&&a.length){
-    const best=a.find(x=>/delhi|new delhi|rohini|vasant kunj|mehrauli/i.test((x.display_name||"")+" "+(x.address?.state||"")))||a[0];
+   const d=await fetchJson("https://photon.komoot.io/api/?limit=8&lang=en&lat=28.5245&lon=77.1588&q="+encodeURIComponent(query));
+   const features=Array.isArray(d?.features)?d.features.filter(x=>Array.isArray(x.geometry?.coordinates)&&x.geometry.coordinates.length>=2):[];
+   if(features.length){
+    const ranked=features.map(x=>{const p=x.properties||{},label=[p.name,p.housenumber,p.street,p.suburb,p.district,p.city,p.state,p.postcode,p.country].filter(Boolean).join(", ");return {x,label,score:score(label)}}).sort((a,b)=>b.score-a.score);
+    const best=ranked[0],coords=best.x.geometry.coordinates;
+    if(!/delhi|kishangarh|mehrauli|vasant kunj|india|1100\d{2}/i.test(q)||/delhi|kishangarh|mehrauli|vasant kunj|india|1100\d{2}/i.test(best.label))return {lat:Number(coords[1]),lon:Number(coords[0]),label:best.label||query};
+   }
+  }catch(e){}
+ }
+ // Nominatim fallback; include India and locality context for less complete house addresses.
+ for(const query of queries.slice(0,3)){
+  try{
+   const d=await fetchJson("https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&q="+encodeURIComponent(query));
+   if(Array.isArray(d)&&d.length){
+    const ranked=d.map(x=>({x,score:score(x.display_name)})).sort((a,b)=>b.score-a.score);
+    const best=ranked[0].x;
     return {lat:Number(best.lat),lon:Number(best.lon),label:best.display_name||query};
    }
   }catch(e){}
  }
- try{
-  const d=await fetchJson("https://photon.komoot.io/api/?limit=6&lang=en&lat=28.5245&lon=77.1588&q="+encodeURIComponent(q));
-  const features=Array.isArray(d?.features)?d.features:[];
-  if(features.length){
-   const best=features.find(x=>/delhi|rohini|vasant kunj|mehrauli/i.test(JSON.stringify(x.properties||{})))||features[0];
-   const p=best.properties||{};
-   return {lat:Number(best.geometry.coordinates[1]),lon:Number(best.geometry.coordinates[0]),label:[p.name,p.street,p.district,p.city,p.state,p.postcode,p.country].filter(Boolean).join(", ")||q};
-  }
- }catch(e){}
  return null;
 }
-
 async function reverseAddress(lat,lon){try{const r=await fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat="+lat+"&lon="+lon+"&zoom=18&addressdetails=1",{headers:{Accept:"application/json"}});if(!r.ok)return "";const d=await r.json();return d.display_name||""}catch(e){return ""}}
 $("bexSetLocation").addEventListener("click",()=>{const b=$("bexSetLocation");if(!navigator.geolocation){status.textContent="GPS available nahi hai. Choose Location on Map se address search karein.";return}b.disabled=true;b.textContent="Location detect ho rahi hai…";status.textContent="Browser permission aaye to Allow dabayein.";navigator.geolocation.getCurrentPosition(async p=>{const lat=Number(p.coords.latitude),lon=Number(p.coords.longitude);$("bexLatitude").value=lat;$("bexLongitude").value=lon;$("bexLocationAccuracy").value=Math.round(p.coords.accuracy||0);$("bexOpenLocation").href="https://www.google.com/maps?q="+encodeURIComponent(lat+","+lon);$("bexOpenLocation").hidden=false;document.querySelector(".bex-location-panel").classList.add("location-set");$("serviceZone").value="";bexDetectedZone=null;b.disabled=false;b.textContent="📍 Use My Current Location";status.textContent="✓ Current location detect aur save ho gayi. Chahein to Choose Location on Map se pin adjust kar sakte hain.";try{const z=await detectServiceZoneFromCoords(lat,lon);if(z)status.textContent="✓ Current location detect ho gayi. Service Zone: "+z.name+". Pin badalna ho to map use karein."}catch(e){}},e=>{b.disabled=false;b.textContent="📍 Use My Current Location";status.textContent=e.code===1?"Location permission Allow karein, ya Map par address search karein.":"GPS nahi mil paayi. Dobara try karein ya Map par address search karein."},{enableHighAccuracy:true,timeout:25000,maximumAge:0})});
 async function openAddressOnMap(){
