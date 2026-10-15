@@ -2458,36 +2458,37 @@ function renderPickerResults(items,q){
  })
 }
 async function searchPickerAddress(q){
- const seq=++pickerSearchSeq;q=q.trim().replace(/\\s+/g," ");
+ const seq=++pickerSearchSeq;
+ q=String(q||"").trim().replace(/\\s+/g," ");
  if(q.length<3){pickerResults.hidden=true;pickerResults.replaceChildren();return}
- pickerResults.hidden=false;pickerResults.innerHTML='<div class="bex-address-empty">🔎 Address search ho raha hai…</div>';
- const timeoutFetch=async(url)=>{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),7000);try{const r=await fetch(url,{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});if(!r.ok)return null;return await r.json()}finally{clearTimeout(timer)}};
+ pickerResults.hidden=false;
+ pickerResults.innerHTML='<div class="bex-address-empty">🔎 Address search ho raha hai…</div>';
+ const fetchJson=async(url,ms=5000)=>{
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),ms);
+  try{const r=await fetch(url,{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});if(!r.ok)return null;return await r.json()}
+  finally{clearTimeout(timer)}
+ };
  let results=[];
- const queries=[q];
- if(!/delhi|india|1100\\d\\d/i.test(q))queries.push(q+", Mehrauli, New Delhi, India",q+", Delhi, India");
+ // Keep search fast: try one India-focused Photon request, then one Nominatim fallback.
  try{
-  for(const term of queries){
-   const url="https://photon.komoot.io/api/?limit=8&lang=en&lat=28.5245&lon=77.1588&q="+encodeURIComponent(term);
-   const data=await timeoutFetch(url);
-   if(seq!==pickerSearchSeq)return;
-   if(data&&Array.isArray(data.features)&&data.features.length){results=data.features;break}
-  }
+  const url="https://photon.komoot.io/api/?limit=8&lang=en&lat=28.5245&lon=77.1588&q="+encodeURIComponent(q);
+  const d=await fetchJson(url);
+  if(seq!==pickerSearchSeq)return;
+  if(d&&Array.isArray(d.features))results=d.features.filter(x=>Array.isArray(x.geometry?.coordinates)&&x.geometry.coordinates.length>=2);
  }catch(e){}
  if(seq!==pickerSearchSeq)return;
  if(!results.length){
   try{
-   for(const term of queries){
-    const url="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&q="+encodeURIComponent(term);
-    const data=await timeoutFetch(url);
-    if(seq!==pickerSearchSeq)return;
-    if(Array.isArray(data)&&data.length){results=data;break}
-   }
+   const url="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&q="+encodeURIComponent(q);
+   const d=await fetchJson(url,5000);
+   if(seq!==pickerSearchSeq)return;
+   if(Array.isArray(d))results=d;
   }catch(e){}
  }
  if(seq!==pickerSearchSeq)return;
  renderPickerResults(results,q);
  if(!results.length){
-  pickerResults.innerHTML='<div class="bex-address-empty">Address search se result nahi mila. Thoda chhota address/area ya PIN code likhein. Pin set karne ke liye neeche “Confirm address on map” use karein.</div>';
+  pickerResults.innerHTML='<div class="bex-address-empty">Address result nahi mila ya search service busy hai. House/road ke saath area, Delhi aur PIN code likhein. Ya Add New Address se yahi address manually enter karke map pin confirm karein.</div>';
   $("bexAddressMapPin").hidden=false;
  }else{$("bexAddressMapPin").hidden=true}
 }
@@ -2504,21 +2505,37 @@ function refreshSavedAddresses(){const items=readSavedAddresses();savedAddressCo
 saveAddressButton.addEventListener("click",()=>{const address=addressInput.value.trim(),lat=Number($("bexLatitude").value),lon=Number($("bexLongitude").value);if(address.length<5){status.textContent="Pehle poora address likhein.";addressInput.focus();return}if(!lat||!lon){status.textContent="Address save karne se pehle Current Location ya Map se pin confirm karein.";return}const items=readSavedAddresses(),entry={title:address.split(",")[0].trim().slice(0,80),address,landmark:$("landmark").value.trim(),lat,lon,savedAt:Date.now()};const existing=items.findIndex(x=>x.address.toLowerCase()===address.toLowerCase());if(existing>=0)items.splice(existing,1);items.unshift(entry);if(writeSavedAddresses(items)){refreshSavedAddresses();savedAddressBox.hidden=false;status.textContent="✓ Address is phone ke browser mein save ho gaya.";if(addressPicker.dataset.open==="1")openAddressPicker()}});
 savedAddressToggle.addEventListener("click",()=>openAddressPicker());refreshSavedAddresses();
 async function searchAddress(q){
- q=String(q||"").trim();if(!q)return null;
- const clean=q.replace(/\\b(house|h\.?)\\s*(no\.?|number)?\\s*/ig," ").replace(/\\b(apartment|appart|flat)\\b/ig," ").replace(/\\s+/g," ").trim();
- const queries=[q,clean].filter((v,i,a)=>v&&a.indexOf(v)===i);
+ q=String(q||"").trim();
+ if(!q)return null;
+ const clean=q.replace(/\\b(house|h\\.?)\\s*(no\\.?|number)?\\s*/ig," ").replace(/\\b(apartment|appart|flat)\\b/ig," ").replace(/\\s+/g," ").trim();
+ const queries=[q,clean].filter((v,i,a)=>v&&a.indexOf(v)===i).slice(0,2);
+ const fetchJson=async(url,ms=5000)=>{
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),ms);
+  try{const r=await fetch(url,{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});if(!r.ok)return null;return await r.json()}
+  finally{clearTimeout(timer)}
+ };
+ // Nominatim first for full street addresses; each request is time-limited.
  for(const query of queries){
   try{
-   const r=await fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=in&addressdetails=1&q="+encodeURIComponent(query),{headers:{Accept:"application/json"}});
-   if(r.ok){const a=await r.json();if(a.length){const best=a.find(x=>/delhi|new delhi|rohini|vasant kunj/i.test((x.display_name||"")+" "+(x.address?.state||"")))||a[0];return {lat:Number(best.lat),lon:Number(best.lon),label:best.display_name||query}}}
+   const a=await fetchJson("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=in&addressdetails=1&q="+encodeURIComponent(query));
+   if(Array.isArray(a)&&a.length){
+    const best=a.find(x=>/delhi|new delhi|rohini|vasant kunj|mehrauli/i.test((x.display_name||"")+" "+(x.address?.state||"")))||a[0];
+    return {lat:Number(best.lat),lon:Number(best.lon),label:best.display_name||query};
+   }
   }catch(e){}
  }
  try{
-  const r=await fetch("https://photon.komoot.io/api/?limit=5&lang=en&q="+encodeURIComponent(q));
-  if(r.ok){const d=await r.json();const features=d.features||[];if(features.length){const best=features.find(x=>/delhi|rohini|vasant kunj/i.test(JSON.stringify(x.properties||{})))||features[0];return {lat:Number(best.geometry.coordinates[1]),lon:Number(best.geometry.coordinates[0]),label:[best.properties.name,best.properties.street,best.properties.district,best.properties.city,best.properties.state].filter(Boolean).join(", ")||q}}}
+  const d=await fetchJson("https://photon.komoot.io/api/?limit=6&lang=en&lat=28.5245&lon=77.1588&q="+encodeURIComponent(q));
+  const features=Array.isArray(d?.features)?d.features:[];
+  if(features.length){
+   const best=features.find(x=>/delhi|rohini|vasant kunj|mehrauli/i.test(JSON.stringify(x.properties||{})))||features[0];
+   const p=best.properties||{};
+   return {lat:Number(best.geometry.coordinates[1]),lon:Number(best.geometry.coordinates[0]),label:[p.name,p.street,p.district,p.city,p.state,p.postcode,p.country].filter(Boolean).join(", ")||q};
+  }
  }catch(e){}
- return null
+ return null;
 }
+
 async function reverseAddress(lat,lon){try{const r=await fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat="+lat+"&lon="+lon+"&zoom=18&addressdetails=1",{headers:{Accept:"application/json"}});if(!r.ok)return "";const d=await r.json();return d.display_name||""}catch(e){return ""}}
 $("bexSetLocation").addEventListener("click",()=>{const b=$("bexSetLocation");if(!navigator.geolocation){status.textContent="GPS available nahi hai. Choose Location on Map se address search karein.";return}b.disabled=true;b.textContent="Location detect ho rahi hai…";status.textContent="Browser permission aaye to Allow dabayein.";navigator.geolocation.getCurrentPosition(async p=>{const lat=Number(p.coords.latitude),lon=Number(p.coords.longitude);$("bexLatitude").value=lat;$("bexLongitude").value=lon;$("bexLocationAccuracy").value=Math.round(p.coords.accuracy||0);$("bexOpenLocation").href="https://www.google.com/maps?q="+encodeURIComponent(lat+","+lon);$("bexOpenLocation").hidden=false;document.querySelector(".bex-location-panel").classList.add("location-set");$("serviceZone").value="";bexDetectedZone=null;b.disabled=false;b.textContent="📍 Use My Current Location";status.textContent="✓ Current location detect aur save ho gayi. Chahein to Choose Location on Map se pin adjust kar sakte hain.";try{const z=await detectServiceZoneFromCoords(lat,lon);if(z)status.textContent="✓ Current location detect ho gayi. Service Zone: "+z.name+". Pin badalna ho to map use karein."}catch(e){}},e=>{b.disabled=false;b.textContent="📍 Use My Current Location";status.textContent=e.code===1?"Location permission Allow karein, ya Map par address search karein.":"GPS nahi mil paayi. Dobara try karein ya Map par address search karein."},{enableHighAccuracy:true,timeout:25000,maximumAge:0})});
 $("bexAddressMapPin").addEventListener("click",()=>{$("bexChooseMapLocation").click()});
