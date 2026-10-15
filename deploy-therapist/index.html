@@ -11,8 +11,7 @@
 <section id="bexAvailability" class="hidden" aria-label="Availability Calendar">
  <div class="bex-av-heading"><div><h2 style="margin:0">Availability</h2><div class="sub">Aaj, kal ya calendar se date chunein</div></div></div>
  <div class="bex-av-dates"><button type="button" id="bexAvToday" class="bex-date-chip">Aaj <strong id="bexAvTodayLabel"></strong></button><button type="button" id="bexAvTomorrow" class="bex-date-chip">Kal <strong id="bexAvTomorrowLabel"></strong></button><button type="button" id="bexAvCalendarBtn" class="bex-calendar-icon" aria-label="Calendar se date chunein">▦</button><input type="date" id="bexAvDate" aria-label="Date select karein"></div>
- <div class="bex-av-note">Date par tap karne ke baad hi us din ke time slots khulenge.</div>
- <div class="bex-note">ON = booking ke liye available. Agar slot mein pehle se active booking hai to Therapist OFF nahi kar sakta; Admin se sampark karein.</div>
+ 
  <div id="bexAvSlots" hidden></div><div id="bexAvMsg" class="bex-msg" role="status"></div>
 </section>
 
@@ -222,7 +221,7 @@ sb.auth.getSession().then(({data})=>{if(data.session)load(true)});
   }catch(e){el('bexAvSlots').innerHTML='';el('bexAvMsg').textContent=e.message||'Slots load nahi hue.'}
   finally{rendering=false}
  }
- function chooseDate(d){el('bexAvDate').value=d;slotsOpened=true;updateDateButtons();el('bexAvSlots').hidden=false;renderSlots()}
+ function chooseDate(d){const sameDate=el('bexAvDate').value===d;if(sameDate&&slotsOpened){slotsOpened=false;el('bexAvSlots').hidden=true;updateDateButtons();return}el('bexAvDate').value=d;slotsOpened=true;updateDateButtons();el('bexAvSlots').hidden=false;renderSlots()}
  el('bexAvDate').value=today();updateDateButtons();
  el('bexAvToday').addEventListener('click',()=>chooseDate(plusDays(0)));
  el('bexAvTomorrow').addEventListener('click',()=>chooseDate(plusDays(1)));
