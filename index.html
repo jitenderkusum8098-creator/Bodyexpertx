@@ -1021,8 +1021,8 @@ article.service .bx-massage-photo img {
 <div class="topbar">प्रीमियम मसाज और सैलून सेवाएँ · घर पर सुविधा · बुकिंग की पुष्टि WhatsApp पर</div>
 <header class="header"><div class="wrap nav">
 <a class="brand" href="#home"><span class="brandmark" aria-hidden="true"><svg viewBox="0 0 100 100" width="30" height="30"><defs><linearGradient id="brandSilver" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#b9bdc1"/><stop offset="1" stop-color="#73777c"/></linearGradient></defs><path d="M15 14 L36 14 L85 77 L65 87 Z" fill="url(#brandSilver)"/><path d="M84 14 L64 14 L15 77 L35 87 Z" fill="url(#brandSilver)"/></svg></span><span>BODYEXPERT<em>X</em></span></a>
-<nav class="links"><a href="#categories">सेवाएँ</a><a href="#our-team">हमारी टीम</a><a href="#courses">ट्रेनिंग</a><a href="#social">हमसे जुड़ें</a><a class="btn small bx-nav-book" href="./massage-choice-v2.html?v=20261012-gold-card-layout-2">मसाज बुक करें</a></nav>
-<a class="btn small bx-nav-account-mobile" href="/Bodyexpertx/customer-account.html">My Account</a>
+<nav class="links"><a href="#categories">सेवाएँ</a><a href="#our-team">हमारी टीम</a><a href="#courses">ट्रेनिंग</a><a href="#social">हमसे जुड़ें</a><a class="btn small" href="./customer-account.html">My Account</a><a class="btn small bx-nav-book" href="./massage-choice-v2.html?v=20261012-gold-card-layout-2">मसाज बुक करें</a></nav>
+<a class="btn small bx-nav-account-mobile" href="./customer-account.html">My Account</a>
 </div></header>
 <main id="home"><section class="brand-banner bx-hero bx-hero-v3" aria-label="BodyExpertX की प्रीमियम मसाज और सैलून सेवाएँ">
   <div class="bx-hero-v3-glow" aria-hidden="true"></div>
@@ -1414,7 +1414,7 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
   const mobileGreeting=header&&header.querySelector(".bx-nav-account-mobile");
   if(mobileGreeting){
    mobileGreeting.textContent=makeGreeting()||"My Account";
-   mobileGreeting.href="/Bodyexpertx/customer-account.html";
+   mobileGreeting.href="./customer-account.html";
    mobileGreeting.classList.add("btn","small");
    mobileGreeting.style.display="inline-flex";
   }
