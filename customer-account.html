@@ -58,9 +58,9 @@ records.forEach(r=>{
   let payload={action:"public-customer-change-booking",tracking_token:r.trackingToken,change};
   if(change==="reschedule"){
    const date=prompt("Nayi date likhein (YYYY-MM-DD)",b.appointment_date||"");if(!date)return;
-   if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)||Number.isNaN(new Date(date+"T00:00:00").getTime())){alert("Date YYYY-MM-DD format mein likhein.");return}
+   if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||Number.isNaN(new Date(date+"T00:00:00").getTime())){alert("Date YYYY-MM-DD format mein likhein.");return}
    const time=prompt("Naya time 24-hour format mein (HH:MM)",b.appointment_time||"");if(!time)return;
-   if(!/^([01]\\d|2[0-3]):[0-5]\\d$/.test(time)){alert("Time HH:MM format mein likhein, jaise 18:30.");return}
+   if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)){alert("Time HH:MM format mein likhein, jaise 18:30.");return}
    payload.appointment_date=date;payload.appointment_time=time;
   }
   btn.disabled=true;
