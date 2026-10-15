@@ -719,7 +719,7 @@ window.addEventListener("popstate",()=>{const v=history.state?.bexAdminView; if(
 function restoreAdminView(){
  let v="bookings";try{v=sessionStorage.getItem("bexSuperAdminCurrentView")||"bookings"}catch(e){}
  const urlView=new URLSearchParams(location.search).get("view");if(urlView&&["bookings","zones","therapists","ratings","partners","therapist-money"].includes(urlView))v=urlView;
- if(["bookings","zones","therapists","ratings","partners"].includes(v)){showAdminView(v,{fromRestore:true,skipScroll:true});if(v==="partners")bpLoad()}
+ if(["bookings","zones","therapists","ratings","partners","therapist-money"].includes(v)){showAdminView(v,{fromRestore:true,skipScroll:true});if(v==="partners")bpLoad()}
 }
 
 async function bpCall(payload){const {data:{session:s}}=await sb.auth.getSession();if(!s)throw new Error("आपका Admin लॉगिन समाप्त हुआ है। कृपया एक बार दोबारा लॉगिन करें।");const r=await fetch(SUPABASE_URL+"/functions/v1/bex-partner-admin",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY,"Authorization":"Bearer "+s.access_token},body:JSON.stringify(payload)});const d=await r.json().catch(()=>({error:"Server response invalid"}));if(!r.ok)throw new Error(d.error||"Request failed");return d}
