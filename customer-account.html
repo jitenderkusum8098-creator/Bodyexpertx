@@ -102,6 +102,22 @@ init();
  // Keep Login / Register / Recover buttons as the only inner auth actions.
  const authTabs=auth.querySelector('.tabs');
  if(authTabs){authTabs.classList.remove('hidden');authTabs.querySelectorAll('.tab').forEach(b=>{b.style.minWidth='0'})}
+ todayPanel.addEventListener('click',async e=>{
+   const btn=e.target.closest('[data-customer-change]');if(!btn)return;
+   const card=btn.closest('.booking');const link=card&&card.querySelector('a[href*="tracking="]');if(!link)return;
+   const token=new URL(link.href,location.href).searchParams.get('tracking');if(!token)return;
+   const change=btn.dataset.customerChange;
+   if(change==='cancel'&&!confirm('Kya aap is booking ko cancel karna chahte hain?'))return;
+   let payload={action:'public-customer-change-booking',tracking_token:token,change};
+   if(change==='reschedule'){
+     const date=prompt('Nayi date likhein (YYYY-MM-DD)');if(!date)return;
+     const time=prompt('Naya time 24-hour format mein (HH:MM)');if(!time)return;
+     payload.appointment_date=date;payload.appointment_time=time;
+   }
+   btn.disabled=true;
+   try{const response=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':KEY},body:JSON.stringify(payload)});const result=await response.json();if(!response.ok)throw Error(result.error||'Booking update nahi hui');alert(result.message||(change==='cancel'?'Booking cancel ho gayi.':'Naya time save ho gaya.'));await init();renderToday()}
+   catch(err){alert(err.message||'Booking update nahi ho saki.');btn.disabled=false}
+ });
  function isToday(r){
    const b=r.booking||{};
    const raw=b.appointment_date||r.appointmentDate||b.created_at||r.createdAt||'';
