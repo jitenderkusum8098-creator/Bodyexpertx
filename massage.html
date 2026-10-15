@@ -2427,10 +2427,10 @@ async function loadAddressSuggestions(q){
    const button=document.createElement("button");button.type="button";button.className="bex-map-search-result";button.setAttribute("role","option");const strong=document.createElement("strong"),detail=document.createElement("span");strong.textContent=title;detail.textContent=label;button.append(strong,detail);
    button.addEventListener("click",()=>{searchInput.value=label;hideSuggestions();const lat=Number(coords[1]),lon=Number(coords[0]);if(Number.isFinite(lat)&&Number.isFinite(lon)){pin(lat,lon,label);mapStatus.textContent="Address select ho gaya. Exact ghar/building par center pin set karke Confirm & Continue dabayein."}});suggestionBox.appendChild(button);
   });
- }catch(e){if(seq===suggestionRequest&&!controller.signal.aborted)suggestionBox.innerHTML='<div class="bex-map-search-empty">Search abhi busy hai. Chhota address ya area/PIN code try karein.</div>'}
+ }catch(e){if(seq===suggestionRequest)suggestionBox.innerHTML='<div class="bex-map-search-empty">Search mein der ho rahi hai. Thoda chhota address ya area/PIN code try karein.</div>'}
  finally{clearTimeout(timeout)}
 }
-searchInput.addEventListener("input",()=>{clearTimeout(suggestionTimer);const q=searchInput.value.trim();if(q.length<3){if(suggestionController)suggestionController.abort();hideSuggestions();return}suggestionTimer=setTimeout(()=>loadAddressSuggestions(q),260)});
+searchInput.addEventListener("input",()=>{clearTimeout(suggestionTimer);if(suggestionController)suggestionController.abort();suggestionRequest++;const q=searchInput.value.trim();if(q.length<3){hideSuggestions();return}suggestionTimer=setTimeout(()=>loadAddressSuggestions(q),260)});
 searchInput.addEventListener("focus",()=>{if(searchInput.value.trim().length>=3&&suggestionBox.childElementCount)suggestionBox.hidden=false});
 document.addEventListener("click",e=>{if(!suggestionBox.contains(e.target)&&e.target!==searchInput)hideSuggestions()});
 function hideAddressSuggestions(){addressSuggestions.hidden=true;addressSuggestions.replaceChildren()}
@@ -2454,10 +2454,10 @@ async function fetchAddressSuggestions(q){
  const controller=addressSuggestController=new AbortController(),timeout=setTimeout(()=>controller.abort(),2200);
  addressSuggestions.hidden=false;addressSuggestions.innerHTML='<div class="bex-address-empty">Nearby addresses search ho rahe hain…</div>';
  try{let features=await photonFeatures(q,6,controller.signal);if(seq!==addressSuggestSequence)return;if(!features.length&&!/delhi|kishangarh|mehrauli|vasant kunj|india|1100\d{2}/i.test(q))features=await photonFeatures(q+", Kishangarh, Mehrauli, New Delhi, India",6,controller.signal);if(seq!==addressSuggestSequence)return;renderAddressSuggestions(features,q)}
- catch(e){if(seq===addressSuggestSequence&&!controller.signal.aborted){addressSuggestions.hidden=false;addressSuggestions.innerHTML='<div class="bex-address-empty">Search busy hai. Map par pin manually set kar sakte hain.</div>'}}
+ catch(e){if(seq===addressSuggestSequence){addressSuggestions.hidden=false;addressSuggestions.innerHTML='<div class="bex-address-empty">Search mein der ho rahi hai. Map par pin manually set kar sakte hain.</div>'}}
  finally{clearTimeout(timeout)}
 }
-addressInput.addEventListener("input",()=>{clearTimeout(addressSuggestTimer);$("bexLatitude").value="";$("bexLongitude").value="";$("bexLocationAccuracy").value="";$("bexOpenLocation").hidden=true;document.querySelector(".bex-location-panel").classList.remove("location-set");$("bexAddressMapPin").hidden=addressInput.value.trim().length<5;addressSuggestTimer=setTimeout(()=>fetchAddressSuggestions(addressInput.value),260)});
+addressInput.addEventListener("input",()=>{clearTimeout(addressSuggestTimer);if(addressSuggestController)addressSuggestController.abort();addressSuggestSequence++;$("bexLatitude").value="";$("bexLongitude").value="";$("bexLocationAccuracy").value="";$("bexOpenLocation").hidden=true;document.querySelector(".bex-location-panel").classList.remove("location-set");$("bexAddressMapPin").hidden=addressInput.value.trim().length<5;addressSuggestTimer=setTimeout(()=>fetchAddressSuggestions(addressInput.value),260)});
 addressInput.addEventListener("focus",()=>{if(addressInput.value.trim().length>=3)fetchAddressSuggestions(addressInput.value)});
 document.addEventListener("click",e=>{if(!addressSuggestions.contains(e.target)&&e.target!==addressInput)hideAddressSuggestions()});
 function openAddressPicker(){refreshSavedAddresses();pickerSaved.appendChild(savedAddressBox);savedAddressBox.hidden=false;addressPicker.hidden=false;pickerSearch.value="";pickerResults.hidden=true;pickerResults.replaceChildren();addressPicker.dataset.open="1";document.body.style.overflow="hidden";setTimeout(()=>pickerSearch.focus({preventScroll:true}),80)}
@@ -2492,10 +2492,10 @@ async function searchPickerAddress(q){
   if(seq!==pickerSearchSeq)return;renderPickerResults(results,q);
   if(!results.length){pickerResults.innerHTML='<div class="bex-address-empty">Exact address nahi mila. Area/landmark + Delhi ya PIN code likhein; zarurat ho to Add New Address karke map pin confirm karein.</div>';$("bexAddressMapPin").hidden=false}
   else $("bexAddressMapPin").hidden=true;
- }catch(e){if(seq===pickerSearchSeq&&!controller.signal.aborted)pickerResults.innerHTML='<div class="bex-address-empty">Search busy hai. Chhota address, area ya PIN code try karein.</div>'}
+ }catch(e){if(seq===pickerSearchSeq)pickerResults.innerHTML='<div class="bex-address-empty">Search mein der ho rahi hai. Chhota address, area ya PIN code try karein.</div>'}
  finally{clearTimeout(timeout)}
 }
-pickerSearch.addEventListener("input",()=>{clearTimeout(pickerSearchTimer);pickerSearchTimer=setTimeout(()=>searchPickerAddress(pickerSearch.value),260)});
+pickerSearch.addEventListener("input",()=>{clearTimeout(pickerSearchTimer);if(pickerSearchController)pickerSearchController.abort();pickerSearchSeq++;pickerSearchTimer=setTimeout(()=>searchPickerAddress(pickerSearch.value),260)});
 pickerSearch.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();clearTimeout(pickerSearchTimer);searchPickerAddress(pickerSearch.value)}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&addressPicker.dataset.open==="1")closeAddressPicker()});
 function readSavedAddresses(){try{const a=JSON.parse(localStorage.getItem(SAVED_ADDRESS_KEY)||"[]");return Array.isArray(a)?a.filter(x=>x&&typeof x.address==="string"):[]}catch(e){return []}}
