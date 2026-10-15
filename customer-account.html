@@ -71,7 +71,7 @@ records.forEach(r=>{
 })
 }
 function renderTherapists(){const box=$("therapistList");box.replaceChildren();const map=new Map();records.forEach(r=>{if(r.therapist&&r.booking?.status!=="cancelled"){const t=r.therapist;if(!map.has(t.id))map.set(t.id,{t,booking:r.booking})}});if(!map.size){box.innerHTML='<div class="empty" style="grid-column:1/-1">Abhi kisi saved booking par therapist assignment nahi mila. Assignment ke baad yahan profile aur rebook option dikhega.</div>';return}for(const {t,booking} of map.values()){const c=document.createElement("article");c.className="therapist-card";c.innerHTML='<img class="photo" src="'+esc(t.photo_url||"")+'" alt="Therapist photo" onerror="this.remove()"><h3>'+esc(t.display_name||"Therapist")+'</h3><p>'+esc(t.therapist_code||"")+' · '+esc(t.experience_years||0)+' years experience</p><div class="stars">'+(t.average_rating==null?"No published rating":"★ "+esc(t.average_rating)+" / 5 · "+esc(t.rating_count||0))+'</div><p style="margin-top:7px">Last service: '+esc(booking.service_name||"—")+'</p><button class="btn" data-rebook="'+esc(t.id)+'" data-service="'+esc(booking.service_type||"Massage")+'" data-tier="'+esc(booking.tier||"Prime")+'">Rebook therapist</button>';box.append(c)}box.querySelectorAll("[data-rebook]").forEach(b=>b.addEventListener("click",()=>{localStorage.setItem("bex_rebook_therapist_id",b.dataset.rebook);localStorage.setItem("bex_rebook_service_type",b.dataset.service);localStorage.setItem("bex_rebook_tier",b.dataset.tier);location.href="./index.html?rebookTherapist="+encodeURIComponent(b.dataset.rebook)+"&rebookService="+encodeURIComponent(b.dataset.service)+"&rebookTier="+encodeURIComponent(b.dataset.tier)+"#booking"}))}
-async function init(){const saved=read("bex_customer_bookings",[]).filter(x=>x&&x.trackingToken);if(!saved.length){records=[];renderBookings();renderTherapists();return}const results=await Promise.allSettled(saved.map(fetchBooking));records=results.filter(x=>x.status==="fulfilled").map(x=>x.value);renderBookings();renderTherapists();if(results.every(x=>x.status==="rejected")){$("bookingList").innerHTML='<div class="empty" style="grid-column:1/-1">Tracking links load nahi hue. Network check karke dobara page kholein.</div>'}}
+async function init(){const saved=read("bex_customer_bookings",[]).filter(x=>x&&x.trackingToken);if(!saved.length){records=[];renderBookings();renderTherapists();if(window.bexRefreshToday)window.bexRefreshToday();return}const results=await Promise.allSettled(saved.map(fetchBooking));records=results.filter(x=>x.status==="fulfilled").map(x=>x.value);renderBookings();renderTherapists();if(results.every(x=>x.status==="rejected")){$("bookingList").innerHTML='<div class="empty" style="grid-column:1/-1">Tracking links load nahi hue. Network check karke dobara page kholein.</div>'}if(window.bexRefreshToday)window.bexRefreshToday()}
 init();
 </script>
 <style id="bex-account-layout-update">
@@ -150,9 +150,10 @@ init();
    const b=r.booking||{};
    const raw=b.appointment_date||r.appointmentDate||b.created_at||r.createdAt||'';
    if(!raw)return false;
-   const d=new Date(raw);
-   if(Number.isNaN(d.getTime()))return String(raw).slice(0,10)===new Date().toISOString().slice(0,10);
-   const now=new Date();return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()&&d.getDate()===now.getDate();
+   const now=new Date(),today=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+   // Appointment dates are stored as YYYY-MM-DD; compare local calendar dates, not UTC.
+   if(/^\d{4}-\d{2}-\d{2}$/.test(String(raw).slice(0,10)))return String(raw).slice(0,10)===today;
+   const d=new Date(raw);return !Number.isNaN(d.getTime())&&d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()&&d.getDate()===now.getDate();
  }
  function renderToday(){
    const list=$('todayBookingList');if(!list)return;
@@ -165,9 +166,8 @@ init();
    const source=$('bookingList');list.replaceChildren(...Array.from(source.children).map(n=>n.cloneNode(true)));
    records=saved;renderBookings();
  }
- // Keep the Today list current after async booking load/status updates.
- const list=$('bookingList');
- if(list)new MutationObserver(()=>{if(active==='today')renderToday()}).observe(list,{childList:true,subtree:false});
+ // init() refreshes this panel after fresh booking data arrives. Avoid observing bookingList mutations because renderToday() re-renders those cards.
+ window.bexRefreshToday=renderToday;
  // Show the customer's saved name in a larger greeting.
  try{
    const p=JSON.parse(localStorage.getItem('bex_customer_profile')||'{}');
