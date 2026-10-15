@@ -116,14 +116,14 @@ Deno.serve(async (req: Request) => {
       const customer_gps_accuracy_meters = body.customer_gps_accuracy_meters === null || body.customer_gps_accuracy_meters === undefined || body.customer_gps_accuracy_meters === "" ? null : Math.max(0, Math.min(100000, Math.round(Number(body.customer_gps_accuracy_meters) || 0)));
       const appointment_date = String(body.appointment_date ?? "").slice(0, 10) || null;
       const appointment_time = String(body.appointment_time ?? "").slice(0, 30) || null;
-      // Enforce minimum 3-hour lead time on server using India timezone offset.
+      // Customers may choose any future date/time; no minimum 3-hour lead-time restriction.
       if (appointment_date && appointment_time) {
         const match = appointment_time.match(/^(\d{1,2}):(\d{2})/);
         if (!match) return json({ error: "Appointment time is invalid." }, 400);
         const hour = Number(match[1]); const minute = Number(match[2]);
         if (hour > 23 || minute > 59) return json({ error: "Appointment time is invalid." }, 400);
         const start = new Date(`${appointment_date}T${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00+05:30`);
-        if (!Number.isFinite(start.getTime()) || start.getTime() < Date.now() + 3 * 60 * 60 * 1000) return json({ error: "Booking live time se kam-se-kam 3 ghante baad ki honi chahiye. Kripya baad ka slot chunein." }, 400);
+        if (!Number.isFinite(start.getTime()) || start.getTime() < Date.now()) return json({ error: "Past date/time select nahi kar sakte. Aaj ya future ka time chunein." }, 400);
       }
       const service_type = String(body.service_type ?? "");
       const tier = String(body.tier ?? "");
@@ -213,16 +213,15 @@ Deno.serve(async (req: Request) => {
       if (bookingError) throw bookingError;
       if (!booking) return json({error:"Booking nahi mili."},404);
       if (["completed","cancelled","reached"].includes(booking.status) || booking.job_started_at) return json({error:"Is booking ka status ab change nahi ho sakta. Admin se sampark karein."},409);
-      if (booking.therapist_id && change==="cancel" && !policy.allow_cancel_after_therapist_accept) return json({error:"Therapist assign ho chuka hai; cancellation ke liye Admin se sampark karein."},409);
-      if (booking.therapist_id && change==="reschedule" && !policy.allow_reschedule_after_therapist_accept) return json({error:"Therapist assign ho chuka hai; reschedule ke liye Admin se sampark karein."},409);
-      const startMatch = String(booking.appointment_time||"").match(/^(\d{1,2}):(\d{2})/);
-      if (!booking.appointment_date || !startMatch) return json({error:"Booking ka time format verify nahi ho saka. Admin se sampark karein."},409);
-      const oldStart = new Date(String(booking.appointment_date)+"T"+String(Number(startMatch[1])).padStart(2,"0")+":"+startMatch[2]+":00+05:30");
-      const hoursLeft = (oldStart.getTime()-Date.now())/3600000;
-      const cutoff = change==="cancel" ? Number(policy.customer_cancel_cutoff_hours) : Number(policy.customer_reschedule_cutoff_hours);
-      if (hoursLeft < cutoff) return json({error:"Is booking mein customer ke liye "+cutoff+" ghante ki limit hai. Ab Admin se sampark karein."},409);
+      // Customer may cancel before therapist arrival/job start; record the selected reason for Admin.
+      // Reschedule is allowed regardless of whether a therapist was already assigned; the old assignment is cleared below.
+
+      // No customer cancellation cutoff; cancellation is allowed until therapist arrival/job start.
       if (change==="cancel") {
-        const { data: updated, error } = await admin.from("booking_assignments").update({status:"cancelled",cancelled_at:new Date().toISOString(),cancel_reason:"Customer self-service cancellation",updated_at:new Date().toISOString()}).eq("id",booking.id).not("status","in",'("completed","cancelled","reached")').select("id,reference_code,status,appointment_date,appointment_time").maybeSingle();
+        const allowedReasons = ["Therapist ne job ke liye mana kar diya","Therapist bahut late ho gaya","Main service baad mein lunga","Personal reason","Plan badal gaya","Other"];
+        const reason = String(body.cancel_reason ?? "").trim().slice(0,300);
+        if (!allowedReasons.includes(reason) && !reason.startsWith("Other: ")) return json({error:"Cancellation ka reason chunein."},400);
+        const { data: updated, error } = await admin.from("booking_assignments").update({status:"cancelled",cancelled_at:new Date().toISOString(),cancel_reason:reason,updated_at:new Date().toISOString()}).eq("id",booking.id).not("status","in",'("completed","cancelled","reached")').select("id,reference_code,status,appointment_date,appointment_time,cancel_reason").maybeSingle();
         if (error) throw error;
         if (!updated) return json({error:"Booking ka status badal gaya hai. Page refresh karke dekhein."},409);
         await admin.from("therapist_job_offers").update({response:"cancelled",responded_at:new Date().toISOString()}).eq("booking_id",booking.id).is("responded_at",null);
@@ -233,7 +232,7 @@ Deno.serve(async (req: Request) => {
       const tm=newTime.match(/^(\d{1,2}):(\d{2})/);
       if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)||!tm||Number(tm[1])>23||Number(tm[2])>59) return json({error:"Nayi date aur time sahi chunein."},400);
       const newStart=new Date(newDate+"T"+String(Number(tm[1])).padStart(2,"0")+":"+tm[2]+":00+05:30");
-      if (!Number.isFinite(newStart.getTime())||newStart.getTime()<Date.now()+3*3600000) return json({error:"Naya slot ab se kam-se-kam 3 ghante baad ka hona chahiye."},400);
+      if (!Number.isFinite(newStart.getTime())||newStart.getTime()<Date.now()) return json({error:"Past date/time select nahi kar sakte. Aaj ya future ka time chunein."},400);
       const { data: updated, error } = await admin.from("booking_assignments").update({appointment_date:newDate,appointment_time:newTime,status:"awaiting_whatsapp",therapist_id:null,updated_at:new Date().toISOString()}).eq("id",booking.id).not("status","in",'("completed","cancelled","reached")').select("id,reference_code,status,appointment_date,appointment_time,therapist_id").maybeSingle();
       if (error) throw error;
       if (!updated) return json({error:"Booking ka status badal gaya hai. Page refresh karke dekhein."},409);
@@ -261,7 +260,7 @@ Deno.serve(async (req: Request) => {
       if (accessError) throw accessError;
       if (!access || new Date(access.expires_at).getTime() < Date.now()) return json({ error: "यह tracking link expired या invalid है। कृपया booking confirmation message से नया link खोलें।" }, 404);
       const { data: booking, error: bookingError } = await admin.from("booking_assignments")
-        .select("id,reference_code,service_type,tier,service_name,appointment_date,appointment_time,status,booking_amount,customer_name,customer_phone,customer_address,therapist_id,preferred_therapist_id,created_at")
+        .select("id,reference_code,service_type,tier,service_name,service_details,appointment_date,appointment_time,status,booking_amount,customer_name,customer_phone,customer_address,therapist_id,preferred_therapist_id,created_at,job_started_at,job_ended_at,therapist_arrived_at,job_accepted_at,payment_method")
         .eq("id", access.booking_id).maybeSingle();
       if (bookingError) throw bookingError;
       if (!booking) return json({ error: "Booking नहीं मिली।" }, 404);
@@ -287,11 +286,36 @@ Deno.serve(async (req: Request) => {
         .select("rating,review,status,created_at").eq("booking_reference", booking.reference_code).order("created_at", { ascending: false }).limit(1);
       if (customerRatingError) throw customerRatingError;
       const customerRating = (customerRatings ?? [])[0] ?? null;
+      const { data: codeRow, error: codeError } = await admin.from("booking_completion_codes").select("completion_code").eq("booking_id", booking.id).maybeSingle();
+      if (codeError) throw codeError;
+      const serviceDurationMinutes = Array.isArray(booking.service_details) ? booking.service_details.reduce((sum: number, item: any) => sum + Math.max(0, Number(item?.duration) || 0), 0) : 0;
       return json({ booking: { reference_code: booking.reference_code, service_type: booking.service_type, tier: booking.tier,
-        service_name: booking.service_name, appointment_date: booking.appointment_date, appointment_time: booking.appointment_time,
-        status: booking.status, booking_amount: booking.booking_amount, created_at: booking.created_at,
+        service_name: booking.service_name, service_details: booking.service_details ?? [], service_duration_minutes: serviceDurationMinutes,
+        appointment_date: booking.appointment_date, appointment_time: booking.appointment_time,
+        status: booking.status, booking_amount: booking.booking_amount, created_at: booking.created_at, job_started_at: booking.job_started_at ?? null,
+        job_ended_at: booking.job_ended_at ?? null, therapist_arrived_at: booking.therapist_arrived_at ?? null, job_accepted_at: booking.job_accepted_at ?? null, payment_method: booking.payment_method ?? null,
+        completion_code: codeRow?.completion_code ?? null,
         preferred_therapist_id: booking.preferred_therapist_id ?? null,
-        customer_rating: customerRating ? { rating: customerRating.rating, review: customerRating.review, created_at: customerRating.created_at } : null }, therapist });
+        customer_rating: customerRating ? { rating: customerRating.rating, review: customerRating.review, status: customerRating.status, created_at: customerRating.created_at } : null }, therapist });
+    }
+    if (action === "public-submit-booking-rating") {
+      const token=String(body.tracking_token??"").trim();
+      const rating=Number(body.rating);
+      const review=String(body.review??"").trim().slice(0,1000);
+      if(!/^[a-f0-9]{64}$/i.test(token))return json({error:"Booking link invalid hai."},400);
+      if(!Number.isInteger(rating)||rating<1||rating>5)return json({error:"1 se 5 stars tak rating chunein."},400);
+      const {data:access,error:accessError}=await admin.from("customer_booking_tracking_access").select("booking_id,expires_at").eq("token_hash",await hashToken(token)).maybeSingle();
+      if(accessError)throw accessError;
+      if(!access||new Date(access.expires_at).getTime()<Date.now())return json({error:"Booking link invalid ya expire ho gaya hai."},404);
+      const {data:booking,error:bookingError}=await admin.from("booking_assignments").select("id,reference_code,therapist_id,status").eq("id",access.booking_id).maybeSingle();
+      if(bookingError)throw bookingError;
+      if(!booking||booking.status!=="completed"||!booking.therapist_id)return json({error:"Therapist rating job complete hone ke baad hi di ja sakti hai."},409);
+      const {data:prior,error:priorError}=await admin.from("therapist_ratings").select("id,status").eq("booking_reference",booking.reference_code).eq("therapist_id",booking.therapist_id).limit(1);
+      if(priorError)throw priorError;
+      if(prior?.length)return json({error:"Is booking ke liye rating pehle hi submit ho chuki hai."},409);
+      const {error:insertError}=await admin.from("therapist_ratings").insert({therapist_id:booking.therapist_id,rating,review:review||null,booking_reference:booking.reference_code,status:"pending"});
+      if(insertError)throw insertError;
+      return json({success:true,message:"Dhanyavaad! Aapki rating Admin approval ke liye submit ho gayi hai."});
     }
     if (action === "public-zones") {
       const { data, error } = await admin.from("zones").select("id,name,description,boundary_geojson,center_lat,center_lng").eq("active", true).order("name");
@@ -509,20 +533,23 @@ Deno.serve(async (req: Request) => {
     if (action === "admin-list-bookings") {
       await requireRole(req, ["admin", "super_admin", "superadmin"]);
       const { data: bookings, error } = await admin.from("booking_assignments")
-        .select("id,reference_code,zone_id,therapist_id,service_type,tier,service_name,appointment_date,appointment_time,status,booking_amount,customer_name,customer_phone,customer_age,recipient_gender,visit_type,customer_address,service_details,discount_amount,coupon_code,customer_notes,customer_type,preferred_pressure,main_concern,source,cancelled_at,cancel_reason,created_at,updated_at,payment_verified,payment_verified_at,customer_latitude,customer_longitude,customer_landmark")
+        .select("id,reference_code,zone_id,therapist_id,service_type,tier,service_name,appointment_date,appointment_time,status,booking_amount,customer_name,customer_phone,customer_age,recipient_gender,visit_type,customer_address,service_details,discount_amount,coupon_code,customer_notes,customer_type,preferred_pressure,main_concern,source,cancelled_at,cancel_reason,created_at,updated_at,payment_verified,payment_verified_at,customer_latitude,customer_longitude,customer_landmark,job_accepted_at,therapist_arrived_at,job_started_at,job_ended_at,payment_method,status_history")
         .order("created_at", { ascending: false }).limit(1000);
       if (error) throw error;
       const therapistIds = [...new Set((bookings ?? []).map((b:any) => b.therapist_id).filter(Boolean))];
       const zoneIds = [...new Set((bookings ?? []).map((b:any) => b.zone_id).filter(Boolean))];
-      const [{ data: therapists, error: therapistError }, { data: zones, error: zoneError }] = await Promise.all([
+      const [{ data: therapists, error: therapistError }, { data: zones, error: zoneError }, { data: customerRatings, error: customerRatingsError }] = await Promise.all([
         therapistIds.length ? admin.from("therapists").select("id,display_name,therapist_code,phone").in("id", therapistIds) : Promise.resolve({data:[],error:null}),
-        zoneIds.length ? admin.from("zones").select("id,name").in("id", zoneIds) : Promise.resolve({data:[],error:null})
+        zoneIds.length ? admin.from("zones").select("id,name").in("id", zoneIds) : Promise.resolve({data:[],error:null}),
+        (bookings??[]).length ? admin.from("customer_ratings").select("booking_id,rating,tags,review,created_at").in("booking_id",(bookings??[]).map((b:any)=>b.id)) : Promise.resolve({data:[],error:null})
       ]);
       if (therapistError) throw therapistError;
       if (zoneError) throw zoneError;
+      if (customerRatingsError) throw customerRatingsError;
       const therapistMap = Object.fromEntries((therapists ?? []).map((t:any) => [t.id, t]));
       const zoneMap = Object.fromEntries((zones ?? []).map((z:any) => [z.id, z]));
-      return json({ bookings: (bookings ?? []).map((b:any) => ({...b, therapist: therapistMap[b.therapist_id] ?? null, zone: zoneMap[b.zone_id] ?? null})) });
+      const customerRatingMap = Object.fromEntries((customerRatings ?? []).map((r:any) => [r.booking_id, r]));
+      return json({ bookings: (bookings ?? []).map((b:any) => ({...b, therapist: therapistMap[b.therapist_id] ?? null, zone: zoneMap[b.zone_id] ?? null, customer_rating: customerRatingMap[b.id] ?? null})) });
     }
     if (action === "admin-list") {
       await requireRole(req, ["admin"]);
@@ -539,13 +566,18 @@ Deno.serve(async (req: Request) => {
       const assignments: unknown[] = [];
       for (let offset = 0; ; offset += 1000) {
         const { data: page, error: pageError } = await admin.from("booking_assignments")
-          .select("id,reference_code,zone_id,therapist_id,service_type,tier,service_name,appointment_date,appointment_time,status,booking_amount,customer_name,customer_phone,customer_age,recipient_gender,visit_type,customer_address,service_details,discount_amount,coupon_code,customer_notes,customer_type,preferred_pressure,main_concern,source,cancelled_at,cancel_reason,created_at,updated_at")
+          .select("id,reference_code,zone_id,therapist_id,service_type,tier,service_name,appointment_date,appointment_time,status,booking_amount,customer_name,customer_phone,customer_age,recipient_gender,visit_type,customer_address,service_details,discount_amount,coupon_code,customer_notes,customer_type,preferred_pressure,main_concern,source,cancelled_at,cancel_reason,created_at,updated_at,job_accepted_at,therapist_arrived_at,job_started_at,job_ended_at,payment_method,status_history")
           .order("created_at", { ascending: false }).range(offset, offset + 999);
         if (pageError) throw pageError;
         assignments.push(...(page ?? []));
         if (!page || page.length < 1000) break;
       }
-      return json({ therapists: therapists ?? [], ratings: ratings ?? [], zones: zones ?? [], therapist_zones: therapistZones ?? [], assignments });
+      const assignmentIds=(assignments as any[]).map((a:any)=>a.id).filter(Boolean);
+      const {data:customerRatings,error:customerRatingsError}=assignmentIds.length?await admin.from("customer_ratings").select("booking_id,rating,tags,review,created_at").in("booking_id",assignmentIds):{data:[],error:null};
+      if(customerRatingsError)throw customerRatingsError;
+      const customerRatingMap=Object.fromEntries((customerRatings??[]).map((r:any)=>[r.booking_id,r]));
+      const assignmentsWithFeedback=(assignments as any[]).map((a:any)=>({...a,customer_rating:customerRatingMap[a.id]??null}));
+      return json({ therapists: therapists ?? [], ratings: ratings ?? [], zones: zones ?? [], therapist_zones: therapistZones ?? [], assignments:assignmentsWithFeedback });
     }
     if (action === "admin-create-zone") {
       await requireRole(req, ["admin"]);
