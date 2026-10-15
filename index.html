@@ -1234,6 +1234,8 @@ function renderCart(){
   document.getElementById("couponStatus").style.color="var(--gold2)";
  }
 }
+function getSavedCustomerProfile(){try{return JSON.parse(localStorage.getItem("bex_customer_profile")||"{}")}catch(e){return {}}}
+function getSavedCustomerCoordinates(){const p=getSavedCustomerProfile();const current=(document.getElementById("address")?.value||"").trim();return current&&current===(p.address||"").trim()?p:{}}
 function toggleAddress(){const on=document.getElementById("visit").value==="Home service";document.getElementById("addressField").hidden=!on;document.getElementById("address").required=on}
 document.getElementById("bookingForm").addEventListener("submit",async function(e){e.preventDefault();const status=document.getElementById("formStatus");if(!cart.length){status.textContent="Please add a massage or add-on first.";return}const total=finalPrice();const hasOffer=cart.some(x=>x.type==="offer");if(hasOffer&&couponApplied){status.textContent="Coupons cannot be combined with the ₹399 first-booking offer. Remove the coupon to continue.";return}const isOffer=cart.some(x=>x.type==="offer");if(total<400&&!isOffer){status.textContent="Minimum booking value is ₹400. The ₹399 first-booking offer is allowed when booked alone.";return}const date=document.getElementById("date").value;const time=document.getElementById("time").value;if(!date||!time){status.textContent="Please choose a booking date and time.";return}const bookingStart=new Date(date+"T"+time+":00+05:30");const minBookingStart=new Date(Date.now()+3*60*60*1000);if(Number.isNaN(bookingStart.getTime())||bookingStart.getTime()<minBookingStart.getTime()){status.textContent="Booking live time se kam-se-kam 3 ghante baad ki honi chahiye. Kripya baad ka slot chunein.";document.getElementById("time").focus();return}let details="✨ *NEW BOOKING — BODYEXPERTX* ✨\n\n"+
 "👤 *Name:* "+document.getElementById("name").value+"\n"+
@@ -1269,8 +1271,8 @@ try{
    recipient_gender:document.getElementById("recipientGender").value,
    visit_type:document.getElementById("visit").value,
    customer_address:document.getElementById("visit").value==="Home service"?document.getElementById("address").value:"",
-   customer_latitude:document.getElementById("visit").value==="Home service"?(JSON.parse(localStorage.getItem("bex_customer_profile")||"{}").latitude??null):null,
-   customer_longitude:document.getElementById("visit").value==="Home service"?(JSON.parse(localStorage.getItem("bex_customer_profile")||"{}").longitude??null):null,
+   customer_latitude:document.getElementById("visit").value==="Home service"?(getSavedCustomerCoordinates().latitude??null):null,
+   customer_longitude:document.getElementById("visit").value==="Home service"?(getSavedCustomerCoordinates().longitude??null):null,
    appointment_date:date,
    appointment_time:document.getElementById("time").value,
    service_type:selectedDepartment==="SALON"?"Salon":"Massage",
