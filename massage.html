@@ -2773,5 +2773,72 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
   else initBexBookingWizard();
 })();
 </script>
+
+<script id="bex-home-address-auto-save">
+(function(){
+  "use strict";
+  const $=id=>document.getElementById(id);
+  const KEY="bex_saved_addresses_v1";
+  function read(){
+    try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(v)?v:[];}catch(e){return [];}
+  }
+  function write(list){try{localStorage.setItem(KEY,JSON.stringify(list.slice(0,10)));}catch(e){}}
+  function latest(){
+    const list=read().filter(x=>x&&x.address&&x.lat!=null&&x.lon!=null);
+    return list.sort((a,b)=>(Number(b.savedAt)||0)-(Number(a.savedAt)||0))[0]||null;
+  }
+  function fill(a){
+    if(!a)return false;
+    const set=(id,v)=>{const el=$(id);if(el&&v!=null&&String(v).trim())el.value=String(v);};
+    set("address",a.address);set("bexHouseNumber",a.house);set("bexStreetAddress",a.street);
+    set("bexFullAddress",a.fullAddress);set("bexAddressLabel",a.label||"My Home");
+    set("bexCustomAddressLabel",a.customLabel);set("landmark",a.landmark);
+    set("bexLatitude",a.lat);set("bexLongitude",a.lon);
+    const address=$("address");if(address)address.readOnly=true;
+    const link=$("bexOpenLocation");
+    if(link){link.href="https://www.google.com/maps?q="+encodeURIComponent(a.lat+","+a.lon);link.hidden=false;}
+    const panel=document.querySelector(".bex-location-panel");if(panel)panel.classList.add("location-set");
+    const status=$("bexLocationStatus");if(status)status.textContent="✓ Aapka saved Home Visit address aur map pin load ho gaya. Zarurat ho to Map se badal sakte hain.";
+    return true;
+  }
+  function saveCurrent(){
+    if(($("visit")||{}).value!=="Home service")return;
+    const address=($("address")||{}).value?.trim()||"";
+    const house=($("bexHouseNumber")||{}).value?.trim()||"";
+    const street=($("bexStreetAddress")||{}).value?.trim()||"";
+    const fullAddress=($("bexFullAddress")||{}).value?.trim()||"";
+    const lat=Number(($("bexLatitude")||{}).value),lon=Number(($("bexLongitude")||{}).value);
+    if(!address||!house||!street||!fullAddress||!Number.isFinite(lat)||!Number.isFinite(lon)||!($("bexLatitude")||{}).value||!($("bexLongitude")||{}).value)return;
+    const label=($("bexAddressLabel")||{}).value||"My Home";
+    const item={title:label==="Other"?(($("bexCustomAddressLabel")||{}).value.trim()||"Saved address"):label,address,house,street,fullAddress,
+      customLabel:($("bexCustomAddressLabel")||{}).value?.trim()||"",label,landmark:($("landmark")||{}).value?.trim()||"",lat,lon,savedAt:Date.now()};
+    let list=read().filter(x=>!(x&&x.address===address&&String(x.lat)===String(lat)&&String(x.lon)===String(lon)));
+    list.unshift(item);write(list);
+  }
+  function chooseVisit(){
+    if(($("visit")||{}).value!=="Home service")return;
+    const hasPin=!!(($("bexLatitude")||{}).value&&($("bexLongitude")||{}).value);
+    const hasAddress=!!(($("address")||{}).value.trim());
+    if(!hasPin&&!hasAddress)fill(latest());
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    const visit=$("visit");
+    if(visit)visit.addEventListener("change",chooseVisit);
+    ["bexHouseNumber","bexStreetAddress","bexFullAddress","bexAddressLabel","bexCustomAddressLabel","landmark"].forEach(id=>{
+      const el=$(id);if(el){el.addEventListener("change",saveCurrent);el.addEventListener("blur",saveCurrent);}
+    });
+    ["bexLatitude","bexLongitude"].forEach(id=>{const el=$(id);if(el)el.addEventListener("change",saveCurrent);});
+    const address=$("address");
+    if(address)address.addEventListener("change",saveCurrent);
+    const form=$("bookingForm");
+    if(form)form.addEventListener("submit",saveCurrent,true);
+    // Restore a previously saved address only when the customer selects Home Visit;
+    // never overwrite a location they are currently entering or choosing.
+    chooseVisit();
+  },{once:true});
+  window.bexSaveHomeAddressAutomatically=saveCurrent;
+})();
+</script>
+
 </body>
 </html>
