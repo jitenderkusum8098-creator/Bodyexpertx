@@ -95,6 +95,7 @@ init();
  controls.id='accountMainButtons';
  controls.innerHTML='<button type="button" class="tab" data-open="login">🔑 Login</button><button type="button" class="tab" data-open="bookings">📚 My Booking</button><button type="button" class="tab" data-open="today">📅 Today Booking</button>';
  $('authPanel').before(controls);
+ const therapistSign=document.createElement('a');therapistSign.href='./therapist-panel.html';therapistSign.className='tab';therapistSign.textContent='🧑‍⚕️ Therapist Sign In';therapistSign.style.cssText='display:flex;align-items:center;justify-content:center;text-decoration:none;border:1px solid #c58b22;border-radius:12px;padding:12px;margin:0 0 16px;color:#9b6a12;font-weight:850;background:#fffaf0';controls.after(therapistSign);
  auth.hidden=true;bookings.hidden=true;if(profile)profile.hidden=true;if(therapists)therapists.hidden=true;
  const todayPanel=document.createElement('section');
  todayPanel.id='todayBookingsPanel';todayPanel.className='panel';todayPanel.hidden=true;
