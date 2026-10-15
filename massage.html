@@ -1768,14 +1768,31 @@ article.service .bx-massage-photo img {
  if(!btn||btn.dataset.bound)return; btn.dataset.bound='1';
  btn.addEventListener('click',function(){
   const readProfile=k=>{try{return JSON.parse(localStorage.getItem(k)||'{}')}catch(e){return {}}};
-  const p=Object.assign({},readProfile('bex_customer_profile'),readProfile('bex_customer_remote_profile'));
-  const fields={name:p.name,phone:p.phone||p.mobile,age:p.age,recipientGender:p.gender||p.recipientGender};
+  // My Account's saved profile is the source of truth; remote profile only fills missing fields.
+  const p=Object.assign({},readProfile('bex_customer_remote_profile'),readProfile('bex_customer_profile'));
+  const set=(id,value)=>{const el=document.getElementById(id);if(!el||value===undefined||value===null||String(value).trim()==='')return false;el.value=String(value);el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));return true;};
   let filled=0;
-  Object.entries(fields).forEach(([id,value])=>{const el=document.getElementById(id);if(el&&value!==undefined&&value!==null&&String(value).trim()!==''){el.value=String(value);el.dispatchEvent(new Event('change',{bubbles:true}));filled++;}});
+  [['name',p.name],['phone',p.phone||p.mobile],['age',p.age],['recipientGender',p.gender||p.recipientGender]].forEach(([id,v])=>{if(set(id,v))filled++;});
   const type=document.getElementById('customerType');if(type){type.value='Returning customer';type.dispatchEvent(new Event('change',{bubbles:true}));}
+  // Copy the saved My Account address and location pin into Home Visit fields.
+  const savedAddress=String(p.address||p.full_address||'').trim();
+  if(savedAddress){
+   set('address',savedAddress);set('bexFullAddress',savedAddress);filled++;
+   const visit=document.getElementById('visit');
+   if(visit&&visit.value==='Home service'){
+    const addr=document.getElementById('address');if(addr)addr.readOnly=true;
+   }
+  }
+  if(p.latitude!==undefined&&p.latitude!==null&&p.longitude!==undefined&&p.longitude!==null){
+   set('bexLatitude',p.latitude);set('bexLongitude',p.longitude);
+   const link=document.getElementById('bexOpenLocation');
+   if(link){link.href='https://www.google.com/maps?q='+encodeURIComponent(p.latitude+','+p.longitude);link.hidden=false;}
+   filled++;
+  }
+  if(p.maps_url)set('bexMapsUrl',p.maps_url);
   const msg=document.getElementById('alreadyRegisteredBookingMsg');
-  if(filled){if(msg)msg.textContent='Aapki saved details bhar di gayi hain. Booking aage continue karein.';}
-  else{if(msg)msg.textContent='Is browser mein saved profile nahi mili. Pehle My Account par login karke profile save karein, phir yahan try karein.';}
+  if(filled){if(msg)msg.textContent='My Account ki saved details bhar di gayi hain. Home Visit chuna hai toh address aur location verify kar lein, phir booking continue karein.';}
+  else{if(msg)msg.textContent='My Account ki saved profile is browser mein nahi mili. My Account mein login karke details save karein, phir yahan dobara try karein.';}
  });
 })();
 </script>
