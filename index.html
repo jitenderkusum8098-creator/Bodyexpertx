@@ -1415,7 +1415,7 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
   const header=document.querySelector("header .nav");
   const links=document.querySelector("header .links");
   function makeGreeting(){
-   const name=(profile.name||"").trim().split(/\\s+/)[0];
+   const name=(profile.name||"").trim().split(/\s+/)[0];
    return name ? "Hi, "+name+" 👋" : "";
   }
   const mobileGreeting=header&&header.querySelector(".bx-nav-account-mobile");
