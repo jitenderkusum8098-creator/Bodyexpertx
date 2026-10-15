@@ -568,6 +568,7 @@ body.therapist-detail-page #therapistDetailPage{display:block!important}
   <button type="button" data-view="therapists"><span class="nav-icon">♙</span> All Therapists</button>
   <button type="button" data-view="ratings"><span class="nav-icon">★</span> Ratings & Reviews</button>
   <button type="button" data-view="partners"><span class="nav-icon">🤝</span> BEX Partner</button>
+  <button type="button" data-view="therapist-money"><span class="nav-icon">₹</span> Therapist Wallet & Approval</button>
 </nav>
 <div id="adminContent">
 <section id="adminTools" class="card hidden therapist-create-card">
@@ -645,6 +646,24 @@ body.therapist-detail-page #therapistDetailPage{display:block!important}
 </section>
 <section id="ratingsSection" class="card"><div class="row"><h2 id="ratingHeading">Customer Ratings Approval</h2><button id="refreshRatings" class="btn alt right" type="button">↻ Refresh Ratings</button></div><p class="muted small">Customer की भेजी हुई ratings पहले Pending में आती हैं। जाँचकर Approve करें; तभी Therapist की profile में rating दिखेगी।</p><div id="ratingModerationSummary" class="rating-moderation-summary"></div><div class="rating-filter-row" role="group" aria-label="Rating status filter"><button type="button" class="rating-filter active" data-rating-filter="pending">⏳ Pending <span id="pendingRatingCount">0</span></button><button type="button" class="rating-filter" data-rating-filter="published">✓ Published <span id="publishedRatingCount">0</span></button><button type="button" class="rating-filter" data-rating-filter="rejected">✕ Rejected <span id="rejectedRatingCount">0</span></button><button type="button" class="rating-filter" data-rating-filter="all">All Ratings <span id="allRatingCount">0</span></button></div><div id="ratingList"><div class="empty">Login के बाद ratings यहां दिखेंगी।</div></div></section>
 <section id="therapistListCard" class="card hidden"><h2>All Therapists</h2><p class="muted small">Review therapist profiles, ratings, contact details and approval status.</p><section class="card"><h3>Pending Therapist Approvals <span id="pendingTherapistCount" class="status-pill">0</span></h3><p class="muted small">New therapist profiles remain unavailable for customer assignment until approved.</p><div id="pendingTherapistList" class="item-list"></div></section><section class="card"><h3>Five-Star Therapists</h3><div id="fiveStarTherapistList" class="item-list"></div></section><section class="card"><h3>All Therapist Profiles</h3><div id="therapistList" class="item-list"></div></section></section>
+<section id="therapistMoneySection" class="card hidden">
+<h2>Therapist Work Plan, Commission & Wallet</h2><p class="muted small">Commission, Salary, Wallet, Profile Approval, Portfolio aur private messages. Existing bookings/earnings ko change nahi kiya jata.</p>
+<div class="grid">
+<label class="field"><span>Therapist search</span><select id="tmTherapistSelect"><option value="">Therapist चुनें</option></select></label>
+<label class="field"><span>Work Plan</span><select id="tmWorkPlan"><option value="commission">Commission Based</option><option value="salary">Salary Based</option></select></label>
+<label class="field"><span>Commission type</span><select id="tmCommissionType"><option value="percent">Percentage (%)</option><option value="fixed">Fixed ₹ per completed job</option></select></label>
+<label class="field"><span>Commission value</span><input id="tmCommissionValue" type="number" min="0" step="0.01" value="30"></label>
+<label class="field"><span>Monthly Salary ₹</span><input id="tmSalary" type="number" min="0" step="1" value="0"></label>
+<button type="button" class="btn" id="tmSaveSettings">Save Commission / Salary Settings</button>
+</div><p id="tmSettingsMsg" class="msg hidden"></p>
+<div class="grid"><label class="field"><span>Wallet amount ₹ (Add positive / Deduct negative)</span><input id="tmWalletAmount" type="number" step="0.01" placeholder="e.g. 500 or -100"></label><label class="field"><span>Reason (required)</span><input id="tmWalletReason" maxlength="300" placeholder="Recharge / adjustment reason"></label><label class="field"><span>Payment mode</span><select id="tmWalletMode"><option value="admin">Admin adjustment</option><option value="cash">Cash</option><option value="online">Online verified</option></select></label><button type="button" class="btn" id="tmWalletApply">Apply Wallet Add / Deduct</button></div><p id="tmWalletMsg" class="msg hidden"></p>
+<section class="card"><h3>Pending Profile / Zone Change Requests</h3><div id="tmProfileRequests" class="item-list"></div></section>
+<section class="card"><h3>Pending Qualifications & Portfolio</h3><div id="tmPortfolioRequests" class="item-list"></div></section>
+<section class="card"><h3>Pending Work Plan Requests</h3><div id="tmWorkRequests" class="item-list"></div></section>
+<section class="card"><h3>Wallet Recharge Requests</h3><div id="tmRechargeRequests" class="item-list"></div></section>
+<section class="card"><h3>Therapist Admin Inbox</h3><div id="tmMessages" class="item-list"></div></section>
+<section class="card"><h3>Selected Therapist Wallet History</h3><div id="tmWalletHistory" class="item-list"></div></section>
+</section>
 </div>
 </div>
 </div>
@@ -678,11 +697,13 @@ function showAdminView(view,options={}){
   zones:["zoneTools","assignmentTools"],
   therapists:["adminTools","therapistListCard","linkTools"],
   ratings:["ratingsSection"],
-  partners:["partnerTools"]
+  partners:["partnerTools"],
+  "therapist-money":["therapistMoneySection"]
  };
- const all=["bookingManagement","zoneTools","assignmentTools","adminTools","therapistListCard","linkTools","ratingsSection","partnerTools"];
+ const all=["bookingManagement","zoneTools","assignmentTools","adminTools","therapistListCard","linkTools","ratingsSection","partnerTools","therapistMoneySection"];
  all.forEach(id=>{const el=$(id);if(el)el.classList.add("hidden")});
  (groups[view]||groups.bookings).forEach(id=>{const el=$(id);if(el)el.classList.remove("hidden")});
+ if(view==="therapist-money"){tmLoad();}
  if(view==="zones"){
   const zoneSection=$("zoneTools");
   if(zoneSection)zoneSection.classList.remove("hidden");
@@ -694,10 +715,10 @@ function showAdminView(view,options={}){
  const content=$("adminContent");if(content&&!options.skipScroll)content.scrollIntoView({behavior:"smooth",block:"start"});
 }
 document.querySelectorAll("#adminNav [data-view]").forEach(b=>b.addEventListener("click",()=>{showAdminView(b.dataset.view);if(b.dataset.view==="partners")bpLoad()}));
-window.addEventListener("popstate",()=>{const v=history.state?.bexAdminView; if(v&&["bookings","zones","therapists","ratings","partners"].includes(v)){showAdminView(v,{fromRestore:true,skipScroll:true});if(v==="partners")bpLoad()}});
+window.addEventListener("popstate",()=>{const v=history.state?.bexAdminView; if(v&&["bookings","zones","therapists","ratings","partners","therapist-money"].includes(v)){showAdminView(v,{fromRestore:true,skipScroll:true});if(v==="partners")bpLoad()}});
 function restoreAdminView(){
  let v="bookings";try{v=sessionStorage.getItem("bexSuperAdminCurrentView")||"bookings"}catch(e){}
- const urlView=new URLSearchParams(location.search).get("view");if(urlView&&["bookings","zones","therapists","ratings","partners"].includes(urlView))v=urlView;
+ const urlView=new URLSearchParams(location.search).get("view");if(urlView&&["bookings","zones","therapists","ratings","partners","therapist-money"].includes(urlView))v=urlView;
  if(["bookings","zones","therapists","ratings","partners"].includes(v)){showAdminView(v,{fromRestore:true,skipScroll:true});if(v==="partners")bpLoad()}
 }
 
