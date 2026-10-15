@@ -2779,61 +2779,66 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
   "use strict";
   const $=id=>document.getElementById(id);
   const KEY="bex_saved_addresses_v1";
-  function read(){
-    try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(v)?v:[];}catch(e){return [];}
-  }
-  function write(list){try{localStorage.setItem(KEY,JSON.stringify(list.slice(0,10)));}catch(e){}}
-  function latest(){
-    const list=read().filter(x=>x&&x.address&&x.lat!=null&&x.lon!=null);
-    return list.sort((a,b)=>(Number(b.savedAt)||0)-(Number(a.savedAt)||0))[0]||null;
-  }
+  const API="https://myjstwbpmbrhaiwytpnq.supabase.co/functions/v1/customer-account-auth";
+  const API_KEY="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy";
+  let remoteTimer=null,remoteLoading=false;
+  function read(){try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(v)?v:[]}catch(e){return []}}
+  function write(list){try{localStorage.setItem(KEY,JSON.stringify(list.slice(0,10)))}catch(e){}}
+  function session(){try{return JSON.parse(localStorage.getItem("bex_customer_session")||"null")}catch(e){return null}}
+  function latest(){return read().filter(x=>x&&x.address&&x.lat!=null&&x.lon!=null).sort((a,b)=>(Number(b.savedAt)||0)-(Number(a.savedAt)||0))[0]||null}
   function fill(a){
-    if(!a)return false;
-    const set=(id,v)=>{const el=$(id);if(el&&v!=null&&String(v).trim())el.value=String(v);};
+    if(!a||!a.address)return false;
+    const set=(id,v)=>{const el=$(id);if(el&&v!=null&&String(v).trim())el.value=String(v)};
     set("address",a.address);set("bexHouseNumber",a.house);set("bexStreetAddress",a.street);
     set("bexFullAddress",a.fullAddress);set("bexAddressLabel",a.label||"My Home");
     set("bexCustomAddressLabel",a.customLabel);set("landmark",a.landmark);
     set("bexLatitude",a.lat);set("bexLongitude",a.lon);
     const address=$("address");if(address)address.readOnly=true;
     const link=$("bexOpenLocation");
-    if(link){link.href="https://www.google.com/maps?q="+encodeURIComponent(a.lat+","+a.lon);link.hidden=false;}
+    if(link&&a.lat!=null&&a.lon!=null){link.href=a.mapsUrl||("https://www.google.com/maps?q="+encodeURIComponent(a.lat+","+a.lon));link.hidden=false}
     const panel=document.querySelector(".bex-location-panel");if(panel)panel.classList.add("location-set");
     const status=$("bexLocationStatus");if(status)status.textContent="✓ Aapka saved Home Visit address aur map pin load ho gaya. Zarurat ho to Map se badal sakte hain.";
     return true;
   }
-  function saveCurrent(){
-    if(($("visit")||{}).value!=="Home service")return;
-    const address=($("address")||{}).value?.trim()||"";
-    const house=($("bexHouseNumber")||{}).value?.trim()||"";
-    const street=($("bexStreetAddress")||{}).value?.trim()||"";
-    const fullAddress=($("bexFullAddress")||{}).value?.trim()||"";
+  function current(){
+    const address=($("address")||{}).value?.trim()||"",house=($("bexHouseNumber")||{}).value?.trim()||"",street=($("bexStreetAddress")||{}).value?.trim()||"",fullAddress=($("bexFullAddress")||{}).value?.trim()||"";
     const lat=Number(($("bexLatitude")||{}).value),lon=Number(($("bexLongitude")||{}).value);
-    if(!address||!house||!street||!fullAddress||!Number.isFinite(lat)||!Number.isFinite(lon)||!($("bexLatitude")||{}).value||!($("bexLongitude")||{}).value)return;
-    const label=($("bexAddressLabel")||{}).value||"My Home";
-    const item={title:label==="Other"?(($("bexCustomAddressLabel")||{}).value.trim()||"Saved address"):label,address,house,street,fullAddress,
-      customLabel:($("bexCustomAddressLabel")||{}).value?.trim()||"",label,landmark:($("landmark")||{}).value?.trim()||"",lat,lon,savedAt:Date.now()};
-    let list=read().filter(x=>!(x&&x.address===address&&String(x.lat)===String(lat)&&String(x.lon)===String(lon)));
-    list.unshift(item);write(list);
+    if(!address||!house||!street||!fullAddress||!($("bexLatitude")||{}).value||!($("bexLongitude")||{}).value||!Number.isFinite(lat)||!Number.isFinite(lon))return null;
+    return {address,house,street,fullAddress,label:($("bexAddressLabel")||{}).value||"My Home",customLabel:($("bexCustomAddressLabel")||{}).value?.trim()||"",landmark:($("landmark")||{}).value?.trim()||"",lat,lon,savedAt:Date.now()};
   }
-  function chooseVisit(){
+  async function request(action,item){
+    const s=session();if(!s?.access_token)return null;
+    const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","apikey":API_KEY,"Authorization":"Bearer "+s.access_token},body:JSON.stringify({action,...(item||{})})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.error||"Account address sync nahi hua.");
+    return d;
+  }
+  async function saveCurrent(){
     if(($("visit")||{}).value!=="Home service")return;
-    const hasPin=!!(($("bexLatitude")||{}).value&&($("bexLongitude")||{}).value);
-    const hasAddress=!!(($("address")||{}).value.trim());
-    if(!hasPin&&!hasAddress)fill(latest());
+    const item=current();if(!item)return;
+    let list=read().filter(x=>!(x&&x.address===item.address&&String(x.lat)===String(item.lat)&&String(x.lon)===String(item.lon)));
+    list.unshift({...item,title:item.label==="Other"?(item.customLabel||"Saved address"):item.label});write(list);
+    clearTimeout(remoteTimer);
+    remoteTimer=setTimeout(async()=>{try{const d=await request("save-home-address",item);const status=$("bexLocationStatus");if(d&&status)status.textContent="✓ Address aur map pin aapke Customer Account mein save ho gaye."}catch(e){const status=$("bexLocationStatus");if(status&&session()?.access_token)status.textContent="Is device par address save hai, lekin account sync nahi hua. Login/network check karein."}},500);
+  }
+  async function chooseVisit(){
+    if(($("visit")||{}).value!=="Home service"||remoteLoading)return;
+    const hasPin=!!(($("bexLatitude")||{}).value&&($("bexLongitude")||{}).value),hasAddress=!!(($("address")||{}).value.trim());
+    if(hasPin||hasAddress)return;
+    const s=session();
+    if(s?.access_token){
+      remoteLoading=true;
+      try{const d=await request("get-home-address");if(d&&d.address&&d.lat!=null&&d.lon!=null){fill(d);const item={address:d.address,house:d.house,street:d.street,fullAddress:d.fullAddress,label:d.label,customLabel:d.customLabel,landmark:d.landmark,lat:d.lat,lon:d.lon,savedAt:Date.now()};let list=read().filter(x=>!(x.address===item.address&&String(x.lat)===String(item.lat)&&String(x.lon)===String(item.lon)));list.unshift({...item,title:item.label});write(list);return}}catch(e){/* local saved address remains a fallback */}finally{remoteLoading=false}
+    }
+    fill(latest());
   }
   document.addEventListener("DOMContentLoaded",function(){
-    const visit=$("visit");
-    if(visit)visit.addEventListener("change",chooseVisit);
-    ["bexHouseNumber","bexStreetAddress","bexFullAddress","bexAddressLabel","bexCustomAddressLabel","landmark"].forEach(id=>{
-      const el=$(id);if(el){el.addEventListener("change",saveCurrent);el.addEventListener("blur",saveCurrent);}
-    });
-    ["bexLatitude","bexLongitude"].forEach(id=>{const el=$(id);if(el)el.addEventListener("change",saveCurrent);});
-    const address=$("address");
-    if(address)address.addEventListener("change",saveCurrent);
-    const form=$("bookingForm");
-    if(form)form.addEventListener("submit",saveCurrent,true);
-    // Restore a previously saved address only when the customer selects Home Visit;
-    // never overwrite a location they are currently entering or choosing.
+    const visit=$("visit");if(visit)visit.addEventListener("change",chooseVisit);
+    ["bexHouseNumber","bexStreetAddress","bexFullAddress","bexAddressLabel","bexCustomAddressLabel","landmark"].forEach(id=>{const el=$(id);if(el){el.addEventListener("change",saveCurrent);el.addEventListener("blur",saveCurrent)}});
+    ["bexLatitude","bexLongitude"].forEach(id=>{const el=$(id);if(el)el.addEventListener("change",saveCurrent)});
+    const address=$("address");if(address)address.addEventListener("change",saveCurrent);
+    const form=$("bookingForm");if(form)form.addEventListener("submit",saveCurrent,true);
+    const saveButton=$("bexSaveAddress");if(saveButton)saveButton.addEventListener("click",saveCurrent);
     chooseVisit();
   },{once:true});
   window.bexSaveHomeAddressAutomatically=saveCurrent;
