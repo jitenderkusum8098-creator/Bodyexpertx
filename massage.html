@@ -2369,17 +2369,29 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
       }
     }
     const phoneInput=byId("phone");
+    function normalizeIndianPhone(value){
+      let digits=String(value||"").replace(/\D/g,"");
+      if(digits.length===12&&digits.startsWith("91"))digits=digits.slice(2);
+      else if(digits.length===11&&digits.startsWith("0"))digits=digits.slice(1);
+      return digits.slice(0,10);
+    }
     if(phoneInput){
-      phoneInput.addEventListener("input",function(){
-        const digits=this.value.replace(/\D/g,"").slice(0,10);
+      const normalizePhoneField=function(){
+        const digits=normalizeIndianPhone(this.value);
         if(this.value!==digits)this.value=digits;
         this.setCustomValidity("");
-      });
-      phoneInput.addEventListener("change",function(){this.setCustomValidity("");});
+      };
+      phoneInput.addEventListener("input",normalizePhoneField);
+      phoneInput.addEventListener("change",normalizePhoneField);
+      phoneInput.addEventListener("blur",normalizePhoneField);
+      normalizePhoneField.call(phoneInput);
     }
     function validateStep(index){
       const panel=panels[index];
-      if(index===0&&phoneInput)phoneInput.setCustomValidity("");
+      if(index===0&&phoneInput){
+        phoneInput.value=normalizeIndianPhone(phoneInput.value);
+        phoneInput.setCustomValidity("");
+      }
       const controls=[...panel.querySelectorAll("input,select,textarea")].filter(el=>!el.disabled&&el.type!=="hidden");
       for(const el of controls){
         if(el.type==="hidden"||el.closest("[hidden]")||el.id==="bexLatitude"||el.id==="bexLongitude"||el.id==="bexLocationAccuracy"||el.id==="serviceZone")continue;
@@ -2390,8 +2402,9 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
         }
       }
       if(index===0&&phoneInput){
-        const digits=phoneInput.value.replace(/\D/g,"");
-        if(!/^[6-9][0-9]{9}$/.test(digits)){phoneInput.setCustomValidity("Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9.");phoneInput.reportValidity();phoneInput.focus();return false}
+        const digits=normalizeIndianPhone(phoneInput.value);
+        phoneInput.value=digits;
+        if(!/^[6-9][0-9]{9}$/.test(digits)){phoneInput.setCustomValidity("Please enter a valid 10-digit Indian mobile number. +91 country code is optional.");phoneInput.reportValidity();phoneInput.focus();return false}
         phoneInput.setCustomValidity("");
       }
       if(index===1&&byId("visit")?.value==="Home service"){
