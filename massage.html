@@ -2845,5 +2845,17 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
 })();
 </script>
 
+<script id="bex-saved-address-account-sync">
+(function(){
+const K="bex_customer_saved_addresses_v1",A="https://myjstwbpmbrhaiwytpnq.supabase.co/functions/v1/customer-account-auth",P="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy";
+const $=id=>document.getElementById(id);
+function session(){try{return JSON.parse(localStorage.getItem("bex_customer_session")||"null")}catch(e){return null}}
+function list(){try{const a=JSON.parse(localStorage.getItem(K)||"[]");return Array.isArray(a)?a:[]}catch(e){return []}}
+async function call(action,addresses){const s=session();if(!s||!s.access_token)return null;const r=await fetch(A,{method:"POST",headers:{"Content-Type":"application/json","apikey":P,"Authorization":"Bearer "+s.access_token},body:JSON.stringify({action,addresses})});const d=await r.json();if(!r.ok)throw Error(d.error||"Account address sync failed");return d}
+async function syncUp(){const a=list().slice(0,10);if(a.length)await call("save-saved-home-addresses",a)}
+async function syncDown(){if(!session()?.access_token)return;try{const d=await call("get-saved-home-addresses");if(Array.isArray(d?.addresses)&&d.addresses.length){const old=list(),all=[...d.addresses,...old],seen=new Set(),out=[];for(const x of all){const k=String(x.address||"").toLowerCase()+"|"+x.lat+"|"+x.lon;if(!seen.has(k)){seen.add(k);out.push(x)}}localStorage.setItem(K,JSON.stringify(out.slice(0,10)));if($("bexToggleSavedAddresses"))$("bexToggleSavedAddresses").textContent="▣ Saved Addresses ("+out.length+")"}}catch(e){console.warn("Address account sync",e)}}
+document.addEventListener("DOMContentLoaded",()=>{const v=$("visit"),b=$("bexSaveAddress"),t=$("bexToggleSavedAddresses");if(v)v.addEventListener("change",()=>{if(v.value==="Home service")syncDown()});if(b)b.addEventListener("click",()=>setTimeout(()=>syncUp().catch(()=>{}),500));if(t)t.addEventListener("click",()=>setTimeout(()=>syncUp().catch(()=>{}),900));if(v?.value==="Home service")syncDown()});
+})();
+</script>
 </body>
 </html>
