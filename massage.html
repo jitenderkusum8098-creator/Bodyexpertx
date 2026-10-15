@@ -1590,6 +1590,29 @@ article.service .bx-massage-photo img {
 #bexMapPinStatus{flex:0 0 auto}
 .bex-map-actions{flex:0 0 auto;padding-bottom:4px}
 @media(max-width:560px){.bex-map-dialog{padding:calc(env(safe-area-inset-top,0px) + 8px) 10px calc(env(safe-area-inset-bottom,0px) + 8px)!important}.bex-map-heading h3{font-size:19px!important}}
+
+/* Final visual overrides: high-contrast delivery-app style controls */
+.bex-picker-search{background:#fff!important;border:1px solid #d7c28b!important;box-shadow:none!important;gap:10px!important}
+.bex-picker-search input{display:block!important;flex:1 1 auto!important;width:100%!important;min-width:0!important;margin:0!important;padding:12px 0!important;border:0!important;border-radius:0!important;outline:none!important;box-shadow:none!important;background:transparent!important;color:#161616!important;-webkit-text-fill-color:#161616!important;font-size:16px!important}
+.bex-picker-search input:focus{border:0!important;outline:none!important;box-shadow:none!important}
+.bex-picker-option{display:flex!important;align-items:center!important;gap:13px!important;width:100%!important;min-height:84px!important;padding:14px 13px!important;border:0!important;border-radius:0!important;background:#fff!important;color:#222!important;-webkit-text-fill-color:#222!important;text-align:left!important;box-shadow:none!important;text-shadow:none!important;opacity:1!important}
+.bex-picker-option+.bex-picker-option{border-top:1px solid #e4e4e4!important}
+.bex-picker-options{border:1px solid #ddd!important;border-radius:15px!important;background:#fff!important;overflow:hidden!important}
+.bex-picker-option-icon{background:#f8f0d9!important;color:#8b6b16!important}
+.bex-picker-option strong{font-size:16px!important;font-weight:800!important;color:#8e3158!important;-webkit-text-fill-color:#8e3158!important}
+.bex-picker-option small{font-size:13px!important;color:#666!important;-webkit-text-fill-color:#666!important}
+.bex-picker-chevron{color:#333!important}
+.bex-picker-saved-heading{color:#777!important}
+.bex-picker-saved .bex-saved-address-card{background:#fff!important;border:1px solid #ddd!important}
+.bex-picker-saved .bex-saved-address-use strong{color:#222!important;-webkit-text-fill-color:#222!important}
+.bex-picker-saved .bex-saved-address-use span{color:#666!important;-webkit-text-fill-color:#666!important}
+.bex-picker-saved .bex-saved-address-delete{background:#fff!important;color:#8e3158!important;border-color:#ddd!important}
+.bex-picker-footnote{color:#777!important}
+.bex-address-picker .bex-address-empty{background:#fff!important;color:#555!important;border:1px solid #ddd!important}
+.bex-picker-result{background:#fff!important;color:#222!important;border:1px solid #ddd!important}
+.bex-picker-result strong{color:#222!important;-webkit-text-fill-color:#222!important}
+.bex-picker-result span{color:#666!important;-webkit-text-fill-color:#666!important}
+
 </style>
 <!-- Map pin selection is available in the mobile booking flow. -->
 
@@ -2402,20 +2425,26 @@ function renderPickerResults(items,q){
  })
 }
 async function searchPickerAddress(q){
- const seq=++pickerSearchSeq;if(q.trim().length<3){pickerResults.hidden=true;pickerResults.replaceChildren();return}
- pickerResults.hidden=false;pickerResults.innerHTML='<div class="bex-address-empty">Address search ho raha hai…</div>';
- const base="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&countrycodes=in&q=";
+ const seq=++pickerSearchSeq;q=q.trim();
+ if(q.length<3){pickerResults.hidden=true;pickerResults.replaceChildren();return}
+ pickerResults.hidden=false;pickerResults.innerHTML='<div class="bex-address-empty">🔎 Address search ho raha hai…</div>';
+ let results=[];
  try{
-  let r=await fetch(base+encodeURIComponent(q.trim()),{headers:{Accept:"application/json"}});
-  let results=r.ok?await r.json():[];
-  if(!results.length){
-   const view="&viewbox=76.8,28.9,77.5,28.35";
-   r=await fetch(base+encodeURIComponent(q.trim())+view,{headers:{Accept:"application/json"}});
-   results=r.ok?await r.json():[];
-  }
-  if(!results.length){const r2=await fetch("https://photon.komoot.io/api/?limit=8&lang=en&lat=28.5245&lon=77.1588&q="+encodeURIComponent(q.trim()),{headers:{Accept:"application/json"}});if(r2.ok){const d=await r2.json();results=d.features||[]}}
-  if(seq!==pickerSearchSeq)return;renderPickerResults(results,q)
- }catch(e){if(seq===pickerSearchSeq){pickerResults.hidden=false;pickerResults.innerHTML='<div class="bex-address-empty">Search abhi nahi chal raha. Internet check karein ya Add New Address se address likhkar map pin set karein.</div>'}}
+  const photonUrl="https://photon.komoot.io/api/?limit=8&lang=en&lat=28.5245&lon=77.1588&q="+encodeURIComponent(q);
+  const pr=await fetch(photonUrl,{headers:{Accept:"application/json"}});
+  if(pr.ok){const pd=await pr.json();results=pd.features||[]}
+ }catch(e){}
+ if(seq!==pickerSearchSeq)return;
+ if(!results.length){
+  try{
+   const nomUrl="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&q="+encodeURIComponent(q);
+   const nr=await fetch(nomUrl,{headers:{Accept:"application/json"}});
+   if(nr.ok)results=await nr.json();
+  }catch(e){}
+ }
+ if(seq!==pickerSearchSeq)return;
+ renderPickerResults(results,q);
+ if(!results.length&&pickerResults.querySelector(".bex-address-empty"))pickerResults.querySelector(".bex-address-empty").textContent="Is search se address nahi mila. House/road, area, Delhi aur PIN code likhkar dobara try karein. Ya Add New Address se manually address likhein.";
 }
 pickerSearch.addEventListener("input",()=>{clearTimeout(pickerSearchTimer);pickerSearchTimer=setTimeout(()=>searchPickerAddress(pickerSearch.value),450)});
 pickerSearch.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();clearTimeout(pickerSearchTimer);searchPickerAddress(pickerSearch.value)}});
