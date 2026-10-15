@@ -2370,7 +2370,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
     }
     function validateStep(index){
       const panel=panels[index];
-      const controls=[...panel.querySelectorAll("input,select,textarea")].filter(el=>!el.disabled&&!el.type==="hidden");
+      const controls=[...panel.querySelectorAll("input,select,textarea")].filter(el=>!el.disabled&&el.type!=="hidden");
       for(const el of controls){
         if(el.type==="hidden"||el.closest("[hidden]")||el.id==="bexLatitude"||el.id==="bexLongitude"||el.id==="bexLocationAccuracy"||el.id==="serviceZone")continue;
         if(!el.checkValidity()){
@@ -2409,16 +2409,12 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
       showStep(index+1);
     }
     form.addEventListener("submit",function(event){
-      for(let i=0;i<panels.length-1;i++){
-        if(!validateStep(i)){
-          event.preventDefault();event.stopImmediatePropagation();showStep(i,true);return;
-        }
-      }
-      const lastRequired=[...panels[4].querySelectorAll("input,select,textarea")].filter(el=>el.required&&!el.disabled&&!el.closest("[hidden]"));
-      for(const el of lastRequired){
-        if(!el.checkValidity()){
-          event.preventDefault();event.stopImmediatePropagation();showStep(4,true);el.reportValidity();return;
-        }
+      const currentIndex=panels.findIndex(panel=>!panel.hidden);
+      if(currentIndex<panels.length-1){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        advance(Math.max(0,currentIndex));
+        return;
       }
     },true);
     showStep(0);
