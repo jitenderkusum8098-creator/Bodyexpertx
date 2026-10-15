@@ -1613,6 +1613,39 @@ article.service .bx-massage-photo img {
 .bex-picker-result strong{color:#222!important;-webkit-text-fill-color:#222!important}
 .bex-picker-result span{color:#666!important;-webkit-text-fill-color:#666!important}
 
+
+/* Match the clean white address selector from the reference delivery app */
+.bex-address-picker{background:#fff!important;color:#222!important;padding:calc(env(safe-area-inset-top,0px) + 12px) 18px calc(env(safe-area-inset-bottom,0px) + 16px)!important}
+.bex-address-picker-header{border-bottom:1px solid #e6e6e6!important}
+.bex-address-picker-header span{color:#8f3158!important}
+.bex-address-picker-header h3{color:#171717!important}
+.bex-picker-back,.bex-picker-x{background:#fff!important;color:#222!important;border:1px solid #ddd!important}
+.bex-picker-search{background:#fff!important;border:1px solid #ddd!important;box-shadow:none!important}
+.bex-picker-search>span{color:#222!important}
+.bex-picker-search input{color:#222!important;-webkit-text-fill-color:#222!important}
+.bex-picker-options{background:#fff!important;border:1px solid #ddd!important;border-radius:15px!important}
+.bex-picker-option{background:#fff!important;color:#222!important;-webkit-text-fill-color:#222!important}
+.bex-picker-option+.bex-picker-option{border-top:1px dashed #ddd!important}
+.bex-picker-option-icon{background:#f8f0d9!important;color:#8f3158!important}
+.bex-picker-option strong{color:#8f3158!important;-webkit-text-fill-color:#8f3158!important}
+.bex-picker-option small{color:#777!important;-webkit-text-fill-color:#777!important}
+.bex-picker-chevron{color:#222!important}
+.bex-picker-saved-heading{color:#777!important}
+.bex-picker-saved .bex-saved-address-card{background:#fff!important;border-color:#ddd!important}
+.bex-picker-saved .bex-saved-address-use strong{color:#222!important;-webkit-text-fill-color:#222!important}
+.bex-picker-saved .bex-saved-address-use span{color:#666!important;-webkit-text-fill-color:#666!important}
+.bex-picker-saved .bex-saved-address-delete{background:#fff!important;color:#8f3158!important;border-color:#ddd!important}
+.bex-picker-footnote{color:#777!important}
+.bex-address-picker .bex-address-empty{background:#fff!important;color:#555!important;border:1px solid #e0e0e0!important}
+.bex-picker-result{background:#fff!important;color:#222!important;border:1px solid #e0e0e0!important}
+.bex-picker-result strong{color:#222!important;-webkit-text-fill-color:#222!important}
+.bex-picker-result span{color:#666!important;-webkit-text-fill-color:#666!important}
+.bex-location-actions{display:none!important}
+#bexAddressMapPin[hidden]{display:none!important}
+.bex-address-map-pin{display:block;width:100%;min-height:48px;margin:10px 0 12px;background:#fff!important;color:#8f3158!important;border:1px solid #8f3158!important;border-radius:12px!important;font-weight:800!important}
+.bex-address-map-pin[hidden]{display:none!important}
+@media(min-width:700px){.bex-address-picker{width:min(560px,100%);left:50%;transform:translateX(-50%);box-shadow:0 0 0 100vmax #0009!important}}
+
 </style>
 <!-- Map pin selection is available in the mobile booking flow. -->
 
@@ -1727,7 +1760,7 @@ article.service .bx-massage-photo img {
 <div class="field-grid"><div class="field"><label for="name">Full name *</label><input id="name" name="name" required autocomplete="name" placeholder="Your name"></div><div class="field"><label for="phone">Mobile number *</label><input id="phone" name="phone" type="tel" required inputmode="numeric" autocomplete="tel" maxlength="10" pattern="[6-9][0-9]{9}" title="Enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9." placeholder="10-digit Indian mobile number"></div></div>
 <div class="field-grid"><div class="field"><label for="age">Your age (18+ years) *</label><input id="age" name="age" type="number" min="18" max="100" required placeholder="Age"></div><div class="field"><label for="recipientGender">Massage kiske liye book kar rahe hain? *</label><select id="recipientGender" name="recipientGender" required onchange="updateGenderPricing()"><option value="Male">Male</option><option value="Female">Female</option></select></div></div>
 <div class="field-grid"><div class="field"><label for="customerType">Have you booked with us before? *</label><select id="customerType" name="customerType" required onchange="updateCouponAvailability()"><option value="First-time customer">No, this is my first booking</option><option value="Returning customer">Yes, I am a returning customer</option></select></div><div class="field"><label for="visit">Service location *</label><select id="visit" required onchange="toggleAddress()"><option value="Centre">Center Visit</option><option value="Home service">Home Visit</option></select></div></div>
-<div class="field" id="addressField" hidden><label for="address">Home Visit Address (optional if GPS is set) *</label><textarea id="address" placeholder="Tap karke delivery address select karein" autocomplete="street-address" aria-controls="bexAddressSuggestions" aria-autocomplete="list" readonly></textarea><div id="bexAddressSuggestions" class="bex-address-suggestions" role="listbox" aria-label="Address suggestions" hidden></div><div class="bex-saved-address-tools"><button type="button" class="btn bex-save-address-btn" id="bexSaveAddress">＋ Save this address</button><button type="button" class="btn bex-saved-address-toggle" id="bexToggleSavedAddresses">▣ Saved Addresses <span id="bexSavedAddressCount">(0)</span></button></div><div id="bexSavedAddresses" class="bex-saved-addresses" hidden></div>
+<div class="field" id="addressField" hidden><label for="address">Home Visit Address (optional if GPS is set) *</label><textarea id="address" placeholder="Tap karke delivery address select karein" autocomplete="street-address" aria-controls="bexAddressSuggestions" aria-autocomplete="list" readonly></textarea><div id="bexAddressSuggestions" class="bex-address-suggestions" role="listbox" aria-label="Address suggestions" hidden></div><button type="button" id="bexAddressMapPin" class="btn bex-address-map-pin" hidden>📍 Confirm address on map</button><div class="bex-saved-address-tools"><button type="button" class="btn bex-save-address-btn" id="bexSaveAddress">＋ Save this address</button><button type="button" class="btn bex-saved-address-toggle" id="bexToggleSavedAddresses">▣ Saved Addresses <span id="bexSavedAddressCount">(0)</span></button></div><div id="bexSavedAddresses" class="bex-saved-addresses" hidden></div>
 <div id="bexAddressPicker" class="bex-address-picker" hidden role="dialog" aria-modal="true" aria-labelledby="bexAddressPickerTitle">
  <div class="bex-address-picker-header"><button type="button" id="bexCloseAddressPicker" class="bex-picker-back" aria-label="Back">←</button><div><span>BODYEXPERTX · HOME VISIT</span><h3 id="bexAddressPickerTitle">Select service address</h3></div><button type="button" id="bexPickerCloseX" class="bex-picker-x" aria-label="Close">×</button></div>
  <div class="bex-picker-search"><span aria-hidden="true">⌕</span><input id="bexAddressPickerSearch" type="search" placeholder="Search area, street name, house or PIN code" autocomplete="street-address" aria-controls="bexAddressPickerResults" aria-autocomplete="list"></div>
@@ -1912,7 +1945,7 @@ function renderCart(){
   document.getElementById("couponStatus").style.color="var(--gold2)";
  }
 }
-function toggleAddress(){const home=document.getElementById("visit").value==="Home service";document.getElementById("addressField").hidden=!home;document.getElementById("centerVisitPanel").hidden=home;document.getElementById("address").required=false;document.getElementById("landmark").required=false;document.getElementById("bexCenterSearch").href="https://share.google/fmoa7Wwu2qTJGbnpi";if(!home){document.getElementById("bexLatitude").value="";document.getElementById("bexLongitude").value="";document.getElementById("bexLocationAccuracy").value="";document.getElementById("bexOpenLocation").hidden=true;document.querySelector(".bex-location-panel").classList.remove("location-set");document.getElementById("bexLocationStatus").textContent="Center Visit चुना गया है। Center का सही पता और directions नीचे दिए गए Google Maps link पर देखें।";}else{document.getElementById("bexLocationStatus").textContent="अपना पूरा address लिखें—हम उसे map पर locate करेंगे। चाहें तो pin को manually adjust कर सकते हैं।";} }
+function toggleAddress(){const home=document.getElementById("visit").value==="Home service";document.getElementById("addressField").hidden=!home;document.getElementById("centerVisitPanel").hidden=home;document.getElementById("address").required=false;document.getElementById("landmark").required=false;document.getElementById("bexCenterSearch").href="https://share.google/fmoa7Wwu2qTJGbnpi";if(!home){document.getElementById("bexLatitude").value="";document.getElementById("bexLongitude").value="";document.getElementById("bexLocationAccuracy").value="";document.getElementById("bexOpenLocation").hidden=true;document.querySelector(".bex-location-panel").classList.remove("location-set");document.getElementById("bexLocationStatus").textContent="Center Visit चुना गया है। Center का सही पता और directions नीचे दिए गए Google Maps link पर देखें।";}else{document.getElementById("bexLocationStatus").textContent="Address upar select karein. Zarurat par address ke neeche Confirm address on map se pin set karein.";document.getElementById("bexAddressMapPin").hidden=true;} }
 const BEX_API_URL="https://myjstwbpmbrhaiwytpnq.supabase.co";
 const BEX_PUBLIC_KEY="sb_publishable_jHjVYTPlBLDgaNfiazRkvg_iVI_5-Xy";
 async function bexApi(action,payload={}){const r=await fetch(BEX_API_URL+"/functions/v1/therapist-ratings",{method:"POST",headers:{"Content-Type":"application/json","apikey":BEX_PUBLIC_KEY},body:JSON.stringify({action,...payload})});const d=await r.json().catch(()=>({error:"Server response समझ नहीं आया।"}));if(!r.ok)throw new Error(d.error||"Request failed.");return d}
@@ -2401,14 +2434,14 @@ async function fetchAddressSuggestions(q){
  try{const url="https://photon.komoot.io/api/?limit=6&lang=en&lat=28.5245&lon=77.1588&q="+encodeURIComponent(q.trim());const r=await fetch(url,{headers:{Accept:"application/json"}});if(!r.ok)throw new Error("Address search unavailable");const d=await r.json();if(seq!==addressSuggestSequence)return;renderAddressSuggestions((d.features||[]).filter(x=>Array.isArray(x.geometry?.coordinates)&&x.geometry.coordinates.length>=2),q)}
  catch(e){if(seq===addressSuggestSequence){addressSuggestions.hidden=false;addressSuggestions.innerHTML='<div class="bex-address-empty">Suggestions abhi load nahi hue. Map par pin manually set kar sakte hain.</div>'}}
 }
-addressInput.addEventListener("input",()=>{clearTimeout(addressSuggestTimer);$("bexLatitude").value="";$("bexLongitude").value="";$("bexLocationAccuracy").value="";$("bexOpenLocation").hidden=true;document.querySelector(".bex-location-panel").classList.remove("location-set");addressSuggestTimer=setTimeout(()=>fetchAddressSuggestions(addressInput.value),450)});
+addressInput.addEventListener("input",()=>{clearTimeout(addressSuggestTimer);$("bexLatitude").value="";$("bexLongitude").value="";$("bexLocationAccuracy").value="";$("bexOpenLocation").hidden=true;document.querySelector(".bex-location-panel").classList.remove("location-set");$("bexAddressMapPin").hidden=addressInput.value.trim().length<5;addressSuggestTimer=setTimeout(()=>fetchAddressSuggestions(addressInput.value),450)});
 addressInput.addEventListener("focus",()=>{if(addressInput.value.trim().length>=3)fetchAddressSuggestions(addressInput.value)});
 document.addEventListener("click",e=>{if(!addressSuggestions.contains(e.target)&&e.target!==addressInput)hideAddressSuggestions()});
 function openAddressPicker(){refreshSavedAddresses();pickerSaved.appendChild(savedAddressBox);savedAddressBox.hidden=false;addressPicker.hidden=false;pickerSearch.value="";pickerResults.hidden=true;pickerResults.replaceChildren();addressPicker.dataset.open="1";document.body.style.overflow="hidden";setTimeout(()=>pickerSearch.focus({preventScroll:true}),80)}
 function closeAddressPicker(){addressPicker.hidden=true;delete addressPicker.dataset.open;document.body.style.overflow="";if(addressInput.value.trim())addressInput.readOnly=true}
 $("bexCloseAddressPicker").addEventListener("click",closeAddressPicker);$("bexPickerCloseX").addEventListener("click",closeAddressPicker);
 addressInput.addEventListener("click",()=>{if(addressInput.readOnly)openAddressPicker()});
-$("bexPickerAddAddress").addEventListener("click",()=>{closeAddressPicker();addressInput.readOnly=false;addressInput.placeholder="House/flat, street, area aur PIN code likhein";addressInput.focus();addressInput.scrollIntoView({behavior:"smooth",block:"center"})});
+$("bexPickerAddAddress").addEventListener("click",()=>{closeAddressPicker();addressInput.readOnly=false;addressInput.placeholder="House/flat, street, area aur PIN code likhein";$("bexAddressMapPin").hidden=addressInput.value.trim().length<5;addressInput.focus();addressInput.scrollIntoView({behavior:"smooth",block:"center"})});
 $("bexPickerUseCurrent").addEventListener("click",()=>{closeAddressPicker();$("bexSetLocation").click()});
 let pickerSearchTimer=null,pickerSearchSeq=0;
 function renderPickerResults(items,q){
@@ -2476,6 +2509,7 @@ async function searchAddress(q){
 }
 async function reverseAddress(lat,lon){try{const r=await fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat="+lat+"&lon="+lon+"&zoom=18&addressdetails=1",{headers:{Accept:"application/json"}});if(!r.ok)return "";const d=await r.json();return d.display_name||""}catch(e){return ""}}
 $("bexSetLocation").addEventListener("click",()=>{const b=$("bexSetLocation");if(!navigator.geolocation){status.textContent="GPS available nahi hai. Choose Location on Map se address search karein.";return}b.disabled=true;b.textContent="Location detect ho rahi hai…";status.textContent="Browser permission aaye to Allow dabayein.";navigator.geolocation.getCurrentPosition(async p=>{const lat=Number(p.coords.latitude),lon=Number(p.coords.longitude);$("bexLatitude").value=lat;$("bexLongitude").value=lon;$("bexLocationAccuracy").value=Math.round(p.coords.accuracy||0);$("bexOpenLocation").href="https://www.google.com/maps?q="+encodeURIComponent(lat+","+lon);$("bexOpenLocation").hidden=false;document.querySelector(".bex-location-panel").classList.add("location-set");$("serviceZone").value="";bexDetectedZone=null;b.disabled=false;b.textContent="📍 Use My Current Location";status.textContent="✓ Current location detect aur save ho gayi. Chahein to Choose Location on Map se pin adjust kar sakte hain.";try{const z=await detectServiceZoneFromCoords(lat,lon);if(z)status.textContent="✓ Current location detect ho gayi. Service Zone: "+z.name+". Pin badalna ho to map use karein."}catch(e){}},e=>{b.disabled=false;b.textContent="📍 Use My Current Location";status.textContent=e.code===1?"Location permission Allow karein, ya Map par address search karein.":"GPS nahi mil paayi. Dobara try karein ya Map par address search karein."},{enableHighAccuracy:true,timeout:25000,maximumAge:0})});
+$("bexAddressMapPin").addEventListener("click",()=>{$("bexChooseMapLocation").click()});
 $("bexChooseMapLocation").addEventListener("click",async()=>{const q=$("address").value.trim();status.textContent=q?"Address map par locate ho raha hai…":"Map khul raha hai. Address/landmark search karein.";let p=null;if(q){try{p=await searchAddress(q)}catch(e){}}if(p)openMap(p.lat,p.lon,"","map","Address ke paas pin laga hai. Exact jagah par adjust karke confirm karein.");else{const lat=Number($("bexLatitude").value),lon=Number($("bexLongitude").value),valid=lat&&lon;let center=valid?[lat,lon]:null;if(!center&&Array.isArray(bexZones)&&bexZones.length){const z=bexZones.find(x=>Number.isFinite(Number(x.center_lat))&&Number.isFinite(Number(x.center_lng)));if(z)center=[Number(z.center_lat),Number(z.center_lng)]}center=center||defaultPoint;openMap(center[0],center[1],"","map",q?"Address auto-locate nahi hua. Search mein area/city/PIN code bhi likhein. Map abhi sirf starting view hai—Confirm se pehle pin ko actual service address par set karein.":"Address search karke actual service location par pin set karein.")}});
 async function runSearch(){const q=$("bexMapAddressSearch").value.trim();if(!q){mapStatus.textContent="Address ya landmark likhein.";return}hideSuggestions();const b=$("bexSearchMapAddress");b.disabled=true;b.textContent="Searching…";mapStatus.textContent="Address search ho raha hai…";try{const p=await searchAddress(q);if(!p){mapStatus.textContent="Exact address nahi mila. House/flat, street, sector/area, city aur PIN code ke saath search karein. Phir map par actual location par pin manually set karein.";return}pin(p.lat,p.lon);mapStatus.textContent="Nearby result: "+p.label+". Map par jagah verify karein, pin adjust karein aur tabhi Confirm karein."}catch(e){mapStatus.textContent="Search abhi nahi ho paaya. Internet check karein ya pin manually set karein."}finally{b.disabled=false;b.textContent="Search"}}
 $("bexSearchMapAddress").addEventListener("click",runSearch);$("bexMapAddressSearch").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();runSearch()}});
@@ -2652,9 +2686,9 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
         if(!byId("bexLatitude")?.value||!byId("bexLongitude")?.value){
           const status=byId("bexLocationStatus");
           if(status)status.textContent="Home Visit ke liye Current Location set karein ya Choose Location on Map se pin confirm karein.";
-          const mapButton=byId("bexChooseMapLocation");
-          if(mapButton){mapButton.focus();mapButton.scrollIntoView({behavior:"smooth",block:"center"})}
-          else byId("bexSetLocation")?.focus();
+          const mapButton=byId("bexAddressMapPin");
+          if(mapButton){mapButton.hidden=false;mapButton.focus();mapButton.scrollIntoView({behavior:"smooth",block:"center"})}
+          else byId("address")?.focus();
           return false;
         }
       }
