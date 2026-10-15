@@ -14,6 +14,9 @@
 .stat strong{font-size:clamp(14px,4vw,22px);line-height:1.2;overflow-wrap:anywhere}
 .stat span{font-size:clamp(8px,2.2vw,11px);line-height:1.35;overflow-wrap:anywhere}
 @media(min-width:651px){.stat{padding:14px}.stat small{font-size:13px}.stat strong{font-size:24px}.stat span{font-size:11px}}
+
+/* FORCE FOUR THERAPIST DASHBOARD CARDS ON MOBILE */
+@media(max-width:650px){.shell .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:6px!important}.shell .grid .stat{min-width:0;padding:7px 6px!important;border-radius:13px}.shell .grid .stat small{font-size:clamp(8px,2.25vw,10px);line-height:1.25;letter-spacing:0;overflow-wrap:anywhere}.shell .grid .stat strong{font-size:clamp(14px,3.8vw,18px);line-height:1.2;overflow-wrap:anywhere}.shell .grid .stat span{font-size:clamp(7px,1.9vw,9px);line-height:1.3;overflow-wrap:anywhere}}
 </style></head><body><main class="shell">
 <header class="top"><div class="therapist-head"><div id="therapistAvatar" class="therapist-avatar">BE</div><div class="therapist-ident"><div class="brand">BODYEXPERTX</div><h1 id="hello">Namaste, Therapist</h1><div class="sub" id="therapistIdLabel"></div></div></div><button type="button" id="settingsOpen" class="soft settings-open" aria-label="Settings">⚙️</button><input type="file" id="therapistPhotoInput" accept="image/jpeg,image/png,image/webp" hidden></header>
 <section id="bexAvailability" class="hidden" aria-label="Availability Calendar">
