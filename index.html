@@ -1321,7 +1321,7 @@ function refreshBexTimeSlots(){
  let chosenStillValid=false;
  Array.from(timeEl.options||[]).forEach(option=>{
   if(!option.value)return;
-  const m=String(option.value).match(/^(\\d{1,2}):(\\d{2})/);
+  const m=String(option.value).match(/^(\d{1,2}):(\d{2})/);
   if(!m){option.hidden=false;option.disabled=false;return}
   const hh=Number(m[1]),mm=Number(m[2]);
   const slotStart=new Date(dateEl.value+"T"+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":00+05:30").getTime();
