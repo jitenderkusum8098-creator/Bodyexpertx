@@ -67,6 +67,35 @@ async function findAuthUserByEmail(email: string) {
   return null;
 }
 
+function bookingTimeMinutes(value:unknown):number|null{
+ const m=String(value??"").trim().match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)?$/i);if(!m)return null;
+ let h=Number(m[1]),min=Number(m[2]);if(min>59||h>23)return null;const ap=(m[3]??"").toUpperCase();if(ap){if(h<1||h>12)return null;h=h%12+(ap==="PM"?12:0)}return h*60+min;
+}
+function bookingDistanceKm(a:number,b:number,c:number,d:number){const rad=(n:number)=>n*Math.PI/180;const x=rad(c-a),y=rad(d-b),v=Math.sin(x/2)**2+Math.cos(rad(a))*Math.cos(rad(c))*Math.sin(y/2)**2;return 6371*2*Math.atan2(Math.sqrt(v),Math.sqrt(1-v))}
+async function chooseInitialTherapist(job:any){
+ const when=bookingTimeMinutes(job.appointment_time);if(!job.appointment_date||when===null)return null;
+ let zoneIds:string[]=[];const hasCoords=job.customer_latitude!==null&&job.customer_latitude!==undefined&&job.customer_longitude!==null&&job.customer_longitude!==undefined&&Number.isFinite(Number(job.customer_latitude))&&Number.isFinite(Number(job.customer_longitude));
+ if(job.zone_id)zoneIds=[String(job.zone_id)];
+ else if(hasCoords){const {data:zs,error}=await admin.from("zones").select("id,center_lat,center_lng").eq("active",true).not("center_lat","is",null).not("center_lng","is",null);if(error)throw error;const near=(zs??[]).map((z:any)=>({...z,d:bookingDistanceKm(Number(job.customer_latitude),Number(job.customer_longitude),Number(z.center_lat),Number(z.center_lng))})).sort((a:any,b:any)=>a.d-b.d)[0];if(near)zoneIds=[String(near.id)]}
+ let links:any[]=[];if(zoneIds.length){const {data,error}=await admin.from("therapist_zones").select("therapist_id,zone_id").in("zone_id",zoneIds);if(error)throw error;links=data??[]}
+ const {data:all,error:cError}=await admin.from("therapists").select("id,display_name,active,available,wallet_blocked,approval_status,service_types,tiers,experience_years,created_at,registration_details").eq("active",true).eq("available",true).eq("approval_status","approved");if(cError)throw cError;
+ const allowed=zoneIds.length?new Set(links.map((x:any)=>x.therapist_id)):null;
+ const candidates=(all??[]).filter((t:any)=>(!allowed||allowed.has(t.id))&&!t.wallet_blocked&&(t.service_types??[]).includes(job.service_type)&&(t.tiers??[]).includes(job.tier)&&(job.tier!=="Luxe"||Number(t.experience_years??0)>=2)&&(job.tier!=="Prime"||Number(t.experience_years??0)>=.5));
+ if(!candidates.length)return null;const ids=candidates.map((t:any)=>t.id);
+ const [{data:slots,error:sError},{data:ratings,error:rError},{data:jobs,error:jError},{data:zones,error:zError}]=await Promise.all([
+  admin.from("therapist_availability_slots").select("therapist_id,start_time,end_time,is_available").in("therapist_id",ids).eq("slot_date",job.appointment_date).eq("is_available",true),
+  admin.from("therapist_ratings").select("therapist_id,rating").in("therapist_id",ids).eq("status","published"),
+  admin.from("booking_assignments").select("therapist_id,status,created_at").in("therapist_id",ids).gte("created_at",new Date(new Date().toLocaleDateString("en-CA",{timeZone:"Asia/Kolkata"})+"T00:00:00+05:30").toISOString()).in("status",["awaiting_whatsapp","whatsapp_opened","confirmed","reached","completed"]),
+  admin.from("zones").select("id,center_lat,center_lng").eq("active",true)
+ ]);if(sError)throw sError;if(rError)throw rError;if(jError)throw jError;if(zError)throw zError;
+ const matched=candidates.filter((t:any)=>(slots??[]).some((slot:any)=>{if(slot.therapist_id!==t.id)return false;const a=bookingTimeMinutes(slot.start_time),b=bookingTimeMinutes(slot.end_time);return a!==null&&b!==null&&when>=a&&when<b}));
+ if(!matched.length)return null;const zoneMap=new Map((zones??[]).map((z:any)=>[z.id,z]));
+ return matched.map((t:any)=>{const rr=(ratings??[]).filter((r:any)=>r.therapist_id===t.id);const avg=rr.length?rr.reduce((n:number,r:any)=>n+Number(r.rating),0)/rr.length:0;const duties=(jobs??[]).filter((j:any)=>j.therapist_id===t.id).length;let distance=Number.POSITIVE_INFINITY;
+ if(hasCoords){const reg=t.registration_details??{};const lat=Number(reg.latitude??reg.lat),lng=Number(reg.longitude??reg.lng);if(Number.isFinite(lat)&&Number.isFinite(lng))distance=bookingDistanceKm(Number(job.customer_latitude),Number(job.customer_longitude),lat,lng);else{const ds=links.filter((x:any)=>x.therapist_id===t.id).map((x:any)=>zoneMap.get(x.zone_id)).filter((z:any)=>z&&z.center_lat!=null&&z.center_lng!=null).map((z:any)=>bookingDistanceKm(Number(job.customer_latitude),Number(job.customer_longitude),Number(z.center_lat),Number(z.center_lng)));if(ds.length)distance=Math.min(...ds)}}
+ return {t,duties,avg,distance,preferred:t.id===job.preferred_therapist_id};
+ }).sort((a:any,b:any)=>(a.duties===0?0:1)-(b.duties===0?0:1)||Number(b.preferred)-Number(a.preferred)||a.distance-b.distance||b.avg-a.avg||a.duties-b.duties||String(a.t.created_at).localeCompare(String(b.t.created_at)))[0].t;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ error: "POST only" }, 405);
@@ -74,7 +103,7 @@ Deno.serve(async (req: Request) => {
     const body = await req.json();
     const action = String(body.action ?? "");
     if (action === "public-create-booking-request") {
-      const customer_name = String(body.customer_name ?? "").trim().replace(/\\s+/g, " ").slice(0, 100);
+      const customer_name = String(body.customer_name ?? "").trim().replace(/\s+/g, " ").slice(0, 100);
       const customer_phone = String(body.customer_phone ?? "").replace(/[^+0-9]/g, "").slice(0, 16);
       const customer_age = body.customer_age === null || body.customer_age === undefined || body.customer_age === "" ? null : Number(body.customer_age);
       const recipient_gender = String(body.recipient_gender ?? "").slice(0, 30) || null;
@@ -87,6 +116,15 @@ Deno.serve(async (req: Request) => {
       const customer_gps_accuracy_meters = body.customer_gps_accuracy_meters === null || body.customer_gps_accuracy_meters === undefined || body.customer_gps_accuracy_meters === "" ? null : Math.max(0, Math.min(100000, Math.round(Number(body.customer_gps_accuracy_meters) || 0)));
       const appointment_date = String(body.appointment_date ?? "").slice(0, 10) || null;
       const appointment_time = String(body.appointment_time ?? "").slice(0, 30) || null;
+      // Enforce minimum 3-hour lead time on server using India timezone offset.
+      if (appointment_date && appointment_time) {
+        const match = appointment_time.match(/^(\d{1,2}):(\d{2})/);
+        if (!match) return json({ error: "Appointment time is invalid." }, 400);
+        const hour = Number(match[1]); const minute = Number(match[2]);
+        if (hour > 23 || minute > 59) return json({ error: "Appointment time is invalid." }, 400);
+        const start = new Date(`${appointment_date}T${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00+05:30`);
+        if (!Number.isFinite(start.getTime()) || start.getTime() < Date.now() + 3 * 60 * 60 * 1000) return json({ error: "Booking live time se kam-se-kam 3 ghante baad ki honi chahiye. Kripya baad ka slot chunein." }, 400);
+      }
       const service_type = String(body.service_type ?? "");
       const tier = String(body.tier ?? "");
       const service_name = String(body.service_name ?? "").trim().slice(0, 500);
@@ -104,21 +142,156 @@ Deno.serve(async (req: Request) => {
         category: String(item?.category ?? "").slice(0, 80),
         type: String(item?.type ?? "").slice(0, 30)
       })) : [];
-      if (customer_name.length < 2 || customer_phone.replace(/\\D/g, "").length < 10) return json({ error: "Valid customer name and mobile number are required." }, 400);
+      const requestedTherapistId = String(body.preferred_therapist_id ?? "").trim();
+      let preferred_therapist_id: string | null = null;
+      if (requestedTherapistId) {
+        if (!/^[0-9a-f-]{36}$/i.test(requestedTherapistId)) return json({ error: "Preferred therapist selection is invalid." }, 400);
+        const { data: preferred, error: preferredError } = await admin.from("therapists")
+          .select("id,active,approval_status").eq("id", requestedTherapistId).maybeSingle();
+        if (preferredError) throw preferredError;
+        if (preferred?.active && preferred.approval_status === "approved") preferred_therapist_id = preferred.id;
+      }
+      if (customer_name.length < 2 || customer_phone.replace(/\D/g, "").length < 10) return json({ error: "Valid customer name and mobile number are required." }, 400);
       if (customer_age !== null && (!Number.isInteger(customer_age) || customer_age < 18 || customer_age > 120)) return json({ error: "Customer age must be between 18 and 120." }, 400);
       if (![ "Massage", "Salon" ].includes(service_type) || ![ "Prime", "Luxe" ].includes(tier) || !service_name) return json({ error: "Choose a valid service and category." }, 400);
       if (!Number.isFinite(booking_amount) || booking_amount < 0 || booking_amount > 10000000 || !Number.isFinite(discount_amount) || discount_amount < 0 || discount_amount > booking_amount) return json({ error: "Booking amount or discount is invalid." }, 400);
-      if (appointment_date && !/^\\d{4}-\\d{2}-\\d{2}$/.test(appointment_date)) return json({ error: "Appointment date is invalid." }, 400);
+      if (appointment_date && !/^\d{4}-\d{2}-\d{2}$/.test(appointment_date)) return json({ error: "Appointment date is invalid." }, 400);
+      const partnerCode = String(body.partner_code ?? "").trim();
+      let referralPartnerId: string | null = null;
+      if (partnerCode) {
+        const { data: referralPartner, error: partnerError } = await admin.from("partners").select("id,status").eq("partner_code", partnerCode).maybeSingle();
+        if (partnerError) throw partnerError;
+        if (!referralPartner || referralPartner.status !== "active") return json({ error: "यह BEX Partner Referral Link अमान्य या निष्क्रिय है। सही Partner Link खोलकर फिर कोशिश करें।" }, 400);
+        referralPartnerId = referralPartner.id;
+      }
       const reference_code = "BEX-BOOK-" + Date.now().toString(36).toUpperCase() + "-" + randomToken().slice(0, 4).toUpperCase();
       const { data, error } = await admin.from("booking_assignments").insert({
         reference_code, zone_id: null, therapist_id: null, service_type, tier, service_name,
         appointment_date, appointment_time, status: "awaiting_whatsapp", booking_amount,
         customer_name, customer_phone, customer_age, recipient_gender, visit_type, customer_address,
         customer_latitude, customer_longitude, customer_landmark, customer_gps_accuracy_meters,
-        service_details, discount_amount, coupon_code, customer_notes, customer_type, preferred_pressure, main_concern, source: "website_whatsapp_form"
+        service_details, discount_amount, coupon_code, customer_notes, customer_type, preferred_pressure, main_concern, preferred_therapist_id, partner_id: referralPartnerId, source: "website_whatsapp_form"
       }).select("id,reference_code").single();
       if (error) throw error;
-      return json({ booking_id: data.id, reference_code: data.reference_code, message: "Booking request recorded; WhatsApp confirmation is still required." });
+      const trackingToken = randomToken();
+      const { error: accessError } = await admin.from("customer_booking_tracking_access").insert({
+        booking_id: data.id, token_hash: await hashToken(trackingToken)
+      });
+      if (accessError) {
+        await admin.from("booking_assignments").delete().eq("id", data.id);
+        throw accessError;
+      }
+      // Start therapist search immediately after the booking is saved. The database trigger creates the 2-minute offer and push notification.
+      try {
+        const { data: jobForDispatch, error: dispatchReadError } = await admin.from("booking_assignments").select("id,zone_id,service_type,tier,appointment_date,appointment_time,customer_latitude,customer_longitude,preferred_therapist_id").eq("id",data.id).single();
+        if(dispatchReadError) throw dispatchReadError;
+        const candidate = await chooseInitialTherapist(jobForDispatch);
+        if(candidate){
+          const { error: assignError } = await admin.from("booking_assignments").update({therapist_id:candidate.id,updated_at:new Date().toISOString()}).eq("id",data.id).is("therapist_id",null).eq("status","awaiting_whatsapp");
+          if(assignError) throw assignError;
+        } else {
+          console.warn("No calendar-eligible therapist for booking",data.reference_code);
+        }
+      } catch(dispatchError) { console.error("Initial therapist assignment failed",data.reference_code,dispatchError); }
+      return json({ booking_id: data.id, reference_code: data.reference_code, tracking_token: trackingToken, partner_referral_attached: !!referralPartnerId, message: "Booking saved; therapist search started. Booking will auto-confirm when a therapist accepts." });
+    }
+    if (action === "public-booking-change-policy") {
+      const { data, error } = await admin.from("booking_change_policy_settings").select("customer_cancel_cutoff_hours,customer_reschedule_cutoff_hours,allow_cancel_after_therapist_accept,allow_reschedule_after_therapist_accept").eq("id", true).single();
+      if (error) throw error;
+      return json({ policy: data });
+    }
+    if (action === "public-customer-change-booking") {
+      const token = String(body.tracking_token ?? "").trim();
+      const change = String(body.change ?? "");
+      if (!/^[a-f0-9]{64}$/i.test(token) || !["cancel","reschedule"].includes(change)) return json({error:"Valid tracking link aur action zaroori hai."},400);
+      const { data: access, error: accessError } = await admin.from("customer_booking_tracking_access").select("booking_id,expires_at").eq("token_hash", await hashToken(token)).maybeSingle();
+      if (accessError) throw accessError;
+      if (!access || new Date(access.expires_at).getTime() < Date.now()) return json({error:"Tracking link invalid ya expire ho gaya hai."},404);
+      const { data: policy, error: policyError } = await admin.from("booking_change_policy_settings").select("*").eq("id",true).single();
+      if (policyError) throw policyError;
+      const { data: booking, error: bookingError } = await admin.from("booking_assignments").select("id,reference_code,status,therapist_id,appointment_date,appointment_time,job_started_at").eq("id",access.booking_id).maybeSingle();
+      if (bookingError) throw bookingError;
+      if (!booking) return json({error:"Booking nahi mili."},404);
+      if (["completed","cancelled","reached"].includes(booking.status) || booking.job_started_at) return json({error:"Is booking ka status ab change nahi ho sakta. Admin se sampark karein."},409);
+      if (booking.therapist_id && change==="cancel" && !policy.allow_cancel_after_therapist_accept) return json({error:"Therapist assign ho chuka hai; cancellation ke liye Admin se sampark karein."},409);
+      if (booking.therapist_id && change==="reschedule" && !policy.allow_reschedule_after_therapist_accept) return json({error:"Therapist assign ho chuka hai; reschedule ke liye Admin se sampark karein."},409);
+      const startMatch = String(booking.appointment_time||"").match(/^(\d{1,2}):(\d{2})/);
+      if (!booking.appointment_date || !startMatch) return json({error:"Booking ka time format verify nahi ho saka. Admin se sampark karein."},409);
+      const oldStart = new Date(String(booking.appointment_date)+"T"+String(Number(startMatch[1])).padStart(2,"0")+":"+startMatch[2]+":00+05:30");
+      const hoursLeft = (oldStart.getTime()-Date.now())/3600000;
+      const cutoff = change==="cancel" ? Number(policy.customer_cancel_cutoff_hours) : Number(policy.customer_reschedule_cutoff_hours);
+      if (hoursLeft < cutoff) return json({error:"Is booking mein customer ke liye "+cutoff+" ghante ki limit hai. Ab Admin se sampark karein."},409);
+      if (change==="cancel") {
+        const { data: updated, error } = await admin.from("booking_assignments").update({status:"cancelled",cancelled_at:new Date().toISOString(),cancel_reason:"Customer self-service cancellation",updated_at:new Date().toISOString()}).eq("id",booking.id).not("status","in",'("completed","cancelled","reached")').select("id,reference_code,status,appointment_date,appointment_time").maybeSingle();
+        if (error) throw error;
+        if (!updated) return json({error:"Booking ka status badal gaya hai. Page refresh karke dekhein."},409);
+        await admin.from("therapist_job_offers").update({response:"cancelled",responded_at:new Date().toISOString()}).eq("booking_id",booking.id).is("responded_at",null);
+        await admin.from("therapist_dispatch_alerts").insert({booking_id:booking.id,alert_type:"customer_cancelled",message:"Customer ne booking "+booking.reference_code+" cancel kar di hai."});
+        return json({success:true,booking:updated,message:"Booking cancel ho gayi hai."});
+      }
+      const newDate=String(body.appointment_date||"").slice(0,10), newTime=String(body.appointment_time||"").trim().slice(0,30);
+      const tm=newTime.match(/^(\d{1,2}):(\d{2})/);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)||!tm||Number(tm[1])>23||Number(tm[2])>59) return json({error:"Nayi date aur time sahi chunein."},400);
+      const newStart=new Date(newDate+"T"+String(Number(tm[1])).padStart(2,"0")+":"+tm[2]+":00+05:30");
+      if (!Number.isFinite(newStart.getTime())||newStart.getTime()<Date.now()+3*3600000) return json({error:"Naya slot ab se kam-se-kam 3 ghante baad ka hona chahiye."},400);
+      const { data: updated, error } = await admin.from("booking_assignments").update({appointment_date:newDate,appointment_time:newTime,status:"awaiting_whatsapp",therapist_id:null,updated_at:new Date().toISOString()}).eq("id",booking.id).not("status","in",'("completed","cancelled","reached")').select("id,reference_code,status,appointment_date,appointment_time,therapist_id").maybeSingle();
+      if (error) throw error;
+      if (!updated) return json({error:"Booking ka status badal gaya hai. Page refresh karke dekhein."},409);
+      await admin.from("therapist_job_offers").update({response:"rescheduled",responded_at:new Date().toISOString()}).eq("booking_id",booking.id).is("responded_at",null);
+      await admin.from("therapist_dispatch_alerts").insert({booking_id:booking.id,alert_type:"customer_rescheduled",message:"Booking "+booking.reference_code+" ka naya time "+newDate+" "+newTime+" hai. Therapist assignment ko Admin verify kare."});
+      return json({success:true,booking:updated,message:"Naya time save ho gaya. Therapist availability/assignment ko Admin verify karega."});
+    }
+    if (action === "admin-get-booking-change-policy") {
+      await requireRole(req, ["admin","super_admin","superadmin"]);
+      const {data,error}=await admin.from("booking_change_policy_settings").select("*").eq("id",true).single();
+      if(error) throw error; return json({policy:data});
+    }
+    if (action === "admin-set-booking-change-policy") {
+      const user=await requireRole(req, ["admin","super_admin","superadmin"]);
+      const cancel=Number(body.customer_cancel_cutoff_hours), reschedule=Number(body.customer_reschedule_cutoff_hours);
+      if(!Number.isInteger(cancel)||cancel<0||cancel>168||!Number.isInteger(reschedule)||reschedule<0||reschedule>168) return json({error:"Cutoff 0 se 168 ghante ke beech whole number hona chahiye."},400);
+      const {data,error}=await admin.from("booking_change_policy_settings").upsert({id:true,customer_cancel_cutoff_hours:cancel,customer_reschedule_cutoff_hours:reschedule,allow_cancel_after_therapist_accept:body.allow_cancel_after_therapist_accept===true,allow_reschedule_after_therapist_accept:body.allow_reschedule_after_therapist_accept===true,updated_at:new Date().toISOString(),updated_by:user.id}).select("*").single();
+      if(error) throw error; return json({success:true,policy:data});
+    }
+    if (action === "public-customer-booking-status") {
+      const trackingToken = String(body.tracking_token ?? "").trim();
+      if (!/^[a-f0-9]{64}$/i.test(trackingToken)) return json({ error: "Valid booking tracking link is required." }, 400);
+      const { data: access, error: accessError } = await admin.from("customer_booking_tracking_access")
+        .select("booking_id,expires_at").eq("token_hash", await hashToken(trackingToken)).maybeSingle();
+      if (accessError) throw accessError;
+      if (!access || new Date(access.expires_at).getTime() < Date.now()) return json({ error: "यह tracking link expired या invalid है। कृपया booking confirmation message से नया link खोलें।" }, 404);
+      const { data: booking, error: bookingError } = await admin.from("booking_assignments")
+        .select("id,reference_code,service_type,tier,service_name,appointment_date,appointment_time,status,booking_amount,customer_name,customer_phone,customer_address,therapist_id,preferred_therapist_id,created_at")
+        .eq("id", access.booking_id).maybeSingle();
+      if (bookingError) throw bookingError;
+      if (!booking) return json({ error: "Booking नहीं मिली।" }, 404);
+      let therapist = null;
+      if (booking.therapist_id && ["confirmed","reached","completed"].includes(booking.status)) {
+        const { data: t, error: therapistError } = await admin.from("therapists")
+          .select("id,display_name,therapist_code,photo_url,experience_years,gender,service_types,tiers")
+          .eq("id", booking.therapist_id).maybeSingle();
+        if (therapistError) throw therapistError;
+        if (t) {
+          const { data: ratings, error: ratingsError } = await admin.from("therapist_ratings")
+            .select("rating,review,created_at").eq("therapist_id", t.id).eq("status", "published").order("created_at", { ascending: false });
+          if (ratingsError) throw ratingsError;
+          const list = ratings ?? [];
+          const avg = list.length ? list.reduce((sum: number, r: { rating: number }) => sum + Number(r.rating), 0) / list.length : null;
+          therapist = { id: t.id, display_name: t.display_name, therapist_code: t.therapist_code, photo_url: t.photo_url,
+            experience_years: Number(t.experience_years ?? 0), gender: t.gender ?? null,
+            average_rating: avg === null ? null : Math.round(avg * 10) / 10, rating_count: list.length,
+            reviews: list.filter((r: { review?: string | null }) => !!r.review).slice(0, 3) };
+        }
+      }
+      const { data: customerRatings, error: customerRatingError } = await admin.from("therapist_ratings")
+        .select("rating,review,status,created_at").eq("booking_reference", booking.reference_code).order("created_at", { ascending: false }).limit(1);
+      if (customerRatingError) throw customerRatingError;
+      const customerRating = (customerRatings ?? [])[0] ?? null;
+      return json({ booking: { reference_code: booking.reference_code, service_type: booking.service_type, tier: booking.tier,
+        service_name: booking.service_name, appointment_date: booking.appointment_date, appointment_time: booking.appointment_time,
+        status: booking.status, booking_amount: booking.booking_amount, created_at: booking.created_at,
+        preferred_therapist_id: booking.preferred_therapist_id ?? null,
+        customer_rating: customerRating ? { rating: customerRating.rating, review: customerRating.review, created_at: customerRating.created_at } : null }, therapist });
     }
     if (action === "public-zones") {
       const { data, error } = await admin.from("zones").select("id,name,description,boundary_geojson,center_lat,center_lng").eq("active", true).order("name");
@@ -272,9 +445,74 @@ Deno.serve(async (req: Request) => {
       if (claimError) throw claimError;
       const link = links?.[0];
       if (!link) return json({ error: "This rating link has expired or has already been used." }, 409);
-      const { error: insertError } = await admin.from("therapist_ratings").insert({ therapist_id: link.therapist_id, rating, review: review || null, status: "pending" });
+      const { error: insertError } = await admin.from("therapist_ratings").insert({ therapist_id: link.therapist_id, rating, review: review || null, status: "published" });
       if (insertError) throw insertError;
-      return json({ success: true, message: "Thank you. Your feedback has been submitted for review." });
+      return json({ success: true, message: "Thank you! Your rating is now published on the therapist profile." });
+    }
+    if (action === "admin-reassign-booking") {
+      await requireRole(req, ["admin", "super_admin", "superadmin"]);
+      const booking_id = String(body.booking_id ?? "");
+      if (!/^[0-9a-f-]{36}$/i.test(booking_id)) return json({ error: "Valid booking ID required." }, 400);
+      const allowedStatuses = ["awaiting_whatsapp", "whatsapp_opened", "confirmed", "reached"];
+      const { data: booking, error: bookingError } = await admin.from("booking_assignments")
+        .select("id,zone_id,therapist_id,status,service_type,tier,recipient_gender")
+        .eq("id", booking_id).maybeSingle();
+      if (bookingError) throw bookingError;
+      if (!booking) return json({ error: "Booking नहीं मिली। Refresh करके फिर कोशिश करें।" }, 404);
+      if (!allowedStatuses.includes(String(booking.status))) return json({ error: "Completed, cancelled या rejected booking का therapist नहीं बदला जा सकता।" }, 409);
+      const { data: links, error: linkError } = booking.zone_id
+        ? await admin.from("therapist_zones").select("therapist_id").eq("zone_id", booking.zone_id)
+        : { data: [], error: null };
+      if (linkError) throw linkError;
+      const zoneTherapistIds = new Set((links ?? []).map((x: any) => x.therapist_id));
+      const { data: allTherapists, error: therapistError } = await admin.from("therapists")
+        .select("id,display_name,therapist_code,phone,gender,active,available,approval_status,service_types,tiers,experience_years")
+        .order("display_name");
+      if (therapistError) throw therapistError;
+      const fullList = (allTherapists ?? []).map((t: any) => ({
+        ...t,
+        zone_linked: !booking.zone_id || zoneTherapistIds.has(t.id)
+      }));
+      const eligible = fullList.filter((t: any) =>
+        t.id !== booking.therapist_id &&
+        t.active === true && t.available === true && (t.approval_status || "approved") === "approved" &&
+        t.zone_linked === true &&
+        (!booking.recipient_gender || t.gender === booking.recipient_gender) &&
+        (t.service_types ?? []).includes(booking.service_type) &&
+        (t.tiers ?? []).includes(booking.tier) &&
+        (booking.tier !== "Luxe" || Number(t.experience_years ?? 0) >= 2) &&
+        (booking.tier !== "Prime" || Number(t.experience_years ?? 0) >= 0.5)
+      );
+      if (!body.therapist_id) return json({ therapists: eligible, all_therapists: fullList });
+      const therapist_id = String(body.therapist_id);
+      if (!/^[0-9a-f-]{36}$/i.test(therapist_id)) return json({ error: "Valid therapist ID required." }, 400);
+      const selected = eligible.find((t: any) => t.id === therapist_id);
+      if (!selected) return json({ error: "यह therapist इस booking के service, tier, gender, availability या zone के लिए eligible नहीं है। Refresh करके फिर चुनें।" }, 409);
+      const { data: updated, error: updateError } = await admin.from("booking_assignments")
+        .update({ therapist_id, updated_at: new Date().toISOString() })
+        .eq("id", booking_id).in("status", allowedStatuses)
+        .select("id,therapist_id,status").maybeSingle();
+      if (updateError) throw updateError;
+      if (!updated) return json({ error: "Booking status बदल गया है; therapist नहीं बदला गया। Refresh करके जाँचें।" }, 409);
+      return json({ success: true, booking: updated, therapist: selected, message: "Booking का therapist सफलतापूर्वक बदल दिया गया। Payment और referral records को नहीं बदला गया।" });
+    }
+    if (action === "admin-list-bookings") {
+      await requireRole(req, ["admin", "super_admin", "superadmin"]);
+      const { data: bookings, error } = await admin.from("booking_assignments")
+        .select("id,reference_code,zone_id,therapist_id,service_type,tier,service_name,appointment_date,appointment_time,status,booking_amount,customer_name,customer_phone,customer_age,recipient_gender,visit_type,customer_address,service_details,discount_amount,coupon_code,customer_notes,customer_type,preferred_pressure,main_concern,source,cancelled_at,cancel_reason,created_at,updated_at,payment_verified,payment_verified_at,customer_latitude,customer_longitude,customer_landmark")
+        .order("created_at", { ascending: false }).limit(1000);
+      if (error) throw error;
+      const therapistIds = [...new Set((bookings ?? []).map((b:any) => b.therapist_id).filter(Boolean))];
+      const zoneIds = [...new Set((bookings ?? []).map((b:any) => b.zone_id).filter(Boolean))];
+      const [{ data: therapists, error: therapistError }, { data: zones, error: zoneError }] = await Promise.all([
+        therapistIds.length ? admin.from("therapists").select("id,display_name,therapist_code,phone").in("id", therapistIds) : Promise.resolve({data:[],error:null}),
+        zoneIds.length ? admin.from("zones").select("id,name").in("id", zoneIds) : Promise.resolve({data:[],error:null})
+      ]);
+      if (therapistError) throw therapistError;
+      if (zoneError) throw zoneError;
+      const therapistMap = Object.fromEntries((therapists ?? []).map((t:any) => [t.id, t]));
+      const zoneMap = Object.fromEntries((zones ?? []).map((z:any) => [z.id, z]));
+      return json({ bookings: (bookings ?? []).map((b:any) => ({...b, therapist: therapistMap[b.therapist_id] ?? null, zone: zoneMap[b.zone_id] ?? null})) });
     }
     if (action === "admin-list") {
       await requireRole(req, ["admin"]);
@@ -301,7 +539,7 @@ Deno.serve(async (req: Request) => {
     }
     if (action === "admin-create-zone") {
       await requireRole(req, ["admin"]);
-      const name = String(body.name ?? "").trim().replace(/\\s+/g, " ").slice(0, 80);
+      const name = String(body.name ?? "").trim().replace(/\s+/g, " ").slice(0, 80);
       const description = String(body.description ?? "").trim().slice(0, 240) || null;
       const boundary_geojson = body.boundary_geojson && typeof body.boundary_geojson === "object" ? body.boundary_geojson : null;
       if (name.length < 2) return json({ error: "Zone name कम से कम 2 characters का होना चाहिए।" }, 400);
@@ -337,6 +575,22 @@ Deno.serve(async (req: Request) => {
       const { error: zoneError } = await admin.from("therapist_zones").insert(zone_ids.map((zone_id: string) => ({ therapist_id, zone_id })));
       if (zoneError) throw zoneError;
       return json({ success: true, message: "Therapist zone, experience और availability सेव हो गए।" });
+    }
+    if (action === "admin-update-zone") {
+      await requireRole(req, ["admin"]);
+      const zone_id = String(body.zone_id ?? "");
+      const name = String(body.name ?? "").trim().replace(/\s+/g, " ").slice(0, 80);
+      const description = String(body.description ?? "").trim().slice(0, 240) || null;
+      const boundary_geojson = body.boundary_geojson && typeof body.boundary_geojson === "object" ? body.boundary_geojson : null;
+      if (!/^[0-9a-f-]{36}$/i.test(zone_id) || name.length < 2) return json({ error: "Valid zone और कम-से-कम 2 character का नाम भरें।" }, 400);
+      if (!boundary_geojson || boundary_geojson.type !== "Polygon" || !Array.isArray(boundary_geojson.coordinates?.[0]) || boundary_geojson.coordinates[0].length < 4) return json({ error: "Map boundary के कम-से-कम 3 points दें।" }, 400);
+      const ring = boundary_geojson.coordinates[0];
+      if (ring.length > 1000 || ring.some((p: unknown) => !Array.isArray(p) || p.length < 2 || !Number.isFinite(Number(p[0])) || !Number.isFinite(Number(p[1])) || Math.abs(Number(p[0])) > 180 || Math.abs(Number(p[1])) > 90)) return json({ error: "Map boundary coordinates invalid हैं।" }, 400);
+      const center = ring.slice(0, -1).reduce((a: {x:number;y:number;n:number}, p: number[]) => ({x:a.x+Number(p[0]),y:a.y+Number(p[1]),n:a.n+1}), {x:0,y:0,n:0});
+      const center_lng = center.n ? center.x / center.n : null, center_lat = center.n ? center.y / center.n : null;
+      const { data, error } = await admin.from("zones").update({ name, description, boundary_geojson, center_lat, center_lng }).eq("id", zone_id).select("id,name,description,active,created_at,boundary_geojson,center_lat,center_lng").single();
+      if (error) { if (error.code === "23505") return json({ error: "यह Zone नाम पहले से मौजूद है।" }, 409); throw error; }
+      return json({ zone: data, message: "Zone details updated." });
     }
     if (action === "admin-set-zone-boundary") {
       await requireRole(req, ["admin"]);
@@ -608,6 +862,49 @@ Deno.serve(async (req: Request) => {
         .select("id,display_name,therapist_code,approval_status,active,available").single();
       if (error) throw error;
       return json({ therapist: data, message: approval_status === "approved" ? "Therapist approved and activated." : approval_status === "rejected" ? "Therapist application rejected." : "Therapist approval set to pending." });
+    }
+    if (action === "admin-list-completion-codes") {
+      await requireRole(req, ["admin", "super_admin", "superadmin"]);
+      const ids = Array.isArray(body.booking_ids)
+        ? [...new Set(body.booking_ids.map((x: unknown) => String(x)).filter((x: string) => /^[0-9a-f-]{36}$/i.test(x)))].slice(0, 500)
+        : [];
+      if (!ids.length) return json({ success: true, codes: {} });
+      const { data, error } = await admin.from("booking_completion_codes")
+        .select("booking_id,completion_code")
+        .in("booking_id", ids);
+      if (error) throw error;
+      const codes: Record<string, string> = {};
+      for (const row of data ?? []) codes[row.booking_id] = row.completion_code;
+      return json({ success: true, codes });
+    }
+    if (action === "admin-issue-end-otp") {
+      await requireRole(req, ["admin", "super_admin", "superadmin"]);
+      const booking_id = String(body.booking_id ?? "");
+      if (!/^[0-9a-f-]{36}$/i.test(booking_id)) return json({ error: "Valid booking ID required." }, 400);
+      const { data: job, error: jobError } = await admin.from("booking_assignments")
+        .select("id,reference_code,status,service_name,customer_phone")
+        .eq("id", booking_id).maybeSingle();
+      if (jobError) throw jobError;
+      if (!job) return json({ error: "Booking nahi mili." }, 404);
+      if (["completed", "cancelled"].includes(job.status)) return json({ error: "Completed/cancelled booking ka code send nahi ho sakta." }, 409);
+      if (!job.customer_phone) return json({ error: "Customer ka mobile number saved nahi hai." }, 409);
+      const { data: codeRow, error: codeError } = await admin.from("booking_completion_codes")
+        .select("completion_code").eq("booking_id", booking_id).maybeSingle();
+      if (codeError) throw codeError;
+      if (!codeRow?.completion_code) return json({ error: "Is booking ka completion code nahi mila. Admin support se sampark karein." }, 409);
+      const code = String(codeRow.completion_code);
+      const { data: changed, error: updateError } = await admin.from("booking_assignments").update({
+        completion_otp_hash: await hashToken(booking_id + ":" + code),
+        completion_otp_expires_at: null,
+        completion_otp_attempts: 0,
+        updated_at: new Date().toISOString()
+      }).eq("id", booking_id).not("status", "in", '("completed","cancelled")').select("id").maybeSingle();
+      if (updateError) throw updateError;
+      if (!changed) return json({ error: "Booking ka status badal gaya hai; refresh karke dobara dekhein." }, 409);
+      const digits = String(job.customer_phone).replace(/\D/g, "");
+      const waPhone = digits.length === 10 ? "91" + digits : (digits.startsWith("0") && digits.length === 11 ? "91" + digits.slice(1) : digits);
+      const message = "BodyExpertX: Aapki " + (job.service_name || "service") + " booking (" + (job.reference_code || "") + ") ka permanent Completion Code hai: " + code + ". Yeh code sirf isi booking ko complete karne ke liye hai. Service poori hone par hi therapist ko batayein. Is code ki expiry timing nahi hai.";
+      return json({ success: true, whatsapp_url: "https://wa.me/" + waPhone + "?text=" + encodeURIComponent(message), message: "WhatsApp draft khul raha hai. Send dabakar code customer ko bhejein. Yeh code isi booking ke liye hai aur expire nahi hoga." });
     }
     if (action === "admin-moderate") {
       await requireRole(req, ["admin"]);
