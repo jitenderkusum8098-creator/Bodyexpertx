@@ -2485,39 +2485,27 @@ function renderPickerResults(items,q){
  })
 }
 async function searchPickerAddress(q){
- const seq=++pickerSearchSeq;
- q=String(q||"").trim().replace(/\\s+/g," ");
+ const seq=++pickerSearchSeq;q=String(q||"").trim().replace(/\s+/g," ");
  if(q.length<3){pickerResults.hidden=true;pickerResults.replaceChildren();return}
- pickerResults.hidden=false;
- pickerResults.innerHTML='<div class="bex-address-empty">🔎 Address search ho raha hai…</div>';
- const fetchJson=async(url,ms=5000)=>{
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),ms);
-  try{const r=await fetch(url,{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});if(!r.ok)return null;return await r.json()}
-  finally{clearTimeout(timer)}
- };
+ pickerResults.hidden=false;pickerResults.innerHTML='<div class="bex-address-empty">🔎 Address search ho raha hai…</div>';
+ const queries=[q];
+ if(!/delhi|india|1100\d{2}/i.test(q))queries.push(q+", Kishangarh, Mehrauli, New Delhi, India");
+ if(!/delhi|india|1100\d{2}/i.test(q))queries.push(q+", Delhi, India");
+ const fetchJson=async(url,ms=4500)=>{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),ms);try{const r=await fetch(url,{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});if(!r.ok)return null;return await r.json()}finally{clearTimeout(timer)}};
  let results=[];
- // Keep search fast: try one India-focused Photon request, then one Nominatim fallback.
- try{
-  const url="https://photon.komoot.io/api/?limit=8&lang=en&lat=28.5245&lon=77.1588&q="+encodeURIComponent(q);
-  const d=await fetchJson(url);
-  if(seq!==pickerSearchSeq)return;
-  if(d&&Array.isArray(d.features))results=d.features.filter(x=>Array.isArray(x.geometry?.coordinates)&&x.geometry.coordinates.length>=2);
- }catch(e){}
+ for(const term of queries.slice(0,2)){
+  try{const d=await fetchJson("https://photon.komoot.io/api/?limit=8&lang=en&lat=28.5245&lon=77.1588&q="+encodeURIComponent(term));if(seq!==pickerSearchSeq)return;if(Array.isArray(d?.features)&&d.features.length){results=d.features;break}}catch(e){}
+ }
  if(seq!==pickerSearchSeq)return;
  if(!results.length){
-  try{
-   const url="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&q="+encodeURIComponent(q);
-   const d=await fetchJson(url,5000);
-   if(seq!==pickerSearchSeq)return;
-   if(Array.isArray(d))results=d;
-  }catch(e){}
+  for(const term of queries.slice(0,2)){
+   try{const d=await fetchJson("https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&q="+encodeURIComponent(term));if(seq!==pickerSearchSeq)return;if(Array.isArray(d)&&d.length){results=d;break}}catch(e){}
+  }
  }
  if(seq!==pickerSearchSeq)return;
  renderPickerResults(results,q);
- if(!results.length){
-  pickerResults.innerHTML='<div class="bex-address-empty">Address result nahi mila ya search service busy hai. House/road ke saath area, Delhi aur PIN code likhein. Ya Add New Address se yahi address manually enter karke map pin confirm karein.</div>';
-  $("bexAddressMapPin").hidden=false;
- }else{$("bexAddressMapPin").hidden=true}
+ if(!results.length){pickerResults.innerHTML='<div class="bex-address-empty">Exact house address map data mein nahi mila. Area/landmark ke saath Delhi ya PIN code likhein, ya Add New Address se address enter karke map pin set karein.</div>';$("bexAddressMapPin").hidden=false}
+ else{$("bexAddressMapPin").hidden=true}
 }
 pickerSearch.addEventListener("input",()=>{clearTimeout(pickerSearchTimer);pickerSearchTimer=setTimeout(()=>searchPickerAddress(pickerSearch.value),450)});
 pickerSearch.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();clearTimeout(pickerSearchTimer);searchPickerAddress(pickerSearch.value)}});
