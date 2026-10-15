@@ -164,16 +164,71 @@ sb.auth.getSession().then(({data})=>{if(data.session)load(true)});
 </style>
 
 <script>
-(()=>{const el=id=>document.getElementById(id);const box=el('bexAvailability');if(!box||!window.supabase)return;
-const pad=n=>String(n).padStart(2,'0');const localDate=()=>{const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
-const tm=n=>{const h=Math.floor(n/60),m=n%60,amp=h>=12?'PM':'AM',hh=h%12||12;return hh+':'+pad(m)+' '+amp};
-let currentTherapistId=null,slotDuration=2,rendering=false;
-async function setup(){try{const tr=typeof therapist!=='undefined'?therapist:null;if(!tr||!tr.id){box.classList.add('hidden');return}currentTherapistId=tr.id;box.classList.remove('hidden');if(!el('bexAvDate').value)el('bexAvDate').value=localDate();const {data:cfg}=await sb.from('therapist_availability_settings').select('*').eq('id',true).maybeSingle();slotDuration=Number(cfg?.slot_duration_hours||2);await renderSlots()}catch(e){el('bexAvMsg').textContent=e.message||'Calendar load nahi hua.'}}
-async function renderSlots(){if(!currentTherapistId||rendering)return;rendering=true;const date=el('bexAvDate').value||localDate();el('bexAvSlots').innerHTML='<p class="sub">Slots load ho rahe hain…</p>';try{const {data:rows,error}=await sb.from('therapist_availability_slots').select('*').eq('therapist_id',currentTherapistId).eq('slot_date',date);if(error)throw error;const map=new Map((rows||[]).map(r=>[String(r.start_time).slice(0,5),r]));let html='';for(let m=420;m<1260;m+=slotDuration*60){const end=Math.min(m+slotDuration*60,1260);if(end-m!==slotDuration*60)continue;const key=pad(Math.floor(m/60))+':'+pad(m%60),row=map.get(key),on=!!row?.is_available;html+='<div class="bex-slot"><div><strong>'+tm(m)+' – '+tm(end)+'</strong><small>'+(on?'Booking ke liye available':'Abhi unavailable')+'</small></div><button class="bex-av-toggle '+(on?'on':'')+'" data-start="'+key+'" data-end="'+pad(Math.floor(end/60))+':'+pad(end%60)+'" data-on="'+(on?'1':'0')+'">'+(on?'ON':'OFF')+'</button></div>'}el('bexAvSlots').innerHTML=html||'<p>Koi slot nahi mila.</p>';el('bexAvMsg').textContent='';}catch(e){el('bexAvSlots').innerHTML='';el('bexAvMsg').textContent=e.message||'Slots load nahi hue.'}finally{rendering=false}}
-el('bexAvDate').value=localDate();el('bexAvDate').addEventListener('change',renderSlots);el('bexAvReload').addEventListener('click',renderSlots);
-el('bexAvSlots').addEventListener('click',async e=>{const b=e.target.closest('[data-start]');if(!b||!currentTherapistId)return;const next=b.dataset.on!=='1';b.disabled=true;el('bexAvMsg').textContent='Saving…';try{const {error}=await sb.rpc('set_therapist_availability_slot',{p_therapist_id:currentTherapistId,p_slot_date:el('bexAvDate').value,p_start_time:b.dataset.start,p_end_time:b.dataset.end,p_is_available:next,p_admin_override:false});if(error)throw error;await renderSlots();el('bexAvMsg').textContent='✓ Availability update ho gayi.'}catch(err){el('bexAvMsg').textContent=err.message||'Update nahi hua.';b.disabled=false}});
-const oldDuty=el('dutyWrap');if(oldDuty)oldDuty.style.display='none';
-setInterval(()=>{try{const tr=typeof therapist!=='undefined'?therapist:null;if(tr?.id&&tr.id!==currentTherapistId){currentTherapistId=tr.id;setup()}else if(!tr?.id){box.classList.add('hidden')}else if(box.classList.contains('hidden'))setup()}catch(e){}},1200);
+(()=> {
+ const el=id=>document.getElementById(id), box=el('bexAvailability');
+ if(!box||!window.supabase)return;
+ const pad=n=>String(n).padStart(2,'0');
+ const dateStr=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+ const today=()=>dateStr(new Date());
+ const plusDays=n=>{const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()+n);return dateStr(d)};
+ const fmtDate=s=>{const d=new Date(s+'T12:00:00');return pad(d.getDate())+'/'+pad(d.getMonth()+1)};
+ const tm=n=>{const h=Math.floor(n/60),m=n%60,amp=h>=720?'PM':'AM',hh=Math.floor(h/60)%12||12;return hh+':'+pad(m)+' '+amp};
+ let currentTherapistId=null,slotDuration=2,rendering=false,slotsOpened=false;
+ function updateDateButtons(){
+   el('bexAvTodayLabel').textContent=fmtDate(plusDays(0));
+   el('bexAvTomorrowLabel').textContent=fmtDate(plusDays(1));
+   el('bexAvToday').classList.toggle('active',el('bexAvDate').value===plusDays(0));
+   el('bexAvTomorrow').classList.toggle('active',el('bexAvDate').value===plusDays(1));
+ }
+ async function setup(){
+  try{
+   const tr=typeof therapist!=='undefined'?therapist:null;
+   if(!tr||!tr.id){box.classList.add('hidden');return}
+   currentTherapistId=tr.id;box.classList.remove('hidden');
+   if(!el('bexAvDate').value)el('bexAvDate').value=today();
+   updateDateButtons();
+   const {data:cfg,error}=await sb.from('therapist_availability_settings').select('*').eq('id',true).maybeSingle();
+   if(error)throw error;
+   slotDuration=Number(cfg?.slot_duration_hours||2);
+   if(slotsOpened)await renderSlots();
+  }catch(e){el('bexAvMsg').textContent=e.message||'Calendar load nahi hua.'}
+ }
+ async function renderSlots(){
+  if(!currentTherapistId||rendering)return;
+  rendering=true;const date=el('bexAvDate').value||today();
+  el('bexAvSlots').hidden=!slotsOpened;
+  if(!slotsOpened){rendering=false;return}
+  el('bexAvSlots').innerHTML='<p class="sub">Slots load ho rahe hain…</p>';
+  try{
+   const {data:rows,error}=await sb.from('therapist_availability_slots').select('*').eq('therapist_id',currentTherapistId).eq('slot_date',date);
+   if(error)throw error;
+   const map=new Map((rows||[]).map(r=>[String(r.start_time).slice(0,5),r]));
+   let html='';
+   for(let m=420;m<1260;m+=slotDuration*60){
+    const end=m+slotDuration*60;if(end>1260)continue;
+    const key=pad(Math.floor(m/60))+':'+pad(m%60),endKey=pad(Math.floor(end/60))+':'+pad(end%60),row=map.get(key),on=!!row?.is_available;
+    html+='<div class="bex-slot"><div><strong>'+tm(m)+' – '+tm(end)+'</strong><small>'+(on?'Booking ke liye available':'Abhi unavailable')+'</small></div><button class="bex-av-toggle '+(on?'on':'')+'" data-start="'+key+'" data-end="'+endKey+'" data-on="'+(on?'1':'0')+'">'+(on?'ON':'OFF')+'</button></div>';
+   }
+   el('bexAvSlots').innerHTML=html||'<p>Koi slot nahi mila.</p>';el('bexAvMsg').textContent='';
+  }catch(e){el('bexAvSlots').innerHTML='';el('bexAvMsg').textContent=e.message||'Slots load nahi hue.'}
+  finally{rendering=false}
+ }
+ function chooseDate(d){el('bexAvDate').value=d;slotsOpened=true;updateDateButtons();el('bexAvSlots').hidden=false;renderSlots()}
+ el('bexAvDate').value=today();updateDateButtons();
+ el('bexAvToday').addEventListener('click',()=>chooseDate(plusDays(0)));
+ el('bexAvTomorrow').addEventListener('click',()=>chooseDate(plusDays(1)));
+ el('bexAvCalendarBtn').addEventListener('click',()=>{try{el('bexAvDate').showPicker()}catch(e){el('bexAvDate').click()}});
+ el('bexAvDate').addEventListener('change',()=>chooseDate(el('bexAvDate').value||today()));
+ const slots=el('bexAvSlots');
+ slots.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-start]');if(!b||!currentTherapistId)return;
+  const next=b.dataset.on!=='1';b.disabled=true;el('bexAvMsg').textContent='Saving…';
+  try{
+   const {error}=await sb.rpc('set_therapist_availability_slot',{p_therapist_id:currentTherapistId,p_slot_date:el('bexAvDate').value,p_start_time:b.dataset.start,p_end_time:b.dataset.end,p_is_available:next,p_admin_override:false});
+   if(error)throw error;await renderSlots();el('bexAvMsg').textContent='✓ Availability update ho gayi.';
+  }catch(err){el('bexAvMsg').textContent=err.message||'Update nahi hua.';b.disabled=false}
+ });
+ setInterval(()=>{try{const tr=typeof therapist!=='undefined'?therapist:null;if(tr?.id&&tr.id!==currentTherapistId)setup();else if(!tr?.id)box.classList.add('hidden');else if(box.classList.contains('hidden'))setup()}catch(e){}},1000);
 })();
 </script>
 </body></html>
