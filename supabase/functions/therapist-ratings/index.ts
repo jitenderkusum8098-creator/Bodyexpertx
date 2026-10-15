@@ -488,13 +488,34 @@ Deno.serve(async (req: Request) => {
       if (!/^[0-9a-f-]{36}$/i.test(therapist_id)) return json({ error: "Valid therapist ID required." }, 400);
       const selected = eligible.find((t: any) => t.id === therapist_id);
       if (!selected) return json({ error: "यह therapist इस booking के service, tier, gender, availability या zone के लिए eligible नहीं है। Refresh करके फिर चुनें।" }, 409);
+      const now = new Date().toISOString();
+      // Close any prior offer first, so the manually selected therapist receives a fresh 2-minute offer.
+      const { error: closeOffersError } = await admin.from("therapist_job_offers")
+        .update({ response: "superseded", responded_at: now })
+        .eq("booking_id", booking_id).eq("response", "offered");
+      if (closeOffersError) throw closeOffersError;
       const { data: updated, error: updateError } = await admin.from("booking_assignments")
-        .update({ therapist_id, updated_at: new Date().toISOString() })
+        .update({ therapist_id, status: "awaiting_whatsapp", updated_at: now })
         .eq("id", booking_id).in("status", allowedStatuses)
         .select("id,therapist_id,status").maybeSingle();
       if (updateError) throw updateError;
       if (!updated) return json({ error: "Booking status बदल गया है; therapist नहीं बदला गया। Refresh करके जाँचें।" }, 409);
-      return json({ success: true, booking: updated, therapist: selected, message: "Booking का therapist सफलतापूर्वक बदल दिया गया। Payment और referral records को नहीं बदला गया।" });
+      const offer = { booking_id, therapist_id, offered_at: now, expires_at: new Date(Date.now() + 120000).toISOString(), responded_at: null, response: "offered" };
+      const { error: offerError } = await admin.from("therapist_job_offers")
+        .upsert(offer, { onConflict: "booking_id,therapist_id" });
+      if (offerError) throw offerError;
+      // Trigger immediate push delivery; the therapist dashboard also displays this offer's expiry countdown.
+      try {
+        const { data: pushSecret, error: secretError } = await admin.rpc("bex_get_push_webhook_token");
+        if (secretError || !pushSecret) throw secretError || new Error("Push secret unavailable");
+        const pushResponse = await fetch(url + "/functions/v1/therapist-push", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-push-secret": String(pushSecret) },
+          body: JSON.stringify({ action: "deliver", booking_id })
+        });
+        if (!pushResponse.ok) console.error("Admin reassignment push failed", pushResponse.status, await pushResponse.text());
+      } catch (pushError) { console.error("Admin reassignment push failed", booking_id, pushError); }
+      return json({ success: true, booking: updated, therapist: selected, offer_expires_at: offer.expires_at, message: "Therapist को duty दोबारा भेज दी गई है। 2 मिनट का timer शुरू हो गया है। Payment और referral records नहीं बदले गए।" });
     }
     if (action === "admin-list-bookings") {
       await requireRole(req, ["admin", "super_admin", "superadmin"]);
