@@ -116,14 +116,14 @@ Deno.serve(async (req: Request) => {
       const customer_gps_accuracy_meters = body.customer_gps_accuracy_meters === null || body.customer_gps_accuracy_meters === undefined || body.customer_gps_accuracy_meters === "" ? null : Math.max(0, Math.min(100000, Math.round(Number(body.customer_gps_accuracy_meters) || 0)));
       const appointment_date = String(body.appointment_date ?? "").slice(0, 10) || null;
       const appointment_time = String(body.appointment_time ?? "").slice(0, 30) || null;
-      // Customers may choose any future date/time; no minimum 3-hour lead-time restriction.
+      // Customer bookings must start at least three hours from the current India time.
       if (appointment_date && appointment_time) {
         const match = appointment_time.match(/^(\d{1,2}):(\d{2})/);
         if (!match) return json({ error: "Appointment time is invalid." }, 400);
         const hour = Number(match[1]); const minute = Number(match[2]);
         if (hour > 23 || minute > 59) return json({ error: "Appointment time is invalid." }, 400);
         const start = new Date(`${appointment_date}T${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00+05:30`);
-        if (!Number.isFinite(start.getTime()) || start.getTime() < Date.now()) return json({ error: "Past date/time select nahi kar sakte. Aaj ya future ka time chunein." }, 400);
+        if (!Number.isFinite(start.getTime()) || start.getTime() < Date.now() + 3 * 60 * 60 * 1000) return json({ error: "Booking ke liye abhi se kam se kam 3 ghante baad ka date aur time chunein." }, 400);
       }
       const service_type = String(body.service_type ?? "");
       const tier = String(body.tier ?? "");
@@ -232,7 +232,7 @@ Deno.serve(async (req: Request) => {
       const tm=newTime.match(/^(\d{1,2}):(\d{2})/);
       if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)||!tm||Number(tm[1])>23||Number(tm[2])>59) return json({error:"Nayi date aur time sahi chunein."},400);
       const newStart=new Date(newDate+"T"+String(Number(tm[1])).padStart(2,"0")+":"+tm[2]+":00+05:30");
-      if (!Number.isFinite(newStart.getTime())||newStart.getTime()<Date.now()) return json({error:"Past date/time select nahi kar sakte. Aaj ya future ka time chunein."},400);
+      if (!Number.isFinite(newStart.getTime())||newStart.getTime()<Date.now()+3*60*60*1000) return json({error:"Reschedule ke liye abhi se kam se kam 3 ghante baad ka date aur time chunein."},400);
       const { data: updated, error } = await admin.from("booking_assignments").update({appointment_date:newDate,appointment_time:newTime,status:"awaiting_whatsapp",therapist_id:null,updated_at:new Date().toISOString()}).eq("id",booking.id).not("status","in",'("completed","cancelled","reached")').select("id,reference_code,status,appointment_date,appointment_time,therapist_id").maybeSingle();
       if (error) throw error;
       if (!updated) return json({error:"Booking ka status badal gaya hai. Page refresh karke dekhein."},409);
