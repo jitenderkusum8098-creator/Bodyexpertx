@@ -1505,7 +1505,45 @@ article.service .bx-massage-photo img {
 #bexLocationMap{width:100%;height:48dvh;min-height:270px;max-height:440px;border-radius:12px;overflow:hidden;background:#e7e7e7;z-index:0}#bexMapPinStatus{color:#f3e6c4;margin:10px 0;line-height:1.5}.bex-map-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}#bexConfirmMapLocation{background:linear-gradient(120deg,#f1d58f,#c6a45b)!important;color:#171717!important}.bex-map-actions .ghost{background:#25262a!important;color:#fff!important;border:1px solid #555!important}
 @media(max-width:560px){.bex-map-modal{padding:6px;align-items:flex-end}.bex-map-dialog{padding:12px;border-radius:16px 16px 10px 10px;max-height:94dvh}.bex-map-heading h3{font-size:19px}#bexLocationMap{height:42dvh;min-height:240px}.bex-map-actions{grid-template-columns:1fr}.bex-map-search .btn{padding:10px 12px}}
 </style>
-<style id="bex-hide-choose-location-button">#bexChooseMapLocation{display:none!important}</style>
+<!-- Map pin selection is available in the mobile booking flow. -->
+
+<style id="bex-mobile-booking-wizard">
+#bookingForm{display:flex;flex-direction:column;gap:0}
+#bookingForm .bex-wizard-progress{margin:0 0 18px;padding:15px;border:1px solid var(--gold);border-radius:16px;background:linear-gradient(145deg,#201c13,#141414)}
+.bex-wizard-progress-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.bex-wizard-kicker{font-size:12px;font-weight:900;letter-spacing:.12em;color:var(--gold2);text-transform:uppercase}
+.bex-wizard-count{font-size:13px;font-weight:800;color:var(--text)}
+.bex-wizard-track{height:6px;border-radius:99px;background:#39352c;overflow:hidden}
+.bex-wizard-track span{display:block;height:100%;width:20%;border-radius:99px;background:linear-gradient(90deg,#d8b568,#f3dc9b);transition:width .2s ease}
+.bex-wizard-step{min-width:0}
+.bex-wizard-step[hidden]{display:none!important}
+.bex-wizard-step-title{margin:0 0 18px!important;color:var(--gold2)!important;font-size:clamp(22px,5vw,28px)!important;line-height:1.25!important}
+.bex-wizard-step-subtitle{margin:-8px 0 20px;color:var(--muted);font-size:14px;line-height:1.55}
+.bex-wizard-nav{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:10px;margin:20px 0 4px}
+.bex-wizard-nav.single{grid-template-columns:1fr}
+.bex-wizard-nav .btn{width:100%;min-height:54px;white-space:normal;line-height:1.3;font-size:16px;font-weight:850}
+.bex-wizard-back{background:#222!important;color:var(--text)!important;border:1px solid #5a5140!important}
+.bex-wizard-step .billing-summary-panel{margin-top:0}
+#bookingForm .bex-wizard-step .field-grid{margin-bottom:0}
+#bookingForm .bex-wizard-step .field{margin-bottom:18px}
+#bookingForm .bex-wizard-step .bex-location-panel{margin-top:12px}
+#bookingForm .bex-wizard-step .bex-location-actions{display:grid;grid-template-columns:1fr;gap:9px}
+#bexChooseMapLocation{display:block!important}
+#bexChooseMapLocation[hidden]{display:none!important}
+@media(max-width:560px){
+ #bookingForm{padding:16px!important}
+ #bookingForm .bex-wizard-progress{padding:13px;margin-bottom:16px}
+ .bex-wizard-step-title{font-size:23px!important}
+ .bex-wizard-nav{position:sticky;bottom:8px;z-index:4;padding:8px 0 0;background:linear-gradient(180deg,transparent,#101010 25%);margin-top:22px}
+ .bex-wizard-nav .btn{min-height:52px;padding:12px 10px;font-size:15px}
+ #bookingForm .bex-wizard-step .field-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+ #bookingForm .bex-wizard-step .billing-summary-panel{padding:14px!important}
+}
+@media(min-width:700px){
+ #bookingForm .bex-wizard-step{max-width:760px;width:100%;margin-inline:auto}
+ .bex-wizard-nav{max-width:760px;margin-inline:auto}
+}
+</style>
 </head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE · NARNAUL + 35 KM</div>
@@ -2242,5 +2280,148 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
 
 
 
+
+<script id="bex-customer-mobile-booking-wizard">
+(function(){
+  "use strict";
+  function initBexBookingWizard(){
+    const form=document.getElementById("bookingForm");
+    if(!form||form.dataset.mobileWizardReady==="1")return;
+    const byId=id=>document.getElementById(id);
+    const namePhone=byId("name")?.closest(".field-grid");
+    const ageGender=byId("age")?.closest(".field-grid");
+    const customerType=byId("customerType")?.closest(".field");
+    const visit=byId("visit")?.closest(".field");
+    const address=byId("addressField");
+    const center=byId("centerVisitPanel");
+    const zone=form.querySelector(".detected-zone-field");
+    const dateTime=byId("date")?.closest(".field-grid");
+    const notes=byId("notes")?.closest(".field");
+    const billing=form.querySelector(".billing-summary-panel");
+    const confirmation=byId("finalConfirmation");
+    const formTitle=form.querySelector(":scope > h3");
+    if(!namePhone||!ageGender||!customerType||!visit||!address||!center||!dateTime||!notes||!billing||!confirmation)return;
+    form.dataset.mobileWizardReady="1";
+    form.setAttribute("novalidate","novalidate");
+    const oldGrid=customerType.parentElement;
+    if(oldGrid&&oldGrid!==form)oldGrid.removeChild(customerType);
+    if(oldGrid&&oldGrid!==form&&oldGrid.children.length===0)oldGrid.remove();
+    const steps=[
+      {title:"Appointment details",subtitle:"Apni basic details bharein.",nodes:[namePhone,ageGender,customerType]},
+      {title:"Service location",subtitle:"Center Visit ya Home Visit chunein. Home Visit ke liye exact map pin confirm karein.",nodes:[visit,address,center,zone].filter(Boolean)},
+      {title:"Date & time",subtitle:"Apni pasand ki date aur available time select karein.",nodes:[dateTime,notes]},
+      {title:"Review & payment",subtitle:"Services, coupon aur final amount check karein.",nodes:[billing]},
+      {title:"Confirm booking",subtitle:"Details check karke booking request bhejein.",nodes:[confirmation]}
+    ];
+    const progress=document.createElement("div");
+    progress.className="bex-wizard-progress";
+    progress.setAttribute("aria-label","Booking progress");
+    progress.innerHTML='<div class="bex-wizard-progress-top"><span class="bex-wizard-kicker">BodyExpertX · Booking</span><span class="bex-wizard-count" id="bexWizardCount">Step 1 of 5</span></div><div class="bex-wizard-track"><span id="bexWizardTrack"></span></div>';
+    if(formTitle)formTitle.textContent="Book your appointment";
+    form.insertBefore(progress,formTitle?formTitle.nextSibling:form.firstChild);
+    const panels=[];
+    steps.forEach((step,index)=>{
+      const panel=document.createElement("section");
+      panel.className="bex-wizard-step";
+      panel.dataset.step=String(index);
+      panel.hidden=index!==0;
+      const heading=document.createElement("h3");
+      heading.className="bex-wizard-step-title";
+      heading.textContent=(index+1)+". "+step.title;
+      const sub=document.createElement("p");
+      sub.className="bex-wizard-step-subtitle";
+      sub.textContent=step.subtitle;
+      panel.append(heading,sub);
+      step.nodes.forEach(node=>{if(node&&node.parentNode)panel.appendChild(node)});
+      const nav=document.createElement("div");
+      nav.className="bex-wizard-nav"+(index===0?" single":"");
+      if(index>0){
+        const back=document.createElement("button");
+        back.type="button";back.className="btn bex-wizard-back";back.textContent="← Back";
+        back.addEventListener("click",()=>showStep(index-1));
+        nav.appendChild(back);
+      }
+      if(index<steps.length-1){
+        const next=document.createElement("button");
+        next.type="button";next.className="btn";
+        next.textContent=index===0?"Continue →":index===3?"Review & Confirm →":"Continue →";
+        next.addEventListener("click",()=>advance(index));
+        nav.appendChild(next);
+      }
+      panel.appendChild(nav);
+      form.appendChild(panel);
+      panels.push(panel);
+    });
+    function showStep(index,focusInvalid){
+      index=Math.max(0,Math.min(panels.length-1,index));
+      panels.forEach((panel,i)=>panel.hidden=i!==index);
+      const count=byId("bexWizardCount"),track=byId("bexWizardTrack");
+      if(count)count.textContent="Step "+(index+1)+" of "+panels.length;
+      if(track)track.style.width=(((index+1)/panels.length)*100)+"%";
+      if(index===1&&typeof window.toggleAddress==="function")window.toggleAddress();
+      const heading=panels[index].querySelector(".bex-wizard-step-title");
+      if(heading){heading.setAttribute("tabindex","-1");heading.focus({preventScroll:true})}
+      const booking=byId("booking");
+      if(booking)booking.scrollIntoView({behavior:"smooth",block:"start"});
+      if(focusInvalid){
+        const invalid=panels[index].querySelector(":invalid");
+        if(invalid)invalid.focus({preventScroll:true});
+      }
+    }
+    function validateStep(index){
+      const panel=panels[index];
+      const controls=[...panel.querySelectorAll("input,select,textarea")].filter(el=>!el.disabled&&el.type!=="hidden");
+      for(const el of controls){
+        if(el.type==="hidden"||el.closest("[hidden]")||el.id==="bexLatitude"||el.id==="bexLongitude"||el.id==="bexLocationAccuracy"||el.id==="serviceZone")continue;
+        if(!el.checkValidity()){
+          el.reportValidity();
+          el.focus({preventScroll:true});
+          return false;
+        }
+      }
+      if(index===0&&byId("phone")){
+        const digits=byId("phone").value.replace(/\D/g,"");
+        if(digits.length!==10){byId("phone").setCustomValidity("Please enter a valid 10-digit Indian mobile number.");byId("phone").reportValidity();byId("phone").focus();return false}
+        byId("phone").setCustomValidity("");
+      }
+      if(index===1&&byId("visit")?.value==="Home service"){
+        if(!byId("bexLatitude")?.value||!byId("bexLongitude")?.value){
+          const status=byId("bexLocationStatus");
+          if(status)status.textContent="Home Visit ke liye Current Location set karein ya Choose Location on Map se pin confirm karein.";
+          const mapButton=byId("bexChooseMapLocation");
+          if(mapButton){mapButton.focus();mapButton.scrollIntoView({behavior:"smooth",block:"center"})}
+          else byId("bexSetLocation")?.focus();
+          return false;
+        }
+      }
+      if(index===3){
+        if(typeof cart==="undefined"||!cart.length){
+          const status=byId("formStatus");if(status)status.textContent="Please add a massage or add-on first.";
+          byId("services")?.scrollIntoView({behavior:"smooth",block:"start"});
+          return false;
+        }
+      }
+      return true;
+    }
+    function advance(index){
+      if(!validateStep(index))return;
+      if(index===1&&typeof window.toggleAddress==="function")window.toggleAddress();
+      showStep(index+1);
+    }
+    form.addEventListener("submit",function(event){
+      const currentIndex=panels.findIndex(panel=>!panel.hidden);
+      if(currentIndex<panels.length-1){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        advance(Math.max(0,currentIndex));
+        return;
+      }
+    },true);
+    showStep(0);
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",initBexBookingWizard,{once:true});
+  else initBexBookingWizard();
+})();
+</script>
 </body>
 </html>
