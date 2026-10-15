@@ -2394,6 +2394,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
       }
       const controls=[...panel.querySelectorAll("input,select,textarea")].filter(el=>!el.disabled&&el.type!=="hidden");
       for(const el of controls){
+        if(el.id==="phone"&&index===0)continue;
         if(el.type==="hidden"||el.closest("[hidden]")||el.id==="bexLatitude"||el.id==="bexLongitude"||el.id==="bexLocationAccuracy"||el.id==="serviceZone")continue;
         if(!el.checkValidity()){
           el.reportValidity();
