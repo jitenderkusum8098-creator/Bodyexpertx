@@ -2458,26 +2458,38 @@ function renderPickerResults(items,q){
  })
 }
 async function searchPickerAddress(q){
- const seq=++pickerSearchSeq;q=q.trim();
+ const seq=++pickerSearchSeq;q=q.trim().replace(/\\s+/g," ");
  if(q.length<3){pickerResults.hidden=true;pickerResults.replaceChildren();return}
  pickerResults.hidden=false;pickerResults.innerHTML='<div class="bex-address-empty">🔎 Address search ho raha hai…</div>';
+ const timeoutFetch=async(url)=>{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),7000);try{const r=await fetch(url,{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});if(!r.ok)return null;return await r.json()}finally{clearTimeout(timer)}};
  let results=[];
+ const queries=[q];
+ if(!/delhi|india|1100\\d\\d/i.test(q))queries.push(q+", Mehrauli, New Delhi, India",q+", Delhi, India");
  try{
-  const photonUrl="https://photon.komoot.io/api/?limit=8&lang=en&lat=28.5245&lon=77.1588&q="+encodeURIComponent(q);
-  const pr=await fetch(photonUrl,{headers:{Accept:"application/json"}});
-  if(pr.ok){const pd=await pr.json();results=pd.features||[]}
+  for(const term of queries){
+   const url="https://photon.komoot.io/api/?limit=8&lang=en&lat=28.5245&lon=77.1588&q="+encodeURIComponent(term);
+   const data=await timeoutFetch(url);
+   if(seq!==pickerSearchSeq)return;
+   if(data&&Array.isArray(data.features)&&data.features.length){results=data.features;break}
+  }
  }catch(e){}
  if(seq!==pickerSearchSeq)return;
  if(!results.length){
   try{
-   const nomUrl="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&q="+encodeURIComponent(q);
-   const nr=await fetch(nomUrl,{headers:{Accept:"application/json"}});
-   if(nr.ok)results=await nr.json();
+   for(const term of queries){
+    const url="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&q="+encodeURIComponent(term);
+    const data=await timeoutFetch(url);
+    if(seq!==pickerSearchSeq)return;
+    if(Array.isArray(data)&&data.length){results=data;break}
+   }
   }catch(e){}
  }
  if(seq!==pickerSearchSeq)return;
  renderPickerResults(results,q);
- if(!results.length&&pickerResults.querySelector(".bex-address-empty"))pickerResults.querySelector(".bex-address-empty").textContent="Is search se address nahi mila. House/road, area, Delhi aur PIN code likhkar dobara try karein. Ya Add New Address se manually address likhein.";
+ if(!results.length){
+  pickerResults.innerHTML='<div class="bex-address-empty">Address search se result nahi mila. Thoda chhota address/area ya PIN code likhein. Pin set karne ke liye neeche “Confirm address on map” use karein.</div>';
+  $("bexAddressMapPin").hidden=false;
+ }else{$("bexAddressMapPin").hidden=true}
 }
 pickerSearch.addEventListener("input",()=>{clearTimeout(pickerSearchTimer);pickerSearchTimer=setTimeout(()=>searchPickerAddress(pickerSearch.value),450)});
 pickerSearch.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();clearTimeout(pickerSearchTimer);searchPickerAddress(pickerSearch.value)}});
