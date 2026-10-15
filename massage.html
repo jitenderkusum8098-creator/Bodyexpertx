@@ -1615,7 +1615,7 @@ article.service .bx-massage-photo img {
 
 <section class="section" id="booking"><div class="wrap"><div class="section-head"><div class="eyebrow">Your appointment, your way</div><h2>Build Your Booking</h2><p>Apni appointment details bharein, booking confirm karein aur WhatsApp par request bhejein.</p></div>
 <div class="booking-layout"><form class="panel" id="bookingForm"><h3>2. Appointment details</h3>
-<div class="field-grid"><div class="field"><label for="name">Full name *</label><input id="name" name="name" required autocomplete="name" placeholder="Your name"></div><div class="field"><label for="phone">Mobile number *</label><input id="phone" name="phone" required inputmode="tel" autocomplete="tel" pattern="[0-9+ ()-]{10,16}" placeholder="10-digit Indian mobile number"></div></div>
+<div class="field-grid"><div class="field"><label for="name">Full name *</label><input id="name" name="name" required autocomplete="name" placeholder="Your name"></div><div class="field"><label for="phone">Mobile number *</label><input id="phone" name="phone" type="tel" required inputmode="numeric" autocomplete="tel" maxlength="10" pattern="[6-9][0-9]{9}" title="Enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9." placeholder="10-digit Indian mobile number"></div></div>
 <div class="field-grid"><div class="field"><label for="age">Your age (18+ years) *</label><input id="age" name="age" type="number" min="18" max="100" required placeholder="Age"></div><div class="field"><label for="recipientGender">Massage kiske liye book kar rahe hain? *</label><select id="recipientGender" name="recipientGender" required onchange="updateGenderPricing()"><option value="Male">Male</option><option value="Female">Female</option></select></div></div>
 <div class="field-grid"><div class="field"><label for="customerType">Have you booked with us before? *</label><select id="customerType" name="customerType" required onchange="updateCouponAvailability()"><option value="First-time customer">No, this is my first booking</option><option value="Returning customer">Yes, I am a returning customer</option></select></div><div class="field"><label for="visit">Service location *</label><select id="visit" required onchange="toggleAddress()"><option value="Centre">Center Visit</option><option value="Home service">Home Visit</option></select></div></div>
 <div class="field" id="addressField" hidden><label for="address">Home Visit Address (optional if GPS is set) *</label><textarea id="address" placeholder="House/flat number, street, area, PIN code"></textarea><label for="landmark" style="margin-top:8px">Landmark (optional)</label><input id="landmark" placeholder="Nearby landmark"><div class="bex-location-panel"><div><strong>📍 Home Visit Location</strong><p id="bexLocationStatus" class="hint">Current Location इस्तेमाल करें या पता लिखकर Map पर pin सेट करें। Booking के लिए pin confirm करना ज़रूरी है।</p></div><div class="bex-location-actions"><button type="button" class="btn bex-location-btn" id="bexSetLocation">📍 Use My Current Location</button><button type="button" class="btn bex-location-btn bex-map-choice-btn" id="bexChooseMapLocation">🗺️ Choose Location on Map</button></div><a id="bexOpenLocation" class="btn small ghost" target="_blank" rel="noopener" hidden>View Location in Maps</a></div><input type="hidden" id="bexLatitude"><input type="hidden" id="bexLongitude"><input type="hidden" id="bexLocationAccuracy">
@@ -2368,8 +2368,18 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
         if(invalid)invalid.focus({preventScroll:true});
       }
     }
+    const phoneInput=byId("phone");
+    if(phoneInput){
+      phoneInput.addEventListener("input",function(){
+        const digits=this.value.replace(/\D/g,"").slice(0,10);
+        if(this.value!==digits)this.value=digits;
+        this.setCustomValidity("");
+      });
+      phoneInput.addEventListener("change",function(){this.setCustomValidity("");});
+    }
     function validateStep(index){
       const panel=panels[index];
+      if(index===0&&phoneInput)phoneInput.setCustomValidity("");
       const controls=[...panel.querySelectorAll("input,select,textarea")].filter(el=>!el.disabled&&el.type!=="hidden");
       for(const el of controls){
         if(el.type==="hidden"||el.closest("[hidden]")||el.id==="bexLatitude"||el.id==="bexLongitude"||el.id==="bexLocationAccuracy"||el.id==="serviceZone")continue;
@@ -2379,10 +2389,10 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
           return false;
         }
       }
-      if(index===0&&byId("phone")){
-        const digits=byId("phone").value.replace(/\D/g,"");
-        if(digits.length!==10){byId("phone").setCustomValidity("Please enter a valid 10-digit Indian mobile number.");byId("phone").reportValidity();byId("phone").focus();return false}
-        byId("phone").setCustomValidity("");
+      if(index===0&&phoneInput){
+        const digits=phoneInput.value.replace(/\D/g,"");
+        if(!/^[6-9][0-9]{9}$/.test(digits)){phoneInput.setCustomValidity("Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9.");phoneInput.reportValidity();phoneInput.focus();return false}
+        phoneInput.setCustomValidity("");
       }
       if(index===1&&byId("visit")?.value==="Home service"){
         if(!byId("bexLatitude")?.value||!byId("bexLongitude")?.value){
