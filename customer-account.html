@@ -45,4 +45,103 @@ records.forEach(r=>{const b=r.booking||{},t=r.therapist,div=document.createEleme
 function renderTherapists(){const box=$("therapistList");box.replaceChildren();const map=new Map();records.forEach(r=>{if(r.therapist&&r.booking?.status!=="cancelled"){const t=r.therapist;if(!map.has(t.id))map.set(t.id,{t,booking:r.booking})}});if(!map.size){box.innerHTML='<div class="empty" style="grid-column:1/-1">Abhi kisi saved booking par therapist assignment nahi mila. Assignment ke baad yahan profile aur rebook option dikhega.</div>';return}for(const {t,booking} of map.values()){const c=document.createElement("article");c.className="therapist-card";c.innerHTML='<img class="photo" src="'+esc(t.photo_url||"")+'" alt="Therapist photo" onerror="this.remove()"><h3>'+esc(t.display_name||"Therapist")+'</h3><p>'+esc(t.therapist_code||"")+' · '+esc(t.experience_years||0)+' years experience</p><div class="stars">'+(t.average_rating==null?"No published rating":"★ "+esc(t.average_rating)+" / 5 · "+esc(t.rating_count||0))+'</div><p style="margin-top:7px">Last service: '+esc(booking.service_name||"—")+'</p><button class="btn" data-rebook="'+esc(t.id)+'" data-service="'+esc(booking.service_type||"Massage")+'" data-tier="'+esc(booking.tier||"Prime")+'">Rebook therapist</button>';box.append(c)}box.querySelectorAll("[data-rebook]").forEach(b=>b.addEventListener("click",()=>{localStorage.setItem("bex_rebook_therapist_id",b.dataset.rebook);localStorage.setItem("bex_rebook_service_type",b.dataset.service);localStorage.setItem("bex_rebook_tier",b.dataset.tier);location.href="./index.html?rebookTherapist="+encodeURIComponent(b.dataset.rebook)+"&rebookService="+encodeURIComponent(b.dataset.service)+"&rebookTier="+encodeURIComponent(b.dataset.tier)+"#booking"}))}
 async function init(){const saved=read("bex_customer_bookings",[]).filter(x=>x&&x.trackingToken);if(!saved.length){records=[];renderBookings();renderTherapists();return}const results=await Promise.allSettled(saved.map(fetchBooking));records=results.filter(x=>x.status==="fulfilled").map(x=>x.value);renderBookings();renderTherapists();if(results.every(x=>x.status==="rejected")){$("bookingList").innerHTML='<div class="empty" style="grid-column:1/-1">Tracking links load nahi hue. Network check karke dobara page kholein.</div>'}}
 init();
-</script></body></html>
+</script>
+<style id="bex-account-layout-update">
+.account-greeting{font-size:clamp(17px,4vw,23px)!important;white-space:normal}
+.hero h1{font-size:clamp(32px,6vw,44px)}
+#accountMainButtons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:4px 0 16px}
+#accountMainButtons .tab{border-radius:12px;min-width:0;padding:12px 4px;font-size:clamp(11px,3vw,14px);line-height:1.25;white-space:normal}
+#accountMainButtons .tab.active{box-shadow:0 0 0 2px #f0c65b35}
+#authPanel[hidden],#bookings[hidden],#todayBookingsPanel[hidden],#profile[hidden],#therapists[hidden]{display:none!important}
+#authPanel .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+#authPanel .tabs .tab{padding:9px 4px;font-size:clamp(10px,2.8vw,13px);border-radius:10px;white-space:normal}
+#todayBookingsPanel .booking{margin-bottom:12px}
+.bex-th-photo{cursor:zoom-in;object-fit:contain!important;object-position:center top!important;background:#fff;max-height:180px}
+#bexPhotoViewer{position:fixed;inset:0;z-index:99999;background:#050505ed;display:none;align-items:center;justify-content:center;padding:22px}
+#bexPhotoViewer.open{display:flex}
+#bexPhotoViewer img{max-width:min(92vw,650px);max-height:84vh;object-fit:contain;object-position:center;background:#151515;border:2px solid #f0c65b;border-radius:16px}
+#bexPhotoViewer button{position:absolute;top:18px;right:18px;border:1px solid #f0c65b;border-radius:999px;padding:10px 15px;background:#181818;color:#f0c65b;font-weight:800}
+.bex-thankyou{border:1px solid #6b5420;background:linear-gradient(135deg,#211b0d,#121214);border-radius:16px;padding:18px;text-align:center;color:#f7e5a3;margin:16px 0}
+.bex-thankyou strong{display:block;font-size:19px;color:#f0c65b;margin-bottom:5px}
+@media(max-width:380px){#accountMainButtons{gap:5px}#accountMainButtons .tab{padding:10px 2px;font-size:10px}}
+</style>
+<script id="bex-account-layout-behaviour">
+(function(){
+ const $=id=>document.getElementById(id);
+ const auth=$('authPanel'), bookings=$('bookings'), profile=$('profile'), therapists=$('therapists');
+ const oldTabs=$('accountTabs');
+ if(!auth||!bookings||!oldTabs)return;
+ // Replace the old multi-tab dashboard with the three requested customer controls.
+ oldTabs.classList.add('hidden');
+ document.querySelectorAll('body > main .tabs.hidden').forEach(el=>{if(el!==oldTabs)el.style.display='none'});
+ const controls=document.createElement('div');
+ controls.id='accountMainButtons';
+ controls.innerHTML='<button type="button" class="tab" data-open="login">🔑 Login</button><button type="button" class="tab" data-open="bookings">📚 My Booking</button><button type="button" class="tab" data-open="today">📅 Today Booking</button>';
+ $('authPanel').before(controls);
+ auth.hidden=true;bookings.hidden=true;if(profile)profile.hidden=true;if(therapists)therapists.hidden=true;
+ const todayPanel=document.createElement('section');
+ todayPanel.id='todayBookingsPanel';todayPanel.className='panel';todayPanel.hidden=true;
+ todayPanel.innerHTML='<h2>Today Booking</h2><p class="hint">Aaj ki saari bookings yahan dikhengi.</p><div id="todayBookingList" class="grid" style="margin-top:14px"></div>';
+ bookings.after(todayPanel);
+ const thank=document.createElement('div');thank.className='bex-thankyou';thank.innerHTML='<strong>❤️ Thank You for Choosing BodyExpertX!</strong>Aapke bharose ke liye dhanyavaad. Hum aapko behtareen wellness experience dene ke liye taiyaar hain.';
+ bookings.appendChild(thank);
+ todayPanel.appendChild(thank.cloneNode(true));
+ const allPanels=[auth,bookings,todayPanel,profile,therapists].filter(Boolean);
+ let active='';
+ function openPanel(which){
+   const next=active===which?'':which;active=next;
+   allPanels.forEach(p=>p.hidden=true);
+   controls.querySelectorAll('[data-open]').forEach(b=>b.classList.toggle('active',b.dataset.open===active));
+   if(!active)return;
+   if(active==='login')auth.hidden=false;
+   if(active==='bookings')bookings.hidden=false;
+   if(active==='today'){todayPanel.hidden=false;renderToday()}
+   if(active==='bookings') {if(typeof renderBookings==='function')renderBookings()}
+ }
+ controls.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openPanel(b.dataset.open)));
+ // Keep Login / Register / Recover buttons as the only inner auth actions.
+ const authTabs=auth.querySelector('.tabs');
+ if(authTabs){authTabs.classList.remove('hidden');authTabs.querySelectorAll('.tab').forEach(b=>{b.style.minWidth='0'})}
+ function isToday(r){
+   const b=r.booking||{};
+   const raw=b.appointment_date||r.appointmentDate||b.created_at||r.createdAt||'';
+   if(!raw)return false;
+   const d=new Date(raw);
+   if(Number.isNaN(d.getTime()))return String(raw).slice(0,10)===new Date().toISOString().slice(0,10);
+   const now=new Date();return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()&&d.getDate()===now.getDate();
+ }
+ function renderToday(){
+   const list=$('todayBookingList');if(!list)return;
+   if(typeof records==='undefined'||!records.length){list.innerHTML='<div class="empty" style="grid-column:1/-1">Abhi aaj ki koi booking nahi hai.</div>';return}
+   const todays=records.filter(isToday);
+   if(!todays.length){list.innerHTML='<div class="empty" style="grid-column:1/-1">Abhi aaj ki koi booking nahi hai.</div>';return}
+   // Reuse the existing booking-card renderer, including live status and cancel/reschedule actions.
+   const saved=records;records=todays;
+   if(typeof renderBookings==='function')renderBookings();
+   const source=$('bookingList');list.replaceChildren(...Array.from(source.children).map(n=>n.cloneNode(true)));
+   records=saved;renderBookings();
+ }
+ // Keep the Today list current after async booking load/status updates.
+ const list=$('bookingList');
+ if(list)new MutationObserver(()=>{if(active==='today')renderToday()}).observe(list,{childList:true,subtree:false});
+ // Show the customer's saved name in a larger greeting.
+ try{
+   const p=JSON.parse(localStorage.getItem('bex_customer_profile')||'{}');
+   if(p.name){const greeting=$('accountGreeting');if(greeting)greeting.textContent='Hi, '+p.name.trim().split(/\s+/)[0]+' 👋'}
+ }catch(e){}
+ // Therapist images open in a full-screen viewer; contain the whole photo so the head is not cropped.
+ const viewer=document.createElement('div');viewer.id='bexPhotoViewer';viewer.innerHTML='<button type="button" aria-label="Close photo">✕ Close</button><img alt="Therapist full photo">';document.body.appendChild(viewer);
+ const close=()=>viewer.classList.remove('open');viewer.querySelector('button').addEventListener('click',close);viewer.addEventListener('click',e=>{if(e.target===viewer)close()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+ document.addEventListener('click',e=>{
+   const img=e.target.closest('#bookingList img.photo, #todayBookingList img.photo, #therapistList img');
+   if(!img||!img.src)return;
+   e.preventDefault();const big=viewer.querySelector('img');big.src=img.src;big.alt=img.alt||'Therapist full photo';viewer.classList.add('open');
+ });
+ function fixPhotoCrops(){
+   document.querySelectorAll('#bookingList img.photo,#todayBookingList img.photo,#therapistList img').forEach(img=>{img.classList.add('bex-th-photo');img.style.objectFit='contain';img.style.objectPosition='center top';img.style.cursor='zoom-in'});
+ }
+ new MutationObserver(fixPhotoCrops).observe(document.body,{childList:true,subtree:true});fixPhotoCrops();
+})();
+</script>
+</body></html>
