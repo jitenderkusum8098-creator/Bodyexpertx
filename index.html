@@ -1314,10 +1314,10 @@ const waUrl="https://wa.me/917838675115?text="+encodeURIComponent(details);
 if(waWindow){waWindow.location.href=waUrl;}else{window.open(waUrl,"_blank","noopener");}
 status.textContent=bookingReference?"Booking "+bookingReference+" save ho gayi. WhatsApp mein Send dabayein; therapist accept karte hi My Account par booking automatically confirm ho jayegi.":"WhatsApp opened with your request. Press Send there; therapist accept karte hi My Account par booking automatically confirm ho jayegi.";if(bookingTrackingToken){setTimeout(()=>{location.href="./customer-dashboard.html?tracking="+encodeURIComponent(bookingTrackingToken)},650)}});
 function bexLocalDateString(d=new Date()){return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(d)}
-function setMinDate(){const dateEl=document.getElementById("date");if(!dateEl)return;dateEl.min=bexLocalDateString();if(!dateEl.value||dateEl.value<dateEl.min)dateEl.value=dateEl.min;refreshBexTimeSlots()}
+function bexMinimumStartMs(){return Date.now()+3*60*60*1000}function setMinDate(){const dateEl=document.getElementById("date");if(!dateEl)return;dateEl.min=bexLocalDateString(new Date(bexMinimumStartMs()));if(!dateEl.value||dateEl.value<dateEl.min)dateEl.value=dateEl.min;refreshBexTimeSlots()}
 function refreshBexTimeSlots(){
  const dateEl=document.getElementById("date"),timeEl=document.getElementById("time");if(!dateEl||!timeEl)return;
- const today=bexLocalDateString(),isToday=dateEl.value===today,cutoff=Date.now();
+ const minStart=bexMinimumStartMs(),minimumDate=bexLocalDateString(new Date(minStart)),cutoff=minStart;
  let chosenStillValid=false;
  Array.from(timeEl.options||[]).forEach(option=>{
   if(!option.value)return;
@@ -1325,11 +1325,11 @@ function refreshBexTimeSlots(){
   if(!m){option.hidden=false;option.disabled=false;return}
   const hh=Number(m[1]),mm=Number(m[2]);
   const slotStart=new Date(dateEl.value+"T"+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":00+05:30").getTime();
-  const blocked=!dateEl.value||!Number.isFinite(slotStart)||(isToday&&slotStart<cutoff);
+  const blocked=!dateEl.value||!Number.isFinite(slotStart)||slotStart<cutoff;
   option.hidden=blocked;option.disabled=blocked;
   if(option.selected&&!blocked)chosenStillValid=true;
  });
- if(timeEl.tagName==="SELECT"&&!chosenStillValid){timeEl.value="";const first=Array.from(timeEl.options).find(o=>o.value&&!o.disabled&&!o.hidden);if(first)timeEl.value=first.value}else if(timeEl.tagName==="INPUT"&&timeEl.type==="time"){if(isToday){const earliest=new Date(cutoff);const mins=earliest.getUTCHours()*60+earliest.getUTCMinutes()+330;const localMins=((mins%1440)+1440)%1440;timeEl.min=String(Math.floor(localMins/60)).padStart(2,"0")+":"+String(localMins%60).padStart(2,"0")}else{timeEl.removeAttribute("min")}}
+ if(timeEl.tagName==="SELECT"&&!chosenStillValid){timeEl.value="";const first=Array.from(timeEl.options).find(o=>o.value&&!o.disabled&&!o.hidden);if(first)timeEl.value=first.value}else if(timeEl.tagName==="INPUT"&&timeEl.type==="time"){if(dateEl.value===minimumDate){const earliest=new Date(cutoff);const mins=earliest.getUTCHours()*60+earliest.getUTCMinutes()+330;const localMins=((mins%1440)+1440)%1440;timeEl.min=String(Math.floor(localMins/60)).padStart(2,"0")+":"+String(localMins%60).padStart(2,"0")}else{timeEl.removeAttribute("min")}}
 }
 document.getElementById("date")?.addEventListener("change",refreshBexTimeSlots);
 document.getElementById("time")?.addEventListener("focus",refreshBexTimeSlots);
