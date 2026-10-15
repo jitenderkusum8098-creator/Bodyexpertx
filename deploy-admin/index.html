@@ -1110,23 +1110,6 @@ function renderBookingRows(){
   const actions=document.createElement("div");actions.className="booking-actions";
   const save=document.createElement("button");save.className="btn";save.textContent="Save booking changes";save.disabled=cancelled;save.onclick=async()=>{try{const body={booking_id:a.id,status:statusSel.value,zone_id:zSel.value,therapist_id:tSel.value,booking_amount:amount.value};if(body.status==="cancelled"&&!confirm("इस booking को Cancelled करना है? यह history में रहेगी और active jobs से हट जाएगी।"))return;const result=await edge("admin-update-booking",body);alert(result.message||"Booking saved");await loadAdmin()}catch(e){alert(e.message)}};
   const cancel=document.createElement("button");cancel.className="btn danger";cancel.textContent="Cancel booking";cancel.disabled=cancelled;cancel.onclick=async()=>{if(!confirm("Booking cancel करें? History सुरक्षित रहेगी और active job count से हट जाएगी।"))return;const reason=prompt("Cancellation reason (optional):")||"";try{const result=await edge("admin-update-booking",{booking_id:a.id,status:"cancelled",cancel_reason:reason});alert(result.message||"Booking cancelled");await loadAdmin()}catch(e){alert(e.message)}};
-  if(!["completed","cancelled"].includes(a.status)&&a.customer_phone){
-   const otpBtn=document.createElement("button");otpBtn.className="btn";otpBtn.textContent="🔐 Customer ko Code WhatsApp karein";
-   otpBtn.onclick=async()=>{
-    if(otpBtn.disabled)return;
-    if(!confirm("Is booking ka saved Completion Code WhatsApp draft mein kholna hai? Send karne ke baad code 10 minute valid hoga."))return;
-    const waWindow=window.open("about:blank","_blank");
-    otpBtn.disabled=true;otpBtn.textContent="WhatsApp taiyar ho raha hai…";
-    try{
-     const result=await edge("admin-issue-end-otp",{booking_id:a.id});
-     if(!result.whatsapp_url)throw new Error(result.message||"WhatsApp link nahi bana.");
-     if(waWindow)waWindow.location.href=result.whatsapp_url;else window.location.href=result.whatsapp_url;
-     alert(result.message||"WhatsApp draft khul gaya. Send dabakar code customer ko bhejein.");
-    }catch(e){if(waWindow)waWindow.close();alert(e.message||"Code bhejne ka draft nahi khula.");}
-    finally{otpBtn.disabled=false;otpBtn.textContent="🔐 Customer ko Code WhatsApp karein";}
-   };
-   actions.append(otpBtn);
-  }
   if(a.status==="completed"&&a.therapist_id&&a.customer_phone){
    const rateBtn=document.createElement("button");rateBtn.className="btn";rateBtn.textContent="⭐ WhatsApp rating link bhejein";
    rateBtn.onclick=async()=>{
