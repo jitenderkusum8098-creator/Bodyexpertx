@@ -1314,7 +1314,7 @@ const waUrl="https://wa.me/917838675115?text="+encodeURIComponent(details);
 if(waWindow){waWindow.location.href=waUrl;}else{window.open(waUrl,"_blank","noopener");}
 status.textContent=bookingReference?"Booking "+bookingReference+" save ho gayi. WhatsApp mein Send dabayein; therapist accept karte hi My Account par booking automatically confirm ho jayegi.":"WhatsApp opened with your request. Press Send there; therapist accept karte hi My Account par booking automatically confirm ho jayegi.";if(bookingTrackingToken){setTimeout(()=>{location.href="./customer-dashboard.html?tracking="+encodeURIComponent(bookingTrackingToken)},650)}});
 function bexLocalDateString(d=new Date()){return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(d)}
-function bexMinimumStartMs(){return Date.now()+3*60*60*1000}function setMinDate(){const dateEl=document.getElementById("date");if(!dateEl)return;dateEl.min=bexLocalDateString(new Date(bexMinimumStartMs()));if(!dateEl.value||dateEl.value<dateEl.min)dateEl.value=dateEl.min;refreshBexTimeSlots()}
+function bexMinimumStartMs(){const hour=60*60*1000,indiaOffset=330*60*1000;return Math.ceil((Date.now()+3*hour+indiaOffset)/hour)*hour-indiaOffset}function setMinDate(){const dateEl=document.getElementById("date");if(!dateEl)return;dateEl.min=bexLocalDateString(new Date(bexMinimumStartMs()));if(!dateEl.value||dateEl.value<dateEl.min)dateEl.value=dateEl.min;refreshBexTimeSlots()}
 function refreshBexTimeSlots(){
  const dateEl=document.getElementById("date"),timeEl=document.getElementById("time");if(!dateEl||!timeEl)return;
  const minStart=bexMinimumStartMs(),minimumDate=bexLocalDateString(new Date(minStart)),cutoff=minStart;
