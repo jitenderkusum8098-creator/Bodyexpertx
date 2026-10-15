@@ -2349,7 +2349,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
         nav.appendChild(next);
       }
       panel.appendChild(nav);
-      form.insertBefore(panel,form.querySelector(".bex-wizard-step")||null);
+      form.appendChild(panel);
       panels.push(panel);
     });
     function showStep(index,focusInvalid){
@@ -2395,7 +2395,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)close
         }
       }
       if(index===3){
-        if(!window.cart||!window.cart.length){
+        if(typeof cart==="undefined"||!cart.length){
           const status=byId("formStatus");if(status)status.textContent="Please add a massage or add-on first.";
           byId("services")?.scrollIntoView({behavior:"smooth",block:"start"});
           return false;
