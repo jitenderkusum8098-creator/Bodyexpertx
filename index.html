@@ -1269,6 +1269,8 @@ try{
    recipient_gender:document.getElementById("recipientGender").value,
    visit_type:document.getElementById("visit").value,
    customer_address:document.getElementById("visit").value==="Home service"?document.getElementById("address").value:"",
+   customer_latitude:document.getElementById("visit").value==="Home service"?(JSON.parse(localStorage.getItem("bex_customer_profile")||"{}").latitude??null):null,
+   customer_longitude:document.getElementById("visit").value==="Home service"?(JSON.parse(localStorage.getItem("bex_customer_profile")||"{}").longitude??null):null,
    appointment_date:date,
    appointment_time:document.getElementById("time").value,
    service_type:selectedDepartment==="SALON"?"Salon":"Massage",
@@ -1288,7 +1290,10 @@ try{
  if(!response.ok)throw new Error(result.error||"Dashboard save failed");
  bookingReference=result.reference_code||"";bookingTrackingToken=result.tracking_token||"";
  try{
-  const profile={name:document.getElementById("name").value.trim(),phone:document.getElementById("phone").value.trim(),address:document.getElementById("visit").value==="Home service"?document.getElementById("address").value.trim():"",updatedAt:new Date().toISOString()};
+  const oldProfile=JSON.parse(localStorage.getItem("bex_customer_profile")||"{}");
+  const bookingAddress=document.getElementById("visit").value==="Home service"?document.getElementById("address").value.trim():(oldProfile.address||"");
+  const sameSavedAddress=bookingAddress===(oldProfile.address||"");
+  const profile={...oldProfile,name:document.getElementById("name").value.trim(),phone:document.getElementById("phone").value.trim(),age:Number(document.getElementById("age").value)||oldProfile.age||"",gender:oldProfile.gender||"",lastRecipientGender:document.getElementById("recipientGender").value,lastVisitType:document.getElementById("visit").value,address:bookingAddress,latitude:sameSavedAddress?oldProfile.latitude:null,longitude:sameSavedAddress?oldProfile.longitude:null,maps_url:sameSavedAddress?oldProfile.maps_url:"",updatedAt:new Date().toISOString()};
   localStorage.setItem("bex_customer_profile",JSON.stringify(profile));
   if(bookingTrackingToken){
    const history=JSON.parse(localStorage.getItem("bex_customer_bookings")||"[]");
@@ -1441,6 +1446,52 @@ document.getElementById("shareReferral")?.addEventListener("click",function(){
  }
  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',cleanBookingExtras); else cleanBookingExtras();
  new MutationObserver(cleanBookingExtras).observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
+
+<script id="bex-saved-customer-booking">
+(function(){
+ const readProfile=()=>{try{return JSON.parse(localStorage.getItem("bex_customer_profile")||"{}")}catch(e){return {}}};
+ const isLoggedIn=()=>{try{return !!JSON.parse(localStorage.getItem("bex_customer_session")||"null")?.access_token}catch(e){return false}};
+ function setValue(id,value){const el=document.getElementById(id);if(!el||value===undefined||value===null||value==="")return;el.value=String(value);el.dispatchEvent(new Event("input",{bubbles:true}));el.dispatchEvent(new Event("change",{bubbles:true}))}
+ function visible(el){return !!el&&(el.getClientRects().length>0)&&getComputedStyle(el).visibility!=="hidden"}
+ function fill(profile){setValue("name",profile.name);setValue("phone",profile.phone);setValue("age",profile.age);setValue("recipientGender",profile.lastRecipientGender||profile.gender);setValue("address",profile.address);if(profile.lastVisitType)setValue("visit",profile.lastVisitType);if(typeof window.toggleAddress==="function")window.toggleAddress();window.bexSavedCustomerLocation={latitude:profile.latitude??null,longitude:profile.longitude??null,maps_url:profile.maps_url||""};}
+ function addButton(form){
+  if(!form||form.querySelector("#bexRepeatBooking"))return;
+  const b=document.createElement("button");b.type="button";b.id="bexRepeatBooking";b.className="btn";b.textContent="↻ Pichhli Booking Jaisi Booking Karein";
+  b.style.cssText="display:block;width:100%;margin:0 0 16px;background:linear-gradient(135deg,#f7d778,#c28c22);color:#171309;border:0;border-radius:13px;padding:13px 12px;font-weight:850;cursor:pointer";
+  form.insertBefore(b,form.firstChild);
+  if(isLoggedIn())fill(readProfile());
+  b.addEventListener("click",async()=>{
+   if(!isLoggedIn()){alert("Pehle My Account mein login karein. Login ke baad aapki saved details automatic fill hongi.");return}
+   const p=readProfile();if(!p.name||!p.phone){alert("Aapki saved profile nahi mili. My Account mein pehle details save karein.");return}
+   fill(p);b.disabled=true;b.textContent="Details fill ho gayi hain…";
+   const date=document.getElementById("date"),time=document.getElementById("time");
+   if(date&&time&&visible(date)&&visible(time)){date.scrollIntoView({behavior:"smooth",block:"center"});b.disabled=false;b.textContent="↻ Pichhli Booking Jaisi Booking Karein";return}
+   for(let i=0;i<4;i++){
+    const candidates=[...form.querySelectorAll("button,input[type=button],input[type=submit]")].filter(visible);
+    const next=candidates.find(x=>/^(continue|continue\s*→|next|aage|आगे|जारी रखें)/i.test((x.innerText||x.value||x.textContent||"").trim()));
+    if(!next)break;
+    next.click();await new Promise(resolve=>setTimeout(resolve,300));
+    if(date&&time&&visible(date)&&visible(time)){date.scrollIntoView({behavior:"smooth",block:"center"});break}
+   }
+   b.disabled=false;b.textContent="↻ Pichhli Booking Jaisi Booking Karein";
+   if(!(date&&time&&visible(date)&&visible(time)))alert("Aapki saved details fill ho gayi hain. Agar Date & Time section abhi nahi khula, Continue dabakar aage badhein.");
+  });
+ }
+ function scan(){
+  const form=document.getElementById("bookingForm");
+  if(form)addButton(form);
+  if(isLoggedIn()){
+   const p=readProfile();
+   ["name","phone","age","recipientGender"].forEach(id=>{const el=document.getElementById(id);const value=id==="name"?p.name:id==="phone"?p.phone:id==="age"?p.age:(p.lastRecipientGender||p.gender);if(el&&value&&!el.value)setValue(id,value)});
+   const visit=document.getElementById("visit");if(visit&&p.lastVisitType&&!visit.value)setValue("visit",p.lastVisitType);
+   const address=document.getElementById("address");if(address&&p.address&&!address.value)setValue("address",p.address);
+  }
+ }
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",scan);else scan();
+ const mo=new MutationObserver(scan);mo.observe(document.documentElement,{childList:true,subtree:true});
+ setInterval(scan,1200);
 })();
 </script>
 </body></html>
