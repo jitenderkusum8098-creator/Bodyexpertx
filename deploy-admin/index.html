@@ -1222,4 +1222,63 @@ sb.auth.onAuthStateChange((event,s)=>{
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(err => console.warn("App offline support unavailable", err)));
 }
+
+let tmBusy=false;
+async function tmLoad(){
+ if(tmBusy)return;tmBusy=true;
+ try{
+  const sel=$("tmTherapistSelect"),old=sel.value;sel.replaceChildren(new Option("Therapist चुनें",""));
+  (therapists||[]).forEach(t=>sel.add(new Option((t.display_name||"Therapist")+" · "+(t.therapist_code||t.phone||t.id),t.id)));
+  if(old&&[...sel.options].some(o=>o.value===old))sel.value=old;
+  await Promise.all([tmLoadProfileRequests(),tmLoadPortfolio(),tmLoadWorkRequests(),tmLoadRechargeRequests(),tmLoadMessages()]);
+  if(sel.value)await tmLoadSelected();
+ }catch(e){msg("tmSettingsMsg",e.message||"Therapist management load nahi hua.")}finally{tmBusy=false}
+}
+async function tmLoadSelected(){
+ const id=$("tmTherapistSelect").value;if(!id)return;
+ const [{data:s,error:se},{data:w,error:we},{data:tx,error:te}]=await Promise.all([
+  sb.from("therapist_work_settings").select("*").eq("therapist_id",id).maybeSingle(),
+  sb.from("therapist_wallets").select("*").eq("therapist_id",id).maybeSingle(),
+  sb.from("therapist_wallet_transactions").select("*").eq("therapist_id",id).order("created_at",{ascending:false}).limit(30)
+ ]);
+ if(se||we||te)throw se||we||te;
+ $("tmWorkPlan").value=s?.work_plan||"commission";$("tmCommissionType").value=s?.commission_type||"percent";$("tmCommissionValue").value=s?.commission_value??30;$("tmSalary").value=s?.monthly_salary??0;
+ $("tmWalletHistory").innerHTML='<p class="muted">Wallet balance: <b>'+esc(w?.balance??0)+'</b> · Pending recovery: <b>'+esc(w?.pending_recovery??0)+'</b> · Duty '+(w&&Number(w.balance)<=-500?'<b style="color:#b33">Blocked</b>':'<b>Active</b>')+'</p>'+((tx||[]).map(x=>'<div class="item"><b>'+esc(x.transaction_type)+' · ₹'+esc(x.amount)+'</b><p>'+esc(x.reason)+'<br>'+esc(x.created_at)+' · '+esc(x.payment_mode||'')+' · Balance: '+esc(x.balance_before)+' → '+esc(x.balance_after)+'</p></div>').join("")||'<div class="empty">No wallet transactions.</div>');
+}
+$("tmTherapistSelect").addEventListener("change",()=>tmLoadSelected().catch(e=>msg("tmSettingsMsg",e.message)));
+$("tmSaveSettings").addEventListener("click",async()=>{try{const id=$("tmTherapistSelect").value;if(!id)throw new Error("Therapist select karein.");const v=Number($("tmCommissionValue").value),salary=Number($("tmSalary").value);if(v<0||salary<0||!Number.isFinite(v)||!Number.isFinite(salary))throw new Error("Commission aur salary valid amount honi chahiye.");const {error}=await sb.from("therapist_work_settings").upsert({therapist_id:id,work_plan:$("tmWorkPlan").value,commission_type:$("tmCommissionType").value,commission_value:v,monthly_salary:salary,effective_at:new Date().toISOString(),updated_at:new Date().toISOString(),updated_by:session.user.id});if(error)throw error;msg("tmSettingsMsg","Commission / Salary settings save ho gayi.");await tmLoadSelected()}catch(e){msg("tmSettingsMsg",e.message||"Settings save nahi hui.")}});
+$("tmWalletApply").addEventListener("click",async()=>{try{const id=$("tmTherapistSelect").value,amount=Number($("tmWalletAmount").value),reason=$("tmWalletReason").value.trim();if(!id)throw new Error("Therapist select karein.");if(!Number.isFinite(amount)||amount===0||reason.length<3)throw new Error("Amount aur reason zaroori hain.");const {data,error}=await sb.rpc("bex_admin_wallet_adjust",{p_therapist_id:id,p_amount:amount,p_reason:reason,p_payment_mode:$("tmWalletMode").value,p_reference_id:null});if(error)throw error;msg("tmWalletMsg","Wallet update ho gaya. Balance: ₹"+data.balance_after+(data.wallet_blocked?" · Duty blocked":" · Duty active"));$("tmWalletAmount").value="";$("tmWalletReason").value="";await tmLoadSelected()}catch(e){msg("tmWalletMsg",e.message||"Wallet update nahi hua.")}});
+async function tmLoadProfileRequests(){
+ const r=await sb.from("therapist_profile_change_requests").select("*").eq("status","pending").order("requested_at",{ascending:true});if(r.error)throw r.error;
+ $("tmProfileRequests").innerHTML=(r.data||[]).map(x=>{const t=therapists.find(y=>y.id===x.therapist_id)||{};return '<div class="item"><b>'+esc(t.display_name||x.therapist_id)+' · '+esc(t.therapist_code||'')+'</b><p>'+esc(JSON.stringify(x.requested_fields))+'</p><label class="field"><span>Admin note</span><input data-tm-note="'+x.id+'" placeholder="Optional reason"></label><button class="btn" data-tm-profile-approve="'+x.id+'">Approve</button> <button class="btn alt" data-tm-profile-reject="'+x.id+'">Reject</button></div>'}).join("")||'<div class="empty">No pending profile/zone requests.</div>';
+}
+async function tmLoadPortfolio(){
+ const r=await sb.from("therapist_portfolio_items").select("*").eq("status","pending").order("created_at",{ascending:true});if(r.error)throw r.error;
+ const html=[];for(const x of r.data||[]){const t=therapists.find(y=>y.id===x.therapist_id)||{};const signed=await sb.storage.from("therapist-private-files").createSignedUrl(x.storage_path,600);const url=signed.data?.signedUrl;html.push('<div class="item"><b>'+esc(t.display_name||x.therapist_id)+' · '+esc(x.item_type)+' · '+esc(x.title)+'</b><p>'+esc(x.description||'')+'</p>'+(url?'<p><a href="'+esc(url)+'" target="_blank" rel="noopener">View private upload</a></p>':'')+'<label class="field"><span>Admin note</span><input data-tm-note="'+x.id+'" placeholder="Optional reason"></label><button class="btn" data-tm-portfolio-approve="'+x.id+'">Approve</button> <button class="btn alt" data-tm-portfolio-reject="'+x.id+'">Reject</button></div>')}
+ $("tmPortfolioRequests").innerHTML=html.join("")||'<div class="empty">No pending portfolio items.</div>';
+}
+async function tmLoadWorkRequests(){
+ const r=await sb.from("therapist_work_plan_requests").select("*").eq("status","pending").order("created_at",{ascending:true});if(r.error)throw r.error;
+ $("tmWorkRequests").innerHTML=(r.data||[]).map(x=>{const t=therapists.find(y=>y.id===x.therapist_id)||{};return '<div class="item"><b>'+esc(t.display_name||x.therapist_id)+'</b><p>Requested: '+esc(x.requested_plan)+' · '+esc(x.created_at)+'</p><button class="btn" data-tm-work-approve="'+x.id+'">Approve</button> <button class="btn alt" data-tm-work-reject="'+x.id+'">Reject</button></div>'}).join("")||'<div class="empty">No pending work-plan requests.</div>';
+}
+async function tmLoadRechargeRequests(){
+ const r=await sb.from("therapist_wallet_recharge_requests").select("*").eq("status","pending").order("created_at",{ascending:true});if(r.error)throw r.error;
+ $("tmRechargeRequests").innerHTML=(r.data||[]).map(x=>{const t=therapists.find(y=>y.id===x.therapist_id)||{};return '<div class="item"><b>'+esc(t.display_name||x.therapist_id)+' · ₹'+esc(x.amount)+'</b><p>'+esc(x.payment_mode)+' · '+esc(x.reference_id||'No reference')+' · '+esc(x.created_at)+'</p><label class="field"><span>Admin note</span><input data-tm-note="'+x.id+'" placeholder="Optional"></label><button class="btn" data-tm-recharge-approve="'+x.id+'">Verify & Add Wallet</button> <button class="btn alt" data-tm-recharge-reject="'+x.id+'">Reject</button></div>'}).join("")||'<div class="empty">No pending recharge requests.</div>';
+}
+async function tmLoadMessages(){
+ const r=await sb.from("therapist_admin_messages").select("*").order("created_at",{ascending:false}).limit(50);if(r.error)throw r.error;
+ const html=[];for(const x of r.data||[]){const t=therapists.find(y=>y.id===x.therapist_id)||{};let link="";if(x.attachment_path){const s=await sb.storage.from("therapist-private-files").createSignedUrl(x.attachment_path,600);if(s.data?.signedUrl)link='<p><a target="_blank" rel="noopener" href="'+esc(s.data.signedUrl)+'">View private attachment</a></p>'}html.push('<div class="item"><b>'+esc(t.display_name||x.therapist_id)+' · '+esc(x.subject)+'</b><p>'+esc(x.message)+'<br>'+esc(x.created_at)+'</p>'+link+'<p>Current reply: '+esc(x.reply||'—')+'</p><label class="field"><span>Reply</span><textarea data-tm-reply="'+x.id+'" rows="2">'+esc(x.reply||'')+'</textarea></label><button class="btn" data-tm-message-reply="'+x.id+'">Save Reply</button> <button class="btn alt" data-tm-message-resolve="'+x.id+'">Mark Resolved</button></div>')}
+ $("tmMessages").innerHTML=html.join("")||'<div class="empty">No therapist messages.</div>';
+}
+$("therapistMoneySection").addEventListener("click",async e=>{
+ const b=e.target.closest("button");if(!b)return;const noteId=b.dataset.tmProfileApprove||b.dataset.tmProfileReject||b.dataset.tmPortfolioApprove||b.dataset.tmPortfolioReject||b.dataset.tmWorkApprove||b.dataset.tmWorkReject||b.dataset.tmRechargeApprove||b.dataset.tmRechargeReject||b.dataset.tmMessageReply||b.dataset.tmMessageResolve;if(!noteId)return;
+ try{
+  if(b.dataset.tmProfileApprove||b.dataset.tmProfileReject){const approve=!!b.dataset.tmProfileApprove;const q=await sb.from("therapist_profile_change_requests").select("*").eq("id",noteId).single();if(q.error)throw q.error;const req=q.data,note=document.querySelector('[data-tm-note="'+noteId+'"]')?.value||"";if(approve){const fields={...req.requested_fields};const zoneIds=fields.zone_ids;delete fields.zone_ids;const up=await sb.from("therapists").update(fields).eq("id",req.therapist_id);if(up.error)throw up.error;if(Array.isArray(zoneIds)&&zoneIds.length){const del=await sb.from("therapist_zones").delete().eq("therapist_id",req.therapist_id);if(del.error)throw del.error;const ins=await sb.from("therapist_zones").insert(zoneIds.map(zone_id=>({therapist_id:req.therapist_id,zone_id})));if(ins.error)throw ins.error}}const upd=await sb.from("therapist_profile_change_requests").update({status:approve?"approved":"rejected",admin_note:note||null,reviewed_at:new Date().toISOString(),reviewed_by:session.user.id}).eq("id",noteId);if(upd.error)throw upd.error}
+  else if(b.dataset.tmPortfolioApprove||b.dataset.tmPortfolioReject){const approve=!!b.dataset.tmPortfolioApprove,note=document.querySelector('[data-tm-note="'+noteId+'"]')?.value||"";const r=await sb.from("therapist_portfolio_items").update({status:approve?"approved":"rejected",admin_note:note||null,reviewed_at:new Date().toISOString(),reviewed_by:session.user.id}).eq("id",noteId);if(r.error)throw r.error}
+  else if(b.dataset.tmWorkApprove||b.dataset.tmWorkReject){const approve=!!b.dataset.tmWorkApprove;const q=await sb.from("therapist_work_plan_requests").select("*").eq("id",noteId).single();if(q.error)throw q.error;if(approve){const old=await sb.from("therapist_work_settings").select("*").eq("therapist_id",q.data.therapist_id).maybeSingle();if(old.error)throw old.error;const s=old.data||{commission_type:"percent",commission_value:30,monthly_salary:0};const up=await sb.from("therapist_work_settings").upsert({therapist_id:q.data.therapist_id,work_plan:q.data.requested_plan,commission_type:s.commission_type,commission_value:s.commission_value,monthly_salary:s.monthly_salary,effective_at:new Date().toISOString(),updated_at:new Date().toISOString(),updated_by:session.user.id});if(up.error)throw up.error}const upd=await sb.from("therapist_work_plan_requests").update({status:approve?"approved":"rejected",reviewed_at:new Date().toISOString(),reviewed_by:session.user.id}).eq("id",noteId);if(upd.error)throw upd.error}
+  else if(b.dataset.tmRechargeApprove||b.dataset.tmRechargeReject){const approve=!!b.dataset.tmRechargeApprove;const q=await sb.from("therapist_wallet_recharge_requests").select("*").eq("id",noteId).single();if(q.error)throw q.error;const note=document.querySelector('[data-tm-note="'+noteId+'"]')?.value||"";if(approve){const rpc=await sb.rpc("bex_admin_wallet_adjust",{p_therapist_id:q.data.therapist_id,p_amount:Number(q.data.amount),p_reason:"Verified wallet recharge request "+q.data.id+(note?": "+note:""),p_payment_mode:q.data.payment_mode,p_reference_id:q.data.reference_id});if(rpc.error)throw rpc.error}const upd=await sb.from("therapist_wallet_recharge_requests").update({status:approve?"approved":"rejected",admin_note:note||null,reviewed_at:new Date().toISOString(),reviewed_by:session.user.id}).eq("id",noteId);if(upd.error)throw upd.error}
+  else if(b.dataset.tmMessageReply||b.dataset.tmMessageResolve){const reply=document.querySelector('[data-tm-reply="'+noteId+'"]')?.value||"";const upd=await sb.from("therapist_admin_messages").update({reply,replied_by:session.user.id,replied_at:new Date().toISOString(),status:b.dataset.tmMessageResolve?"resolved":"replied"}).eq("id",noteId);if(upd.error)throw upd.error}
+  await tmLoad();
+ }catch(err){msg("tmSettingsMsg",err.message||"Action fail hui.")}
+});
 </script></body></html>
