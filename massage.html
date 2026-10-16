@@ -2056,7 +2056,7 @@ function refreshBexTimeSlots(){
    timeEl.value=button.dataset.time||"";
    timeEl.dispatchEvent(new Event("input",{bubbles:true}));
    timeEl.dispatchEvent(new Event("change",{bubbles:true}));
-   grid.querySelectorAll(".bex-time-slot").forEach(b=>b.setAttribute("aria-pressed",String(b===button)));
+   grid.querySelectorAll(".bex-time-slot").forEach(b=>{const active=b===button;b.setAttribute("aria-pressed",String(active));b.style.setProperty("background-color",active?"#16a34a":"","important");b.style.setProperty("border-color",active?"#22c55e":"");b.style.setProperty("color",active?"#ffffff":"");b.style.setProperty("box-shadow",active?"0 0 0 3px #22c55e66, 0 0 14px #16a34a88":"");});
    if(help)help.textContent="✓ Selected time: "+bexTimeLabel(timeEl.value);
   };
   grid.addEventListener("click",chooseSlot,true);
