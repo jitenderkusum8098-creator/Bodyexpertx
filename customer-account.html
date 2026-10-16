@@ -128,13 +128,12 @@ init();
  // Booking page stays inside My Account, but its original standalone page/design is untouched.
  const bookingPanel=document.createElement('section');
  bookingPanel.id='bexAccountBookingPage';
- bookingPanel.style.cssText='border:1px solid #6b5420;border-radius:18px;overflow:hidden;margin:16px 0;background:#0b0b0d';
- bookingPanel.innerHTML='<div id="bexAccountBookingEmpty" style="padding:18px;color:var(--muted);text-align:center">Booking details yahan dikhengi jab aap booking kar lenge. <a href="./index.html#booking">Abhi booking karein</a>.</div><iframe id="bexAccountBookingFrame" title="Aapki BodyExpertX booking details, status, therapist aur OTP" loading="eager" class="hidden" allow="geolocation" style="display:block;width:100%;height:1000px;border:0;background:#0b0b0d"></iframe>';
+ bookingPanel.style.cssText='display:none;border:1px solid #6b5420;border-radius:18px;overflow:hidden;margin:16px 0;background:#0b0b0d';
+ bookingPanel.innerHTML='<iframe id="bexAccountBookingFrame" title="Aapki BodyExpertX booking details, status, therapist aur OTP" loading="eager" class="hidden" allow="geolocation" style="display:block;width:100%;height:1000px;border:0;background:#0b0b0d"></iframe>';
  controls.insertAdjacentElement('afterend',bookingPanel);
  const bookingFrame=document.getElementById('bexAccountBookingFrame');
- const bookingEmpty=document.getElementById('bexAccountBookingEmpty');
  function savedBookingTokens(){try{const list=JSON.parse(localStorage.getItem('bex_customer_bookings')||'[]');return Array.isArray(list)?list.filter(x=>x&&x.trackingToken):[]}catch(e){return[]}}
- function showEmbeddedBooking(token){if(!token)return;bookingEmpty.classList.add('hidden');bookingFrame.classList.remove('hidden');bookingFrame.style.display='block';const src='./customer-dashboard.html?tracking='+encodeURIComponent(token)+'&embed=account';if(bookingFrame.getAttribute('src')!==src)bookingFrame.setAttribute('src',src)}
+ function showEmbeddedBooking(token){if(!token)return;bookingPanel.style.display='block';bookingFrame.classList.remove('hidden');bookingFrame.style.display='block';const src='./customer-dashboard.html?tracking='+encodeURIComponent(token)+'&embed=account';if(bookingFrame.getAttribute('src')!==src)bookingFrame.setAttribute('src',src)}
  const savedBookingList=savedBookingTokens();let currentBookingToken='';try{currentBookingToken=localStorage.getItem('bex_current_booking_tracking')||''}catch(e){}
  const latestBookingToken=savedBookingList[0]?.trackingToken||currentBookingToken;if(latestBookingToken)showEmbeddedBooking(latestBookingToken);
  function fitBookingFrame(){
@@ -169,7 +168,7 @@ init();
    if(active==='login')auth.hidden=false;
    if(active==='bookings')bookings.hidden=false;
    if(active==='today'){todayPanel.hidden=false;renderToday()}
-   if(active==='bookings') {if(typeof renderBookings==='function')renderBookings()}
+   if(active==='bookings') {if(typeof renderTherapists==='function')renderTherapists();if(typeof renderBookings==='function')renderBookings()}
  }
  controls.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openPanel(b.dataset.open)));
  // Keep Login / Register / Recover buttons as the only inner auth actions.
