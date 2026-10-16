@@ -1850,40 +1850,66 @@ async function bexSearchMapAddress(){
  if(!q){bexSetMapMessage("Pehle house/flat number, street, area ya PIN code type karein.");input.focus();return}
  const requestId=++bexMapSearchRequest;
  results.hidden=false;results.replaceChildren();bexSetMapMessage("Address suggestions dhoondh rahe hain…");
- const clean=v=>String(v||"").replace(/\s+/g," ").replace(/\s*,\s*/g,", ").trim();
+ const clean=v=>String(v||"").replace(/\\s+/g," ").replace(/\\s*,\\s*/g,", ").trim();
  const near=bexPickerPosition||{lat:28.5245,lon:77.1855};
- const controller=new AbortController(), timeout=setTimeout(()=>controller.abort(),8000);
+ const queries=[q];
+ const slashNormalized=q.replace(/\\s*\\/\\s*/g," ");
+ if(slashNormalized!==q)queries.push(slashNormalized);
+ const normalizeRow=x=>({
+  ...x,
+  lat:Number(x.lat),lon:Number(x.lon),
+  _title:x._title||[x.address?.house_number,x.address?.road||x.address?.pedestrian||x.name].filter(Boolean).join(" ")||x.name||x.display_name||"Address result",
+  _detail:x._detail||[x.address?.neighbourhood,x.address?.suburb,x.address?.city||x.address?.town||x.address?.village,x.address?.state,x.address?.postcode].filter(Boolean).join(", ")
+ });
  let rows=[],providerWorked=false;
- try{
-  const url="https://photon.komoot.io/api/?q="+encodeURIComponent(q)+"&limit=8&lang=en&lat="+encodeURIComponent(near.lat)+"&lon="+encodeURIComponent(near.lon);
-  const response=await fetch(url,{headers:{Accept:"application/json"},signal:controller.signal});
-  if(response.ok){
-   providerWorked=true;
-   const data=await response.json();
-   rows=(data.features||[]).map(f=>{
-    const p=f.properties||{},c=f.geometry?.coordinates||[];
-    const title=[p.housenumber,p.street||p.name].filter(Boolean).join(" ")||p.name||p.city||p.suburb||"Address result";
-    const detail=[p.suburb,p.district,p.city,p.state,p.postcode,p.country].map(clean).filter((v,i,a)=>v&&a.findIndex(x=>x.toLowerCase()===v.toLowerCase())===i).join(", ");
-    return {lat:Number(c[1]),lon:Number(c[0]),display_name:[title,detail].filter(Boolean).join(", "),address:{house_number:p.housenumber,road:p.street,neighbourhood:p.suburb,suburb:p.district,city:p.city||p.town||p.village,state:p.state,postcode:p.postcode,country:p.country},_title:title,_detail:detail,_country:p.country};
-   }).filter(x=>Number.isFinite(x.lat)&&Number.isFinite(x.lon)&&x.display_name&&(!x._country||/india/i.test(x._country)));
-  }
- }catch(e){}
- finally{clearTimeout(timeout)}
- if(requestId!==bexMapSearchRequest)return;
- // Photon can return unrelated or empty results. Use India's address index as a fallback.
- if(!rows.length){
-  const fallbackController=new AbortController(),fallbackTimeout=setTimeout(()=>fallbackController.abort(),8000);
+ for(const query of queries){
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),7000);
   try{
-   const url="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&accept-language=en&q="+encodeURIComponent(q);
-   const response=await fetch(url,{headers:{Accept:"application/json"},signal:fallbackController.signal});
-   if(response.ok){providerWorked=true;rows=(await response.json()).map(x=>({...x,_title:[x.address?.house_number,x.address?.road||x.address?.pedestrian||x.name].filter(Boolean).join(" ")||x.name||x.display_name,_detail:[x.address?.neighbourhood,x.address?.suburb,x.address?.city||x.address?.town||x.address?.village,x.address?.state,x.address?.postcode].filter(Boolean).join(", ")})).filter(x=>Number.isFinite(Number(x.lat))&&Number.isFinite(Number(x.lon)));}
-  }catch(e){}
-  finally{clearTimeout(fallbackTimeout)}
+   const url="https://photon.komoot.io/api/?q="+encodeURIComponent(query)+"&limit=10&lang=en&lat="+encodeURIComponent(near.lat)+"&lon="+encodeURIComponent(near.lon);
+   const response=await fetch(url,{headers:{Accept:"application/json"},signal:controller.signal});
+   if(response.ok){
+    providerWorked=true;
+    const data=await response.json();
+    const photonRows=(data.features||[]).map(f=>{
+     const p=f.properties||{},coords=f.geometry?.coordinates||[];
+     const title=[p.housenumber,p.street||p.name].filter(Boolean).join(" ")||p.name||p.city||p.suburb||"Address result";
+     const detail=[p.suburb,p.district,p.city||p.town||p.village,p.state,p.postcode,p.country].map(clean).filter((v,i,a)=>v&&a.findIndex(x=>x.toLowerCase()===v.toLowerCase())===i).join(", ");
+     return normalizeRow({lat:coords[1],lon:coords[0],display_name:[title,detail].filter(Boolean).join(", "),address:{house_number:p.housenumber,road:p.street||p.name,neighbourhood:p.suburb,suburb:p.district,city:p.city||p.town||p.village,state:p.state,postcode:p.postcode,country:p.country},_title:title,_detail:detail,_country:p.country});
+    }).filter(x=>Number.isFinite(x.lat)&&Number.isFinite(x.lon)&&x.display_name&&(!x._country||/india/i.test(x._country)));
+    rows.push(...photonRows);
+   }
+  }catch(e){}finally{clearTimeout(timeout)}
+  if(requestId!==bexMapSearchRequest)return;
+  // Always consult the India address index too: Photon may return unrelated results for flat numbers such as 4/9.
+  if(rows.length<5){
+   const fallbackController=new AbortController(),fallbackTimeout=setTimeout(()=>fallbackController.abort(),7000);
+   try{
+    const url="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=10&countrycodes=in&accept-language=en&q="+encodeURIComponent(query);
+    const response=await fetch(url,{headers:{Accept:"application/json"},signal:fallbackController.signal});
+    if(response.ok){
+     providerWorked=true;
+     const data=await response.json();
+     rows.push(...data.map(x=>normalizeRow({...x,_title:[x.address?.house_number,x.address?.road||x.address?.pedestrian||x.name].filter(Boolean).join(" ")||x.name||x.display_name,_detail:[x.address?.neighbourhood,x.address?.suburb,x.address?.city||x.address?.town||x.address?.village,x.address?.state,x.address?.postcode].filter(Boolean).join(", ")})).filter(x=>Number.isFinite(x.lat)&&Number.isFinite(x.lon)));
+    }
+   }catch(e){}finally{clearTimeout(fallbackTimeout)}
+  }
+  if(rows.length>=10)break;
  }
  if(requestId!==bexMapSearchRequest)return;
+ const seen=new Set();
+ rows=rows.filter(row=>{
+  const key=Number(row.lat).toFixed(5)+","+Number(row.lon).toFixed(5);
+  if(seen.has(key))return false;seen.add(key);return true;
+ });
+ const tokens=q.toLowerCase().split(/[\\s,]+/).filter(x=>x.length>1);
+ rows.sort((a,b)=>{
+  const score=x=>{const hay=(String(x.display_name||"")+" "+String(x._title||"")+" "+String(x._detail||"")).toLowerCase();return tokens.reduce((n,t)=>n+(hay.includes(t)?1:0),0)};
+  return score(b)-score(a);
+ });
+ rows=rows.slice(0,10);
  if(!rows.length){
   results.hidden=true;results.replaceChildren();
-  bexSetMapMessage(providerWorked?"Is address ke liye result nahi mila. Area + city ya PIN code try karein, jaise “Kishangarh, Vasant Kunj, Delhi”.":"Address search service abhi respond nahi kar rahi. Thodi der baad try karein, ya map par pin set karein.");
+  bexSetMapMessage(providerWorked?"Is address ke liye result nahi mila. House number ke saath area/city likhein, jaise “4/9 Kishangarh, Vasant Kunj, Delhi”.":"Address search service abhi respond nahi kar rahi. Thodi der baad try karein, ya map par pin set karein.");
   return;
  }
  rows.forEach(row=>{
