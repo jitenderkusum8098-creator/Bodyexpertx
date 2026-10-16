@@ -133,11 +133,9 @@ init();
  bookingPanel.innerHTML='<iframe id="bexAccountBookingFrame" title="Aapki BodyExpertX booking details, status, therapist aur OTP" loading="eager" class="hidden" allow="geolocation" style="display:block;width:100%;height:1000px;border:0;background:#0b0b0d"></iframe>';
  // Insert the booking page after the expandable account sections so it never pushes them far below the buttons.
  let bookingPanelPlaced=false;
- const bookingFrame=document.getElementById('bexAccountBookingFrame');
+ let bookingFrame=null;
  function savedBookingTokens(){try{const list=JSON.parse(localStorage.getItem('bex_customer_bookings')||'[]');return Array.isArray(list)?list.filter(x=>x&&x.trackingToken):[]}catch(e){return[]}}
- function showEmbeddedBooking(token){if(!token)return;bookingPanel.style.display='block';bookingFrame.classList.remove('hidden');bookingFrame.style.display='block';const src='./customer-dashboard.html?tracking='+encodeURIComponent(token)+'&embed=account';if(bookingFrame.getAttribute('src')!==src)bookingFrame.setAttribute('src',src)}
- const savedBookingList=savedBookingTokens();let currentBookingToken='';try{currentBookingToken=localStorage.getItem('bex_current_booking_tracking')||''}catch(e){}
- const latestBookingToken=savedBookingList[0]?.trackingToken||currentBookingToken;if(latestBookingToken)showEmbeddedBooking(latestBookingToken);
+ function showEmbeddedBooking(token){if(!token||!bookingFrame)return;bookingPanel.style.display='block';bookingFrame.classList.remove('hidden');bookingFrame.style.display='block';const src='./customer-dashboard.html?tracking='+encodeURIComponent(token)+'&embed=account';if(bookingFrame.getAttribute('src')!==src)bookingFrame.setAttribute('src',src)}
  function fitBookingFrame(){
    try{
      const doc=bookingFrame.contentDocument;if(!doc)return;
@@ -158,6 +156,10 @@ init();
  todayPanel.innerHTML='<h2>Today Booking</h2><p class="hint">Aaj ki saari bookings yahan dikhengi.</p><div id="todayBookingList" class="grid" style="margin-top:14px"></div>';
  bookings.after(todayPanel);
  if(!bookingPanelPlaced){todayPanel.insertAdjacentElement('afterend',bookingPanel);bookingPanelPlaced=true;}
+ // The iframe must be queried after its parent is attached to the document.
+ bookingFrame=bookingPanel.querySelector('#bexAccountBookingFrame');
+ const savedBookingList=savedBookingTokens();let currentBookingToken='';try{currentBookingToken=localStorage.getItem('bex_current_booking_tracking')||''}catch(e){}
+ const latestBookingToken=savedBookingList[0]?.trackingToken||currentBookingToken;if(latestBookingToken)showEmbeddedBooking(latestBookingToken);
  const thank=document.createElement('div');thank.className='bex-thankyou';thank.innerHTML='<strong>❤️ Thank You for Choosing BodyExpertX!</strong>Aapke bharose ke liye dhanyavaad. Hum aapko behtareen wellness experience dene ke liye taiyaar hain.';
  bookings.appendChild(thank);
  todayPanel.appendChild(thank.cloneNode(true));
