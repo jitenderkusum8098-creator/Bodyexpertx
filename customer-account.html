@@ -151,9 +151,9 @@ init();
  window.addEventListener('resize',fitBookingFrame);
  setInterval(fitBookingFrame,1500);
  document.addEventListener('click',event=>{const link=event.target.closest('#bookingList a[href*="tracking="],#todayBookingList a[href*="tracking="]');if(!link)return;let token='';try{token=new URL(link.href,location.href).searchParams.get('tracking')||''}catch(e){}if(!token)return;event.preventDefault();showEmbeddedBooking(token);bookingPanel.scrollIntoView({behavior:'smooth',block:'start'})});
- auth.hidden=true;bookings.hidden=true;if(profile)profile.hidden=true;if(therapists)therapists.hidden=true;
+ auth.hidden=true;bookings.hidden=true;if(profile)profile.hidden=true;if(therapists)therapists.hidden=true;auth.style.display='none';bookings.style.display='none';if(profile)profile.style.display='none';if(therapists)therapists.style.display='none';
  const todayPanel=document.createElement('section');
- todayPanel.id='todayBookingsPanel';todayPanel.className='panel';todayPanel.hidden=true;
+ todayPanel.id='todayBookingsPanel';todayPanel.className='panel';todayPanel.hidden=true;todayPanel.style.display='none';
  todayPanel.innerHTML='<h2>Today Booking</h2><p class="hint">Aaj ki saari bookings yahan dikhengi.</p><div id="todayBookingList" class="grid" style="margin-top:14px"></div>';
  bookings.after(todayPanel);
  if(!bookingPanelPlaced){todayPanel.insertAdjacentElement('afterend',bookingPanel);bookingPanelPlaced=true;}
@@ -164,12 +164,12 @@ init();
  let active='';
  function openPanel(which){
    const next=active===which?'':which;active=next;
-   allPanels.forEach(p=>p.hidden=true);
+   allPanels.forEach(p=>{p.hidden=true;p.style.display='none'});
    controls.querySelectorAll('[data-open]').forEach(b=>b.classList.toggle('active',b.dataset.open===active));
    if(!active)return;
-   if(active==='login')auth.hidden=false;
-   if(active==='bookings')bookings.hidden=false;
-   if(active==='today'){todayPanel.hidden=false;renderToday()}
+   if(active==='login'){auth.hidden=false;auth.style.display='block'}
+   if(active==='bookings'){bookings.hidden=false;bookings.style.display='block'}
+   if(active==='today'){todayPanel.hidden=false;todayPanel.style.display='block';renderToday()}
    if(active==='bookings') {if(typeof renderTherapists==='function')renderTherapists();if(typeof renderBookings==='function')renderBookings()}
    const target=active==='login'?auth:(active==='bookings'?bookings:(active==='today'?todayPanel:null));
    if(target)setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'start'}),80);
