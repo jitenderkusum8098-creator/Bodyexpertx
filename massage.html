@@ -1768,7 +1768,7 @@ article.service .bx-massage-photo img {
 <div class="field"><label for="bexAddressLabel">Save address as</label><select id="bexAddressLabel"><option value="My Home">🏠 My Home</option><option value="Office">🏢 Office</option><option value="Other">📍 Other</option></select></div>
 <div class="field" id="bexCustomAddressLabelField" hidden><label for="bexCustomAddressLabel">Your address name *</label><input id="bexCustomAddressLabel" type="text" placeholder="e.g. Brother Home, Guest House"></div>
 </div>
-<button type="button" id="bexAddressMapPin" class="btn bex-address-map-pin" hidden>📍 Confirm address on map</button><div class="bex-saved-address-tools"><button type="button" class="btn bex-location-btn" id="bexSetLocation">📍 Use My Location</button><button type="button" class="btn bex-saved-address-toggle" id="bexToggleSavedAddresses">▣ Saved Addresses <span id="bexSavedAddressCount">(0)</span></button></div><div id="bexSavedAddresses" class="bex-saved-addresses" hidden></div>
+<button type="button" id="bexAddressMapPin" class="btn bex-address-map-pin" hidden>📍 Confirm address on map</button><div class="bex-saved-address-tools"><button type="button" class="btn bex-location-btn" id="bexSetLocation">📍 Set Location on Map</button><button type="button" class="btn bex-saved-address-toggle" id="bexToggleSavedAddresses">▣ Saved Addresses <span id="bexSavedAddressCount">(0)</span></button></div><div id="bexSavedAddresses" class="bex-saved-addresses" hidden></div>
 <div id="bexAddressPicker" class="bex-address-picker" hidden role="dialog" aria-modal="true" aria-labelledby="bexAddressPickerTitle">
  <div class="bex-address-picker-header"><button type="button" id="bexCloseAddressPicker" class="bex-picker-back" aria-label="Back">←</button><div><span>BODYEXPERTX · HOME VISIT</span><h3 id="bexAddressPickerTitle">Select service address</h3></div><button type="button" id="bexPickerCloseX" class="bex-picker-x" aria-label="Close">×</button></div>
  <div class="bex-picker-search"><span aria-hidden="true">⌕</span><input id="bexAddressPickerSearch" type="search" placeholder="Search area, street name, house or PIN code" autocomplete="street-address" aria-controls="bexAddressPickerResults" aria-autocomplete="list"></div>
@@ -2577,22 +2577,17 @@ async function searchAddress(q){
  return null;
 }
 async function reverseAddress(lat,lon){try{const r=await fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat="+lat+"&lon="+lon+"&zoom=18&addressdetails=1",{headers:{Accept:"application/json"}});if(!r.ok)return "";const d=await r.json();return d.display_name||""}catch(e){return ""}}
-$("bexSetLocation").addEventListener("click",()=>{const b=$("bexSetLocation");if(!navigator.geolocation){status.textContent="GPS available nahi hai. Choose Location on Map se address search karein.";return}b.disabled=true;b.textContent="Location detect ho rahi hai…";status.textContent="Browser permission aaye to Allow dabayein.";navigator.geolocation.getCurrentPosition(async p=>{const lat=Number(p.coords.latitude),lon=Number(p.coords.longitude);$("bexLatitude").value=lat;$("bexLongitude").value=lon;$("bexLocationAccuracy").value=Math.round(p.coords.accuracy||0);$("bexOpenLocation").href="https://www.google.com/maps?q="+encodeURIComponent(lat+","+lon);$("bexOpenLocation").hidden=false;document.querySelector(".bex-location-panel").classList.add("location-set");$("serviceZone").value="";bexDetectedZone=null;b.disabled=false;b.textContent="📍 Use My Current Location";status.textContent=(Number(p.coords.accuracy||0)>100?"GPS accuracy lagbhag "+Math.round(p.coords.accuracy)+" m hai. Zyada sahi pin ke liye Set Location on Map use karein.":"✓ Current location detect aur save ho gayi. Chahein to map pin adjust kar sakte hain.");try{const detected=await reverseAddress(lat,lon);if(detected&&!addressInput.value.trim()){settingAddress=true;addressInput.value=detected;addressInput.readOnly=true;settingAddress=false;status.textContent=(Number(p.coords.accuracy||0)>100?"GPS accuracy "+Math.round(p.coords.accuracy)+" m hai. Address check karein aur zarurat par map pin set karein.":"✓ Current Location attach ho gayi. Ab Flat/House No., Street aur Full Address bharein.")}}catch(e){}try{const z=await detectServiceZoneFromCoords(lat,lon);if(z)status.textContent="✓ Current location detect ho gayi. Service Zone: "+z.name+". Pin badalna ho to map use karein."}catch(e){}},e=>{b.disabled=false;b.textContent="📍 Use My Current Location";status.textContent=e.code===1?"Location permission Allow karein, ya Map par address search karein.":"GPS nahi mil paayi. Dobara try karein ya Map par address search karein."},{enableHighAccuracy:true,timeout:25000,maximumAge:0})});
+$("bexSetLocation").addEventListener("click",openAddressOnMap);
 async function openAddressOnMap(){
  const q=($("address")||{}).value.trim();
- if(q.length<5){status.textContent="Pehle upar Home Visit Address likhein.";openAddressPicker();return}
- status.textContent="Address map par locate ho raha hai…";
- let p=null;try{p=await searchAddress(q)}catch(e){}
- if(p&&Number.isFinite(p.lat)&&Number.isFinite(p.lon)){
-  $("bexLatitude").value=p.lat;$("bexLongitude").value=p.lon;
-  openMap(p.lat,p.lon,"","map","Address ke paas pin laga hai. Exact ghar/building par pin set karke sirf ek baar Confirm Location dabayein.");
+ const savedLat=Number(($("bexLatitude")||{}).value),savedLon=Number(($("bexLongitude")||{}).value);
+ const hasSaved=Number.isFinite(savedLat)&&Number.isFinite(savedLon)&&savedLat!==0&&savedLon!==0;
+ if(q.length>=3){
+  status.textContent="Map khul raha hai. Search suggestions se address choose karein ya pin move karein.";
+  openMap(hasSaved?savedLat:defaultPoint[0],hasSaved?savedLon:defaultPoint[1],"","map","Address search karein, suggestion choose karein, ya map ko move karke exact service location set karein.");
   return;
  }
- const lat=Number(($("bexLatitude")||{}).value),lon=Number(($("bexLongitude")||{}).value);
- let center=lat&&lon?[lat,lon]:null;
- if(!center&&Array.isArray(bexZones)&&bexZones.length){const z=bexZones.find(x=>Number.isFinite(Number(x.center_lat))&&Number.isFinite(Number(x.center_lng)));if(z)center=[Number(z.center_lat),Number(z.center_lng)]}
- center=center||defaultPoint;
- openMap(center[0],center[1],"","map","Address auto-locate nahi hua. Map par actual ghar ki jagah pin set karein; Confirm Location ek hi baar dabayein.");
+ openMap(hasSaved?savedLat:defaultPoint[0],hasSaved?savedLon:defaultPoint[1],"","map","Search bar mein area, street, building ya PIN code likhein. GPS ya map pin se exact location set karein.");
 }
 window.bexOpenAddressMap=openAddressOnMap;
 $("bexAddressMapPin").addEventListener("click",openAddressOnMap);
