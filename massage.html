@@ -1872,7 +1872,7 @@ function bexUpdateMapPin(lat,lon,accuracy=null){bexPickerPosition={lat:Number(la
 function bexInitPickerMap(){if(bexPickerMap||!window.L)return;const start=[28.5245,77.1855];bexPickerMap=L.map("bexMapCanvas",{zoomControl:true}).setView(start,12);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'}).addTo(bexPickerMap);bexPickerMarker=L.marker(start,{draggable:true,autoPan:true}).addTo(bexPickerMap);bexPickerMarker.on("dragend",()=>{const p=bexPickerMarker.getLatLng();bexUpdateMapPin(p.lat,p.lng,null)});bexPickerMap.on("click",e=>bexUpdateMapPin(e.latlng.lat,e.latlng.lng,null))}
 function bexRenderSavedMapAddresses(){const box=document.getElementById("bexSavedAddressList");if(!box)return;const saved=bexSavedMapAddresses();box.replaceChildren();if(!saved.length){const p=document.createElement("div");p.textContent="Abhi koi saved address nahi hai.";p.className="bex-empty-saved";box.append(p);return}saved.forEach(item=>{const b=document.createElement("button");b.type="button";const title=document.createElement("strong");title.textContent=(item.label||"Saved address")+" · ";const details=document.createElement("small");details.textContent=item.address||"Address";b.append(title,details);b.addEventListener("click",()=>{bexPickerAddress=item.address||"";bexPickerParts=item.parts||null;bexPickerPosition={lat:Number(item.lat),lon:Number(item.lon)};bexPickerAccuracy=item.accuracy||null;bexPickerMarker.setLatLng([item.lat,item.lon]);bexPickerMap.setView([item.lat,item.lon],17);bexFormatMapLabel(bexPickerAddress);bexSetMapMessage("Saved address selected. Confirm Location dabayein ya pin adjust karein.")});box.append(b)})}
 let bexMapSearchRequest=0;
-async function bexSearchMapAddress(){
+async async function bexSearchMapAddress(){
  const input=document.getElementById("bexMapSearch"),results=document.getElementById("bexMapSearchResults");
  if(!input||!results)return;
  const q=(input.value||"").trim();
@@ -1900,16 +1900,17 @@ async function bexSearchMapAddress(){
  finally{clearTimeout(timeout)}
  if(requestId!==bexMapSearchRequest)return;
  // Photon can return unrelated or empty results. Use India's address index as a fallback.
- if(!rows.length){
+ if(rows.length<5){
   const fallbackController=new AbortController(),fallbackTimeout=setTimeout(()=>fallbackController.abort(),8000);
   try{
    const url="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&accept-language=en&q="+encodeURIComponent(q);
    const response=await fetch(url,{headers:{Accept:"application/json"},signal:fallbackController.signal});
-   if(response.ok){providerWorked=true;rows=(await response.json()).map(x=>({...x,_title:[x.address?.house_number,x.address?.road||x.address?.pedestrian||x.name].filter(Boolean).join(" ")||x.name||x.display_name,_detail:[x.address?.neighbourhood,x.address?.suburb,x.address?.city||x.address?.town||x.address?.village,x.address?.state,x.address?.postcode].filter(Boolean).join(", ")})).filter(x=>Number.isFinite(Number(x.lat))&&Number.isFinite(Number(x.lon)));}
+   if(response.ok){providerWorked=true;const fallbackRows=(await response.json()).map(x=>({...x,_title:[x.address?.house_number,x.address?.road||x.address?.pedestrian||x.name].filter(Boolean).join(" ")||x.name||x.display_name,_detail:[x.address?.neighbourhood,x.address?.suburb,x.address?.city||x.address?.town||x.address?.village,x.address?.state,x.address?.postcode].filter(Boolean).join(", ")})).filter(x=>Number.isFinite(Number(x.lat))&&Number.isFinite(Number(x.lon)));rows.push(...fallbackRows);}
   }catch(e){}
   finally{clearTimeout(fallbackTimeout)}
  }
  if(requestId!==bexMapSearchRequest)return;
+ const seen=new Set();rows=rows.filter(x=>{const k=Number(x.lat).toFixed(5)+","+Number(x.lon).toFixed(5);if(seen.has(k))return false;seen.add(k);return true;}).slice(0,10);
  if(!rows.length){
   results.hidden=true;results.replaceChildren();
   bexSetMapMessage(providerWorked?"Is address ke liye result nahi mila. Area + city ya PIN code try karein, jaise “Kishangarh, Vasant Kunj, Delhi”.":"Address search service abhi respond nahi kar rahi. Thodi der baad try karein, ya map par pin set karein.");
