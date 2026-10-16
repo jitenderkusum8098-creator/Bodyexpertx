@@ -1587,7 +1587,26 @@ article.service .bx-massage-photo img {
 #bexMapModal .leaflet-control-zoom{margin-top:100px!important}
 @media(max-width:480px){#bexMapSheet{max-height:58dvh!important}#bexMapControls{max-height:33dvh!important}}
 </style>
-</head>
+<style id="bex-uber-map-final">
+#bexMapModal{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-height:100dvh!important;border:0!important;border-radius:0!important;background:#e7e9eb!important}
+#bexMapCanvas{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:100%!important;z-index:0!important}
+#bexFixedCenterPin{position:absolute!important;left:50%!important;top:43%!important;transform:translate(-50%,-100%)!important;width:36px!important;height:46px!important;z-index:3!important;pointer-events:none!important}
+#bexFixedCenterPin span{display:block!important;position:relative!important;width:34px!important;height:34px!important;border-radius:50% 50% 50% 0!important;transform:rotate(-45deg)!important;background:#111!important;box-shadow:0 2px 5px #0005!important}
+#bexFixedCenterPin span:after{content:""!important;position:absolute!important;width:7px!important;height:7px!important;border-radius:50%!important;background:#fff!important;top:13px!important;left:13px!important}
+#bexMapHeader{position:absolute!important;z-index:5!important;top:calc(env(safe-area-inset-top,0px) + 8px)!important;left:12px!important;right:12px!important;background:#fff!important;color:#111!important}
+#bexMapSheet{position:absolute!important;z-index:4!important;left:0!important;right:0!important;bottom:0!important;max-height:56dvh!important;background:#fff!important;color:#111!important;border-radius:26px 26px 0 0!important;padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
+#bexMapControls{max-height:32dvh!important;overflow-y:auto!important;background:#fff!important;color:#111!important}
+#bexMapSearchRow{background:#f1f1f1!important;border:0!important;border-radius:12px!important;padding:2px!important}
+#bexMapSearch{background:#f1f1f1!important;color:#111!important;border:0!important;border-radius:12px!important}
+#bexUseCurrentLocation{background:#f1f1f1!important;color:#111!important;border:0!important;text-align:left!important}
+#bexMapFooter{background:#fff!important;border-top:1px solid #eee!important}
+#bexMapFooter .bex-map-confirm{background:#111!important;color:#fff!important}
+#bexMapSaveType{background:#fff!important;color:#111!important;border-color:#ddd!important}
+#bexMapMessage,#bexMapLabel{color:#555!important}
+#bexMapSearchResults button,#bexSavedAddressList button{background:#fff!important;color:#111!important;border-color:#eee!important}
+#bexMapModal .leaflet-control-zoom{display:none!important}
+@media(max-width:480px){#bexMapSheet{max-height:56dvh!important}#bexMapControls{max-height:30dvh!important}}
+</style></head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE · NARNAUL + 35 KM</div>
 <header class="header"><div class="wrap nav">
@@ -1682,6 +1701,7 @@ article.service .bx-massage-photo img {
 <footer class="footer"><div class="wrap footer-row"><div><a class="brand" href="#home"><span class="brandmark" aria-hidden="true"><svg viewBox="0 0 100 100" width="30" height="30"><defs><linearGradient id="brandSilver" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#b9bdc1"/><stop offset="1" stop-color="#73777c"/></linearGradient></defs><path d="M15 14 L36 14 L85 77 L65 87 Z" fill="url(#brandSilver)"/><path d="M84 14 L64 14 L15 77 L35 87 Z" fill="url(#brandSilver)"/></svg></span><span>BODYEXPERT<em style="color:var(--gold)">X</em></span></a><p>Expert hands. Better you.</p></div><div>© 2026 BodyExpertX · Appointments by prior confirmation.<br><a href="./policies.html">About Us · Contact · Pricing · Terms · Privacy · Refund & Cancellation Policy</a><br><span class="notice">Massage services are for wellness and comfort and are not a substitute for medical care.</span></div></div></footer>
 <div id="bexMapModal" role="dialog" aria-modal="true" aria-labelledby="bexMapTitle">
 <div id="bexMapCanvas" aria-label="Map location picker; drag the pin or tap the map"></div>
+<div id="bexFixedCenterPin" aria-hidden="true" hidden><span></span></div>
 <div id="bexMapHeader"><button type="button" aria-label="Back to booking" onclick="closeBexLocationMap()">‹</button><div><strong id="bexMapTitle">Select Home Visit Location</strong><small>Address search karein ya map par pin set karein</small></div></div>
 <div id="bexMapSheet">
 <div id="bexMapSheetHandle"></div>
@@ -1857,39 +1877,49 @@ function bexSavedMapAddresses(){try{const v=JSON.parse(localStorage.getItem(BEX_
 function bexSetMapMessage(msg){const el=document.getElementById("bexMapMessage");if(el)el.textContent=msg||""}function bexFormatMapLabel(address){const el=document.getElementById("bexMapLabel");if(el)el.textContent=address||"Pin ki location select karein."}
 async function bexReverseGeocode(lat,lon){try{const r=await fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat="+encodeURIComponent(lat)+"&lon="+encodeURIComponent(lon)+"&addressdetails=1",{headers:{Accept:"application/json"}});if(!r.ok)throw new Error();const d=await r.json();bexPickerAddress=d.display_name||"";bexPickerParts=d.address||null;bexFormatMapLabel(bexPickerAddress||("Pin: "+lat+", "+lon))}catch(e){bexFormatMapLabel("Pin: "+Number(lat).toFixed(6)+", "+Number(lon).toFixed(6)+" — address fields confirm ke baad edit kar sakte hain.")}}
 function bexUpdateMapPin(lat,lon,accuracy=null){bexPickerPosition={lat:Number(lat),lon:Number(lon)};bexPickerAccuracy=accuracy;if(bexPickerMarker)bexPickerMarker.setLatLng([lat,lon]);if(bexPickerMap)bexPickerMap.setView([lat,lon],Math.max(bexPickerMap.getZoom(),16));bexPickerAddress="";bexPickerParts=null;bexFormatMapLabel("Selected pin: "+Number(lat).toFixed(6)+", "+Number(lon).toFixed(6)+" — address check ho raha hai…");bexReverseGeocode(lat,lon)}
-function bexInitPickerMap(){if(bexPickerMap||!window.L)return;const start=[28.5245,77.1855];bexPickerMap=L.map("bexMapCanvas",{zoomControl:true}).setView(start,12);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'}).addTo(bexPickerMap);bexPickerMarker=L.marker(start,{draggable:true,autoPan:true}).addTo(bexPickerMap);bexPickerMarker.on("dragend",()=>{const p=bexPickerMarker.getLatLng();bexUpdateMapPin(p.lat,p.lng,null)});bexPickerMap.on("click",e=>bexUpdateMapPin(e.latlng.lat,e.latlng.lng,null))}
+function bexInitPickerMap(){
+ if(bexPickerMap||!window.L)return;
+ const start=[28.5245,77.1855];
+ bexPickerMap=L.map("bexMapCanvas",{zoomControl:false,dragging:true,tap:true}).setView(start,14);
+ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'}).addTo(bexPickerMap);
+ // Uber-like fixed center pin: the map moves underneath the pin.
+ const pin=document.getElementById("bexFixedCenterPin");
+ if(pin)pin.hidden=false;
+ bexPickerMarker=L.marker(start,{opacity:0,interactive:false}).addTo(bexPickerMap);
+ bexPickerPosition={lat:start[0],lon:start[1]};
+ bexPickerMap.on("moveend",()=>{if(!bexPickerMap)return;const p=bexPickerMap.getCenter();bexPickerPosition={lat:p.lat,lon:p.lng};bexPickerAccuracy=null;bexPickerAddress="";bexPickerParts=null;bexFormatMapLabel("Map pin location — address check ho raha hai…");bexReverseGeocode(p.lat,p.lng)});
+}
 function bexRenderSavedMapAddresses(){const box=document.getElementById("bexSavedAddressList");if(!box)return;const saved=bexSavedMapAddresses();box.replaceChildren();if(!saved.length){const p=document.createElement("div");p.textContent="Abhi koi saved address nahi hai.";p.className="bex-empty-saved";box.append(p);return}saved.forEach(item=>{const b=document.createElement("button");b.type="button";const title=document.createElement("strong");title.textContent=(item.label||"Saved address")+" · ";const details=document.createElement("small");details.textContent=item.address||"Address";b.append(title,details);b.addEventListener("click",()=>{bexPickerAddress=item.address||"";bexPickerParts=item.parts||null;bexPickerPosition={lat:Number(item.lat),lon:Number(item.lon)};bexPickerAccuracy=item.accuracy||null;bexPickerMarker.setLatLng([item.lat,item.lon]);bexPickerMap.setView([item.lat,item.lon],17);bexFormatMapLabel(bexPickerAddress);bexSetMapMessage("Saved address selected. Confirm Location dabayein ya pin adjust karein.")});box.append(b)})}
 let bexMapSearchRequest=0;
 async function bexSearchMapAddress(){
  const input=document.getElementById("bexMapSearch"),results=document.getElementById("bexMapSearchResults");
  if(!input||!results)return;
- const q=(input.value||"").trim();
- if(!q){bexSetMapMessage("Pehle address ya PIN code type karein.");input.focus();return}
+ const raw=(input.value||"").trim();
+ if(!raw){bexSetMapMessage("Address ya PIN code type karein.");input.focus();return}
  const requestId=++bexMapSearchRequest;
- results.hidden=false;results.replaceChildren();bexSetMapMessage("Searching address…");
+ results.hidden=false;results.replaceChildren();bexSetMapMessage("Fast address search…");
  const near=bexPickerPosition||{lat:28.5245,lon:77.1855};
- const clean=v=>String(v||"").replace(/\\s+/g," ").trim();
- const toRows=(items,photon=false)=>(items||[]).map(x=>{
-  if(photon){const p=x.properties||{},xy=x.geometry?.coordinates||[];const title=[p.housenumber,p.street||p.name].filter(Boolean).join(" ")||p.name||p.city||p.suburb||"Address";const detail=[p.suburb,p.district,p.city||p.town||p.village,p.state,p.postcode].filter(Boolean).join(", ");return {lat:+xy[1],lon:+xy[0],display_name:[title,detail].filter(Boolean).join(", "),address:{house_number:p.housenumber,road:p.street||p.name,neighbourhood:p.suburb,suburb:p.district,city:p.city||p.town||p.village,state:p.state,postcode:p.postcode},_title:title,_detail:detail};}
-  const p=x.address||{};const title=[p.house_number,p.road||x.name].filter(Boolean).join(" ")||x.name||x.display_name.split(",")[0];const detail=x.display_name;return {lat:+x.lat,lon:+x.lon,display_name:detail,address:p,_title:title,_detail:detail};
- }).filter(x=>Number.isFinite(x.lat)&&Number.isFinite(x.lon)&&x.display_name).filter((x,i,arr)=>arr.findIndex(y=>Math.abs(y.lat-x.lat)<0.00001&&Math.abs(y.lon-x.lon)<0.00001)===i);
- // Ask both address indexes at once to avoid waiting for one slow provider.
- const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),5500);
- const photonUrl="https://photon.komoot.io/api/?q="+encodeURIComponent(q)+"&limit=8&lang=en&lat="+near.lat+"&lon="+near.lon;
- const nomUrl="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&accept-language=en&q="+encodeURIComponent(q);
+ const clean=s=>String(s||"").replace(/\\s+/g," ").trim();
+ const unique=rows=>rows.filter((x,i,arr)=>Number.isFinite(x.lat)&&Number.isFinite(x.lon)&&x.display_name&&arr.findIndex(y=>Math.abs(y.lat-x.lat)<0.00001&&Math.abs(y.lon-x.lon)<0.00001)===i);
+ const parsePhoton=data=>(data.features||[]).map(f=>{const p=f.properties||{},xy=f.geometry?.coordinates||[];const title=[p.housenumber,p.street||p.name].filter(Boolean).join(" ")||p.name||p.city||p.suburb||"Address";const detail=[p.suburb,p.district,p.city||p.town||p.village,p.state,p.postcode,p.country].filter(Boolean).join(", ");return {lat:+xy[1],lon:+xy[0],display_name:[title,detail].filter(Boolean).join(", "),address:{house_number:p.housenumber,road:p.street||p.name,neighbourhood:p.suburb,suburb:p.district,city:p.city||p.town||p.village,state:p.state,postcode:p.postcode},_title:title,_detail:detail}});
+ const parseNom=data=>(data||[]).map(x=>{const p=x.address||{};const title=[p.house_number,p.road||x.name].filter(Boolean).join(" ")||x.name||x.display_name.split(",")[0];return {lat:+x.lat,lon:+x.lon,display_name:x.display_name,address:p,_title:title,_detail:x.display_name}});
+ // Retry broad and simplified forms in parallel; a long informal phrase often defeats geocoders.
+ const variants=[raw,raw.replace(/\\bnear\\b.*$/i,"").trim(),raw.replace(/\\bnear\\b.*$/i,"").replace(/\\b(gaus?hala|gaushala|near|opposite|behind)\\b/ig," ").replace(/\\s+/g," ").trim(),raw.replace(/[.,]/g," ").replace(/\\s+/g," ").trim()].filter((x,i,a)=>x&&a.indexOf(x)===i).slice(0,3);
+ const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),6500);
  try{
-  const responses=await Promise.allSettled([
-   fetch(photonUrl,{headers:{Accept:"application/json"},signal:ctl.signal}).then(async r=>r.ok?toRows((await r.json()).features,true):[]),
-   fetch(nomUrl,{headers:{Accept:"application/json"},signal:ctl.signal}).then(async r=>r.ok?toRows(await r.json(),false):[])
-  ]);
+  const tasks=[];
+  for(const q of variants){
+   tasks.push(fetch("https://photon.komoot.io/api/?q="+encodeURIComponent(q)+"&limit=8&lang=en&lat="+near.lat+"&lon="+near.lon,{headers:{Accept:"application/json"},signal:ctl.signal}).then(async r=>r.ok?parsePhoton(await r.json()):[]).catch(()=>[]));
+   tasks.push(fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&accept-language=en&q="+encodeURIComponent(q),{headers:{Accept:"application/json"},signal:ctl.signal}).then(async r=>r.ok?parseNom(await r.json()):[]).catch(()=>[]));
+  }
+  const batches=await Promise.all(tasks);
   if(requestId!==bexMapSearchRequest)return;
-  let rows=[];for(const r of responses)if(r.status==="fulfilled")rows.push(...r.value);
-  rows=rows.filter((x,i,arr)=>arr.findIndex(y=>Math.abs(y.lat-x.lat)<0.00001&&Math.abs(y.lon-x.lon)<0.00001)===i).slice(0,10);
-  if(!rows.length){bexSetMapMessage("Address nahi mila. House number ke saath area ya PIN code try karein.");return}
+  let rows=unique(batches.flat()).sort((a,b)=>{const dist=x=>(x.lat-near.lat)**2+(x.lon-near.lon)**2;return dist(a)-dist(b)}).slice(0,12);
+  if(!rows.length){bexSetMapMessage("Address nahi mila. Chhota search try karein: 4/9 Kishangarh, Vasant Kunj ya PIN code.");return}
   results.replaceChildren();
-  rows.forEach(row=>{const b=document.createElement("button");b.type="button";b.innerHTML="";const title=document.createElement("strong");title.textContent=row._title||"Address";const detail=document.createElement("small");detail.textContent=row._detail||row.display_name;b.append(title,detail);b.addEventListener("click",()=>{bexPickerParts=row.address||null;bexPickerAddress=row.display_name;bexPickerPosition={lat:row.lat,lon:row.lon};bexPickerAccuracy=null;bexPickerMarker.setLatLng([row.lat,row.lon]);bexPickerMap.setView([row.lat,row.lon],18,{animate:false});bexFormatMapLabel(row.display_name);results.hidden=true;results.replaceChildren();bexSetMapMessage("Address selected. Pin ko adjust karke Confirm Location dabayein.");input.value=row.display_name;});results.append(b)});
+  rows.forEach(row=>{const b=document.createElement("button");b.type="button";const title=document.createElement("strong");title.textContent=row._title||"Address";const detail=document.createElement("small");detail.textContent=row._detail||row.display_name;b.append(title,detail);b.addEventListener("click",()=>{bexPickerParts=row.address||null;bexPickerAddress=row.display_name;bexPickerPosition={lat:row.lat,lon:row.lon};bexPickerAccuracy=null;bexPickerMap.setView([row.lat,row.lon],18,{animate:false});bexFormatMapLabel(row.display_name);results.hidden=true;results.replaceChildren();bexSetMapMessage("Address selected. Pin adjust karke Confirm Location dabayein.");input.value=row.display_name;});results.append(b)});
   bexSetMapMessage(rows.length+" address results mile. Sahi address select karein.");
- }catch(e){if(requestId===bexMapSearchRequest)bexSetMapMessage("Search slow ho raha hai. Area + city ya PIN code try karein.");}
+ }catch(e){if(requestId===bexMapSearchRequest)bexSetMapMessage("Search connection slow hai. Area + city ya PIN code try karein.");}
  finally{clearTimeout(timer)}
 }
 function bexUseCurrentMapLocation(){
@@ -1898,13 +1928,12 @@ function bexUseCurrentMapLocation(){
  navigator.geolocation.getCurrentPosition(pos=>{
   const lat=pos.coords.latitude,lon=pos.coords.longitude;
   bexPickerAccuracy=pos.coords.accuracy;bexPickerPosition={lat,lon};bexPickerParts=null;bexPickerAddress="";
-  bexPickerMarker.setLatLng([lat,lon]);bexPickerMap.setView([lat,lon],18,{animate:false});
+  bexPickerMap.setView([lat,lon],18,{animate:false});
   bexFormatMapLabel("Current location — address load ho raha hai…");
-  document.getElementById("bexMapSearchResults").hidden=true;
-  document.getElementById("bexMapSearch").value="";
-  bexSetMapMessage("Current location mil gayi. Address resolve ho raha hai…");
+  document.getElementById("bexMapSearchResults").hidden=true;document.getElementById("bexMapSearch").value="";
+  bexSetMapMessage("Current location set ho gayi. Pin center par hai.");
   bexReverseGeocode(lat,lon);
- },err=>{bexSetMapMessage(err.code===1?"Location permission allow karein, ya address search karein.":"GPS location nahi mili. GPS on karke dobara try karein.")},{enableHighAccuracy:true,timeout:9000,maximumAge:15000});
+ },err=>{bexSetMapMessage(err.code===1?"Location permission allow karein, ya address search karein.":"GPS nahi mila. Phone ka Location/GPS on karke dobara try karein.")},{enableHighAccuracy:true,timeout:12000,maximumAge:30000});
 }
 function bexSaveCurrentMapAddress(){if(!bexPickerPosition){bexSetMapMessage("Pehle map par location select karein.");return}const address=(bexPickerAddress||"").trim();if(!address){bexSetMapMessage("Address resolve ho raha hai. Thoda wait karein, phir Save Address dabayein.");return}const label=document.getElementById("bexMapSaveType").value;let saved=bexSavedMapAddresses();saved=saved.filter(x=>x.label!==label);saved.unshift({label,address,lat:bexPickerPosition.lat,lon:bexPickerPosition.lon,accuracy:bexPickerAccuracy||null,parts:bexPickerParts||null});saved=saved.slice(0,10);try{localStorage.setItem(BEX_MAP_SAVED_KEY,JSON.stringify(saved));bexRenderSavedMapAddresses();bexSetMapMessage(label+" address is device par save ho gaya.")}catch(e){bexSetMapMessage("Address save nahi ho paya. Device storage available nahi hai.")}}
 function openBexLocationMap(){const modal=document.getElementById("bexMapModal");if(!modal)return;modal.classList.add("open");document.body.classList.add("bex-map-open");bexInitPickerMap();bexRenderSavedMapAddresses();setTimeout(()=>{if(bexPickerMap){bexPickerMap.invalidateSize(true);setTimeout(()=>bexPickerMap&&bexPickerMap.invalidateSize(true),350);const lat=Number(document.getElementById("bexLatitude").value),lon=Number(document.getElementById("bexLongitude").value);if(Number.isFinite(lat)&&Number.isFinite(lon)&&lat&&lon){bexPickerPosition={lat,lon};bexPickerMarker.setLatLng([lat,lon]);bexPickerMap.setView([lat,lon],17);bexPickerAddress=(document.getElementById("address").value||"").trim();bexFormatMapLabel(bexPickerAddress||"Current booking location")}else if(!bexPickerPosition){const p=bexPickerMarker.getLatLng();bexPickerPosition={lat:p.lat,lon:p.lng}}}},180)}
