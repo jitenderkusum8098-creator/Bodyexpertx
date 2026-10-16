@@ -169,8 +169,8 @@ init();
    controls.querySelectorAll('[data-open]').forEach(b=>b.classList.toggle('active',b.dataset.open===active));
    if(!active)return;
    if(active==='login'){auth.hidden=false;auth.classList.add('bex-open');auth.style.display='block'}
-   if(active==='bookings'){bookings.hidden=false;bookings.style.display='block'}
-   if(active==='today'){todayPanel.hidden=false;todayPanel.style.display='block';renderToday()}
+   if(active==='bookings'){bookings.hidden=false;bookings.classList.add('bex-open');bookings.style.display='block'}
+   if(active==='today'){todayPanel.hidden=false;todayPanel.classList.add('bex-open');todayPanel.style.display='block';renderToday()}
    if(active==='bookings') {if(typeof renderTherapists==='function')renderTherapists();if(typeof renderBookings==='function')renderBookings()}
    const target=active==='login'?auth:(active==='bookings'?bookings:(active==='today'?todayPanel:null));
    if(target)setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'start'}),80);
