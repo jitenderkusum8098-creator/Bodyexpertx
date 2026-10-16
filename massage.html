@@ -1620,6 +1620,15 @@ article.service .bx-massage-photo img {
 #bexMapSheet.bex-has-results #bexMapSearchResults{max-height:38dvh!important}
 #bexMapModal .leaflet-tile{filter:none!important}
 @media(max-width:480px){#bexMapSheet{max-height:68dvh!important}#bexMapControls{max-height:44dvh!important}#bexMapSearchResults:not([hidden]){max-height:34dvh!important}}
+</style><style id="bex-map-tile-search-fix">
+/* Use a public tile server; remove failed API-key tiles. Keep all changes inside the location picker. */
+#bexMapCanvas .leaflet-tile{filter:grayscale(.72) saturate(.68) contrast(1.02)!important}
+#bexMapSheet.bex-has-results{max-height:82dvh!important}
+#bexMapSheet.bex-has-results #bexMapControls{max-height:66dvh!important;overflow-y:auto!important}
+#bexMapSheet.bex-has-results #bexMapSearchResults:not([hidden]){max-height:47dvh!important;overflow-y:auto!important}
+#bexMapSheet.bex-has-results #bexMapSearchResults button{min-height:68px!important;padding:12px 12px!important;white-space:normal!important}
+#bexMapSheet.bex-has-results #bexMapSavedAddressSection{display:none!important}
+@media(max-width:480px){#bexMapSheet.bex-has-results{max-height:82dvh!important}#bexMapSheet.bex-has-results #bexMapControls{max-height:65dvh!important}#bexMapSheet.bex-has-results #bexMapSearchResults:not([hidden]){max-height:46dvh!important}}
 </style></head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE · NARNAUL + 35 KM</div>
@@ -1895,7 +1904,7 @@ function bexInitPickerMap(){
  if(bexPickerMap||!window.L)return;
  const start=[28.5245,77.1855];
  bexPickerMap=L.map("bexMapCanvas",{zoomControl:false,dragging:true,tap:true}).setView(start,14);
- L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",{maxZoom:19,attribution:'&copy; OpenStreetMap contributors &copy; CARTO'}).addTo(bexPickerMap);
+ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(bexPickerMap);
  // Uber-like fixed center pin: the map moves underneath the pin.
  const pin=document.getElementById("bexFixedCenterPin");
  if(pin)pin.hidden=false;
@@ -1915,10 +1924,10 @@ async function bexSearchMapAddress(){
  const near=bexPickerPosition||{lat:28.5245,lon:77.1855};
  const clean=s=>String(s||"").replace(/\s+/g," ").trim();
  const unique=rows=>rows.filter((x,i,arr)=>Number.isFinite(x.lat)&&Number.isFinite(x.lon)&&x.display_name&&arr.findIndex(y=>Math.abs(y.lat-x.lat)<0.00001&&Math.abs(y.lon-x.lon)<0.00001)===i);
- const parsePhoton=data=>(data.features||[]).map(f=>{const p=f.properties||{},xy=f.geometry?.coordinates||[];const title=[p.housenumber,p.street||p.name].filter(Boolean).join(" ")||p.name||p.city||p.suburb||"Address";const detail=[p.suburb,p.district,p.city||p.town||p.village,p.state,p.postcode,p.country].filter(Boolean).join(", ");return {lat:+xy[1],lon:+xy[0],display_name:[title,detail].filter(Boolean).join(", "),address:{house_number:p.housenumber,road:p.street||p.name,neighbourhood:p.suburb,suburb:p.district,city:p.city||p.town||p.village,state:p.state,postcode:p.postcode},_title:title,_detail:detail}});
+ const parsePhoton=data=>(data.features||[]).map(f=>{const p=f.properties||{},xy=f.geometry?.coordinates||[];if(!/^(india|भारत)$/i.test(String(p.country||"").trim()))return null;const title=[p.housenumber,p.street||p.name].filter(Boolean).join(" ")||p.name||p.city||p.suburb||"Address";const detail=[p.suburb,p.district,p.city||p.town||p.village,p.state,p.postcode,p.country].filter(Boolean).join(", ");return {lat:+xy[1],lon:+xy[0],display_name:[title,detail].filter(Boolean).join(", "),address:{house_number:p.housenumber,road:p.street||p.name,neighbourhood:p.suburb,suburb:p.district,city:p.city||p.town||p.village,state:p.state,postcode:p.postcode},_title:title,_detail:detail}});
  const parseNom=data=>(data||[]).map(x=>{const p=x.address||{};const title=[p.house_number,p.road||x.name].filter(Boolean).join(" ")||x.name||x.display_name.split(",")[0];return {lat:+x.lat,lon:+x.lon,display_name:x.display_name,address:p,_title:title,_detail:x.display_name}});
  // Retry broad and simplified forms in parallel; a long informal phrase often defeats geocoders.
- const variants=[raw,raw.replace(/\bnear\b.*$/i,"").trim(),raw.replace(/\bnear\b.*$/i,"").replace(/\b(gaus?hala|gaushala|near|opposite|behind)\b/ig," ").replace(/\s+/g," ").trim(),raw.replace(/[.,]/g," ").replace(/\s+/g," ").trim()].filter((x,i,a)=>x&&a.indexOf(x)===i).slice(0,3);
+ const localBase=raw.replace(/\bnear\b.*$/i,"").replace(/\b(gaus?hala|gaushala|mandir|near|opposite|behind)\b/ig," ").replace(/\s+/g," ").trim();const variants=[raw,localBase,localBase+", Kishangarh, Vasant Kunj, New Delhi, India"].filter((x,i,a)=>x&&a.indexOf(x)===i).slice(0,3);
  const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),6500);
  try{
   const tasks=[];
