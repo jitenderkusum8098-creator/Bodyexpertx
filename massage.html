@@ -1569,6 +1569,35 @@ article.service .bx-massage-photo img {
 #bexMapFooter .bex-map-confirm{width:100%;min-height:54px;border:0;border-radius:14px;background:#171717;color:#fff;font-size:17px;font-weight:900}
 #bexMapModal .leaflet-control-attribution{font-size:9px}
 @media(min-width:760px){#bexMapModal{inset:0}#bexMapHeader{left:calc(50% - 350px);right:calc(50% - 350px)}#bexMapSheet{left:calc(50% - 350px);right:calc(50% - 350px);max-height:72dvh;border-radius:28px 28px 0 0}}
+/* Location picker only: Uber-style white map sheet; preserve the rest of the site */
+<style id="bex-uber-map-layout">
+#bexMapModal{position:fixed!important;inset:0!important;z-index:10050!important;background:#e8e8e8!important;color:#151515!important;display:none;overflow:hidden!important;height:100dvh!important;max-height:100dvh!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+#bexMapModal.open{display:block!important}
+#bexMapCanvas{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;z-index:0!important}
+#bexMapHeader{position:absolute!important;z-index:3!important;top:calc(env(safe-area-inset-top,0px) + 8px)!important;left:12px!important;right:12px!important;display:flex!important;align-items:center!important;gap:12px!important;padding:10px 14px!important;background:#fff!important;color:#111!important;border:0!important;border-radius:18px!important;box-shadow:0 3px 18px #0002!important}
+#bexMapHeader button{border:0!important;border-radius:50%!important;background:#f2f2f2!important;color:#111!important;min-width:42px!important;min-height:42px!important;font-size:27px!important}
+#bexMapHeader strong{color:#151515!important;font-size:17px!important}#bexMapHeader small{color:#6a6a6a!important}
+#bexMapSheet{position:absolute!important;z-index:2!important;left:0!important;right:0!important;bottom:0!important;max-height:76dvh!important;display:flex!important;flex-direction:column!important;background:#fff!important;color:#151515!important;border-radius:28px 28px 0 0!important;box-shadow:0 -5px 30px #0002!important;padding:0 0 calc(8px + env(safe-area-inset-bottom))!important;overflow:hidden!important}
+#bexMapSheetHandle{width:48px!important;height:5px!important;border-radius:8px!important;background:#dedede!important;margin:9px auto 8px!important;flex-shrink:0!important}
+#bexMapControls{padding:4px 16px 8px!important;background:#fff!important;color:#151515!important;display:flex!important;flex-direction:column!important;gap:10px!important;overflow-y:auto!important;min-height:0!important;max-height:none!important;flex:1 1 auto!important}
+#bexMapSearchRow{display:flex!important;gap:8px!important;border:2px solid #171717!important;border-radius:16px!important;padding:5px!important;align-items:center!important;flex-shrink:0!important}
+#bexMapSearch{flex:1!important;min-width:0!important;border:0!important;outline:0!important;background:#fff!important;color:#151515!important;padding:12px 10px!important;font-size:16px!important;min-height:46px!important;box-shadow:none!important}
+#bexMapSearchBtn{width:44px!important;height:44px!important;border:0!important;border-radius:12px!important;background:#f0f0f0!important;color:#111!important;font-size:26px!important}
+#bexUseCurrentLocation{border:0!important;border-radius:13px!important;background:#f1f1f1!important;color:#111!important;text-align:left!important;padding:14px 15px!important;font-weight:800!important;min-height:48px!important;flex-shrink:0!important}
+#bexMapSearchResults{display:grid!important;gap:0!important;max-height:30vh!important;overflow-y:auto!important;border-bottom:1px solid #eee!important}
+#bexMapSearchResults button,#bexSavedAddressList button{width:100%!important;text-align:left!important;border:0!important;border-bottom:1px solid #ececec!important;border-radius:0!important;padding:12px 8px!important;background:#fff!important;color:#151515!important;line-height:1.35!important;font-size:15px!important}
+#bexMapSearchResults button small,#bexSavedAddressList button small{display:block!important;color:#777!important;margin-top:4px!important}
+#bexMapLabel{font-size:12px!important;color:#5f5f5f!important;line-height:1.4!important;max-height:40px!important;overflow:auto!important}
+#bexSavedAddressSection>strong{display:block!important;font-size:14px!important;margin:2px 0 3px!important;color:#444!important}
+#bexSavedAddressList{display:grid!important;gap:0!important}
+#bexMapFooter{padding:9px 16px 0!important;border-top:1px solid #eee!important;display:grid!important;gap:8px!important;flex-shrink:0!important;background:#fff!important}
+#bexMapSaveRow{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:8px!important}
+#bexMapSaveType{min-width:0!important;background:#fff!important;color:#222!important;border:1px solid #ccc!important;border-radius:12px!important;padding:10px!important;font-size:14px!important}
+#bexSaveMapAddress{border:0!important;border-radius:12px!important;background:#f1f1f1!important;color:#111!important;padding:10px 13px!important;font-weight:800!important}
+#bexMapMessage{font-size:12px!important;color:#666!important;min-height:0!important}
+#bexMapFooter .bex-map-confirm{width:100%!important;min-height:54px!important;border:0!important;border-radius:14px!important;background:#171717!important;color:#fff!important;font-size:17px!important;font-weight:900!important}
+@media(min-width:760px){#bexMapModal{inset:0!important}#bexMapHeader{left:calc(50% - 350px)!important;right:calc(50% - 350px)!important}#bexMapSheet{left:calc(50% - 350px)!important;right:calc(50% - 350px)!important;max-height:72dvh!important;border-radius:28px 28px 0 0!important}}
+</style>
 </style>
 </head>
 <body>
