@@ -1844,65 +1844,71 @@ function bexInitPickerMap(){if(bexPickerMap||!window.L)return;const start=[28.52
 function bexRenderSavedMapAddresses(){const box=document.getElementById("bexSavedAddressList");if(!box)return;const saved=bexSavedMapAddresses();box.replaceChildren();if(!saved.length){const p=document.createElement("div");p.textContent="Abhi koi saved address nahi hai.";p.className="bex-empty-saved";box.append(p);return}saved.forEach(item=>{const b=document.createElement("button");b.type="button";const title=document.createElement("strong");title.textContent=(item.label||"Saved address")+" · ";const details=document.createElement("small");details.textContent=item.address||"Address";b.append(title,details);b.addEventListener("click",()=>{bexPickerAddress=item.address||"";bexPickerParts=item.parts||null;bexPickerPosition={lat:Number(item.lat),lon:Number(item.lon)};bexPickerAccuracy=item.accuracy||null;bexPickerMarker.setLatLng([item.lat,item.lon]);bexPickerMap.setView([item.lat,item.lon],17);bexFormatMapLabel(bexPickerAddress);bexSetMapMessage("Saved address selected. Confirm Location dabayein ya pin adjust karein.")});box.append(b)})}
 let bexMapSearchRequest=0;
 async function bexSearchMapAddress(){
- const input=document.getElementById("bexMapSearch"),q=(input.value||"").trim(),results=document.getElementById("bexMapSearchResults");
+ const input=document.getElementById("bexMapSearch"),results=document.getElementById("bexMapSearchResults");
+ if(!input||!results)return;
+ const q=(input.value||"").trim();
  if(!q){bexSetMapMessage("Pehle house/flat number, street, area ya PIN code type karein.");input.focus();return}
  const requestId=++bexMapSearchRequest;
- bexSetMapMessage("Address search ho raha hai…");results.hidden=false;results.replaceChildren();
- const unique=a=>a.map(x=>String(x||"").trim()).filter((x,i,a)=>x&&a.findIndex(y=>y.toLowerCase()===x.toLowerCase())===i);
- const stripped=q.replace(/^\s*\d+[\w/-]*\s*,?\s*/,"").trim();
- const cleaned=q.replace(/\bnear\b/ig," ").replace(/\s+/g," ").replace(/\s*,\s*/g,", ").trim();
- const queries=unique([q,cleaned,stripped,stripped.replace(/\bnear\b/ig," ").replace(/\s+/g," ").trim()]);
+ results.hidden=false;results.replaceChildren();bexSetMapMessage("Address suggestions dhoondh rahe hain…");
+ const clean=v=>String(v||"").replace(/\s+/g," ").replace(/\s*,\s*/g,", ").trim();
  const near=bexPickerPosition||{lat:28.5245,lon:77.1855};
- let rows=[];
- const photonQueries=unique([q,cleaned,stripped]);
- for(const query of photonQueries){
-  try{
-   const url="https://photon.komoot.io/api/?q="+encodeURIComponent(query)+"&limit=8&lang=en&lat="+encodeURIComponent(near.lat)+"&lon="+encodeURIComponent(near.lon);
-   const response=await fetch(url,{headers:{Accept:"application/json"}});
-   if(response.ok){
-    const data=await response.json();
-    rows=(data.features||[]).map(f=>{
-     const p=f.properties||{},c=f.geometry?.coordinates||[];
-     const title=[p.housenumber,p.street||p.name].filter(Boolean).join(" ")||p.name||p.city||"Address result";
-     const detail=unique([p.suburb,p.district,p.city,p.state,p.postcode,p.country]).join(", ");
-     return {lat:Number(c[1]),lon:Number(c[0]),display_name:unique([title,detail]).join(", "),address:{house_number:p.housenumber,road:p.street,neighbourhood:p.suburb,suburb:p.district,city:p.city,state:p.state,postcode:p.postcode},_title:title,_detail:detail};
-    }).filter(x=>Number.isFinite(x.lat)&&Number.isFinite(x.lon)&&x.display_name);
-   }
-  }catch(e){}
-  if(requestId!==bexMapSearchRequest)return;
-  if(rows.length)break;
- }
- if(!rows.length){
-  for(const query of queries){
-   try{
-    const url="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&accept-language=en&q="+encodeURIComponent(query);
-    const response=await fetch(url,{headers:{Accept:"application/json"}});
-    if(response.ok){rows=await response.json();if(rows.length)break}
-   }catch(e){}
-   if(requestId!==bexMapSearchRequest)return;
-   if(queries.indexOf(query)<queries.length-1)await new Promise(resolve=>setTimeout(resolve,1100));
+ const controller=new AbortController(), timeout=setTimeout(()=>controller.abort(),8000);
+ let rows=[],providerWorked=false;
+ try{
+  const url="https://photon.komoot.io/api/?q="+encodeURIComponent(q)+"&limit=8&lang=en&lat="+encodeURIComponent(near.lat)+"&lon="+encodeURIComponent(near.lon);
+  const response=await fetch(url,{headers:{Accept:"application/json"},signal:controller.signal});
+  if(response.ok){
+   providerWorked=true;
+   const data=await response.json();
+   rows=(data.features||[]).map(f=>{
+    const p=f.properties||{},c=f.geometry?.coordinates||[];
+    const title=[p.housenumber,p.street||p.name].filter(Boolean).join(" ")||p.name||p.city||p.suburb||"Address result";
+    const detail=[p.suburb,p.district,p.city,p.state,p.postcode,p.country].map(clean).filter((v,i,a)=>v&&a.findIndex(x=>x.toLowerCase()===v.toLowerCase())===i).join(", ");
+    return {lat:Number(c[1]),lon:Number(c[0]),display_name:[title,detail].filter(Boolean).join(", "),address:{house_number:p.housenumber,road:p.street,neighbourhood:p.suburb,suburb:p.district,city:p.city||p.town||p.village,state:p.state,postcode:p.postcode,country:p.country},_title:title,_detail:detail,_country:p.country};
+   }).filter(x=>Number.isFinite(x.lat)&&Number.isFinite(x.lon)&&x.display_name&&(!x._country||/india/i.test(x._country)));
   }
+ }catch(e){}
+ finally{clearTimeout(timeout)}
+ if(requestId!==bexMapSearchRequest)return;
+ // Photon can return unrelated or empty results. Use India's address index as a fallback.
+ if(!rows.length){
+  const fallbackController=new AbortController(),fallbackTimeout=setTimeout(()=>fallbackController.abort(),8000);
+  try{
+   const url="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&accept-language=en&q="+encodeURIComponent(q);
+   const response=await fetch(url,{headers:{Accept:"application/json"},signal:fallbackController.signal});
+   if(response.ok){providerWorked=true;rows=(await response.json()).map(x=>({...x,_title:[x.address?.house_number,x.address?.road||x.address?.pedestrian||x.name].filter(Boolean).join(" ")||x.name||x.display_name,_detail:[x.address?.neighbourhood,x.address?.suburb,x.address?.city||x.address?.town||x.address?.village,x.address?.state,x.address?.postcode].filter(Boolean).join(", ")})).filter(x=>Number.isFinite(Number(x.lat))&&Number.isFinite(Number(x.lon)));}
+  }catch(e){}
+  finally{clearTimeout(fallbackTimeout)}
  }
  if(requestId!==bexMapSearchRequest)return;
- if(!rows.length){bexSetMapMessage("Address nahi mila. Sirf area + city ya PIN code try karein, jaise “Kishangarh, Vasant Kunj, Delhi”. Exact ghar ke liye result select karke pin adjust kar sakte hain.");return}
+ if(!rows.length){
+  results.hidden=true;results.replaceChildren();
+  bexSetMapMessage(providerWorked?"Is address ke liye result nahi mila. Area + city ya PIN code try karein, jaise “Kishangarh, Vasant Kunj, Delhi”.":"Address search service abhi respond nahi kar rahi. Thodi der baad try karein, ya map par pin set karein.");
+  return;
+ }
  rows.forEach(row=>{
-  const b=document.createElement("button");b.type="button";
+  const b=document.createElement("button");b.type="button";b.className="bex-map-search-result";
   const title=document.createElement("strong");title.textContent=row._title||row.name||row.display_name||"Address result";
   const detail=document.createElement("small");detail.textContent=row._detail||row.display_name||"";
   b.append(title,detail);
   b.addEventListener("click",()=>{
-   bexPickerPosition={lat:Number(row.lat),lon:Number(row.lon)};bexPickerAddress=row.display_name||[title.textContent,detail.textContent].filter(Boolean).join(", ");bexPickerParts=row.address||null;bexPickerAccuracy=null;
-   bexPickerMarker.setLatLng([bexPickerPosition.lat,bexPickerPosition.lon]);bexPickerMap.setView([bexPickerPosition.lat,bexPickerPosition.lon],17);bexFormatMapLabel(bexPickerAddress);results.hidden=true;results.replaceChildren();bexSetMapMessage("Address select ho gaya. Exact building ke liye pin adjust karke Confirm Location dabayein.")
-  });results.append(b)
+   const lat=Number(row.lat),lon=Number(row.lon);
+   if(!Number.isFinite(lat)||!Number.isFinite(lon))return;
+   bexPickerPosition={lat,lon};bexPickerAddress=row.display_name||[title.textContent,detail.textContent].filter(Boolean).join(", ");bexPickerParts=row.address||null;bexPickerAccuracy=null;
+   if(bexPickerMarker)bexPickerMarker.setLatLng([lat,lon]);
+   if(bexPickerMap)bexPickerMap.setView([lat,lon],17);
+   bexFormatMapLabel(bexPickerAddress);results.hidden=true;results.replaceChildren();bexSetMapMessage("Address select ho gaya. Exact building ke liye pin adjust karke Confirm Location dabayein.");
+  });
+  results.append(b);
  });
- bexSetMapMessage(rows.length+" address options mile. Sahi address par tap karein.");
+ bexSetMapMessage(rows.length+" address suggestions mile. Sahi address par tap karein.");
 }
 function bexUseCurrentMapLocation(){if(!navigator.geolocation){bexSetMapMessage("Is device par location available nahi hai.");return}bexSetMapMessage("Aapki current location mil rahi hai…");navigator.geolocation.getCurrentPosition(pos=>{bexPickerAccuracy=pos.coords.accuracy;bexPickerPosition={lat:pos.coords.latitude,lon:pos.coords.longitude};bexPickerMarker.setLatLng([pos.coords.latitude,pos.coords.longitude]);bexPickerMap.setView([pos.coords.latitude,pos.coords.longitude],18);bexReverseGeocode(pos.coords.latitude,pos.coords.longitude);bexSetMapMessage("Current location set ho gayi. Pin sahi jagah par hai to Confirm Location dabayein.")},err=>{bexSetMapMessage(err.code===1?"Location permission allow karein, ya address search karke pin set karein.":"GPS location nahi mili. Address search karein ya map par pin move karein.")},{enableHighAccuracy:true,timeout:20000,maximumAge:0})}
 function bexSaveCurrentMapAddress(){if(!bexPickerPosition){bexSetMapMessage("Pehle map par location select karein.");return}const address=(bexPickerAddress||"").trim();if(!address){bexSetMapMessage("Address resolve ho raha hai. Thoda wait karein, phir Save Address dabayein.");return}const label=document.getElementById("bexMapSaveType").value;let saved=bexSavedMapAddresses();saved=saved.filter(x=>x.label!==label);saved.unshift({label,address,lat:bexPickerPosition.lat,lon:bexPickerPosition.lon,accuracy:bexPickerAccuracy||null,parts:bexPickerParts||null});saved=saved.slice(0,10);try{localStorage.setItem(BEX_MAP_SAVED_KEY,JSON.stringify(saved));bexRenderSavedMapAddresses();bexSetMapMessage(label+" address is device par save ho gaya.")}catch(e){bexSetMapMessage("Address save nahi ho paya. Device storage available nahi hai.")}}
 function openBexLocationMap(){const modal=document.getElementById("bexMapModal");if(!modal)return;modal.classList.add("open");document.body.classList.add("bex-map-open");bexInitPickerMap();bexRenderSavedMapAddresses();setTimeout(()=>{if(bexPickerMap){bexPickerMap.invalidateSize(true);setTimeout(()=>bexPickerMap&&bexPickerMap.invalidateSize(true),350);const lat=Number(document.getElementById("bexLatitude").value),lon=Number(document.getElementById("bexLongitude").value);if(Number.isFinite(lat)&&Number.isFinite(lon)&&lat&&lon){bexPickerPosition={lat,lon};bexPickerMarker.setLatLng([lat,lon]);bexPickerMap.setView([lat,lon],17);bexPickerAddress=(document.getElementById("address").value||"").trim();bexFormatMapLabel(bexPickerAddress||"Current booking location")}else if(!bexPickerPosition){const p=bexPickerMarker.getLatLng();bexPickerPosition={lat:p.lat,lon:p.lng}}}},180)}
 function closeBexLocationMap(){document.getElementById("bexMapModal")?.classList.remove("open");document.body.classList.remove("bex-map-open")}
 function bexConfirmMapLocation(){if(!bexPickerPosition){bexSetMapMessage("Confirm karne se pehle map par pin select karein.");return}const lat=bexPickerPosition.lat,lon=bexPickerPosition.lon,address=(bexPickerAddress||"").trim(),house=document.getElementById("bexHouseNumber"),street=document.getElementById("bexStreetAddress"),full=document.getElementById("bexFullAddress"),addr=document.getElementById("address"),parts=bexPickerParts||{};if(addr)addr.value=address||("Location pin: "+lat.toFixed(6)+", "+lon.toFixed(6));if(house&&!house.value.trim())house.value=[parts.house_number,parts.building].filter(Boolean).join(" ");if(street&&!street.value.trim())street.value=[parts.road,parts.neighbourhood,parts.suburb].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(", ");if(full)full.value=address||("Map location: "+lat.toFixed(6)+", "+lon.toFixed(6));document.getElementById("bexLatitude").value=String(lat);document.getElementById("bexLongitude").value=String(lon);document.getElementById("bexLocationAccuracy").value=bexPickerAccuracy==null?"":String(Math.round(bexPickerAccuracy));document.getElementById("bexHomeLocationPanel")?.classList.add("location-set");const status=document.getElementById("bexLocationStatus");if(status)status.textContent="✓ Location confirmed: "+(address||lat.toFixed(6)+", "+lon.toFixed(6));const link=document.getElementById("bexOpenLocation");if(link){link.href="https://www.google.com/maps?q="+encodeURIComponent(lat+","+lon);link.hidden=false}closeBexLocationMap();document.getElementById("addressField")?.scrollIntoView({behavior:"smooth",block:"start"});bexSetMapMessage("")}
-document.addEventListener("DOMContentLoaded",()=>{document.getElementById("bexMapSearchBtn")?.addEventListener("click",bexSearchMapAddress);document.getElementById("bexMapSearch")?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();bexSearchMapAddress()}});let bexMapTypeaheadTimer=null;document.getElementById("bexMapSearch")?.addEventListener("input",()=>{clearTimeout(bexMapTypeaheadTimer);const q=document.getElementById("bexMapSearch").value.trim();if(q.length<3){const box=document.getElementById("bexMapSearchResults");box.hidden=true;box.replaceChildren();return}bexMapTypeaheadTimer=setTimeout(bexSearchMapAddress,1000)});document.getElementById("bexUseCurrentLocation")?.addEventListener("click",bexUseCurrentMapLocation);document.getElementById("bexSaveMapAddress")?.addEventListener("click",bexSaveCurrentMapAddress);document.getElementById("bexConfirmMapLocation")?.addEventListener("click",bexConfirmMapLocation)});
+document.addEventListener("DOMContentLoaded",()=>{document.getElementById("bexMapSearchBtn")?.addEventListener("click",bexSearchMapAddress);document.getElementById("bexMapSearch")?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();bexSearchMapAddress()}});let bexMapTypeaheadTimer=null;document.getElementById("bexMapSearch")?.addEventListener("input",()=>{clearTimeout(bexMapTypeaheadTimer);const q=document.getElementById("bexMapSearch").value.trim();if(q.length<3){const box=document.getElementById("bexMapSearchResults");box.hidden=true;box.replaceChildren();return}bexMapTypeaheadTimer=setTimeout(bexSearchMapAddress,450)});document.getElementById("bexUseCurrentLocation")?.addEventListener("click",bexUseCurrentMapLocation);document.getElementById("bexSaveMapAddress")?.addEventListener("click",bexSaveCurrentMapAddress);document.getElementById("bexConfirmMapLocation")?.addEventListener("click",bexConfirmMapLocation)});
 
 function toggleAddress(){const home=(document.getElementById("visit")||{}).value==="Home service";document.getElementById("addressField").hidden=!home;document.getElementById("centerVisitPanel").hidden=home;document.getElementById("address").required=false;document.getElementById("landmark").required=false;document.getElementById("bexCenterSearch").href="https://share.google/fmoa7Wwu2qTJGbnpi";if(!home){document.getElementById("bexLatitude").value="";document.getElementById("bexLongitude").value="";document.getElementById("bexLocationAccuracy").value="";document.getElementById("bexOpenLocation").hidden=true;document.getElementById("bexHomeLocationPanel").classList.remove("location-set");document.getElementById("bexLocationStatus").textContent="Center Visit चुना गया है। Center का सही पता और directions नीचे दिए गए Google Maps link पर देखें."}else{document.getElementById("bexLocationStatus").textContent=(document.getElementById("bexLatitude").value&&document.getElementById("bexLongitude").value)?"✓ Home Visit location confirmed. Zarurat ho to Select Home Visit Location se change karein.":"Home Visit ke liye ek hi map se address search, saved address ya current location select karke confirm karein."}}
 const BEX_API_URL="https://myjstwbpmbrhaiwytpnq.supabase.co";
