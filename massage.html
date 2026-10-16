@@ -2044,8 +2044,23 @@ function refreshBexTimeSlots(){
   const disabled=!selectedDate||!Number.isFinite(slotMs)||(selectedDate===today&&slotMs<cutoff);
   const button=document.createElement("button");button.type="button";button.className="bex-time-slot";button.textContent=bexTimeLabel(value);button.disabled=disabled;button.setAttribute("aria-pressed",String(previous===value&&!disabled));
   if(previous===value&&!disabled)selectedStillAvailable=true;
-  button.addEventListener("click",()=>{timeEl.value=value;grid.querySelectorAll(".bex-time-slot").forEach(b=>b.setAttribute("aria-pressed","false"));button.setAttribute("aria-pressed","true");if(help)help.textContent="✓ Selected time: "+bexTimeLabel(value);});
+  button.dataset.time=value;
   grid.appendChild(button);
+ }
+ if(!grid.dataset.bexSelectBound){
+  grid.dataset.bexSelectBound="1";
+  const chooseSlot=(event)=>{
+   const button=event.target.closest(".bex-time-slot");
+   if(!button||button.disabled||!grid.contains(button))return;
+   event.preventDefault();event.stopPropagation();
+   timeEl.value=button.dataset.time||"";
+   timeEl.dispatchEvent(new Event("input",{bubbles:true}));
+   timeEl.dispatchEvent(new Event("change",{bubbles:true}));
+   grid.querySelectorAll(".bex-time-slot").forEach(b=>b.setAttribute("aria-pressed",String(b===button)));
+   if(help)help.textContent="✓ Selected time: "+bexTimeLabel(timeEl.value);
+  };
+  grid.addEventListener("click",chooseSlot,true);
+  grid.addEventListener("pointerup",chooseSlot,true);
  }
  if(!selectedStillAvailable)timeEl.value="";
  if(help){if(!selectedDate)help.textContent="Pehle date select karein.";else if(selectedDate===today)help.textContent="Aaj ke liye live time se kam-se-kam 2 ghante baad ka slot select karein.";else help.textContent="Available time select karein. Har slot 30 minute ke gap par hai.";}
