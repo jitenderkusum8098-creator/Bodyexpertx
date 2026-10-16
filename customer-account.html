@@ -108,7 +108,19 @@ init();
  function showEmbeddedBooking(token){if(!token)return;bookingEmpty.classList.add('hidden');bookingFrame.classList.remove('hidden');bookingFrame.style.display='block';const src='./customer-dashboard.html?tracking='+encodeURIComponent(token)+'&embed=account';if(bookingFrame.getAttribute('src')!==src)bookingFrame.setAttribute('src',src)}
  const savedBookingList=savedBookingTokens();let currentBookingToken='';try{currentBookingToken=localStorage.getItem('bex_current_booking_tracking')||''}catch(e){}
  const latestBookingToken=savedBookingList[0]?.trackingToken||currentBookingToken;if(latestBookingToken)showEmbeddedBooking(latestBookingToken);
- window.addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==bookingFrame.contentWindow)return;const data=event.data;if(data&&data.type==='bex-booking-page-height'&&Number.isFinite(Number(data.height)))bookingFrame.style.height=Math.max(850,Math.min(12000,Number(data.height)+8))+'px'});
+ function fitBookingFrame(){
+   try{
+     const doc=bookingFrame.contentDocument;if(!doc)return;
+     const top=doc.querySelector('.top'),main=doc.querySelector('main.wrap');
+     if(!main)return;
+     // Measure actual content, not document scrollHeight: body min-height:100vh can otherwise create a blank-height feedback loop.
+     const total=Math.ceil((top?top.getBoundingClientRect().height:0)+main.getBoundingClientRect().height+24);
+     bookingFrame.style.height=Math.max(560,Math.min(10000,total))+'px';
+   }catch(e){}
+ }
+ bookingFrame.addEventListener('load',()=>{fitBookingFrame();setTimeout(fitBookingFrame,250);setTimeout(fitBookingFrame,900)});
+ window.addEventListener('resize',fitBookingFrame);
+ setInterval(fitBookingFrame,1500);
  document.addEventListener('click',event=>{const link=event.target.closest('#bookingList a[href*="tracking="],#todayBookingList a[href*="tracking="]');if(!link)return;let token='';try{token=new URL(link.href,location.href).searchParams.get('tracking')||''}catch(e){}if(!token)return;event.preventDefault();showEmbeddedBooking(token);bookingPanel.scrollIntoView({behavior:'smooth',block:'start'})});
  auth.hidden=true;bookings.hidden=true;if(profile)profile.hidden=true;if(therapists)therapists.hidden=true;
  const todayPanel=document.createElement('section');
