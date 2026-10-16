@@ -2038,7 +2038,7 @@ function refreshBexTimeSlots(){
  if(!dateEl||!timeEl||!grid)return;
  const selectedDate=dateEl.value,today=bexBookingToday(),cutoff=Date.now()+2*60*60*1000,previous=timeEl.value;
  grid.replaceChildren();let selectedStillAvailable=false;
- for(let minutes=13*60+30;minutes<=22*60;minutes+=30){
+ for(let minutes=7*60;minutes<=22*60;minutes+=30){
   const hh=Math.floor(minutes/60),mm=minutes%60,value=String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0");
   const slotMs=selectedDate?new Date(selectedDate+"T"+value+":00+05:30").getTime():NaN;
   const disabled=!selectedDate||!Number.isFinite(slotMs)||(selectedDate===today&&slotMs<cutoff);
