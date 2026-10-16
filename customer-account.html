@@ -131,10 +131,8 @@ init();
  bookingPanel.id='bexAccountBookingPage';
  bookingPanel.style.cssText='display:none;border:1px solid #6b5420;border-radius:18px;overflow:hidden;margin:16px 0;background:#0b0b0d';
  bookingPanel.innerHTML='<iframe id="bexAccountBookingFrame" title="Aapki BodyExpertX booking details, status, therapist aur OTP" loading="eager" class="hidden" allow="geolocation" style="display:block;width:100%;height:1000px;border:0;background:#0b0b0d"></iframe>';
- bookingFrame=bookingPanel.querySelector('#bexAccountBookingFrame'); // Initialise before listeners use it.
- // Insert the booking page after the expandable account sections so it never pushes them far below the buttons.
+ let bookingFrame=bookingPanel.querySelector('#bexAccountBookingFrame');
  let bookingPanelPlaced=false;
- let bookingFrame=null;
  function savedBookingTokens(){try{const list=JSON.parse(localStorage.getItem('bex_customer_bookings')||'[]');return Array.isArray(list)?list.filter(x=>x&&x.trackingToken):[]}catch(e){return[]}}
  function showEmbeddedBooking(token){if(!token||!bookingFrame)return;bookingPanel.style.display='block';bookingFrame.classList.remove('hidden');bookingFrame.style.display='block';const src='./customer-dashboard.html?tracking='+encodeURIComponent(token)+'&embed=account';if(bookingFrame.getAttribute('src')!==src)bookingFrame.setAttribute('src',src)}
  function fitBookingFrame(){
