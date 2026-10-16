@@ -485,7 +485,7 @@ select.zone-manual-select{display:block!important;position:relative!important;op
 .bex-location-panel,.bex-center-panel{display:flex;flex-direction:column;align-items:stretch;gap:10px;padding:14px;margin-top:12px;border:1px solid #c6a45b;border-radius:14px;background:linear-gradient(135deg,#111214,#242529);color:#fff}
 .bex-location-panel strong,.bex-center-panel strong{font-size:17px;font-weight:900;color:#f0d99a}
 .bex-location-panel .hint,.bex-center-panel .hint{color:#e0e3e8;font-size:14px;line-height:1.55;margin:4px 0}
-.bex-location-btn{background:linear-gradient(120deg,#f1d58f,#c6a45b)!important;color:#171717!important;border:1px solid #b38e42!important;font-weight:900!important;min-height:48px;width:100%}
+.bex-location-btn{background:linear-gradient(120deg,#f1d58f,#c6a45b)!important;color:#171717!important;border:1px solid #b38e42!important;font-weight:800!important;min-height:40px;width:100%;padding:8px 9px!important;font-size:12px!important;line-height:1.25!important;white-space:normal!important}
 #bexOpenLocation,.bex-center-panel a{width:100%;text-align:center;font-weight:800}
 #bexOpenLocation[hidden],#centerVisitPanel[hidden],#addressField[hidden]{display:none!important}
 .bex-location-panel.location-set{border-color:#1f9d62;background:linear-gradient(135deg,#10271d,#1a392b)}
@@ -1497,13 +1497,13 @@ article.service .bx-massage-photo img {
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <style id="bex-location-map-styles">
-.bex-location-actions{display:grid;grid-template-columns:1fr;gap:9px;width:100%}.bex-map-choice-btn{background:#fff!important;color:#171717!important;border:1px solid #c6a45b!important}
+.bex-location-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}.bex-map-choice-btn{background:#fff!important;color:#171717!important;border:1px solid #c6a45b!important}
 .bex-map-modal{position:fixed;inset:0;z-index:10050;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(5,7,12,.78);backdrop-filter:blur(4px)}.bex-map-modal[hidden]{display:none!important}
 .bex-map-dialog{width:min(760px,100%);max-height:92dvh;overflow:auto;background:#111214;color:#fff;border:1px solid #c6a45b;border-radius:18px;padding:16px;box-shadow:0 22px 70px #0009}
 .bex-map-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}.bex-map-heading h3{margin:0 0 5px;color:#f0d99a;font-size:21px}.bex-map-heading p{margin:0;color:#e0e3e8;font-size:13px;line-height:1.5}.bex-map-close{border:1px solid #555;background:#222;color:#fff;border-radius:9px;min-width:42px;min-height:42px;font-size:18px}
 .bex-map-search{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-bottom:10px}.bex-map-search input{width:100%;min-width:0;min-height:48px;padding:10px 12px;border-radius:10px;border:1px solid #666;background:#fff;color:#111;font-size:16px}.bex-map-search .btn,.bex-map-actions .btn{min-height:48px;font-weight:800}
 #bexLocationMap{width:100%;height:48dvh;min-height:270px;max-height:440px;border-radius:12px;overflow:hidden;background:#e7e7e7;z-index:0}#bexMapPinStatus{color:#f3e6c4;margin:10px 0;line-height:1.5}.bex-map-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}#bexConfirmMapLocation{background:linear-gradient(120deg,#f1d58f,#c6a45b)!important;color:#171717!important}.bex-map-actions .ghost{background:#25262a!important;color:#fff!important;border:1px solid #555!important}
-@media(max-width:560px){.bex-map-modal{padding:6px;align-items:flex-end}.bex-map-dialog{padding:12px;border-radius:16px 16px 10px 10px;max-height:94dvh}.bex-map-heading h3{font-size:19px}#bexLocationMap{height:42dvh;min-height:240px}.bex-map-actions{grid-template-columns:1fr}.bex-map-search .btn{padding:10px 12px}}
+@media(max-width:420px){.bex-location-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.bex-location-btn{min-height:42px;font-size:11px!important;padding:7px 5px!important}} @media(max-width:560px){.bex-map-modal{padding:6px;align-items:flex-end}.bex-map-dialog{padding:12px;border-radius:16px 16px 10px 10px;max-height:94dvh}.bex-map-heading h3{font-size:19px}#bexLocationMap{height:42dvh;min-height:240px}.bex-map-actions{grid-template-columns:1fr}.bex-map-search .btn{padding:10px 12px}}
 .bex-map-search-results{display:grid;gap:7px;margin:-3px 0 12px;max-height:220px;overflow:auto;border-radius:11px}
 .bex-map-search-results[hidden]{display:none!important}
 .bex-map-search-result{display:block;width:100%;text-align:left;padding:12px;border:1px solid #494949;border-radius:10px;background:#202124;color:#fff;cursor:pointer;line-height:1.35}
@@ -1670,7 +1670,7 @@ article.service .bx-massage-photo img {
 #bookingForm .bex-wizard-step .field-grid{margin-bottom:0}
 #bookingForm .bex-wizard-step .field{margin-bottom:18px}
 #bookingForm .bex-wizard-step .bex-location-panel{margin-top:12px}
-#bookingForm .bex-wizard-step .bex-location-actions{display:grid;grid-template-columns:1fr;gap:9px}
+#bookingForm .bex-wizard-step .bex-location-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 #bexChooseMapLocation{display:block!important}
 #bexChooseMapLocation[hidden]{display:none!important}
 @media(max-width:560px){
@@ -1758,44 +1758,6 @@ article.service .bx-massage-photo img {
 
 <section class="section" id="booking"><div class="wrap"><div class="section-head"><div class="eyebrow">Your appointment, your way</div><h2>Build Your Booking</h2><p>Apni appointment details bharein, booking confirm karein aur WhatsApp par request bhejein.</p></div>
 <div class="booking-layout"><form class="panel" id="bookingForm"><h3>2. Appointment details</h3>
-<div class="existing-customer-entry" style="margin:12px 0 18px;padding:12px;border:1px solid rgba(212,175,55,.55);border-radius:12px;text-align:center">
-  <button type="button" class="btn" id="alreadyRegisteredBookingBtn" style="display:inline-flex;align-items:center;justify-content:center;width:100%;box-sizing:border-box">Already Registered? Fill My Details</button>
-  <p id="alreadyRegisteredBookingMsg" role="status" style="margin:8px 0 0;font-size:.9rem;opacity:.9">Pehle se registered hain? Button dabakar saved details bharein.</p>
-</div>
-<script>
-(function(){
- const btn=document.getElementById('alreadyRegisteredBookingBtn');
- if(!btn||btn.dataset.bound)return; btn.dataset.bound='1';
- btn.addEventListener('click',function(){
-  const readProfile=k=>{try{return JSON.parse(localStorage.getItem(k)||'{}')}catch(e){return {}}};
-  // My Account's saved profile is the source of truth; remote profile only fills missing fields.
-  const p=Object.assign({},readProfile('bex_customer_remote_profile'),readProfile('bex_customer_profile'));
-  const set=(id,value)=>{const el=document.getElementById(id);if(!el||value===undefined||value===null||String(value).trim()==='')return false;el.value=String(value);el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));return true;};
-  let filled=0;
-  [['name',p.name],['phone',p.phone||p.mobile],['age',p.age],['recipientGender',p.gender||p.recipientGender]].forEach(([id,v])=>{if(set(id,v))filled++;});
-  const type=document.getElementById('customerType');if(type){type.value='Returning customer';type.dispatchEvent(new Event('change',{bubbles:true}));}
-  // Copy the saved My Account address and location pin into Home Visit fields.
-  const savedAddress=String(p.address||p.full_address||'').trim();
-  if(savedAddress){
-   set('address',savedAddress);set('bexFullAddress',savedAddress);filled++;
-   const visit=document.getElementById('visit');
-   if(visit&&visit.value==='Home service'){
-    const addr=document.getElementById('address');if(addr)addr.readOnly=true;
-   }
-  }
-  if(p.latitude!==undefined&&p.latitude!==null&&p.longitude!==undefined&&p.longitude!==null){
-   set('bexLatitude',p.latitude);set('bexLongitude',p.longitude);
-   const link=document.getElementById('bexOpenLocation');
-   if(link){link.href='https://www.google.com/maps?q='+encodeURIComponent(p.latitude+','+p.longitude);link.hidden=false;}
-   filled++;
-  }
-  if(p.maps_url)set('bexMapsUrl',p.maps_url);
-  const msg=document.getElementById('alreadyRegisteredBookingMsg');
-  if(filled){if(msg)msg.textContent='My Account ki saved details bhar di gayi hain. Home Visit chuna hai toh address aur location verify kar lein, phir booking continue karein.';}
-  else{if(msg)msg.textContent='My Account ki saved profile is browser mein nahi mili. My Account mein login karke details save karein, phir yahan dobara try karein.';}
- });
-})();
-</script>
 <div class="field-grid"><div class="field"><label for="name">Full name *</label><input id="name" name="name" required autocomplete="name" placeholder="Your name"></div><div class="field"><label for="phone">Mobile number *</label><input id="phone" name="phone" type="tel" required inputmode="numeric" autocomplete="tel" maxlength="10" pattern="[6-9][0-9]{9}" title="Enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9." placeholder="10-digit Indian mobile number"></div></div>
 <div class="field-grid"><div class="field"><label for="age">Your age (18+ years) *</label><input id="age" name="age" type="number" min="18" max="100" required placeholder="Age"></div><div class="field"><label for="recipientGender">Massage kiske liye book kar rahe hain? *</label><select id="recipientGender" name="recipientGender" required onchange="updateGenderPricing()"><option value="Male">Male</option><option value="Female">Female</option></select></div></div>
 <div class="field-grid"><div class="field"><label for="customerType">Have you booked with us before? *</label><select id="customerType" name="customerType" required onchange="updateCouponAvailability()"><option value="First-time customer">No, this is my first booking</option><option value="Returning customer">Yes, I am a returning customer</option></select></div><div class="field"><label for="visit">Service location *</label><select id="visit" required onchange="toggleAddress()"><option value="Centre">Center Visit</option><option value="Home service">Home Visit</option></select></div></div>
@@ -1814,7 +1776,7 @@ article.service .bx-massage-photo img {
  <div class="bex-picker-options"><button type="button" id="bexPickerUseCurrent" class="bex-picker-option"><span class="bex-picker-option-icon">⌖</span><span><strong>Use your current location</strong><small>GPS se abhi ki location lein</small></span><span class="bex-picker-chevron">›</span></button><button type="button" id="bexPickerAddAddress" class="bex-picker-option"><span class="bex-picker-option-icon">＋</span><span><strong>Add New Address</strong><small>House, flat aur landmark khud likhein</small></span><span class="bex-picker-chevron">›</span></button></div>
  <div class="bex-picker-saved-heading">Saved Addresses</div><div id="bexAddressPickerSaved" class="bex-picker-saved"></div>
  <p class="bex-picker-footnote">Home Visit ke liye sahi address aur map pin confirm karna zaroori hai.</p>
-</div><label for="landmark" style="margin-top:8px">Landmark (optional)</label><input id="landmark" placeholder="Nearby landmark"><div class="bex-location-panel"><div><strong>📍 Home Visit Location</strong><p id="bexLocationStatus" class="hint">Current Location इस्तेमाल करें या पता लिखकर Map पर pin सेट करें। Booking के लिए pin confirm करना ज़रूरी है।</p></div><div class="bex-location-actions"><button type="button" class="btn bex-location-btn" id="bexSetLocation">📍 Use My Current Location</button><button type="button" class="btn bex-location-btn bex-map-choice-btn" id="bexChooseMapLocation">🗺️ Choose Location on Map</button></div><a id="bexOpenLocation" class="btn small ghost" target="_blank" rel="noopener" hidden>View Location in Maps</a></div><input type="hidden" id="bexLatitude"><input type="hidden" id="bexLongitude"><input type="hidden" id="bexLocationAccuracy">
+</div><label for="landmark" style="margin-top:8px">Landmark (optional)</label><input id="landmark" placeholder="Nearby landmark"><div class="bex-location-panel"><div><strong>📍 Home Visit Location</strong><p id="bexLocationStatus" class="hint">Current Location इस्तेमाल करें या पता लिखकर Map पर pin सेट करें। Booking के लिए pin confirm करना ज़रूरी है।</p></div><div class="bex-location-actions"><button type="button" class="btn bex-location-btn" id="bexSetLocation">📍 Use My Current Location</button><button type="button" class="btn bex-location-btn bex-map-choice-btn" id="bexChooseMapLocation">🗺️ Set Location on Map</button></div><a id="bexOpenLocation" class="btn small ghost" target="_blank" rel="noopener" hidden>View Location in Maps</a></div><input type="hidden" id="bexLatitude"><input type="hidden" id="bexLongitude"><input type="hidden" id="bexLocationAccuracy">
 <style id="bex-map-fullscreen-ui">
 .bex-map-modal{position:fixed;inset:0;z-index:10050;display:flex;align-items:stretch;justify-content:stretch;padding:0;background:#f5f3ec}.bex-map-modal[hidden]{display:none!important}
 .bex-map-dialog-full{position:relative;width:100%;height:100dvh;max-height:100dvh;overflow:hidden;border:0;border-radius:0;padding:0;background:#f5f3ec;color:#171717;box-shadow:none}
@@ -2615,7 +2577,7 @@ async function searchAddress(q){
  return null;
 }
 async function reverseAddress(lat,lon){try{const r=await fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat="+lat+"&lon="+lon+"&zoom=18&addressdetails=1",{headers:{Accept:"application/json"}});if(!r.ok)return "";const d=await r.json();return d.display_name||""}catch(e){return ""}}
-$("bexSetLocation").addEventListener("click",()=>{const b=$("bexSetLocation");if(!navigator.geolocation){status.textContent="GPS available nahi hai. Choose Location on Map se address search karein.";return}b.disabled=true;b.textContent="Location detect ho rahi hai…";status.textContent="Browser permission aaye to Allow dabayein.";navigator.geolocation.getCurrentPosition(async p=>{const lat=Number(p.coords.latitude),lon=Number(p.coords.longitude);$("bexLatitude").value=lat;$("bexLongitude").value=lon;$("bexLocationAccuracy").value=Math.round(p.coords.accuracy||0);$("bexOpenLocation").href="https://www.google.com/maps?q="+encodeURIComponent(lat+","+lon);$("bexOpenLocation").hidden=false;document.querySelector(".bex-location-panel").classList.add("location-set");$("serviceZone").value="";bexDetectedZone=null;b.disabled=false;b.textContent="📍 Use My Current Location";status.textContent="✓ Current location detect aur save ho gayi. Chahein to map pin adjust kar sakte hain.";try{const detected=await reverseAddress(lat,lon);if(detected&&!addressInput.value.trim()){settingAddress=true;addressInput.value=detected;addressInput.readOnly=true;settingAddress=false;status.textContent="✓ Current Location attach ho gayi. Ab Flat/House No., Street aur Full Address bharein."}}catch(e){}try{const z=await detectServiceZoneFromCoords(lat,lon);if(z)status.textContent="✓ Current location detect ho gayi. Service Zone: "+z.name+". Pin badalna ho to map use karein."}catch(e){}},e=>{b.disabled=false;b.textContent="📍 Use My Current Location";status.textContent=e.code===1?"Location permission Allow karein, ya Map par address search karein.":"GPS nahi mil paayi. Dobara try karein ya Map par address search karein."},{enableHighAccuracy:true,timeout:25000,maximumAge:0})});
+$("bexSetLocation").addEventListener("click",()=>{const b=$("bexSetLocation");if(!navigator.geolocation){status.textContent="GPS available nahi hai. Choose Location on Map se address search karein.";return}b.disabled=true;b.textContent="Location detect ho rahi hai…";status.textContent="Browser permission aaye to Allow dabayein.";navigator.geolocation.getCurrentPosition(async p=>{const lat=Number(p.coords.latitude),lon=Number(p.coords.longitude);$("bexLatitude").value=lat;$("bexLongitude").value=lon;$("bexLocationAccuracy").value=Math.round(p.coords.accuracy||0);$("bexOpenLocation").href="https://www.google.com/maps?q="+encodeURIComponent(lat+","+lon);$("bexOpenLocation").hidden=false;document.querySelector(".bex-location-panel").classList.add("location-set");$("serviceZone").value="";bexDetectedZone=null;b.disabled=false;b.textContent="📍 Use My Current Location";status.textContent=(Number(p.coords.accuracy||0)>100?"GPS accuracy lagbhag "+Math.round(p.coords.accuracy)+" m hai. Zyada sahi pin ke liye Set Location on Map use karein.":"✓ Current location detect aur save ho gayi. Chahein to map pin adjust kar sakte hain.");try{const detected=await reverseAddress(lat,lon);if(detected&&!addressInput.value.trim()){settingAddress=true;addressInput.value=detected;addressInput.readOnly=true;settingAddress=false;status.textContent=(Number(p.coords.accuracy||0)>100?"GPS accuracy "+Math.round(p.coords.accuracy)+" m hai. Address check karein aur zarurat par map pin set karein.":"✓ Current Location attach ho gayi. Ab Flat/House No., Street aur Full Address bharein.")}}catch(e){}try{const z=await detectServiceZoneFromCoords(lat,lon);if(z)status.textContent="✓ Current location detect ho gayi. Service Zone: "+z.name+". Pin badalna ho to map use karein."}catch(e){}},e=>{b.disabled=false;b.textContent="📍 Use My Current Location";status.textContent=e.code===1?"Location permission Allow karein, ya Map par address search karein.":"GPS nahi mil paayi. Dobara try karein ya Map par address search karein."},{enableHighAccuracy:true,timeout:25000,maximumAge:0})});
 async function openAddressOnMap(){
  const q=($("address")||{}).value.trim();
  if(q.length<5){status.textContent="Pehle upar Home Visit Address likhein.";openAddressPicker();return}
