@@ -96,6 +96,20 @@ init();
  controls.id='accountMainButtons';
  controls.innerHTML='<button type="button" class="tab" data-open="login">🔑 Login</button><button type="button" class="tab" data-open="bookings">📚 My Booking</button><button type="button" class="tab" data-open="today">📅 Today Booking</button>';
  $('authPanel').before(controls);
+ // Booking page stays inside My Account, but its original standalone page/design is untouched.
+ const bookingPanel=document.createElement('section');
+ bookingPanel.id='bexAccountBookingPage';
+ bookingPanel.style.cssText='border:1px solid #6b5420;border-radius:18px;overflow:hidden;margin:16px 0;background:#0b0b0d';
+ bookingPanel.innerHTML='<div id="bexAccountBookingEmpty" style="padding:18px;color:var(--muted);text-align:center">Booking details yahan dikhengi jab aap booking kar lenge. <a href="./index.html#booking">Abhi booking karein</a>.</div><iframe id="bexAccountBookingFrame" title="Aapki BodyExpertX booking details, status, therapist aur OTP" loading="eager" class="hidden" allow="geolocation" style="display:block;width:100%;height:1000px;border:0;background:#0b0b0d"></iframe>';
+ controls.insertAdjacentElement('afterend',bookingPanel);
+ const bookingFrame=document.getElementById('bexAccountBookingFrame');
+ const bookingEmpty=document.getElementById('bexAccountBookingEmpty');
+ function savedBookingTokens(){try{const list=JSON.parse(localStorage.getItem('bex_customer_bookings')||'[]');return Array.isArray(list)?list.filter(x=>x&&x.trackingToken):[]}catch(e){return[]}}
+ function showEmbeddedBooking(token){if(!token)return;bookingEmpty.classList.add('hidden');bookingFrame.classList.remove('hidden');bookingFrame.style.display='block';const src='./customer-dashboard.html?tracking='+encodeURIComponent(token)+'&embed=account';if(bookingFrame.getAttribute('src')!==src)bookingFrame.setAttribute('src',src)}
+ const savedBookingList=savedBookingTokens();let currentBookingToken='';try{currentBookingToken=localStorage.getItem('bex_current_booking_tracking')||''}catch(e){}
+ const latestBookingToken=savedBookingList[0]?.trackingToken||currentBookingToken;if(latestBookingToken)showEmbeddedBooking(latestBookingToken);
+ window.addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==bookingFrame.contentWindow)return;const data=event.data;if(data&&data.type==='bex-booking-page-height'&&Number.isFinite(Number(data.height)))bookingFrame.style.height=Math.max(850,Math.min(12000,Number(data.height)+8))+'px'});
+ document.addEventListener('click',event=>{const link=event.target.closest('#bookingList a[href*="tracking="],#todayBookingList a[href*="tracking="]');if(!link)return;let token='';try{token=new URL(link.href,location.href).searchParams.get('tracking')||''}catch(e){}if(!token)return;event.preventDefault();showEmbeddedBooking(token);bookingPanel.scrollIntoView({behavior:'smooth',block:'start'})});
  auth.hidden=true;bookings.hidden=true;if(profile)profile.hidden=true;if(therapists)therapists.hidden=true;
  const todayPanel=document.createElement('section');
  todayPanel.id='todayBookingsPanel';todayPanel.className='panel';todayPanel.hidden=true;
@@ -212,33 +226,4 @@ function showThankYou(message){
 })();
 </script>
 
-<style id="bex-account-booking-iframe-fix-style">
-#bexAccountBookingPage{border:1px solid #6b5420;border-radius:18px;overflow:hidden;margin:16px 0;background:#0b0b0d}
-#bexAccountBookingPage iframe{display:block;width:100%;height:1000px;border:0;background:#0b0b0d}
-#bexAccountBookingEmpty{padding:18px;color:var(--muted);text-align:center}
-</style>
-<script id="bex-account-booking-iframe-fix">
-(function(){
- const controls=document.getElementById('accountMainButtons');
- if(!controls)return;
- const panel=document.createElement('section');
- panel.id='bexAccountBookingPage';
- panel.innerHTML='<div id="bexAccountBookingEmpty">Booking details yahan dikhengi jab aap booking kar lenge. <a href="./index.html#booking">Abhi booking karein</a>.</div><iframe id="bexAccountBookingFrame" title="Aapki BodyExpertX booking details, status, therapist aur OTP" loading="eager" class="hidden" allow="geolocation"></iframe>';
- controls.insertAdjacentElement('afterend',panel);
- const frame=document.getElementById('bexAccountBookingFrame');
- const empty=document.getElementById('bexAccountBookingEmpty');
- function tokens(){try{const list=JSON.parse(localStorage.getItem('bex_customer_bookings')||'[]');return Array.isArray(list)?list.filter(x=>x&&x.trackingToken):[]}catch(e){return[]}}
- function open(token){if(!token)return;empty.classList.add('hidden');frame.classList.remove('hidden');const src='./customer-dashboard.html?tracking='+encodeURIComponent(token)+'&embed=account';if(frame.getAttribute('src')!==src)frame.src=src}
- const saved=tokens();let current='';try{current=localStorage.getItem('bex_current_booking_tracking')||''}catch(e){}
- const latest=saved[0]?.trackingToken||current;if(latest)open(latest);
- window.addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==frame.contentWindow)return;const d=event.data;if(d&&d.type==='bex-booking-page-height'&&Number.isFinite(Number(d.height)))frame.style.height=Math.max(850,Math.min(12000,Number(d.height)+8))+'px'});
- document.addEventListener('click',event=>{
-   const link=event.target.closest('#bookingList a[href*="tracking="],#todayBookingList a[href*="tracking="]');
-   if(!link)return;
-   let token='';try{token=new URL(link.href,location.href).searchParams.get('tracking')||''}catch(e){}
-   if(!token)return;
-   event.preventDefault();open(token);panel.scrollIntoView({behavior:'smooth',block:'start'});
- });
-})();
-</script>
 </body></html>
