@@ -116,14 +116,14 @@ Deno.serve(async (req: Request) => {
       const customer_gps_accuracy_meters = body.customer_gps_accuracy_meters === null || body.customer_gps_accuracy_meters === undefined || body.customer_gps_accuracy_meters === "" ? null : Math.max(0, Math.min(100000, Math.round(Number(body.customer_gps_accuracy_meters) || 0)));
       const appointment_date = String(body.appointment_date ?? "").slice(0, 10) || null;
       const appointment_time = String(body.appointment_time ?? "").slice(0, 30) || null;
-      // Customer bookings must start at least three hours from the current India time.
+      // Customer bookings must start at least two hours from the current India time.
       if (appointment_date && appointment_time) {
         const match = appointment_time.match(/^(\d{1,2}):(\d{2})/);
         if (!match) return json({ error: "Appointment time is invalid." }, 400);
         const hour = Number(match[1]); const minute = Number(match[2]);
         if (hour > 23 || minute > 59) return json({ error: "Appointment time is invalid." }, 400);
         const start = new Date(`${appointment_date}T${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00+05:30`);
-        if (!Number.isFinite(start.getTime()) || start.getTime() < Date.now() + 3 * 60 * 60 * 1000) return json({ error: "Booking ke liye abhi se kam se kam 3 ghante baad ka date aur time chunein." }, 400);
+        if (!Number.isFinite(start.getTime()) || start.getTime() < Date.now() + 2 * 60 * 60 * 1000) return json({ error: "Booking ke liye live time se kam-se-kam 2 ghante baad ka slot select karein." }, 400);
       }
       const service_type = String(body.service_type ?? "");
       const tier = String(body.tier ?? "");
