@@ -1296,7 +1296,7 @@ try{
   const oldProfile=JSON.parse(localStorage.getItem("bex_customer_profile")||"{}");
   const bookingAddress=document.getElementById("visit").value==="Home service"?document.getElementById("address").value.trim():(oldProfile.address||"");
   const sameSavedAddress=bookingAddress===(oldProfile.address||"");
-  const profile={...oldProfile,name:document.getElementById("name").value.trim(),phone:document.getElementById("phone").value.trim(),age:Number(document.getElementById("age").value)||oldProfile.age||"",gender:oldProfile.gender||"",lastRecipientGender:document.getElementById("recipientGender").value,lastVisitType:document.getElementById("visit").value,address:bookingAddress,latitude:sameSavedAddress?oldProfile.latitude:null,longitude:sameSavedAddress?oldProfile.longitude:null,maps_url:sameSavedAddress?oldProfile.maps_url:"",updatedAt:new Date().toISOString()};
+  const profile={...oldProfile,name:document.getElementById("name").value.trim(),phone:document.getElementById("phone").value.trim(),age:Number(document.getElementById("age").value)||oldProfile.age||"",gender:document.getElementById("recipientGender").value||oldProfile.gender||"",lastRecipientGender:document.getElementById("recipientGender").value,lastVisitType:document.getElementById("visit").value,address:bookingAddress,latitude:sameSavedAddress?oldProfile.latitude:null,longitude:sameSavedAddress?oldProfile.longitude:null,maps_url:sameSavedAddress?oldProfile.maps_url:"",updatedAt:new Date().toISOString()};
   localStorage.setItem("bex_customer_profile",JSON.stringify(profile));
   if(bookingTrackingToken){
    const history=JSON.parse(localStorage.getItem("bex_customer_bookings")||"[]");
@@ -1336,6 +1336,8 @@ document.getElementById("date")?.addEventListener("change",refreshBexTimeSlots);
 document.getElementById("time")?.addEventListener("focus",refreshBexTimeSlots);
 document.getElementById("time")?.addEventListener("click",refreshBexTimeSlots);
 setInterval(refreshBexTimeSlots,30000);
+function bexPrefillSavedCustomer(){try{const p=getSavedCustomerProfile();if(!p||!Object.keys(p).length)return;const put=(id,value)=>{const el=document.getElementById(id);if(el&&value!==undefined&&value!==null&&String(value)!==""){el.value=String(value);el.dispatchEvent(new Event("change",{bubbles:true}));}};put("name",p.name);put("phone",p.phone);put("age",p.age);put("recipientGender",p.lastRecipientGender||p.gender);put("address",p.address);const visit=document.getElementById("visit");if(visit&&p.lastVisitType){visit.value=p.lastVisitType;toggleAddress();}const type=document.getElementById("customerType");if(type&&p.phone)type.value="Returning customer";}catch(e){console.warn("Saved customer details could not be filled",e)}}
+bexPrefillSavedCustomer();
 renderServices();renderCart();setMinDate();updateCouponAvailability();
 </script>
 <script>
