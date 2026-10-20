@@ -86,6 +86,7 @@ h2{color:#17243a;font-size:19px}.muted,.sub{color:var(--muted)}
   <button type="button" data-view="zones"><span class="nav-icon">⌖</span> Zone Management</button>
   <button type="button" data-view="therapists"><span class="nav-icon">♙</span> All Therapists</button>
   <button type="button" data-view="ratings"><span class="nav-icon">★</span> Ratings & Reviews</button>
+  <button type="button" data-view="tracking"><span class="nav-icon">◉</span> Customer Tracking</button>
 </nav>
 <div id="adminContent">
 <section id="adminTools" class="card hidden">
@@ -116,6 +117,7 @@ h2{color:#17243a;font-size:19px}.muted,.sub{color:var(--muted)}
 </section>
 <section id="linkTools" class="card hidden"><h2>WhatsApp rating link बनाएं</h2><label class="field"><span>Therapist चुनें</span><select id="therapistSelect"><option value="">पहले therapist बनाएं</option></select></label><button id="makeLink" class="btn">Generate private rating link</button><div id="linkMsg" class="msg hidden"></div><div id="linkOutput" class="hidden"><div class="linkbox" id="linkText"></div><div class="row"><button id="copyLink" class="btn alt">Copy link</button><a id="whatsappLink" class="btn" target="_blank" rel="noopener">WhatsApp पर भेजें</a></div><p class="muted small">Link 30 दिन में expire होगा और एक customer rating के बाद इस्तेमाल नहीं हो सकेगा।</p></div></section>
 <section id="ratingsSection" class="card"><div class="row"><h2 id="ratingHeading">Ratings & reviews</h2><button id="refresh" class="btn alt right">Refresh</button></div><div id="ratingList"><div class="empty">Login के बाद ratings यहां दिखेंगी।</div></div></section>
+<section id="customerTrackingSection" class="card hidden"><h2>Customer Tracking</h2><p class="muted small">Customer booking activity और incomplete booking signals देखने के लिए।</p><iframe title="Customer Tracking Dashboard" src="./customer-tracking.html" loading="lazy" style="display:block;width:100%;height:780px;border:1px solid var(--line);border-radius:12px;background:#0b0b0d"></iframe></section>
 <section id="therapistListCard" class="card hidden"><h2>All Therapists</h2><p class="muted small">Review therapist profiles, ratings, contact details and approval status.</p><section class="card"><h3>Pending Therapist Approvals <span id="pendingTherapistCount" class="status-pill">0</span></h3><p class="muted small">New therapist profiles remain unavailable for customer assignment until approved.</p><div id="pendingTherapistList" class="item-list"></div></section><section class="card"><h3>Five-Star Therapists</h3><div id="fiveStarTherapistList" class="item-list"></div></section><section class="card"><h3>All Therapist Profiles</h3><div id="therapistList" class="item-list"></div></section></section>
 </div>
 </div>
@@ -146,9 +148,10 @@ function showAdminView(view){
   bookings:["bookingManagement"],
   zones:["zoneTools","assignmentTools"],
   therapists:["adminTools","serviceIdTools","therapistListCard","linkTools"],
-  ratings:["ratingsSection"]
+  ratings:["ratingsSection"],
+  tracking:["customerTrackingSection"]
  };
- const all=["bookingManagement","zoneTools","assignmentTools","adminTools","serviceIdTools","therapistListCard","linkTools","ratingsSection"];
+ const all=["bookingManagement","zoneTools","assignmentTools","adminTools","serviceIdTools","therapistListCard","linkTools","ratingsSection","customerTrackingSection"];
  all.forEach(id=>{const el=$(id);if(el)el.classList.add("hidden")});
  (groups[view]||groups.bookings).forEach(id=>{const el=$(id);if(el)el.classList.remove("hidden")});
  document.querySelectorAll("#adminNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
