@@ -567,10 +567,12 @@ body.therapist-detail-page #therapistDetailPage{display:block!important}
   <button type="button" data-view="zones"><span class="nav-icon">⌖</span> Zone Management</button>
   <button type="button" data-view="therapists"><span class="nav-icon">♙</span> All Therapists</button>
   <button type="button" data-view="ratings"><span class="nav-icon">★</span> Ratings & Reviews</button>
+  <button type="button" data-view="tracking"><span class="nav-icon">◉</span> Customer Tracking</button>
   <button type="button" data-view="partners"><span class="nav-icon">🤝</span> BEX Partner</button>
   <button type="button" data-view="therapist-money"><span class="nav-icon">₹</span> Therapist Wallet & Approval</button>
 </nav>
 <div id="adminContent">
+ <section id="customerTrackingSection" class="card hidden"><h2>Customer Tracking</h2><p class="muted">Customer booking activity dashboard</p><iframe title="Customer Tracking Dashboard" src="./customer-tracking.html" style="width:100%;height:78vh;min-height:620px;border:1px solid var(--line);border-radius:12px;background:#0b0b0d"></iframe></section>
 <section id="adminTools" class="card hidden therapist-create-card">
 <div class="therapist-section-heading"><div><span class="eyebrow">BODYEXPERTX · THERAPIST MANAGEMENT</span><h2>Add New Therapist</h2><p class="muted small">सही जानकारी भरें। जरूरत पड़ने पर Edit Profile से सुधार कर सकते हैं।</p></div><span class="profile-step">NEW PROFILE</span></div>
 <div class="therapist-create-row therapist-row-identity">
@@ -698,10 +700,11 @@ function showAdminView(view,options={}){
   zones:["zoneTools","assignmentTools"],
   therapists:["adminTools","therapistListCard","linkTools"],
   ratings:["ratingsSection"],
+  tracking:["customerTrackingSection"],
   partners:["partnerTools"],
   "therapist-money":["therapistMoneySection"]
  };
- const all=["bookingManagement","zoneTools","assignmentTools","adminTools","therapistListCard","linkTools","ratingsSection","partnerTools","therapistMoneySection"];
+ const all=["bookingManagement","zoneTools","assignmentTools","adminTools","therapistListCard","linkTools","ratingsSection","partnerTools","therapistMoneySection","customerTrackingSection"];
  all.forEach(id=>{const el=$(id);if(el)el.classList.add("hidden")});
  (groups[view]||groups.bookings).forEach(id=>{const el=$(id);if(el)el.classList.remove("hidden")});
  if(view==="therapist-money"){tmLoad();}
