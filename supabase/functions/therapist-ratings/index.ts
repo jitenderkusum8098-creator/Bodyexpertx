@@ -326,7 +326,8 @@ Deno.serve(async (req: Request) => {
       const zone_id = String(body.zone_id ?? "");
       const service_type = String(body.service_type ?? "");
       const tier = String(body.tier ?? "");
-      const recipient_gender = String(body.recipient_gender ?? "").trim();
+      const requested_recipient_gender = String(body.recipient_gender ?? "").trim();
+      const recipient_gender = service_type === "Salon" ? "Female" : requested_recipient_gender;
       if (!/^[0-9a-f-]{36}$/i.test(zone_id) || !["Massage", "Salon"].includes(service_type) || !["Prime", "Luxe"].includes(tier) || !["Male","Female"].includes(recipient_gender)) {
         return json({ error: "Please choose a valid zone, service, and category." }, 400);
       }
@@ -374,7 +375,8 @@ Deno.serve(async (req: Request) => {
       const therapist_id = String(body.therapist_id ?? "");
       const service_type = String(body.service_type ?? "");
       const tier = String(body.tier ?? "");
-      const recipient_gender = String(body.recipient_gender ?? "").trim();
+      const requested_recipient_gender = String(body.recipient_gender ?? "").trim();
+      const recipient_gender = service_type === "Salon" ? "Female" : requested_recipient_gender;
       const service_name = String(body.service_name ?? "").trim().slice(0, 500);
       const appointment_date = String(body.appointment_date ?? "").slice(0, 10) || null;
       const appointment_time = String(body.appointment_time ?? "").slice(0, 30) || null;
