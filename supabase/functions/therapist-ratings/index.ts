@@ -96,6 +96,24 @@ async function chooseInitialTherapist(job:any){
  }).sort((a:any,b:any)=>(a.duties===0?0:1)-(b.duties===0?0:1)||Number(b.preferred)-Number(a.preferred)||a.distance-b.distance||b.avg-a.avg||a.duties-b.duties||String(a.t.created_at).localeCompare(String(b.t.created_at)))[0].t;
 }
 
+async function attachBookingAudit(bookings:any[]) {
+  const ids=(bookings??[]).map((b:any)=>b.id).filter(Boolean);
+  if(!ids.length)return (bookings??[]).map((b:any)=>({...b,reschedule_history:[],therapist_assignment_history:[]}));
+  const [{data:reschedules,error:rhError},{data:offers,error:offerError}] = await Promise.all([
+    admin.from("booking_reschedule_history").select("id,booking_id,old_appointment_date,old_appointment_time,new_appointment_date,new_appointment_time,changed_by,changed_at").in("booking_id",ids).order("changed_at",{ascending:true}),
+    admin.from("therapist_job_offers").select("id,booking_id,therapist_id,offered_at,expires_at,responded_at,response,created_at").in("booking_id",ids).order("offered_at",{ascending:true})
+  ]);
+  if(rhError)throw rhError;if(offerError)throw offerError;
+  const therapistIds=[...new Set((offers??[]).map((o:any)=>o.therapist_id).filter(Boolean))];
+  const {data:therapists,error:tError}=therapistIds.length?await admin.from("therapists").select("id,display_name,therapist_code").in("id",therapistIds):{data:[],error:null};
+  if(tError)throw tError;
+  const names=new Map((therapists??[]).map((t:any)=>[t.id,{name:t.display_name,code:t.therapist_code}]));
+  const rhMap=new Map<string,any[]>(),offerMap=new Map<string,any[]>();
+  for(const row of reschedules??[]){if(!rhMap.has(row.booking_id))rhMap.set(row.booking_id,[]);rhMap.get(row.booking_id)!.push(row)}
+  for(const row of offers??[]){if(!offerMap.has(row.booking_id))offerMap.set(row.booking_id,[]);const t=names.get(row.therapist_id);offerMap.get(row.booking_id)!.push({...row,therapist_name:t?.name??"Unknown therapist",therapist_code:t?.code??""})}
+  return (bookings??[]).map((b:any)=>({...b,reschedule_history:rhMap.get(b.id)??[],therapist_assignment_history:offerMap.get(b.id)??[]}));
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ error: "POST only" }, 405);
@@ -232,8 +250,11 @@ Deno.serve(async (req: Request) => {
       const tm=newTime.match(/^(\d{1,2}):(\d{2})/);
       if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)||!tm||Number(tm[1])>23||Number(tm[2])>59) return json({error:"Nayi date aur time sahi chunein."},400);
       const newStart=new Date(newDate+"T"+String(Number(tm[1])).padStart(2,"0")+":"+tm[2]+":00+05:30");
-      if (!Number.isFinite(newStart.getTime())||newStart.getTime()<Date.now()+3*60*60*1000) return json({error:"Reschedule ke liye abhi se kam se kam 3 ghante baad ka date aur time chunein."},400);
-      const { data: updated, error } = await admin.from("booking_assignments").update({appointment_date:newDate,appointment_time:newTime,status:"awaiting_whatsapp",therapist_id:null,updated_at:new Date().toISOString()}).eq("id",booking.id).not("status","in",'("completed","cancelled","reached")').select("id,reference_code,status,appointment_date,appointment_time,therapist_id").maybeSingle();
+      if (!Number.isFinite(newStart.getTime())||newStart.getTime()<Date.now()+2*60*60*1000) return json({error:"Reschedule ke liye abhi se kam se kam 2 ghante baad ka date aur time chunein."},400);
+      const changedAt = new Date().toISOString();
+      const { error: historyError } = await admin.from("booking_reschedule_history").insert({booking_id:booking.id,old_appointment_date:booking.appointment_date,old_appointment_time:booking.appointment_time,new_appointment_date:newDate,new_appointment_time:newTime,changed_by:"customer",changed_at:changedAt});
+      if (historyError) throw historyError;
+      const { data: updated, error } = await admin.from("booking_assignments").update({appointment_date:newDate,appointment_time:newTime,status:"awaiting_whatsapp",therapist_id:null,updated_at:changedAt}).eq("id",booking.id).not("status","in",'("completed","cancelled","reached")').select("id,reference_code,status,appointment_date,appointment_time,therapist_id").maybeSingle();
       if (error) throw error;
       if (!updated) return json({error:"Booking ka status badal gaya hai. Page refresh karke dekhein."},409);
       await admin.from("therapist_job_offers").update({response:"rescheduled",responded_at:new Date().toISOString()}).eq("booking_id",booking.id).is("responded_at",null);
@@ -267,34 +288,42 @@ Deno.serve(async (req: Request) => {
       let therapist = null;
       if (booking.therapist_id && ["confirmed","reached","completed"].includes(booking.status)) {
         const { data: t, error: therapistError } = await admin.from("therapists")
-          .select("id,display_name,therapist_code,photo_url,experience_years,gender,service_types,tiers")
+          .select("id,display_name,therapist_code,photo_url,experience_years,gender,service_types,tiers,phone")
           .eq("id", booking.therapist_id).maybeSingle();
         if (therapistError) throw therapistError;
         if (t) {
           const { data: ratings, error: ratingsError } = await admin.from("therapist_ratings")
-            .select("rating,review,created_at").eq("therapist_id", t.id).eq("status", "published").order("created_at", { ascending: false });
+            .select("rating,review,created_at,booking_reference").eq("therapist_id", t.id).eq("status", "published").order("created_at", { ascending: false });
           if (ratingsError) throw ratingsError;
           const list = ratings ?? [];
+          const refs=[...new Set(list.map((r:any)=>r.booking_reference).filter(Boolean))];
+          const {data:reviewBookings,error:reviewBookingsError}=refs.length?await admin.from("booking_assignments").select("reference_code,customer_name").in("reference_code",refs):{data:[],error:null};
+          if(reviewBookingsError)throw reviewBookingsError;
+          const names=new Map((reviewBookings??[]).map((b:any)=>[b.reference_code,b.customer_name]));
           const avg = list.length ? list.reduce((sum: number, r: { rating: number }) => sum + Number(r.rating), 0) / list.length : null;
-          therapist = { id: t.id, display_name: t.display_name, therapist_code: t.therapist_code, photo_url: t.photo_url,
+          therapist = { id: t.id, display_name: t.display_name, therapist_code: t.therapist_code, photo_url: t.photo_url, phone: t.phone,
             experience_years: Number(t.experience_years ?? 0), gender: t.gender ?? null,
             average_rating: avg === null ? null : Math.round(avg * 10) / 10, rating_count: list.length,
-            reviews: list.filter((r: { review?: string | null }) => !!r.review).slice(0, 3) };
+            reviews: list.filter((r: { review?: string | null }) => !!r.review).map((r:any)=>({...r,customer_name:names.get(r.booking_reference)||"Customer"})) };
         }
       }
       const { data: customerRatings, error: customerRatingError } = await admin.from("therapist_ratings")
         .select("rating,review,status,created_at").eq("booking_reference", booking.reference_code).order("created_at", { ascending: false }).limit(1);
       if (customerRatingError) throw customerRatingError;
       const customerRating = (customerRatings ?? [])[0] ?? null;
-      const { data: codeRow, error: codeError } = await admin.from("booking_completion_codes").select("completion_code").eq("booking_id", booking.id).maybeSingle();
+      const [{ data: codeRow, error: codeError }, { data: startCodeRow, error: startCodeError }] = await Promise.all([
+        admin.from("booking_completion_codes").select("completion_code").eq("booking_id", booking.id).maybeSingle(),
+        admin.from("booking_start_codes").select("start_code").eq("booking_id", booking.id).maybeSingle()
+      ]);
       if (codeError) throw codeError;
+      if (startCodeError) throw startCodeError;
       const serviceDurationMinutes = Array.isArray(booking.service_details) ? booking.service_details.reduce((sum: number, item: any) => sum + Math.max(0, Number(item?.duration) || 0), 0) : 0;
       return json({ booking: { reference_code: booking.reference_code, service_type: booking.service_type, tier: booking.tier,
         service_name: booking.service_name, service_details: booking.service_details ?? [], service_duration_minutes: serviceDurationMinutes,
         appointment_date: booking.appointment_date, appointment_time: booking.appointment_time,
         status: booking.status, booking_amount: booking.booking_amount, created_at: booking.created_at, job_started_at: booking.job_started_at ?? null,
-        job_ended_at: booking.job_ended_at ?? null, therapist_arrived_at: booking.therapist_arrived_at ?? null, job_accepted_at: booking.job_accepted_at ?? null, payment_method: booking.payment_method ?? null,
-        completion_code: codeRow?.completion_code ?? null,
+        job_ended_at: booking.job_ended_at ?? null, actual_service_duration_seconds: booking.job_started_at && booking.job_ended_at ? Math.max(0, Math.floor((Date.parse(booking.job_ended_at)-Date.parse(booking.job_started_at))/1000)) : null, therapist_arrived_at: booking.therapist_arrived_at ?? null, job_accepted_at: booking.job_accepted_at ?? null, payment_method: booking.payment_method ?? null,
+        completion_code: codeRow?.completion_code ?? null, start_code: startCodeRow?.start_code ?? null,
         preferred_therapist_id: booking.preferred_therapist_id ?? null,
         customer_rating: customerRating ? { rating: customerRating.rating, review: customerRating.review, status: customerRating.status, created_at: customerRating.created_at } : null }, therapist });
     }
@@ -313,9 +342,9 @@ Deno.serve(async (req: Request) => {
       const {data:prior,error:priorError}=await admin.from("therapist_ratings").select("id,status").eq("booking_reference",booking.reference_code).eq("therapist_id",booking.therapist_id).limit(1);
       if(priorError)throw priorError;
       if(prior?.length)return json({error:"Is booking ke liye rating pehle hi submit ho chuki hai."},409);
-      const {error:insertError}=await admin.from("therapist_ratings").insert({therapist_id:booking.therapist_id,rating,review:review||null,booking_reference:booking.reference_code,status:"pending"});
+      const {error:insertError}=await admin.from("therapist_ratings").insert({therapist_id:booking.therapist_id,rating,review:review||null,booking_reference:booking.reference_code,status:"published"});
       if(insertError)throw insertError;
-      return json({success:true,message:"Dhanyavaad! Aapki rating Admin approval ke liye submit ho gayi hai."});
+      return json({success:true,message:"Dhanyavaad! Aapki rating publish ho gayi hai. Therapist ki profile par rating ab update ho jayegi."});
     }
     if (action === "public-zones") {
       const { data, error } = await admin.from("zones").select("id,name,description,boundary_geojson,center_lat,center_lng").eq("active", true).order("name");
@@ -540,18 +569,23 @@ Deno.serve(async (req: Request) => {
       if (error) throw error;
       const therapistIds = [...new Set((bookings ?? []).map((b:any) => b.therapist_id).filter(Boolean))];
       const zoneIds = [...new Set((bookings ?? []).map((b:any) => b.zone_id).filter(Boolean))];
-      const [{ data: therapists, error: therapistError }, { data: zones, error: zoneError }, { data: customerRatings, error: customerRatingsError }] = await Promise.all([
+      const bookingIds=(bookings??[]).map((b:any)=>b.id);
+      const bookingRefs=[...new Set((bookings??[]).map((b:any)=>b.reference_code).filter(Boolean))];
+      const [{ data: therapists, error: therapistError }, { data: zones, error: zoneError }, { data: customerRatings, error: customerRatingsError }, { data: therapistRatings, error: therapistRatingsError }] = await Promise.all([
         therapistIds.length ? admin.from("therapists").select("id,display_name,therapist_code,phone").in("id", therapistIds) : Promise.resolve({data:[],error:null}),
         zoneIds.length ? admin.from("zones").select("id,name").in("id", zoneIds) : Promise.resolve({data:[],error:null}),
-        (bookings??[]).length ? admin.from("customer_ratings").select("booking_id,rating,tags,review,created_at").in("booking_id",(bookings??[]).map((b:any)=>b.id)) : Promise.resolve({data:[],error:null})
+        bookingIds.length ? admin.from("customer_ratings").select("booking_id,rating,tags,review,created_at").in("booking_id",bookingIds) : Promise.resolve({data:[],error:null}),
+        bookingRefs.length ? admin.from("therapist_ratings").select("booking_reference,rating,review,status,created_at").in("booking_reference",bookingRefs) : Promise.resolve({data:[],error:null})
       ]);
       if (therapistError) throw therapistError;
       if (zoneError) throw zoneError;
       if (customerRatingsError) throw customerRatingsError;
+      if (therapistRatingsError) throw therapistRatingsError;
       const therapistMap = Object.fromEntries((therapists ?? []).map((t:any) => [t.id, t]));
       const zoneMap = Object.fromEntries((zones ?? []).map((z:any) => [z.id, z]));
       const customerRatingMap = Object.fromEntries((customerRatings ?? []).map((r:any) => [r.booking_id, r]));
-      return json({ bookings: (bookings ?? []).map((b:any) => ({...b, therapist: therapistMap[b.therapist_id] ?? null, zone: zoneMap[b.zone_id] ?? null, customer_rating: customerRatingMap[b.id] ?? null})) });
+      const therapistRatingMap = Object.fromEntries((therapistRatings ?? []).map((r:any) => [r.booking_reference, r]));
+      return json({ bookings: await attachBookingAudit((bookings ?? []).map((b:any) => ({...b, therapist: therapistMap[b.therapist_id] ?? null, zone: zoneMap[b.zone_id] ?? null, customer_rating: customerRatingMap[b.id] ?? null, therapist_rating: therapistRatingMap[b.reference_code] ?? null}))) });
     }
     if (action === "admin-list") {
       await requireRole(req, ["admin"]);
@@ -579,7 +613,7 @@ Deno.serve(async (req: Request) => {
       if(customerRatingsError)throw customerRatingsError;
       const customerRatingMap=Object.fromEntries((customerRatings??[]).map((r:any)=>[r.booking_id,r]));
       const assignmentsWithFeedback=(assignments as any[]).map((a:any)=>({...a,customer_rating:customerRatingMap[a.id]??null}));
-      return json({ therapists: therapists ?? [], ratings: ratings ?? [], zones: zones ?? [], therapist_zones: therapistZones ?? [], assignments:assignmentsWithFeedback });
+      return json({ therapists: therapists ?? [], ratings: ratings ?? [], zones: zones ?? [], therapist_zones: therapistZones ?? [], assignments:await attachBookingAudit(assignmentsWithFeedback) });
     }
     if (action === "admin-create-zone") {
       await requireRole(req, ["admin"]);
@@ -912,14 +946,18 @@ Deno.serve(async (req: Request) => {
       const ids = Array.isArray(body.booking_ids)
         ? [...new Set(body.booking_ids.map((x: unknown) => String(x)).filter((x: string) => /^[0-9a-f-]{36}$/i.test(x)))].slice(0, 500)
         : [];
-      if (!ids.length) return json({ success: true, codes: {} });
-      const { data, error } = await admin.from("booking_completion_codes")
-        .select("booking_id,completion_code")
-        .in("booking_id", ids);
+      if (!ids.length) return json({ success: true, codes: {}, start_codes: {} });
+      const [{ data, error }, { data: startData, error: startError }] = await Promise.all([
+        admin.from("booking_completion_codes").select("booking_id,completion_code").in("booking_id", ids),
+        admin.from("booking_start_codes").select("booking_id,start_code").in("booking_id", ids)
+      ]);
       if (error) throw error;
+      if (startError) throw startError;
       const codes: Record<string, string> = {};
+      const start_codes: Record<string, string> = {};
       for (const row of data ?? []) codes[row.booking_id] = row.completion_code;
-      return json({ success: true, codes });
+      for (const row of startData ?? []) start_codes[row.booking_id] = row.start_code;
+      return json({ success: true, codes, start_codes });
     }
     if (action === "admin-issue-end-otp") {
       await requireRole(req, ["admin", "super_admin", "superadmin"]);
