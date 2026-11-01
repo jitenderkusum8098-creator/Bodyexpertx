@@ -159,6 +159,15 @@ button,a{transition:color .18s ease,background-color .18s ease,border-color .18s
 input,select,textarea{font-size:16px;line-height:1.5}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 @media(max-width:560px){.wrap{width:min(100% - 28px,1160px)}.section-head p{font-size:15px;line-height:1.65}}
+
+/* Female Salon optional service details */
+.bx-salon-detail-toggle{width:100%;margin-top:12px;padding:12px 14px;border:1px solid #c6a34a;border-radius:12px;background:transparent;color:inherit;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.bx-salon-detail-toggle[aria-expanded="true"]{background:#fff8e7;color:#4a3710}
+.bx-salon-detail-panel{display:none;margin-top:10px;padding:14px;border:1px solid #e6d8ad;border-radius:14px;background:#fffdf7;color:#28231a}
+.bx-salon-detail-panel.open{display:block}
+.bx-salon-detail-panel h4{margin:12px 0 5px;font-size:15px;color:#76570e}
+.bx-salon-detail-panel p,.bx-salon-detail-panel li{font-size:13px;line-height:1.55;color:#514b40}
+.bx-salon-detail-panel ul{padding-left:19px;margin:6px 0}
 </style>
 <style id="bodyexpertx-premium-theme">
 :root{color-scheme:dark;--bg:#101010;--panel:#191919;--panel2:#22201b;--gold:#D8B568;--gold2:#E8C982;--text:#F7F4ED;--muted:#BDB8AD;--line:#39342A;--ink:#F7F4ED;--gold-light:#2B261B;--white:#F7F4ED}
@@ -380,6 +389,14 @@ const money=n=>"₹"+n.toLocaleString("en-IN");
 const photo=(id,w=720)=>"https://images.unsplash.com/"+id+"?auto=format&fit=crop&w="+w+"&q=80";
 function selectDepartment(department){selectedDepartment="SALON";document.getElementById("tierChooser").hidden=false;document.getElementById("tierEyebrow").textContent="SALON EXPERIENCE";document.getElementById("tierDescription").textContent="Choose PRIME or LUXE to view salon services and booking.";document.getElementById("primeDescription").textContent="Haircut ₹120 · Shaving ₹80 · Combo ₹180.";document.getElementById("luxeDescription").textContent="Haircut ₹160 · Shaving ₹120 · Combo ₹259.";document.getElementById("primePrice").textContent="Haircut ₹120 · Shaving ₹80 · Combo ₹180";document.getElementById("luxePrice").textContent="Haircut ₹160 · Shaving ₹120 · Combo ₹259";document.getElementById("tierNote").textContent="Home Visit only · Female Beautician · Prices match your screenshots.";selectCategory(selectedCategory,false);document.getElementById("tierChooser").scrollIntoView({behavior:"smooth",block:"start"});}
 function selectCategory(category,scroll=true){selectedCategory=category==="LUXE"?"LUXE":"PRIME";document.getElementById("services").style.display="block";document.getElementById("add-ons").style.display=selectedDepartment==="MASSAGE"?"block":"none";document.getElementById("booking").style.display="block";document.getElementById("primeCategory").classList.toggle("active",selectedCategory==="PRIME");document.getElementById("luxeCategory").classList.toggle("active",selectedCategory==="LUXE");document.getElementById("primeCategory").setAttribute("aria-pressed",String(selectedCategory==="PRIME"));document.getElementById("luxeCategory").setAttribute("aria-pressed",String(selectedCategory==="LUXE"));document.getElementById("selectedCategoryLabel").textContent=selectedDepartment+" · "+selectedCategory;document.getElementById("serviceMenuTitle").textContent=selectedCategory+" "+(selectedDepartment==="MASSAGE"?"Massage Menu":"Salon Menu");document.getElementById("serviceMenuDescription").textContent=selectedDepartment==="MASSAGE"?(selectedCategory==="LUXE"?"Enjoy the same massage menu with ₹1,000 added to each massage session.":"Choose your treatment and session length. Select any service to add it to your booking."):"Choose facial, waxing and mani-pedi packages. Female beautician home service only.";renderServices();if(scroll)document.getElementById("services").scrollIntoView({behavior:"smooth",block:"start"});}
+const salonDetailContent={
+ "Rice Extract 10-Step Facial":{included:["10-step facial service","Free cleansing brush","Free lip balm"],procedure:[["Cleansing","Face is cleansed to remove dirt and oil."],["Face & Lip Exfoliation","Gentle exfoliation followed by skin preparation."],["Gel","Facial gel is applied to the face and neck."],["Cream","Facial cream massage for the face and neck."],["Candle Massage","Candle massage is for the neck and back only; wax is not applied to the face."],["Pack Application","Facial pack is applied and removed after it dries."],["2-in-1 Eye Mask & Face Serum","Eye mask and face serum are applied."],["Peel-Off Herbs Mask","Herbal rubber mask is applied and peeled off after it dries."],["SPF","SPF is applied to help protect the skin."],["Lip Balm","Lip balm is applied to moisturise the lips."]],aftercare:["Stay hydrated.","Avoid harsh exfoliation immediately after the facial.","Apply sunscreen as part of your daily routine."]},
+ "Korean Facial & Sokora Aftercare Duo":{included:["Facial service","Sokora Day & Nite Cream duo"],notes:["Approximate duration: 1 hour 15 minutes."]},
+ "O3+ Shine & Glow Facial":{included:["7-step facial service","Sokora Day & Nite Sheet Mask"],notes:["Approximate duration: 1 hour 10 minutes."]},
+ "Korean Mani & Pedi":{included:["Combined manicure and pedicure care package"]},
+ "Full Arms + Full Legs + Underarms Waxing":{included:["Full arms waxing","Full legs waxing","Underarms waxing"]},
+ "Full Arms, Underarms & Full Legs":{included:["Full arms waxing","Underarms waxing","Full legs waxing"]}
+};
 function renderServices(){
  const serviceBox=document.getElementById("serviceCards");
  const addonBox=document.getElementById("addonCards");
@@ -396,7 +413,7 @@ function renderServices(){
  document.getElementById("add-ons").hidden=true;
  serviceBox.innerHTML=salonServices.map(item=>{
   const price=selectedCategory==="LUXE"?item.luxe:item.prime;
-  return `<article class="service"><img loading="lazy" src="https://images.unsplash.com/${item.img}?auto=format&fit=crop&w=720&q=85" alt="${item.alt}"><div class="service-body"><div class="tag">${selectedCategory} · SALON</div><h3>${item.name}</h3><p>${item.desc}</p><div class="prices"><div class="price-choice" style="grid-column:1/-1"><span>${selectedCategory} price</span><b>${money(price)}</b><button class="btn small" type="button" onclick="addSalonService(${price},'${item.name}')">Add to Cart</button></div></div></div></article>`;
+  const detail=salonDetailContent[item.name]||{};const detailId="salon-detail-"+salonServices.indexOf(item);return `<article class="service"><img loading="lazy" src="https://images.unsplash.com/${item.img}?auto=format&fit=crop&w=720&q=85" alt="${item.alt}"><div class="service-body"><div class="tag">${selectedCategory} · SALON</div><h3>${item.name}</h3><p>${item.desc}</p><div class="prices"><div class="price-choice" style="grid-column:1/-1"><span>${selectedCategory} price</span><b>${money(price)}</b><button class="btn small" type="button" onclick="addSalonService(${price},'${item.name}')">Add to Cart</button></div></div><button class="bx-salon-detail-toggle" type="button" aria-expanded="false" aria-controls="${detailId}" onclick="toggleSalonDetails(this)">Know More <span>＋</span></button><div class="bx-salon-detail-panel" id="${detailId}"><h4>About this service</h4><p>${item.desc}</p>${detail.included?`<h4>What's Included</h4><ul>${detail.included.map(x=>`<li>${x}</li>`).join("")}</ul>`:""}${detail.procedure?`<h4>Procedure</h4><ol>${detail.procedure.map(x=>`<li><strong>${x[0]}:</strong> ${x[1]}</li>`).join("")}</ol>`:""}${detail.aftercare?`<h4>Aftercare</h4><ul>${detail.aftercare.map(x=>`<li>${x}</li>`).join("")}</ul>`:""}${detail.notes?`<h4>Important Information</h4><ul>${detail.notes.map(x=>`<li>${x}</li>`).join("")}</ul>`:""}</div></div></article>`;
  }).join("");
  addonBox.innerHTML="";
  return;
@@ -422,6 +439,7 @@ function renderServices(){
   </article>`).join("");
 }
 function currentGender(){return document.getElementById("recipientGender")?.value||"Male"}
+function toggleSalonDetails(button){const panel=document.getElementById(button.getAttribute("aria-controls"));if(!panel)return;const open=!panel.classList.contains("open");panel.classList.toggle("open",open);button.setAttribute("aria-expanded",String(open));const label=button.querySelector("span");if(label)label.textContent=open?"−":"＋";button.firstChild.textContent=open?"Hide Details ":"Know More ";}
 function addSalonService(price,serviceName="Haircut"){cart.push({name:serviceName+" ("+selectedCategory+")",duration:0,basePrice:price,price:price,type:"salon",category:"SALON · "+selectedCategory});couponApplied=false;offerMode=false;renderCart();showCartFeedback(serviceName+" added to cart.");}
 function addService(i,duration){if(!services[i])return;const s=services[i],base=(duration===60?s.p60:s.p90)+(selectedCategory==="LUXE"?1300:0);cart.push({name:s.name+" ("+selectedCategory+")",duration:duration,basePrice:base,price:base+(currentGender()==="Female"?150:0),type:"service",category:"MASSAGE · "+selectedCategory});couponApplied=false;renderCart();showCartFeedback(s.name+" · "+duration+" min added to cart.");}
 function addAddon(i){if(!addons[i])return;const a=addons[i];cart.push({name:a.name,duration:a.minutes,basePrice:a.price,price:a.price+(currentGender()==="Female"?150:0),type:"addon"});couponApplied=false;renderCart();showCartFeedback(a.name+" added to cart.");}
