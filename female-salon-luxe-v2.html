@@ -105,7 +105,7 @@ body{background:#0b0b0d;color:#f7f3e8}
 /* Reliability fixes: hero layout without a stock photo, visible service cards and readable prices */
 .hero-grid{grid-template-columns:minmax(0,1fr)!important;max-width:900px}
 .hero{padding-bottom:42px}
-#services{display:block!important;min-height:500px}
+#services{display:block!important;min-height:0!important}
 #serviceCards{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:18px!important}
 #addonCards{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
 .service .price-choice .btn{font-size:11px;padding:8px 4px;white-space:normal}
@@ -170,7 +170,7 @@ input,select,textarea{font-size:16px;line-height:1.5}
 .bx-salon-detail-panel ul{padding-left:19px;margin:6px 0}
 
 /* Female Salon category-first navigation (PRIME and LUXE) */
-.salon-category-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0 22px}
+.salon-category-menu{display:grid!important;visibility:visible!important;opacity:1!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0 22px}
 .salon-category-card{appearance:none;border:1px solid #9d8043;border-radius:15px;overflow:hidden;background:#191714;color:#f5e7c4;text-align:left;padding:0;cursor:pointer;min-width:0}
 .salon-category-card img{display:block;width:100%;height:94px;object-fit:cover}
 .salon-category-card span{display:block;padding:10px 8px;font-weight:800;font-size:14px;text-align:center;letter-spacing:.02em}
@@ -360,7 +360,7 @@ img{max-width:100%}
 </div></div></section>
 
 <div id="tierChooser" hidden aria-hidden="true" style="display:none!important"><button id="primeCategory" type="button" tabindex="-1"></button><button id="luxeCategory" type="button" tabindex="-1"></button></div>
-<section class="section" id="services"><div class="wrap"><div class="section-head"><div class="eyebrow">Your selection · <span id="selectedCategoryLabel" class="category-status">FEMALE SALON · LUXE</span></div><h2 id="serviceMenuTitle">LUXE Female Salon Menu</h2><p id="serviceMenuDescription">Facial, waxing and mani-pedi packages for women.</p></div><p class="gender-price-note">Female Salon · Home Visit only.</p><div id="salonCategoryMenu" class="salon-category-menu" aria-label="Choose salon service category"></div><div class="cards" id="serviceCards"></div></div></section>
+<section class="section" id="services"><div class="wrap"><div class="section-head"><div class="eyebrow">Your selection · <span id="selectedCategoryLabel" class="category-status">FEMALE SALON · LUXE</span></div><h2 id="serviceMenuTitle">LUXE Female Salon Menu</h2><p id="serviceMenuDescription">Facial, waxing and mani-pedi packages for women.</p></div><p class="gender-price-note">Female Salon · Home Visit only.</p><div id="salonCategoryMenu" class="salon-category-menu" aria-label="Choose salon service category"><button class="salon-category-card" type="button" onclick="selectSalonServiceCategory('Waxing')"><img loading="lazy" src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=500&q=80" alt="Waxing service"><span>Waxing ↗</span></button><button class="salon-category-card" type="button" onclick="selectSalonServiceCategory('Facial')"><img loading="lazy" src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=500&q=80" alt="Facial service"><span>Facial ↗</span></button><button class="salon-category-card" type="button" onclick="selectSalonServiceCategory('Mani-Pedi')"><img loading="lazy" src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=500&q=80" alt="Manicure and pedicure"><span>Mani-Pedi ↗</span></button></div><div class="cards" id="serviceCards"></div></div></section>
 <section class="section alt" id="add-ons"><div class="wrap"><div class="section-head"><div class="eyebrow">A little extra care</div><h2>Quick Add-on Sessions</h2><p>Book these on their own (₹400 minimum applies) or add them to a massage.</p></div><div class="addon-grid" id="addonCards">
 <article class="addon"><h3>Head Massage</h3><p>A short session focused on head and scalp comfort · 20 min</p><strong>₹199</strong><button class="btn small" type="button" onclick="addAddon(0)">Add to Cart</button></article>
 <article class="addon"><h3>Foot Massage</h3><p>A relaxing session focused on tired feet · 20 min</p><strong>₹199</strong><button class="btn small" type="button" onclick="addAddon(1)">Add to Cart</button></article>
