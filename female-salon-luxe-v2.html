@@ -514,5 +514,32 @@ function setMinDate(){document.getElementById("date").min=new Date().toISOString
 selectedDepartment="SALON";activeSalonCategory="";document.getElementById("tierEyebrow").textContent="FEMALE SALON";document.getElementById("tierDescription").textContent="Choose PRIME or LUXE to view female salon packages and book a home visit.";document.getElementById("primeDescription").textContent="Facial, waxing and mani-pedi packages for women.";document.getElementById("luxeDescription").textContent="Same package prices in PRIME and LUXE.";document.getElementById("primePrice").textContent="Packages from ₹899 · Facial ₹1,299–₹1,798";document.getElementById("luxePrice").textContent="Same package prices as PRIME";document.getElementById("tierNote").textContent="Home Visit only · Female Beautician · PRIME and LUXE prices match your reference.";document.getElementById("selectedCategoryLabel").textContent="FEMALE SALON · PRIME";document.getElementById("serviceMenuTitle").textContent="PRIME Female Salon Menu";document.getElementById("services").style.display="none";document.getElementById("add-ons").style.display="none";document.getElementById("booking").style.display="none";renderServices();renderCart();setMinDate();updateCouponAvailability();selectCategory("LUXE",false);document.getElementById("tierChooser").style.display="none";document.getElementById("tierChooser").hidden=true;document.getElementById("serviceCards").classList.remove("salon-filtered");
 </script>
 
+
+<script id="bex-salon-services-render-fix">
+(function(){
+ const data=[
+  {category:"Facial",name:"Rice Extract 10-Step Facial",desc:"10 steps with FREE cleansing brush and lip balm. Rice extract care for a refreshed look.",price:1299,img:"photo-1570172619644-dfd03ed5d881",alt:"Woman receiving a facial treatment"},
+  {category:"Facial",name:"Korean Facial & Sokora Aftercare Duo",desc:"Includes Day & Nite Cream. Approx. 1 hour 15 minutes.",price:1798,img:"photo-1616394584738-fc6e612e71b9",alt:"Korean facial skincare treatment"},
+  {category:"Facial",name:"O3+ Shine & Glow Facial",desc:"7 steps with Sokora Day & Nite Sheet Mask. Approx. 1 hour 10 minutes.",price:1399,img:"photo-1512290923902-8a9f81dc236c",alt:"Glow facial treatment"},
+  {category:"Mani-Pedi",name:"Korean Mani & Pedi",desc:"A combined manicure and pedicure care package.",price:1081,img:"photo-1604654894610-df63bc536371",alt:"Manicure and pedicure treatment"},
+  {category:"Waxing",name:"Full Arms + Full Legs + Underarms Waxing",desc:"A complete waxing combo for arms, legs and underarms.",price:899,img:"photo-1515377905703-c4788e51af15",alt:"Professional waxing service"},
+  {category:"Waxing",name:"Full Arms, Underarms & Full Legs",desc:"Full arms, underarms and full legs waxing combination.",price:949,img:"photo-1519415510236-718bdfcd89c8",alt:"Professional beauty salon waxing"}
+ ];
+ function paint(category){
+  const box=document.getElementById("serviceCards"); if(!box)return;
+  const items=category?data.filter(x=>x.category===category):data;
+  box.style.setProperty("display","grid","important");
+  box.style.setProperty("visibility","visible","important");
+  box.style.setProperty("opacity","1","important");
+  box.innerHTML=items.map(x=>'<article class="service"><img loading="lazy" src="https://images.unsplash.com/'+x.img+'?auto=format&fit=crop&w=720&q=85" alt="'+x.alt+'"><div class="service-body"><div class="tag">'+x.category+' · SALON</div><h3>'+x.name+'</h3><p>'+x.desc+'</p><div class="prices"><div class="price-choice" style="grid-column:1/-1"><span>'+((window.selectedCategory||"PRIME"))+' price</span><b>₹'+x.price.toLocaleString("en-IN")+'</b><button class="btn small bex-add-salon" type="button">Add to Cart</button></div></div></div></article>').join("");
+  box.querySelectorAll(".bex-add-salon").forEach((btn,i)=>btn.addEventListener("click",()=>{if(typeof window.addSalonService==="function")window.addSalonService(items[i].price,items[i].name);}));
+ }
+ window.selectSalonServiceCategory=function(category){window.activeSalonCategory=category||"";paint(window.activeSalonCategory);};
+ paint("");
+ const heading=document.querySelector(".all-services-heading");
+ if(heading)heading.textContent="All Salon Services";
+})();
+</script>
+
 <script src="./hindi-ui.js" defer></script>
 </body></html>
