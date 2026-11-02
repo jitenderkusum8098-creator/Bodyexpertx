@@ -14,7 +14,7 @@ main{width:min(900px,92%);margin:24px auto 60px}.hero{border:1px solid #8f743d;b
 </style>
 </head>
 <body>
-<header class="top"><a class="brand" href="salon.html">Ⓧ BODYEXPERTX</a><a class="back" href="female-salon-prime-v2.html#service-menu">← Back to PRIME</a></header>
+<header class="top"><a class="brand" href="salon.html">Ⓧ BODYEXPERTX</a><a class="back" href="female-salon-prime-v2.html#serviceMenuTitle">← Back to PRIME</a></header>
 <main id="detail"><p style="color:#cbb47d">Loading service details…</p></main>
 <script>
 const services={
@@ -26,10 +26,10 @@ const services={
 "arms-underarms-legs":{name:"Full Arms, Underarms & Full Legs",price:"₹949",time:"Duration confirmed at booking",image:"https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?auto=format&fit=crop&w=1100&q=90",alt:"Professional beauty salon waxing",intro:"A waxing combination covering full arms, underarms and full legs.",points:["Full arms waxing","Underarms waxing","Full legs waxing","Three areas covered in one service","At-home waxing convenience"],includes:["Full arms waxing","Underarms waxing","Full legs waxing"],steps:["Therapist checks the skin and confirms the requested areas","Skin is prepared for waxing","Waxing is performed area by area","Aftercare guidance is shared"],after:["Avoid hot showers and strong exfoliation immediately after waxing","Wear loose clothing over freshly waxed areas","Avoid waxing over cuts, sunburn or irritated skin"],note:"Please inform the therapist about sensitive skin, allergies or any skin irritation before starting."}
 };
 const key=new URLSearchParams(location.search).get("service");const s=services[key];const root=document.getElementById("detail");
-if(!s){root.innerHTML='<section class="section"><h2>Service not found</h2><p>Please return to the Female PRIME service menu and select a service.</p><a class="btn secondary" href="female-salon-prime-v2.html#service-menu">Back to PRIME services</a></section>';}
+if(!s){root.innerHTML='<section class="section"><h2>Service not found</h2><p>Please return to the Female PRIME service menu and select a service.</p><a class="btn secondary" href="female-salon-prime-v2.html#serviceMenuTitle">Back to PRIME services</a></section>';}
 else{
 const list=a=>a.map(x=>'<li>'+x+'</li>').join("");
-root.innerHTML='<article class="hero"><img src="'+s.image+'" alt="'+s.alt+'"><div class="body"><span class="tag">PRIME · FEMALE SALON · HOME VISIT</span><h1 class="title">'+s.name+'</h1><p class="desc">'+s.intro+'</p><div class="price"><strong>'+s.price+'</strong>'+(s.old?'<del>'+s.old+'</del>':'')+'<span style="color:var(--muted)">'+s.time+'</span></div><section class="section"><h2>Service highlights</h2><ul>'+list(s.points)+'</ul></section><section class="section"><h2>What’s included</h2><ul>'+list(s.includes)+'</ul></section><section class="section"><h2>Service procedure</h2><ol class="steps">'+list(s.steps)+'</ol></section><section class="section"><h2>Aftercare</h2><ul>'+list(s.after)+'</ul></section><p class="note">'+s.note+'</p><div class="actions"><a class="btn primary" href="female-salon-prime-v2.html#service-menu">Go to PRIME menu to add to cart</a><a class="btn secondary" href="female-salon-prime-v2.html#service-menu">Back to services</a></div></div></article>';
+root.innerHTML='<article class="hero"><img src="'+s.image+'" alt="'+s.alt+'"><div class="body"><span class="tag">PRIME · FEMALE SALON · HOME VISIT</span><h1 class="title">'+s.name+'</h1><p class="desc">'+s.intro+'</p><div class="price"><strong>'+s.price+'</strong>'+(s.old?'<del>'+s.old+'</del>':'')+'<span style="color:var(--muted)">'+s.time+'</span></div><section class="section"><h2>Service highlights</h2><ul>'+list(s.points)+'</ul></section><section class="section"><h2>What’s included</h2><ul>'+list(s.includes)+'</ul></section><section class="section"><h2>Service procedure</h2><ol class="steps">'+list(s.steps)+'</ol></section><section class="section"><h2>Aftercare</h2><ul>'+list(s.after)+'</ul></section><p class="note">'+s.note+'</p><div class="actions"><a class="btn primary" href="female-salon-prime-v2.html#serviceMenuTitle">Go to PRIME menu to add to cart</a><a class="btn secondary" href="female-salon-prime-v2.html#serviceMenuTitle">Back to services</a></div></div></article>';
 }
 </script>
 </body></html>
