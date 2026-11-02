@@ -138,7 +138,7 @@ body{background:#0b0b0d;color:#f7f3e8}
 
 .brand-banner,.hero{display:none!important}
 .category-section{padding:18px 0 10px}
-#services,#add-ons,#booking{display:none}
+#services,#add-ons,#booking{display:none}#services{display:block!important}#serviceCards{display:grid!important;visibility:visible!important;opacity:1!important;min-height:240px!important}
 .header .links a[href="#services"],.header .links a[href="#add-ons"]{display:none}
 .salon-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 auto 22px}
 .salon-gallery figure{margin:0;position:relative;min-width:0;height:clamp(145px,23vw,270px);overflow:hidden;border-radius:15px;border:1px solid #6b511d;background:#17130a}
@@ -429,7 +429,7 @@ function renderServices(){
   {name:"Facial",img:"photo-1570172619644-dfd03ed5d881",alt:"Facial service"},
   {name:"Mani-Pedi",img:"photo-1604654894610-df63bc536371",alt:"Manicure and pedicure"}
  ];
- activeSalonCategory="";serviceBox.classList.remove("salon-filtered");serviceBox.style.setProperty("display","grid","important");
+ serviceBox.classList.remove("salon-filtered");serviceBox.style.setProperty("display","grid","important");
  categoryMenu.innerHTML=categories.map(c=>'<button class="salon-category-card" type="button" aria-pressed="'+(activeSalonCategory===c.name)+'" onclick="selectSalonServiceCategory(\\''+(activeSalonCategory===c.name?'':c.name)+'\\')"><img loading="lazy" src="https://images.unsplash.com/'+c.img+'?auto=format&fit=crop&w=500&q=80" alt="'+c.alt+'"><span>'+c.name+' ↗</span></button>').join("")
  ;
  const visibleServices=activeSalonCategory?salonServices.filter(item=>item.category===activeSalonCategory):salonServices;
