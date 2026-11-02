@@ -426,8 +426,7 @@ function renderServices(){
   {name:"Mani-Pedi",img:"photo-1604654894610-df63bc536371",alt:"Manicure and pedicure"}
  ];
  serviceBox.classList.remove("salon-filtered");serviceBox.style.setProperty("display","grid","important");
- categoryMenu.innerHTML=categories.map(c=>'<button class="salon-category-card" type="button" aria-pressed="'+(activeSalonCategory===c.name)+'" onclick="selectSalonServiceCategory(\\''+(activeSalonCategory===c.name?'':c.name)+'\\')"><img loading="lazy" src="https://images.unsplash.com/'+c.img+'?auto=format&fit=crop&w=500&q=80" alt="'+c.alt+'"><span>'+c.name+' ↗</span></button>').join("")
- ;
+ categoryMenu.innerHTML=categories.map(c=>'<button class="salon-category-card" type="button" aria-pressed="'+(activeSalonCategory===c.name)+'" onclick="selectSalonServiceCategory(&quot;'+c.name+'&quot;)"><img loading="lazy" src="https://images.unsplash.com/'+c.img+'?auto=format&fit=crop&w=500&q=80" alt="'+c.alt+'"><span>'+c.name+' ↗</span></button>').join("");
  const visibleServices=activeSalonCategory?salonServices.filter(item=>item.category===activeSalonCategory):salonServices;
  if(!visibleServices.length){serviceBox.innerHTML='<p class="gender-price-note">No services in this category yet.</p>';}
  else serviceBox.innerHTML=visibleServices.map(item=>{
