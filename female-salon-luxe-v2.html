@@ -351,13 +351,126 @@ img{max-width:100%}
 @media(min-width:700px){.bex-location-panel{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center}.bex-location-btn{width:auto;min-width:210px}}
 </style>
 <style id="standaloneSalonTier">#categories,#tierChooser{display:none!important}#services,#add-ons,#booking{display:block!important}</style><style id="bex-salon-cart-quantity-style">
-.bex-salon-cart-row{display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:10px 14px;align-items:center}
-.bex-salon-cart-row>span{min-width:0}
-.bex-salon-cart-row>span small{font-size:12px;color:var(--muted)}
-.bex-salon-quantity{display:flex;align-items:center;gap:12px;padding:7px 10px;border:1px solid var(--gold);border-radius:12px;white-space:nowrap}
-.bex-salon-quantity button{width:30px;height:30px;border:0;border-radius:50%;background:var(--gold);color:#17120a;font-size:20px;font-weight:900;line-height:1}
-.bex-salon-quantity strong{min-width:16px;text-align:center;font-size:17px}
-.bex-salon-line-total{grid-column:1/-1;text-align:right;color:var(--gold2);font-size:18px;font-weight:900}
+/* Salon cart card only: service details first, quantity and line total below */
+#booking #cartItems .bex-salon-cart-row{
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:stretch!important;
+ justify-content:flex-start!important;
+ gap:13px!important;
+ width:100%!important;
+ min-width:0!important;
+ box-sizing:border-box!important;
+ padding:16px!important;
+ border:1px solid #393633!important;
+ border-radius:17px!important;
+ background:linear-gradient(140deg,#22201e,#141414)!important;
+ overflow:hidden!important;
+}
+#booking #cartItems .bex-salon-info{
+ display:block!important;
+ width:100%!important;
+ min-width:0!important;
+}
+#booking #cartItems .bex-salon-name{
+ display:block!important;
+ width:100%!important;
+ color:#f2eee7!important;
+ font-size:17px!important;
+ line-height:1.45!important;
+ font-weight:700!important;
+ overflow-wrap:anywhere!important;
+}
+#booking #cartItems .bex-salon-unit{
+ display:flex!important;
+ flex-wrap:wrap!important;
+ align-items:baseline!important;
+ gap:7px!important;
+ margin-top:7px!important;
+ color:#c9c3b7!important;
+ font-size:13px!important;
+ line-height:1.4!important;
+}
+#booking #cartItems .bex-salon-unit b{
+ display:inline!important;
+ margin:0!important;
+ color:#f3ca6c!important;
+ font-size:20px!important;
+}
+#booking #cartItems .bex-salon-bottom{
+ display:flex!important;
+ flex-direction:row!important;
+ align-items:center!important;
+ justify-content:space-between!important;
+ gap:12px!important;
+ width:100%!important;
+ min-width:0!important;
+}
+#booking #cartItems .bex-salon-quantity{
+ display:inline-flex!important;
+ flex:0 0 auto!important;
+ align-items:center!important;
+ justify-content:center!important;
+ gap:10px!important;
+ width:auto!important;
+ max-width:100%!important;
+ min-width:0!important;
+ margin:0!important;
+ padding:5px 8px!important;
+ border:1px solid #b99442!important;
+ border-radius:12px!important;
+ background:#211d14!important;
+ box-sizing:border-box!important;
+ white-space:nowrap!important;
+}
+#booking #cartItems .bex-salon-quantity button{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ width:38px!important;
+ min-width:38px!important;
+ max-width:38px!important;
+ height:38px!important;
+ min-height:38px!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:9px!important;
+ background:#e9c879!important;
+ color:#17130a!important;
+ font-size:22px!important;
+ font-weight:900!important;
+ line-height:1!important;
+ flex:0 0 38px!important;
+}
+#booking #cartItems .bex-salon-quantity strong{
+ display:block!important;
+ width:22px!important;
+ min-width:22px!important;
+ margin:0!important;
+ padding:0!important;
+ color:#f3d78f!important;
+ text-align:center!important;
+ font-size:18px!important;
+ line-height:1!important;
+ flex:0 0 22px!important;
+}
+#booking #cartItems .bex-salon-line-total{
+ display:block!important;
+ flex:1 1 auto!important;
+ min-width:0!important;
+ margin:0!important;
+ color:#f7d681!important;
+ text-align:right!important;
+ font-size:21px!important;
+ line-height:1.25!important;
+ font-weight:900!important;
+ white-space:nowrap!important;
+}
+@media(max-width:360px){
+ #booking #cartItems .bex-salon-bottom{gap:7px!important}
+ #booking #cartItems .bex-salon-quantity{gap:6px!important;padding:4px 6px!important}
+ #booking #cartItems .bex-salon-quantity button{width:34px!important;min-width:34px!important;max-width:34px!important;height:34px!important;min-height:34px!important;flex-basis:34px!important}
+}
 </style>
 </head>
 <body>
@@ -579,13 +692,18 @@ function renderCart(){
  box.className=cart.length?"":"cart-empty";
  box.innerHTML=cart.length?cart.map((item,i)=>item.type==="salon"?`
   <div class="cart-item bex-salon-cart-row">
-   <span>${item.name}<br><small>Price per service</small><br><b>${money(item.price)}</b></span>
-   <div class="bex-salon-quantity" aria-label="Service quantity">
-    <button type="button" aria-label="Decrease quantity" onclick="adjustSalonQuantity(${i},-1)">−</button>
-    <strong>${Number(item.quantity)||1}</strong>
-    <button type="button" aria-label="Increase quantity" onclick="adjustSalonQuantity(${i},1)">+</button>
+   <div class="bex-salon-info">
+    <div class="bex-salon-name">${item.name}</div>
+    <div class="bex-salon-unit"><span>Price per service</span><b>${money(item.price)}</b></div>
    </div>
-   <div class="bex-salon-line-total">${money(item.price*(Number(item.quantity)||1))}</div>
+   <div class="bex-salon-bottom">
+    <div class="bex-salon-quantity" aria-label="Service quantity">
+     <button type="button" aria-label="Decrease quantity" onclick="adjustSalonQuantity(${i},-1)">−</button>
+     <strong>${Number(item.quantity)||1}</strong>
+     <button type="button" aria-label="Increase quantity" onclick="adjustSalonQuantity(${i},1)">+</button>
+    </div>
+    <div class="bex-salon-line-total">${money(item.price*(Number(item.quantity)||1))}</div>
+   </div>
   </div>
  `:`
   <div class="cart-item"><span>${item.name}<br><b>${money(item.price)}</b></span><button type="button" aria-label="Remove item" onclick="removeItem(${i})">Remove</button></div>
