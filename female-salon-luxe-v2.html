@@ -591,4 +591,57 @@ selectedDepartment="SALON";activeSalonCategory="";document.getElementById("tierE
 @media(max-width:560px){#serviceCards .bex-salon-premium-card>img{height:190px}#serviceCards .bex-salon-premium-card .service-body{padding:16px}}
 </style>
 <script src="./hindi-ui.js" defer></script>
+
+<script id="bexSalonStandaloneCartRuntime">
+(function(){
+ "use strict";
+ if(window.__bexSalonStandaloneCartRuntime)return;
+ window.__bexSalonStandaloneCartRuntime=true;
+ var items=[];
+ function money(n){return "₹"+Number(n||0).toLocaleString("en-IN");}
+ function paintCart(){
+  var box=document.getElementById("cartItems");
+  var subtotal=items.reduce(function(sum,item){return sum+item.price;},0);
+  if(box){
+   box.className=items.length?"":"cart-empty";
+   box.innerHTML=items.length?items.map(function(item,index){
+    var row=document.createElement("div");row.className="cart-item";
+    var info=document.createElement("span");
+    info.appendChild(document.createTextNode(item.name));
+    var br=document.createElement("br");info.appendChild(br);
+    var price=document.createElement("b");price.textContent=money(item.price);info.appendChild(price);
+    var remove=document.createElement("button");remove.type="button";remove.textContent="Remove";remove.setAttribute("aria-label","Remove "+item.name);
+    remove.addEventListener("click",function(){items.splice(index,1);paintCart();});
+    row.appendChild(info);row.appendChild(remove);return row.outerHTML;
+   }).join(""):"Your salon cart is empty. Add salon services above.";
+  }
+  var sub=document.getElementById("subtotal"),total=document.getElementById("total"),note=document.getElementById("minOrderStatus");
+  if(sub)sub.textContent=money(subtotal);
+  if(total)total.textContent=money(subtotal);
+  if(note){
+   if(subtotal<200){note.textContent="Minimum salon order is ₹200. Add ₹"+(200-subtotal)+" more to continue.";note.style.color="#a33";}
+   else{note.textContent="Minimum order met. Home service only — centre appointments are not available.";note.style.color="var(--gold2)";}
+  }
+  window.bexSalonCartItems=items.slice();
+  window.dispatchEvent(new CustomEvent("bex:salon-cart-updated",{detail:{items:items.slice(),subtotal:subtotal}}));
+ }
+ document.addEventListener("click",function(event){
+  var button=event.target&&event.target.closest?event.target.closest("#serviceCards .bex-add-salon"):null;
+  if(!button)return;
+  event.preventDefault();event.stopPropagation();
+  if(event.stopImmediatePropagation)event.stopImmediatePropagation();
+  var card=button.closest(".bex-salon-premium-card");
+  if(!card)return;
+  var title=card.querySelector("h3"),priceNode=card.querySelector(".bex-salon-price b");
+  var price=Number((priceNode?priceNode.textContent:"").replace(/[^0-9.]/g,""));
+  if(!title||!Number.isFinite(price)||price<=0){button.textContent="Try Again";return;}
+  items.push({name:title.textContent.trim()+" ("+(window.selectedCategory||"PRIME")+")",price:price,type:"salon"});
+  paintCart();
+  var old=button.textContent;button.textContent="Added ✓";button.disabled=true;
+  window.setTimeout(function(){if(button.isConnected){button.textContent=old;button.disabled=false;}},900);
+ },true);
+ paintCart();
+})();
+</script>
+
 </body></html>
