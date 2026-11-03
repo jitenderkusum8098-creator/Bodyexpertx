@@ -675,6 +675,16 @@ selectedDepartment="SALON";activeSalonCategory="";document.getElementById("tierE
 #cartItems .bex-cart-qty{display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;gap:8px;width:max-content;max-width:150px;margin:2px 0 0;padding:3px 6px;flex:none}
 #cartItems .bex-cart-qty button{width:28px;height:28px;flex:0 0 28px;font-size:18px}
 #cartItems .bex-cart-qty span{min-width:22px;font-size:16px}
+
+/* Final cart layout override: service details left, compact stepper right */
+#cartItems .cart-item{display:grid!important;grid-template-columns:minmax(0,1fr) 138px!important;flex-direction:initial!important;align-items:center!important;justify-content:initial!important;gap:12px!important;padding:14px 0!important}
+#cartItems .cart-item>span{display:block!important;grid-column:1;grid-row:1;width:100%!important;min-width:0!important;max-width:none!important;font-size:16px;line-height:1.45;white-space:normal!important;overflow-wrap:anywhere;word-break:normal}
+#cartItems .cart-item>span small{display:inline-block;margin-top:6px;font-size:13px;color:#c9c3b7}
+#cartItems .cart-item>span b{display:inline-block;margin-top:7px;font-size:20px;color:#e8c982}
+#cartItems .bex-cart-qty{grid-column:2;grid-row:1;display:flex!important;align-items:center;justify-content:space-between;align-self:center!important;justify-self:end;gap:4px;width:138px!important;max-width:100%;box-sizing:border-box;margin:0!important;padding:4px;border:1px solid #b99442;border-radius:999px;background:#211d14}
+#cartItems .bex-cart-qty button{display:flex;align-items:center;justify-content:center;width:36px;height:36px;flex:0 0 36px;border:0;border-radius:50%;background:#e9c879;color:#17130a;font-size:22px;font-weight:900;line-height:1;cursor:pointer}
+#cartItems .bex-cart-qty span{display:block;flex:1;min-width:20px;text-align:center;color:#f3d78f;font-size:18px;font-weight:800}
+@media(max-width:380px){#cartItems .cart-item{grid-template-columns:minmax(0,1fr) 120px!important;gap:8px!important}#cartItems .bex-cart-qty{width:120px!important}#cartItems .bex-cart-qty button{width:32px;height:32px;flex-basis:32px}}
 </style>
 <script id="bexSalonStandaloneCartRuntime">
 (function(){
