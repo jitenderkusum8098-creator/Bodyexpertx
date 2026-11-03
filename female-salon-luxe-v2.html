@@ -656,6 +656,15 @@ selectedDepartment="SALON";activeSalonCategory="";document.getElementById("tierE
 #cartItems .bex-cart-qty{display:inline-flex;align-items:center;gap:9px;margin-top:8px;padding:4px 7px;border:1px solid #b99442;border-radius:999px;background:#211d14;vertical-align:middle}
 #cartItems .bex-cart-qty button{width:30px;height:30px;border:0;border-radius:50%;background:#e9c879;color:#17130a;font-size:20px;font-weight:900;line-height:1;cursor:pointer}
 #cartItems .bex-cart-qty span{min-width:20px;text-align:center;color:#f3d78f;font-size:17px;font-weight:800}
+
+/* Mobile salon cart layout: keep service details above compact quantity controls */
+#cartItems .cart-item{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:9px;padding:14px 0}
+#cartItems .cart-item>span{display:block;width:100%;min-width:0;max-width:100%;font-size:16px;line-height:1.5;white-space:normal;overflow-wrap:break-word;word-break:normal}
+#cartItems .cart-item>span small{display:inline-block;margin-top:4px;font-size:13px;color:#c9c3b7}
+#cartItems .cart-item>span b{display:inline-block;margin-top:5px;font-size:20px;color:#e8c982}
+#cartItems .bex-cart-qty{display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;gap:8px;width:max-content;max-width:150px;margin:2px 0 0;padding:3px 6px;flex:none}
+#cartItems .bex-cart-qty button{width:28px;height:28px;flex:0 0 28px;font-size:18px}
+#cartItems .bex-cart-qty span{min-width:22px;font-size:16px}
 </style>
 <script id="bexSalonStandaloneCartRuntime">
 (function(){
