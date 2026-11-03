@@ -607,10 +607,15 @@ function toggleSalonDetails(button){const panel=document.getElementById(button.g
 function addSalonService(price,serviceName="Haircut"){
  const itemName=serviceName+" ("+selectedCategory+")";
  const existing=cart.find(x=>x.type==="salon"&&x.name===itemName);
- if(existing){existing.quantity=(Number(existing.quantity)||1)+1;}
- else{cart.push({name:itemName,duration:0,basePrice:price,price:price,quantity:1,type:"salon",category:"SALON · "+selectedCategory});}
+ const card=[...document.querySelectorAll("#serviceCards .bex-salon-premium-card")].find(el=>{
+  const title=el.querySelector("h3");return title&&title.textContent.trim()===serviceName;
+ });
+ const imageEl=card&&card.querySelector("img");
+ const imageUrl=imageEl?(imageEl.currentSrc||imageEl.src||imageEl.getAttribute("src")||""):"";
+ if(existing){existing.quantity=(Number(existing.quantity)||1)+1;if(!existing.imageUrl&&imageUrl)existing.imageUrl=imageUrl;}
+ else{cart.push({name:itemName,duration:0,basePrice:price,price:price,quantity:1,type:"salon",category:"SALON · "+selectedCategory,imageUrl:imageUrl});}
  couponApplied=false;offerMode=false;renderCart();showCartFeedback(serviceName+" · "+(existing?existing.quantity:1)+" added to cart.");
- }
+}
 window.addSalonService=addSalonService;
 /* bexSalonCartCaptureFix: capture salon add clicks before card/page handlers */
 (function(){
@@ -692,6 +697,7 @@ function renderCart(){
  box.className=cart.length?"":"cart-empty";
  box.innerHTML=cart.length?cart.map((item,i)=>item.type==="salon"?`
   <div class="cart-item bex-salon-cart-row">
+   <img class="bex-salon-thumb" src="${item.imageUrl||""}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
    <div class="bex-salon-info">
     <div class="bex-salon-name">${item.name}</div>
     <div class="bex-salon-unit"><span>Price per service</span><b>${money(item.price)}</b></div>
@@ -1012,147 +1018,77 @@ selectedDepartment="SALON";activeSalonCategory="";document.getElementById("tierE
   if(heading)heading.textContent=key==="All"?"All Salon Services":key+" Services";
  };
 })();
-</script><style id="bex-salon-cart-final-lock">
-/* FINAL LOCKED SALON-CART LAYOUT.
-   Keep this block last in the head: older generic #cartItems rules must not override it.
-   Scope is limited to .bex-salon-cart-row; other carts and booking UI are untouched. */
+</script>
+<style id="bex-salon-cart-final-lock">
+/* Locked salon cart card layout: thumbnail left, details right, quantity below. */
 html body #booking #cartItems .cart-item.bex-salon-cart-row{
- display:flex!important;
- flex-direction:column!important;
- align-items:stretch!important;
- justify-content:flex-start!important;
- grid-template-columns:none!important;
- grid-template-rows:none!important;
- gap:14px!important;
- width:100%!important;
- min-width:0!important;
- max-width:100%!important;
- padding:16px!important;
- box-sizing:border-box!important;
- overflow:hidden!important;
+ display:grid!important;
+ grid-template-columns:76px minmax(0,1fr)!important;
+ grid-template-rows:auto auto!important;
+ align-items:start!important;
+ justify-content:initial!important;
+ gap:10px 13px!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ padding:14px!important;box-sizing:border-box!important;overflow:hidden!important;
 }
-html body #booking #cartItems .cart-item.bex-salon-cart-row>.bex-salon-info{
- display:block!important;
- flex:0 0 auto!important;
- width:100%!important;
- min-width:0!important;
- max-width:100%!important;
- grid-column:auto!important;
- grid-row:auto!important;
+html body #booking #cartItems .bex-salon-cart-row>.bex-salon-thumb{
+ display:block!important;grid-column:1!important;grid-row:1 / span 2!important;
+ width:76px!important;height:76px!important;min-width:76px!important;max-width:76px!important;
+ object-fit:cover!important;object-position:center!important;border-radius:11px!important;
+ background:#29251d!important;align-self:start!important;
 }
-html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-name{
- display:block!important;
- width:100%!important;
- max-width:100%!important;
- color:#f2eee7!important;
- font-size:17px!important;
- line-height:1.45!important;
- font-weight:750!important;
- white-space:normal!important;
- overflow-wrap:anywhere!important;
- word-break:normal!important;
+html body #booking #cartItems .bex-salon-cart-row>.bex-salon-info{
+ display:block!important;grid-column:2!important;grid-row:1!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
 }
-html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-unit{
- display:flex!important;
- flex-direction:row!important;
- flex-wrap:wrap!important;
- align-items:baseline!important;
- gap:7px!important;
- width:100%!important;
- margin-top:7px!important;
- color:#c9c3b7!important;
- font-size:13px!important;
- line-height:1.4!important;
+html body #booking #cartItems .bex-salon-cart-row .bex-salon-name{
+ display:block!important;width:100%!important;max-width:100%!important;
+ color:#f2eee7!important;font-size:16px!important;line-height:1.4!important;font-weight:750!important;
+ white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;
 }
-html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-unit b{
- display:inline!important;
- margin:0!important;
- color:#f3ca6c!important;
- font-size:20px!important;
+html body #booking #cartItems .bex-salon-cart-row .bex-salon-unit{
+ display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;align-items:baseline!important;
+ gap:5px 7px!important;width:100%!important;margin-top:5px!important;
+ color:#c9c3b7!important;font-size:13px!important;line-height:1.35!important;
 }
-html body #booking #cartItems .cart-item.bex-salon-cart-row>.bex-salon-bottom{
- display:flex!important;
- flex-direction:row!important;
- flex-wrap:nowrap!important;
- align-items:center!important;
- justify-content:space-between!important;
- gap:12px!important;
- width:100%!important;
- min-width:0!important;
- grid-column:auto!important;
- grid-row:auto!important;
+html body #booking #cartItems .bex-salon-cart-row .bex-salon-unit b{
+ display:inline!important;margin:0!important;color:#f3ca6c!important;font-size:19px!important;
 }
-html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-quantity{
- display:inline-flex!important;
- flex:0 0 auto!important;
- flex-direction:row!important;
- align-items:center!important;
- justify-content:center!important;
- gap:9px!important;
- width:auto!important;
- min-width:0!important;
- max-width:100%!important;
- margin:0!important;
- padding:5px 8px!important;
- border:1px solid #b99442!important;
- border-radius:12px!important;
- background:#211d14!important;
- box-sizing:border-box!important;
- white-space:nowrap!important;
+html body #booking #cartItems .bex-salon-cart-row>.bex-salon-bottom{
+ display:flex!important;grid-column:2!important;grid-row:2!important;
+ flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;
+ justify-content:space-between!important;gap:8px!important;width:100%!important;min-width:0!important;
 }
-html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-quantity button{
- display:flex!important;
- align-items:center!important;
- justify-content:center!important;
- flex:0 0 38px!important;
- width:38px!important;
- min-width:38px!important;
- max-width:38px!important;
- height:38px!important;
- min-height:38px!important;
- margin:0!important;
- padding:0!important;
- border:0!important;
- border-radius:9px!important;
- background:#e9c879!important;
- color:#17130a!important;
- font-size:22px!important;
- font-weight:900!important;
- line-height:1!important;
+html body #booking #cartItems .bex-salon-cart-row .bex-salon-quantity{
+ display:inline-flex!important;flex:0 0 auto!important;flex-direction:row!important;
+ align-items:center!important;justify-content:center!important;gap:7px!important;
+ width:auto!important;min-width:0!important;max-width:100%!important;margin:0!important;
+ padding:4px 6px!important;border:1px solid #b99442!important;border-radius:12px!important;
+ background:#211d14!important;box-sizing:border-box!important;white-space:nowrap!important;
 }
-html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-quantity strong{
- display:block!important;
- flex:0 0 22px!important;
- width:22px!important;
- min-width:22px!important;
- margin:0!important;
- padding:0!important;
- color:#f3d78f!important;
- text-align:center!important;
- font-size:18px!important;
- line-height:1!important;
+html body #booking #cartItems .bex-salon-cart-row .bex-salon-quantity button{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 32px!important;width:32px!important;min-width:32px!important;max-width:32px!important;
+ height:32px!important;min-height:32px!important;margin:0!important;padding:0!important;
+ border:0!important;border-radius:9px!important;background:#e9c879!important;color:#17130a!important;
+ font-size:20px!important;font-weight:900!important;line-height:1!important;
 }
-html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-line-total{
- display:block!important;
- flex:1 1 auto!important;
- width:auto!important;
- min-width:0!important;
- margin:0!important;
- padding:0!important;
- grid-column:auto!important;
- grid-row:auto!important;
- color:#f7d681!important;
- text-align:right!important;
- font-size:21px!important;
- line-height:1.25!important;
- font-weight:900!important;
- white-space:nowrap!important;
+html body #booking #cartItems .bex-salon-cart-row .bex-salon-quantity strong{
+ display:block!important;flex:0 0 20px!important;width:20px!important;min-width:20px!important;
+ margin:0!important;padding:0!important;color:#f3d78f!important;text-align:center!important;
+ font-size:17px!important;line-height:1!important;
+}
+html body #booking #cartItems .bex-salon-cart-row .bex-salon-line-total{
+ display:block!important;flex:1 1 auto!important;width:auto!important;min-width:0!important;
+ margin:0!important;padding:0!important;color:#f7d681!important;text-align:right!important;
+ font-size:20px!important;line-height:1.2!important;font-weight:900!important;white-space:nowrap!important;
 }
 @media(max-width:380px){
- html body #booking #cartItems .cart-item.bex-salon-cart-row{padding:13px!important;gap:12px!important}
- html body #booking #cartItems .cart-item.bex-salon-cart-row>.bex-salon-bottom{gap:7px!important}
- html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-quantity{gap:6px!important;padding:4px 6px!important}
- html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-quantity button{flex-basis:34px!important;width:34px!important;min-width:34px!important;max-width:34px!important;height:34px!important;min-height:34px!important}
+ html body #booking #cartItems .cart-item.bex-salon-cart-row{grid-template-columns:64px minmax(0,1fr)!important;gap:9px 10px!important;padding:12px!important}
+ html body #booking #cartItems .bex-salon-cart-row>.bex-salon-thumb{width:64px!important;height:64px!important;min-width:64px!important;max-width:64px!important}
+ html body #booking #cartItems .bex-salon-cart-row .bex-salon-quantity{gap:5px!important;padding:3px 5px!important}
+ html body #booking #cartItems .bex-salon-cart-row .bex-salon-quantity button{flex-basis:29px!important;width:29px!important;min-width:29px!important;max-width:29px!important;height:29px!important;min-height:29px!important}
+ html body #booking #cartItems .bex-salon-cart-row .bex-salon-line-total{font-size:18px!important}
 }
 </style>
 </body></html>
