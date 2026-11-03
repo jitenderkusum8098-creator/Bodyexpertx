@@ -611,8 +611,58 @@ function setZoneMessage(title,help){const card=document.getElementById("detected
 async function detectServiceZoneFromCoords(lat,lon){const sel=document.getElementById("serviceZone");const insideRing=(ring,x,y)=>{let inside=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const xi=Number(ring[i][0]),yi=Number(ring[i][1]),xj=Number(ring[j][0]),yj=Number(ring[j][1]);const crosses=((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/((yj-yi)||1e-12)+xi);if(crosses)inside=!inside}return inside};const insideZones=bexZones.filter(z=>{const geom=z.boundary_geojson;return geom?.type==="Polygon"&&Array.isArray(geom.coordinates?.[0])&&insideRing(geom.coordinates[0],lon,lat)});if(insideZones.length){const rad=v=>v*Math.PI/180,dist=z=>{const dLat=rad(Number(z.center_lat)-lat),dLon=rad(Number(z.center_lng)-lon),a=Math.sin(dLat/2)**2+Math.cos(rad(lat))*Math.cos(rad(Number(z.center_lat)))*Math.sin(dLon/2)**2;return 6371*2*Math.atan2(Math.sqrt(a),Math.sqrt(Math.max(0,1-a)))};const z=insideZones.slice().sort((a,b)=>dist(a)-dist(b))[0];sel.value=z.id;bexDetectedZone=z;setZoneMessage("📍 "+z.name+" — Zone GPS से confirm हुआ","आपकी GPS location saved service-zone boundary के अंदर है।");return z}
 const norm=v=>String(v||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9]+/g," ").trim();for(const zoom of [14,13,12]){try{const res=await fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat="+encodeURIComponent(lat)+"&lon="+encodeURIComponent(lon)+"&zoom="+zoom+"&addressdetails=1",{headers:{Accept:"application/json"}});if(!res.ok)continue;const d=await res.json(),a=d.address||{},hay=norm([a.neighbourhood,a.suburb,a.quarter,a.residential,a.city_district,a.city,a.town,a.village,a.county,a.state_district,a.state,d.name,d.display_name].filter(Boolean).join(" "));const match=bexZones.find(z=>{const zn=norm(z.name);return zn&&(" "+hay+" ").includes(" "+zn+" ")});if(match){sel.value=match.id;bexDetectedZone=match;setZoneMessage("📍 "+match.name+" — Zone auto-detected","GPS location aur nearby area se service zone match hua.");return match}}catch(e){}}
 const distance=(a,b,c,d)=>{const r=x=>x*Math.PI/180,dl=r(c-a),dn=r(d-b),q=Math.sin(dl/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dn/2)**2;return 6371*2*Math.atan2(Math.sqrt(q),Math.sqrt(Math.max(0,1-q)))};const nearest=bexZones.map(z=>({z,km:Number.isFinite(Number(z.center_lat))&&Number.isFinite(Number(z.center_lng))?distance(lat,lon,Number(z.center_lat),Number(z.center_lng)):Infinity})).sort((a,b)=>a.km-b.km)[0];if(nearest&&nearest.km<=4.5){sel.value=nearest.z.id;bexDetectedZone=nearest.z;setZoneMessage("📍 "+nearest.z.name+" — Nearby zone detected","GPS point saved zone ke center se "+nearest.km.toFixed(1)+" km ke andar hai.");return nearest.z}bexDetectedZone=null;sel.value="";setZoneMessage("Service area not confirmed","GPS मिली, लेकिन saved service zones से match नहीं हुई। कृपया team से zone availability confirm करें।");return null}
-async function bexUseCurrentLocation(){if(bexCurrentLocationBusy)return;if(!navigator.geolocation){bexSetLocationStatus("Is browser mein location available nahi hai. Browser permission check karein.");return}await bexZonesReady;const button=document.getElementById("bexUseCurrentLocation");bexCurrentLocationBusy=true;if(button){button.disabled=true;button.textContent="📍 Accurate location mil rahi hai…"}bexSetLocationStatus("Phone ki Location permission allow karein. GPS se accurate location li ja rahi hai…");navigator.geolocation.getCurrentPosition(async position=>{try{const lat=Number(position.coords.latitude),lon=Number(position.coords.longitude),accuracy=Number(position.coords.accuracy);if(!Number.isFinite(lat)||!Number.isFinite(lon))throw new Error("GPS coordinates invalid");document.getElementById("bexLatitude").value=String(lat);document.getElementById("bexLongitude").value=String(lon);document.getElementById("bexLocationAccuracy").value=Number.isFinite(accuracy)?String(Math.round(accuracy)):"";const reverseAddress=await bexReverseGeocodeCurrent(lat,lon);const zone=await detectServiceZoneFromCoords(lat,lon);document.getElementById("bexHomeLocationPanel")?.classList.add("location-set");const accuracyText=Number.isFinite(accuracy)?"GPS accuracy approx. "+Math.round(accuracy)+" metres.":"GPS coordinates received.";bexSetLocationStatus("✓ Current location mil gayi. "+(reverseAddress?"Location address: "+reverseAddress+". ":"")+accuracyText+(zone?" Service zone: "+zone.name+".":""))}catch(e){document.getElementById("bexLatitude").value="";document.getElementById("bexLongitude").value="";document.getElementById("bexLocationAccuracy").value="";bexDetectedZone=null;bexSetLocationStatus("Location save nahi ho saki. Dobara Use My Current Location dabayein.")}finally{bexCurrentLocationBusy=false;if(button){button.disabled=false;button.textContent="📍 Use My Current Location"}}},error=>{bexCurrentLocationBusy=false;if(button){button.disabled=false;button.textContent="📍 Use My Current Location"}const message=error.code===1?"Location permission deny hui. Browser settings mein Location allow karke dobara try karein.":error.code===2?"Phone ki GPS/location available nahi. Location ON karke dobara try karein.":error.code===3?"Accurate location milne mein time laga. Khuli jagah mein khade hokar dobara try karein.":"Current location nahi mil saki. GPS ON karke dobara try karein.";bexSetLocationStatus(message)},{enableHighAccuracy:true,timeout:30000,maximumAge:0})}
-document.getElementById("bexUseCurrentLocation")?.addEventListener("click",bexUseCurrentLocation);
+function bexUseCurrentLocation(){
+ if(bexCurrentLocationBusy)return;
+ const button=document.getElementById("bexUseCurrentLocation");
+ if(!window.isSecureContext){
+  bexSetLocationStatus("Location ke liye secure HTTPS page zaroori hai. Website ko https:// se kholein.");
+  return;
+ }
+ if(!navigator.geolocation){
+  bexSetLocationStatus("Is browser mein GPS location support nahi hai. Chrome mein page kholkar try karein.");
+  return;
+ }
+ bexCurrentLocationBusy=true;
+ if(button){button.disabled=true;button.textContent="📍 GPS location mil rahi hai…";}
+ bexSetLocationStatus("Phone ki Location ON karein aur browser permission Allow karein. GPS se location li ja rahi hai…");
+ navigator.geolocation.getCurrentPosition(async function(position){
+  const lat=Number(position.coords.latitude),lon=Number(position.coords.longitude),accuracy=Number(position.coords.accuracy);
+  try{
+   if(!Number.isFinite(lat)||!Number.isFinite(lon))throw new Error("GPS coordinates invalid");
+   document.getElementById("bexLatitude").value=String(lat);
+   document.getElementById("bexLongitude").value=String(lon);
+   document.getElementById("bexLocationAccuracy").value=Number.isFinite(accuracy)?String(Math.round(accuracy)):"";
+   document.getElementById("bexHomeLocationPanel")?.classList.add("location-set");
+   const accuracyText=Number.isFinite(accuracy)?"GPS accuracy approx. "+Math.round(accuracy)+" metres.":"GPS coordinates received.";
+   bexSetLocationStatus("✓ GPS location mil gayi. Address aur service zone check ho rahe hain… "+accuracyText);
+   let reverseAddress="";
+   try{reverseAddress=await bexReverseGeocodeCurrent(lat,lon);}catch(e){}
+   const addressField=document.getElementById("address");
+   if(addressField&&!addressField.value.trim()&&reverseAddress)addressField.value=reverseAddress;
+   let zone=null;
+   try{
+    await Promise.race([bexZonesReady,new Promise(resolve=>setTimeout(resolve,8000))]);
+    zone=await detectServiceZoneFromCoords(lat,lon);
+   }catch(e){zone=null;}
+   bexSetLocationStatus("✓ Current location save ho gayi. "+(reverseAddress?"Address: "+reverseAddress+". ":"")+accuracyText+(zone?" Service zone: "+zone.name+".":" GPS coordinates saved; service zone abhi confirm nahi hui."));
+  }catch(e){
+   document.getElementById("bexLatitude").value="";
+   document.getElementById("bexLongitude").value="";
+   document.getElementById("bexLocationAccuracy").value="";
+   bexDetectedZone=null;
+   bexSetLocationStatus("GPS mili, lekin save nahi ho saki. Dobara try karein. "+(e&&e.message?e.message:""));
+  }finally{
+   bexCurrentLocationBusy=false;
+   if(button){button.disabled=false;button.textContent="📍 Use My Current Location";}
+  }
+ },function(error){
+  bexCurrentLocationBusy=false;
+  if(button){button.disabled=false;button.textContent="📍 Use My Current Location";}
+  const message=error.code===1?"Location permission deny hai. Phone Settings > Apps > Chrome > Permissions > Location ko Allow karein.":error.code===2?"Phone ki Location/GPS available nahi. Location ON karke khuli jagah mein dobara try karein.":error.code===3?"GPS response mein time lag raha hai. Location ON rakhein aur dobara try karein.":"Current location nahi mil saki. Phone Location ON karke Chrome mein permission Allow karein.";
+  bexSetLocationStatus(message);
+ },{enableHighAccuracy:true,timeout:45000,maximumAge:0});
+}
+document.getElementById("bexUseCurrentLocation")?.addEventListener("click",function(event){event.preventDefault();bexUseCurrentLocation();});
 const bexZonesReady=initServiceZones();
 window.bexPendingBooking=null;
 document.getElementById("continueWhatsApp").addEventListener("click",()=>{const p=window.bexPendingBooking;if(!p)return;const status=document.getElementById("formStatus");const tab=window.open("about:blank","_blank");if(!tab){status.textContent="WhatsApp खोलने के लिए browser में pop-ups allow करें।";return}const b=p.booking;const dashboard=new URL("./customer-dashboard.html",location.href);dashboard.searchParams.set("tracking",p.tracking_token);try{localStorage.setItem("bex_current_booking_tracking",p.tracking_token)}catch(e){}const message="🙏 *BodyExpertX को चुनने के लिए आपका बहुत-बहुत धन्यवाद!* ❤️\n\nहमें खुशी है कि आपने हम पर भरोसा किया।\n\n🎯 *हमारा मिशन*\nआपको भरोसेमंद, बेहतरीन और संतोषजनक Salon सेवा देना हमारी प्राथमिकता है।\n\n💇‍♀️ *आपकी Beautician और Booking की जानकारी*\nBeautician assign होने पर उसकी जानकारी नीचे दिए गए लिंक पर दिखाई देगी। आप वेबसाइट के *My Account* से भी अपनी booking देख सकते हैं।\n\n🔗 *बुकिंग स्टेटस एवं Beautician डिटेल्स यहाँ देखें:*\n"+dashboard.href+"\n\n🧾 *बुकिंग नंबर:* "+p.reference_code+"\n⏳ *बुकिंग स्थिति:* पुष्टि होना बाकी है।\n\n✨ *NEW FEMALE SALON BOOKING — BODYEXPERTX* ✨\n\n👤 *Name:* "+b.customer_name+"\n📱 *Phone:* "+b.customer_phone+"\n📍 *Visit Type:* HOME VISIT\n🏠 *Address:* "+b.customer_address+"\n📌 *Landmark:* "+(b.customer_landmark||"Not provided")+"\n📅 *Date:* "+b.appointment_date+"\n🕒 *Preferred Time:* "+b.appointment_time+"\n\n💅 *BOOKING DETAILS*\n"+b.service_details.map(x=>"• "+x.name+" ("+b.tier+"): "+money(x.price)).join("\n")+"\n\n💰 *Total Amount:* "+money(b.booking_amount)+"\n\n🙏 *कृपया booking request प्राप्त होने की पुष्टि करें। हमारी team availability check करके आपसे संपर्क करेगी।*\nThank you! ❤️";tab.location.href="https://wa.me/917838675115?text="+encodeURIComponent(message);status.textContent="WhatsApp खुल गया है। कृपया Send दबाएँ। हमारी team आपसे संपर्क करेगी।"});
