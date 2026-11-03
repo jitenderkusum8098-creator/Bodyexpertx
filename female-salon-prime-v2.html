@@ -689,17 +689,20 @@ selectedDepartment="SALON";activeSalonCategory="";document.getElementById("tierE
   var subtotal=items.reduce(function(sum,item){return sum+item.price*item.quantity;},0);
   if(box){
    box.className=items.length?"":"cart-empty";
-   box.innerHTML=items.length?items.map(function(item,index){
-    var row=document.createElement("div");row.className="cart-item";
-    var info=document.createElement("span");info.appendChild(document.createTextNode(item.name));
-    info.appendChild(document.createElement("br"));
-    var detail=document.createElement("small");detail.textContent="Qty: "+item.quantity+" × "+money(item.price);info.appendChild(detail);
-    info.appendChild(document.createElement("br"));
-    var line=document.createElement("b");line.textContent=money(item.price*item.quantity);info.appendChild(line);
-    var remove=document.createElement("button");remove.type="button";remove.textContent="Remove";remove.setAttribute("aria-label","Remove "+item.name);
-    remove.addEventListener("click",function(){items.splice(index,1);paintCart();});
-    row.appendChild(info);row.appendChild(remove);return row.outerHTML;
-   }).join(""):"Your salon cart is empty. Add salon services above.";
+   box.replaceChildren();
+   if(items.length){
+    items.forEach(function(item,index){
+     var row=document.createElement("div");row.className="cart-item";
+     var info=document.createElement("span");info.appendChild(document.createTextNode(item.name));
+     info.appendChild(document.createElement("br"));
+     var detail=document.createElement("small");detail.textContent="Qty: "+item.quantity+" × "+money(item.price);info.appendChild(detail);
+     info.appendChild(document.createElement("br"));
+     var line=document.createElement("b");line.textContent=money(item.price*item.quantity);info.appendChild(line);
+     var remove=document.createElement("button");remove.type="button";remove.textContent="Remove";remove.setAttribute("aria-label","Remove "+item.name);
+     remove.addEventListener("click",function(){items=items.filter(function(x){return x.key!==item.key;});paintCart();});
+     row.appendChild(info);row.appendChild(remove);box.appendChild(row);
+    });
+   }else{box.textContent="Your salon cart is empty. Add salon services above.";}
   }
   var sub=document.getElementById("subtotal"),total=document.getElementById("total"),note=document.getElementById("minOrderStatus");
   if(sub)sub.textContent=money(subtotal);
