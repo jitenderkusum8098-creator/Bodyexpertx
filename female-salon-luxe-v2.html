@@ -468,6 +468,39 @@ function selectSalonServiceCategory(category){activeSalonCategory=category||"";r
 function toggleSalonDetails(button){const panel=document.getElementById(button.getAttribute("aria-controls"));if(!panel)return;const open=!panel.classList.contains("open");panel.classList.toggle("open",open);button.setAttribute("aria-expanded",String(open));const label=button.querySelector("span");if(label)label.textContent=open?"−":"＋";button.firstChild.textContent=open?"Hide Details ":"Know More ";}
 function addSalonService(price,serviceName="Haircut"){cart.push({name:serviceName+" ("+selectedCategory+")",duration:0,basePrice:price,price:price,type:"salon",category:"SALON · "+selectedCategory});couponApplied=false;offerMode=false;renderCart();showCartFeedback(serviceName+" added to cart.");}
 window.addSalonService=addSalonService;
+/* bexSalonCartCaptureFix: capture salon add clicks before card/page handlers */
+(function(){
+ if(window.__bexSalonCartCaptureFix)return;
+ window.__bexSalonCartCaptureFix=true;
+ document.addEventListener("click",function(event){
+  const button=event.target&&event.target.closest?event.target.closest("#serviceCards .bex-add-salon"):null;
+  if(!button)return;
+  event.preventDefault();
+  event.stopPropagation();
+  if(event.stopImmediatePropagation)event.stopImmediatePropagation();
+  const card=button.closest(".bex-salon-premium-card");
+  if(!card)return;
+  const title=card.querySelector("h3");
+  const priceText=card.querySelector(".bex-salon-price b");
+  const serviceName=title?title.textContent.trim():"Salon service";
+  const price=Number((priceText?priceText.textContent:"").replace(/[^0-9.]/g,""));
+  if(!Number.isFinite(price)||price<=0){
+   const status=document.getElementById("formStatus");
+   if(status)status.textContent="Service price could not be read. Please refresh and try again.";
+   return;
+  }
+  try{
+   addSalonService(price,serviceName);
+   button.textContent="Added ✓";
+   button.setAttribute("aria-label",serviceName+" added to cart");
+   setTimeout(function(){if(button.isConnected)button.textContent="Add to Cart";},1400);
+  }catch(error){
+   console.error("BodyExpertX salon cart error:",error);
+   const status=document.getElementById("formStatus");
+   if(status)status.textContent="Cart update failed. Please refresh and try again.";
+  }
+ },true);
+})();
 function addService(i,duration){if(!services[i])return;const s=services[i],base=(duration===60?s.p60:s.p90)+(selectedCategory==="LUXE"?1300:0);cart.push({name:s.name+" ("+selectedCategory+")",duration:duration,basePrice:base,price:base+(currentGender()==="Female"?150:0),type:"service",category:"MASSAGE · "+selectedCategory});couponApplied=false;renderCart();showCartFeedback(s.name+" · "+duration+" min added to cart.");}
 function addAddon(i){if(!addons[i])return;const a=addons[i];cart.push({name:a.name,duration:a.minutes,basePrice:a.price,price:a.price+(currentGender()==="Female"?150:0),type:"addon"});couponApplied=false;renderCart();showCartFeedback(a.name+" added to cart.");}
 function showCartFeedback(message){const box=document.getElementById("cartItems");box.scrollIntoView({behavior:"smooth",block:"center"});const old=document.getElementById("cartFeedback");if(old)old.remove();const note=document.createElement("p");note.id="cartFeedback";note.className="status";note.textContent=message;box.appendChild(note)}
