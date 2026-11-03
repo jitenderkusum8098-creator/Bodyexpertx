@@ -472,6 +472,149 @@ img{max-width:100%}
  #booking #cartItems .bex-salon-quantity button{width:34px!important;min-width:34px!important;max-width:34px!important;height:34px!important;min-height:34px!important;flex-basis:34px!important}
 }
 </style>
+<style id="bex-salon-cart-final-lock">
+/* FINAL LOCKED SALON-CART LAYOUT.
+   Keep this block last in the head: older generic #cartItems rules must not override it.
+   Scope is limited to .bex-salon-cart-row; other carts and booking UI are untouched. */
+html body #booking #cartItems .cart-item.bex-salon-cart-row{
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:stretch!important;
+ justify-content:flex-start!important;
+ grid-template-columns:none!important;
+ grid-template-rows:none!important;
+ gap:14px!important;
+ width:100%!important;
+ min-width:0!important;
+ max-width:100%!important;
+ padding:16px!important;
+ box-sizing:border-box!important;
+ overflow:hidden!important;
+}
+html body #booking #cartItems .cart-item.bex-salon-cart-row>.bex-salon-info{
+ display:block!important;
+ flex:0 0 auto!important;
+ width:100%!important;
+ min-width:0!important;
+ max-width:100%!important;
+ grid-column:auto!important;
+ grid-row:auto!important;
+}
+html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-name{
+ display:block!important;
+ width:100%!important;
+ max-width:100%!important;
+ color:#f2eee7!important;
+ font-size:17px!important;
+ line-height:1.45!important;
+ font-weight:750!important;
+ white-space:normal!important;
+ overflow-wrap:anywhere!important;
+ word-break:normal!important;
+}
+html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-unit{
+ display:flex!important;
+ flex-direction:row!important;
+ flex-wrap:wrap!important;
+ align-items:baseline!important;
+ gap:7px!important;
+ width:100%!important;
+ margin-top:7px!important;
+ color:#c9c3b7!important;
+ font-size:13px!important;
+ line-height:1.4!important;
+}
+html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-unit b{
+ display:inline!important;
+ margin:0!important;
+ color:#f3ca6c!important;
+ font-size:20px!important;
+}
+html body #booking #cartItems .cart-item.bex-salon-cart-row>.bex-salon-bottom{
+ display:flex!important;
+ flex-direction:row!important;
+ flex-wrap:nowrap!important;
+ align-items:center!important;
+ justify-content:space-between!important;
+ gap:12px!important;
+ width:100%!important;
+ min-width:0!important;
+ grid-column:auto!important;
+ grid-row:auto!important;
+}
+html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-quantity{
+ display:inline-flex!important;
+ flex:0 0 auto!important;
+ flex-direction:row!important;
+ align-items:center!important;
+ justify-content:center!important;
+ gap:9px!important;
+ width:auto!important;
+ min-width:0!important;
+ max-width:100%!important;
+ margin:0!important;
+ padding:5px 8px!important;
+ border:1px solid #b99442!important;
+ border-radius:12px!important;
+ background:#211d14!important;
+ box-sizing:border-box!important;
+ white-space:nowrap!important;
+}
+html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-quantity button{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ flex:0 0 38px!important;
+ width:38px!important;
+ min-width:38px!important;
+ max-width:38px!important;
+ height:38px!important;
+ min-height:38px!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:9px!important;
+ background:#e9c879!important;
+ color:#17130a!important;
+ font-size:22px!important;
+ font-weight:900!important;
+ line-height:1!important;
+}
+html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-quantity strong{
+ display:block!important;
+ flex:0 0 22px!important;
+ width:22px!important;
+ min-width:22px!important;
+ margin:0!important;
+ padding:0!important;
+ color:#f3d78f!important;
+ text-align:center!important;
+ font-size:18px!important;
+ line-height:1!important;
+}
+html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-line-total{
+ display:block!important;
+ flex:1 1 auto!important;
+ width:auto!important;
+ min-width:0!important;
+ margin:0!important;
+ padding:0!important;
+ grid-column:auto!important;
+ grid-row:auto!important;
+ color:#f7d681!important;
+ text-align:right!important;
+ font-size:21px!important;
+ line-height:1.25!important;
+ font-weight:900!important;
+ white-space:nowrap!important;
+}
+@media(max-width:380px){
+ html body #booking #cartItems .cart-item.bex-salon-cart-row{padding:13px!important;gap:12px!important}
+ html body #booking #cartItems .cart-item.bex-salon-cart-row>.bex-salon-bottom{gap:7px!important}
+ html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-quantity{gap:6px!important;padding:4px 6px!important}
+ html body #booking #cartItems .cart-item.bex-salon-cart-row .bex-salon-quantity button{flex-basis:34px!important;width:34px!important;min-width:34px!important;max-width:34px!important;height:34px!important;min-height:34px!important}
+}
+</style>
 </head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE AVAILABLE · MEHRAULI, NEW DELHI</div>
