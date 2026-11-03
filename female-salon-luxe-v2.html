@@ -445,7 +445,7 @@ function renderServices(){
  else serviceBox.innerHTML=visibleServices.map(item=>{
    const price=selectedCategory==="LUXE"?item.luxe:item.prime;
    const slug={"Rice Extract 10-Step Facial":"rice-facial","Korean Facial & Sokora Aftercare Duo":"korean-facial-duo","O3+ Shine & Glow Facial":"o3-glow-facial","Korean Mani & Pedi":"korean-mani-pedi","Full Arms + Full Legs + Underarms Waxing":"full-arms-legs-underarms","Full Arms, Underarms & Full Legs":"arms-underarms-legs"}[item.name];
-   return '<article class="service"><img loading="lazy" src="https://images.unsplash.com/'+item.img+'?auto=format&fit=crop&w=720&q=85" alt="'+item.alt+'"><div class="service-body"><div class="tag">'+selectedCategory+' · SALON</div><h3>'+item.name+'</h3><p>'+item.desc+'</p><div class="prices"><div class="price-choice" style="grid-column:1/-1"><span>'+selectedCategory+' price</span><b>'+money(price)+'</b><button class="btn small" type="button" onclick="addSalonService('+price+',\''+item.name+'\')">Add to Cart</button></div></div><a class="bx-salon-detail-toggle" href="female-salon-service-details.html?service='+slug+'">View All <span aria-hidden="true">↗</span></a></div></article>';
+   return '<article class="service"><img loading="lazy" src="https://images.unsplash.com/'+item.img+'?auto=format&fit=crop&w=720&q=85" alt="'+item.alt+'"><div class="service-body"><div class="tag">'+selectedCategory+' · SALON</div><h3>'+item.name+'</h3><p>'+item.desc+'</p><div class="prices"><div class="price-choice" style="grid-column:1/-1"><span>'+selectedCategory+' price</span><b>'+money(price)+'</b><div class="bex-card-cart-control"><button class="btn small" type="button" onclick="addSalonService('+price+',\''+item.name+'\')">Add to Cart</button></div></div></div><a class="bx-salon-detail-toggle" href="female-salon-service-details.html?service='+slug+'">View All <span aria-hidden="true">↗</span></a></div></article>';
   }).join("");
  }
  addonBox.innerHTML="";
@@ -520,6 +520,28 @@ function addService(i,duration){if(!services[i])return;const s=services[i],base=
 function addAddon(i){if(!addons[i])return;const a=addons[i];cart.push({name:a.name,duration:a.minutes,basePrice:a.price,price:a.price+(currentGender()==="Female"?150:0),type:"addon"});couponApplied=false;renderCart();showCartFeedback(a.name+" added to cart.");}
 function showCartFeedback(message){const box=document.getElementById("cartItems");box.scrollIntoView({behavior:"smooth",block:"center"});const old=document.getElementById("cartFeedback");if(old)old.remove();const note=document.createElement("p");note.id="cartFeedback";note.className="status";note.textContent=message;box.appendChild(note)}
 function chooseOffer(){if(selectedDepartment==="SALON"){document.getElementById("formStatus").textContent="The first-booking massage offer is available on the Massage page. Choose a salon service above.";document.getElementById("services").scrollIntoView({behavior:"smooth"});return;}if(selectedDepartment!=="MASSAGE")selectDepartment("MASSAGE");if(selectedCategory!=="PRIME")selectCategory("PRIME");if(document.getElementById("customerType").value==="Returning customer"){document.getElementById("formStatus").textContent="The ₹399 first-booking offer is for new customers only. You can still choose any regular massage from the Massage Menu.";document.getElementById("booking").scrollIntoView({behavior:"smooth"});return}cart=[{name:"Swedish Massage — First Booking Offer",duration:60,basePrice:399,price:399+(currentGender()==="Female"?150:0),type:"offer"}];offerMode=true;couponApplied=false;appliedCoupon="";document.getElementById("coupon").value="";renderCart();updateCouponAvailability();document.getElementById("booking").scrollIntoView({behavior:"smooth"});}
+
+function adjustSalonCardQuantity(serviceName,price,delta){
+ const itemName=serviceName+" ("+selectedCategory+")";
+ const existing=cart.find(x=>x.type==="salon"&&x.name===itemName);
+ if(!existing&&delta>0){addSalonService(price,serviceName);return;}
+ if(!existing)return;
+ existing.quantity=Math.max(0,(Number(existing.quantity)||1)+delta);
+ if(existing.quantity===0)cart.splice(cart.indexOf(existing),1);
+ couponApplied=false;appliedCoupon="";renderCart();updateCouponAvailability();
+}
+function syncSalonCardQuantities(){
+ document.querySelectorAll("#serviceCards .service").forEach(card=>{
+  const title=card.querySelector("h3"),control=card.querySelector(".bex-card-cart-control"),priceNode=card.querySelector(".price-choice b");
+  if(!title||!control||!priceNode)return;
+  const name=title.textContent.trim(),price=Number(priceNode.textContent.replace(/[^0-9.]/g,""));
+  const item=cart.find(x=>x.type==="salon"&&x.name===name+" ("+selectedCategory+")");
+  const qty=item?Number(item.quantity)||1:0;
+  control.innerHTML=qty>0
+   ?'<div class="bex-salon-quantity bex-card-quantity"><button type="button" aria-label="Decrease quantity" onclick="adjustSalonCardQuantity('+JSON.stringify(name)+','+price+',-1)">−</button><strong>'+qty+'</strong><button type="button" aria-label="Increase quantity" onclick="adjustSalonCardQuantity('+JSON.stringify(name)+','+price+',1)">+</button></div>'
+   :'<button class="btn small" type="button" onclick="adjustSalonCardQuantity('+JSON.stringify(name)+','+price+',1)">Add to Cart</button>';
+ });
+}
 function adjustSalonQuantity(i,delta){
  const item=cart[i];if(!item||item.type!=="salon")return;
  item.quantity=Math.max(0,(Number(item.quantity)||1)+delta);
@@ -557,6 +579,7 @@ function renderCart(){
  const note=document.getElementById("minOrderStatus");
  if(subtotal<200){note.textContent="Minimum salon order is ₹200. Add ₹"+(200-subtotal)+" more to continue.";note.style.color="#a33"}
  else {note.textContent="Minimum order met. Home service only — centre appointments are not available.";note.style.color="var(--gold2)"}
+ syncSalonCardQuantities();
 }
 function toggleAddress(){}
 const BEX_API_URL="https://myjstwbpmbrhaiwytpnq.supabase.co";
