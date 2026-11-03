@@ -546,6 +546,7 @@ function adjustSalonQuantity(i,delta){
  }
  window.adjustSalonQuantity=adjustSalonQuantity;
  function removeItem(i){if(cart[i]?.type==="offer")offerMode=false;cart.splice(i,1);couponApplied=false;appliedCoupon="";renderCart();updateCouponAvailability()}
+window.removeItem=removeItem;
 const coupons={RELAX10:{kind:"percent",value:10,min:800,label:"10% off"},WELCOME100:{kind:"flat",value:100,min:999,label:"₹100 off"},RECOVERY15:{kind:"percent",value:15,min:1500,label:"15% off"}};
 function updateGenderPricing(){const female=currentGender()==="Female";cart=cart.map(x=>({...x,price:(x.basePrice??x.price)+((x.type==="salon")?0:(female?150:0))}));couponApplied=false;appliedCoupon="";renderCart();updateCouponAvailability()}
 function updateCouponAvailability(){renderCart()}
