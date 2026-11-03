@@ -340,7 +340,16 @@ img{max-width:100%}
 #detectedZoneCard.zone-detected{display:block;border-color:#1f9d62}
 @media(min-width:700px){.bex-location-panel{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center}.bex-location-btn{width:auto;min-width:210px}}
 </style>
-<style id="standaloneSalonTier">#categories,#tierChooser{display:none!important}#services,#add-ons,#booking{display:block!important}</style></head>
+<style id="standaloneSalonTier">#categories,#tierChooser{display:none!important}#services,#add-ons,#booking{display:block!important}</style><style id="bex-salon-cart-quantity-style">
+.bex-salon-cart-row{display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:10px 14px;align-items:center}
+.bex-salon-cart-row>span{min-width:0}
+.bex-salon-cart-row>span small{font-size:12px;color:var(--muted)}
+.bex-salon-quantity{display:flex;align-items:center;gap:12px;padding:7px 10px;border:1px solid var(--gold);border-radius:12px;white-space:nowrap}
+.bex-salon-quantity button{width:30px;height:30px;border:0;border-radius:50%;background:var(--gold);color:#17120a;font-size:20px;font-weight:900;line-height:1}
+.bex-salon-quantity strong{min-width:16px;text-align:center;font-size:17px}
+.bex-salon-line-total{grid-column:1/-1;text-align:right;color:var(--gold2);font-size:18px;font-weight:900}
+</style>
+</head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE AVAILABLE · MEHRAULI, NEW DELHI</div>
 <header class="header"><div class="wrap nav">
@@ -462,7 +471,13 @@ function renderServices(){
 function currentGender(){return document.getElementById("recipientGender")?.value||"Male"}
 function selectSalonServiceCategory(category){activeSalonCategory=category||"";renderServices();if(activeSalonCategory){document.getElementById("services").scrollIntoView({behavior:"smooth",block:"start"});}}
 function toggleSalonDetails(button){const panel=document.getElementById(button.getAttribute("aria-controls"));if(!panel)return;const open=!panel.classList.contains("open");panel.classList.toggle("open",open);button.setAttribute("aria-expanded",String(open));const label=button.querySelector("span");if(label)label.textContent=open?"−":"＋";button.firstChild.textContent=open?"Hide Details ":"Know More ";}
-function addSalonService(price,serviceName="Haircut"){cart.push({name:serviceName+" ("+selectedCategory+")",duration:0,basePrice:price,price:price,type:"salon",category:"SALON · "+selectedCategory});couponApplied=false;offerMode=false;renderCart();showCartFeedback(serviceName+" added to cart.");}
+function addSalonService(price,serviceName="Haircut"){
+ const itemName=serviceName+" ("+selectedCategory+")";
+ const existing=cart.find(x=>x.type==="salon"&&x.name===itemName);
+ if(existing){existing.quantity=(Number(existing.quantity)||1)+1;}
+ else{cart.push({name:itemName,duration:0,basePrice:price,price:price,quantity:1,type:"salon",category:"SALON · "+selectedCategory});}
+ couponApplied=false;offerMode=false;renderCart();showCartFeedback(serviceName+" · "+(existing?existing.quantity:1)+" added to cart.");
+ }
 window.addSalonService=addSalonService;
 /* bexSalonCartCaptureFix: capture salon add clicks before card/page handlers */
 (function(){
@@ -501,18 +516,35 @@ function addService(i,duration){if(!services[i])return;const s=services[i],base=
 function addAddon(i){if(!addons[i])return;const a=addons[i];cart.push({name:a.name,duration:a.minutes,basePrice:a.price,price:a.price+(currentGender()==="Female"?150:0),type:"addon"});couponApplied=false;renderCart();showCartFeedback(a.name+" added to cart.");}
 function showCartFeedback(message){const box=document.getElementById("cartItems");box.scrollIntoView({behavior:"smooth",block:"center"});const old=document.getElementById("cartFeedback");if(old)old.remove();const note=document.createElement("p");note.id="cartFeedback";note.className="status";note.textContent=message;box.appendChild(note)}
 function chooseOffer(){if(selectedDepartment==="SALON"){document.getElementById("formStatus").textContent="The first-booking massage offer is available on the Massage page. Choose a salon service above.";document.getElementById("services").scrollIntoView({behavior:"smooth"});return;}if(selectedDepartment!=="MASSAGE")selectDepartment("MASSAGE");if(selectedCategory!=="PRIME")selectCategory("PRIME");if(document.getElementById("customerType").value==="Returning customer"){document.getElementById("formStatus").textContent="The ₹399 first-booking offer is for new customers only. You can still choose any regular massage from the Massage Menu.";document.getElementById("booking").scrollIntoView({behavior:"smooth"});return}cart=[{name:"Swedish Massage — First Booking Offer",duration:60,basePrice:399,price:399+(currentGender()==="Female"?150:0),type:"offer"}];offerMode=true;couponApplied=false;appliedCoupon="";document.getElementById("coupon").value="";renderCart();updateCouponAvailability();document.getElementById("booking").scrollIntoView({behavior:"smooth"});}
-function removeItem(i){if(cart[i]?.type==="offer")offerMode=false;cart.splice(i,1);couponApplied=false;appliedCoupon="";renderCart();updateCouponAvailability()}
+function adjustSalonQuantity(i,delta){
+ const item=cart[i];if(!item||item.type!=="salon")return;
+ item.quantity=Math.max(0,(Number(item.quantity)||1)+delta);
+ if(item.quantity===0)cart.splice(i,1);
+ couponApplied=false;appliedCoupon="";renderCart();updateCouponAvailability();
+ }
+ window.adjustSalonQuantity=adjustSalonQuantity;
+ function removeItem(i){if(cart[i]?.type==="offer")offerMode=false;cart.splice(i,1);couponApplied=false;appliedCoupon="";renderCart();updateCouponAvailability()}
 const coupons={RELAX10:{kind:"percent",value:10,min:800,label:"10% off"},WELCOME100:{kind:"flat",value:100,min:999,label:"₹100 off"},RECOVERY15:{kind:"percent",value:15,min:1500,label:"15% off"}};
 function updateGenderPricing(){const female=currentGender()==="Female";cart=cart.map(x=>({...x,price:(x.basePrice??x.price)+((x.type==="salon")?0:(female?150:0))}));couponApplied=false;appliedCoupon="";renderCart();updateCouponAvailability()}
 function updateCouponAvailability(){renderCart()}
 function applyCoupon(){}
-function totalPrice(){return cart.reduce((n,x)=>n+x.price,0)}
+function totalPrice(){return cart.reduce((n,x)=>n+x.price*(x.type==="salon"?(Number(x.quantity)||1):1),0)}
 function discountPrice(){return 0}
 function finalPrice(){return Math.max(0,totalPrice()-discountPrice())}
 function renderCart(){
  const box=document.getElementById("cartItems");
  box.className=cart.length?"":"cart-empty";
- box.innerHTML=cart.length?cart.map((item,i)=>`
+ box.innerHTML=cart.length?cart.map((item,i)=>item.type==="salon"?`
+  <div class="cart-item bex-salon-cart-row">
+   <span>${item.name}<br><small>Price per service</small><br><b>${money(item.price)}</b></span>
+   <div class="bex-salon-quantity" aria-label="Service quantity">
+    <button type="button" aria-label="Decrease quantity" onclick="adjustSalonQuantity(${i},-1)">−</button>
+    <strong>${Number(item.quantity)||1}</strong>
+    <button type="button" aria-label="Increase quantity" onclick="adjustSalonQuantity(${i},1)">+</button>
+   </div>
+   <div class="bex-salon-line-total">${money(item.price*(Number(item.quantity)||1))}</div>
+  </div>
+ `:`
   <div class="cart-item"><span>${item.name}<br><b>${money(item.price)}</b></span><button type="button" aria-label="Remove item" onclick="removeItem(${i})">Remove</button></div>
  `).join(""):"Your salon cart is empty. Add salon services above.";
  const subtotal=totalPrice();
