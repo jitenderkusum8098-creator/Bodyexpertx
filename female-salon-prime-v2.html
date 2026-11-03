@@ -644,6 +644,12 @@ selectedDepartment="SALON";activeSalonCategory="";document.getElementById("tierE
 </style>
 <script src="./hindi-ui.js" defer></script>
 
+<style id="bex-salon-quantity-stepper">
+#serviceCards .bex-qty-control{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin-top:8px;padding:7px 12px;border:1px solid #d7b96d;border-radius:999px;background:linear-gradient(90deg,#f6d889,#e9c16d);color:#17130a;box-sizing:border-box}
+#serviceCards .bex-qty-control button{width:42px;height:38px;border:0;border-radius:50%;background:rgba(255,255,255,.35);color:#17130a;font-size:25px;font-weight:800;line-height:1;cursor:pointer}
+#serviceCards .bex-qty-control span{font-size:20px;font-weight:800;min-width:24px;text-align:center}
+#serviceCards .bex-add-salon{width:100%;margin-top:8px}
+</style>
 <script id="bexSalonStandaloneCartRuntime">
 (function(){
  "use strict";
@@ -651,17 +657,45 @@ selectedDepartment="SALON";activeSalonCategory="";document.getElementById("tierE
  window.__bexSalonStandaloneCartRuntime=true;
  var items=[];
  function money(n){return "₹"+Number(n||0).toLocaleString("en-IN");}
+ function serviceKey(name,price){return name+"|"+price;}
+ function findItem(key){return items.find(function(item){return item.key===key;});}
+ function paintCardControls(){
+  document.querySelectorAll("#serviceCards .bex-salon-premium-card").forEach(function(card){
+   var title=card.querySelector("h3"),priceNode=card.querySelector(".bex-salon-price b");
+   if(!title||!priceNode)return;
+   var price=Number(priceNode.textContent.replace(/[^0-9.]/g,""));
+   var name=title.textContent.trim()+" ("+(window.selectedCategory||"PRIME")+")";
+   var key=serviceKey(name,price),item=findItem(key),current=card.querySelector(".bex-add-salon, .bex-qty-control");
+   if(!current)return;
+   if(!item){
+    if(current.classList.contains("bex-qty-control")){
+     var add=document.createElement("button");add.type="button";add.className="btn small bex-add-salon";add.textContent="Add to Cart";current.replaceWith(add);
+    }
+    return;
+   }
+   if(!current.classList.contains("bex-qty-control")){
+    var wrap=document.createElement("div");wrap.className="bex-qty-control";wrap.setAttribute("role","group");wrap.setAttribute("aria-label","Quantity for "+title.textContent.trim());
+    var minus=document.createElement("button");minus.type="button";minus.dataset.action="decrease";minus.setAttribute("aria-label","Decrease quantity");minus.textContent="−";
+    var count=document.createElement("span");count.className="bex-qty-count";
+    var plus=document.createElement("button");plus.type="button";plus.dataset.action="increase";plus.setAttribute("aria-label","Increase quantity");plus.textContent="+";
+    wrap.append(minus,count,plus);current.replaceWith(wrap);current=wrap;
+   }
+   current.dataset.serviceKey=key;
+   current.querySelector(".bex-qty-count").textContent=String(item.quantity);
+  });
+ }
  function paintCart(){
   var box=document.getElementById("cartItems");
-  var subtotal=items.reduce(function(sum,item){return sum+item.price;},0);
+  var subtotal=items.reduce(function(sum,item){return sum+item.price*item.quantity;},0);
   if(box){
    box.className=items.length?"":"cart-empty";
    box.innerHTML=items.length?items.map(function(item,index){
     var row=document.createElement("div");row.className="cart-item";
-    var info=document.createElement("span");
-    info.appendChild(document.createTextNode(item.name));
-    var br=document.createElement("br");info.appendChild(br);
-    var price=document.createElement("b");price.textContent=money(item.price);info.appendChild(price);
+    var info=document.createElement("span");info.appendChild(document.createTextNode(item.name));
+    info.appendChild(document.createElement("br"));
+    var detail=document.createElement("small");detail.textContent="Qty: "+item.quantity+" × "+money(item.price);info.appendChild(detail);
+    info.appendChild(document.createElement("br"));
+    var line=document.createElement("b");line.textContent=money(item.price*item.quantity);info.appendChild(line);
     var remove=document.createElement("button");remove.type="button";remove.textContent="Remove";remove.setAttribute("aria-label","Remove "+item.name);
     remove.addEventListener("click",function(){items.splice(index,1);paintCart();});
     row.appendChild(info);row.appendChild(remove);return row.outerHTML;
@@ -674,23 +708,30 @@ selectedDepartment="SALON";activeSalonCategory="";document.getElementById("tierE
    if(subtotal<200){note.textContent="Minimum salon order is ₹200. Add ₹"+(200-subtotal)+" more to continue.";note.style.color="#a33";}
    else{note.textContent="Minimum order met. Home service only — centre appointments are not available.";note.style.color="var(--gold2)";}
   }
-  window.bexSalonCartItems=items.slice();
-  window.dispatchEvent(new CustomEvent("bex:salon-cart-updated",{detail:{items:items.slice(),subtotal:subtotal}}));
+  window.bexSalonCartItems=items.map(function(item){return Object.assign({},item);});
+  window.dispatchEvent(new CustomEvent("bex:salon-cart-updated",{detail:{items:window.bexSalonCartItems,subtotal:subtotal}}));
+  paintCardControls();
  }
  document.addEventListener("click",function(event){
-  var button=event.target&&event.target.closest?event.target.closest("#serviceCards .bex-add-salon"):null;
-  if(!button)return;
+  var add=event.target&&event.target.closest?event.target.closest("#serviceCards .bex-add-salon"):null;
+  var qty=event.target&&event.target.closest?event.target.closest("#serviceCards .bex-qty-control button"):null;
+  if(!add&&!qty)return;
   event.preventDefault();event.stopPropagation();
   if(event.stopImmediatePropagation)event.stopImmediatePropagation();
-  var card=button.closest(".bex-salon-premium-card");
+  var card=(add||qty).closest(".bex-salon-premium-card");
   if(!card)return;
   var title=card.querySelector("h3"),priceNode=card.querySelector(".bex-salon-price b");
   var price=Number((priceNode?priceNode.textContent:"").replace(/[^0-9.]/g,""));
-  if(!title||!Number.isFinite(price)||price<=0){button.textContent="Try Again";return;}
-  items.push({name:title.textContent.trim()+" ("+(window.selectedCategory||"PRIME")+")",price:price,type:"salon"});
+  if(!title||!Number.isFinite(price)||price<=0)return;
+  var name=title.textContent.trim()+" ("+(window.selectedCategory||"PRIME")+")";
+  var key=serviceKey(name,price),item=findItem(key);
+  if(qty){
+   if(!item)return;
+   if(qty.dataset.action==="increase")item.quantity+=1;
+   else if(qty.dataset.action==="decrease"){item.quantity-=1;if(item.quantity<=0)items=items.filter(function(x){return x.key!==key;});}
+  }else if(item){item.quantity+=1;}
+  else{items.push({key:key,name:name,price:price,quantity:1,type:"salon"});}
   paintCart();
-  var old=button.textContent;button.textContent="Added ✓";button.disabled=true;
-  window.setTimeout(function(){if(button.isConnected){button.textContent=old;button.disabled=false;}},900);
  },true);
  paintCart();
 })();
