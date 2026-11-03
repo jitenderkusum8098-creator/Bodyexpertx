@@ -645,10 +645,13 @@ selectedDepartment="SALON";activeSalonCategory="";document.getElementById("tierE
 <script src="./hindi-ui.js" defer></script>
 
 <style id="bex-salon-quantity-stepper">
-#serviceCards .bex-qty-control{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin-top:8px;padding:7px 12px;border:1px solid #d7b96d;border-radius:999px;background:linear-gradient(90deg,#f6d889,#e9c16d);color:#17130a;box-sizing:border-box}
-#serviceCards .bex-qty-control button{width:42px;height:38px;border:0;border-radius:50%;background:rgba(255,255,255,.35);color:#17130a;font-size:25px;font-weight:800;line-height:1;cursor:pointer}
-#serviceCards .bex-qty-control span{font-size:20px;font-weight:800;min-width:24px;text-align:center}
+#serviceCards .bex-qty-control{display:flex;align-items:center;justify-content:space-between;gap:8px;width:min(100%,220px);margin:8px auto 0;padding:5px 8px;border:1px solid #d7b96d;border-radius:999px;background:linear-gradient(90deg,#f6d889,#e9c16d);color:#17130a;box-sizing:border-box}
+#serviceCards .bex-qty-control button{width:34px;height:32px;flex:0 0 34px;border:0;border-radius:50%;background:rgba(255,255,255,.4);color:#17130a;font-size:21px;font-weight:800;line-height:1;cursor:pointer}
+#serviceCards .bex-qty-control .bex-qty-count{display:block!important;flex:1;color:#17130a!important;opacity:1!important;font-size:19px;font-weight:900;min-width:24px;text-align:center;line-height:1.2}
 #serviceCards .bex-add-salon{width:100%;margin-top:8px}
+#cartItems .bex-cart-qty{display:inline-flex;align-items:center;gap:9px;margin-top:8px;padding:4px 7px;border:1px solid #b99442;border-radius:999px;background:#211d14;vertical-align:middle}
+#cartItems .bex-cart-qty button{width:30px;height:30px;border:0;border-radius:50%;background:#e9c879;color:#17130a;font-size:20px;font-weight:900;line-height:1;cursor:pointer}
+#cartItems .bex-cart-qty span{min-width:20px;text-align:center;color:#f3d78f;font-size:17px;font-weight:800}
 </style>
 <script id="bexSalonStandaloneCartRuntime">
 (function(){
@@ -659,6 +662,12 @@ selectedDepartment="SALON";activeSalonCategory="";document.getElementById("tierE
  function money(n){return "₹"+Number(n||0).toLocaleString("en-IN");}
  function serviceKey(name,price){return name+"|"+price;}
  function findItem(key){return items.find(function(item){return item.key===key;});}
+ function changeQty(key,delta){
+  var item=findItem(key);if(!item)return;
+  item.quantity+=delta;
+  if(item.quantity<=0)items=items.filter(function(x){return x.key!==key;});
+  paintCart();
+ }
  function paintCardControls(){
   document.querySelectorAll("#serviceCards .bex-salon-premium-card").forEach(function(card){
    var title=card.querySelector("h3"),priceNode=card.querySelector(".bex-salon-price b");
@@ -691,16 +700,19 @@ selectedDepartment="SALON";activeSalonCategory="";document.getElementById("tierE
    box.className=items.length?"":"cart-empty";
    box.replaceChildren();
    if(items.length){
-    items.forEach(function(item,index){
+    items.forEach(function(item){
      var row=document.createElement("div");row.className="cart-item";
      var info=document.createElement("span");info.appendChild(document.createTextNode(item.name));
      info.appendChild(document.createElement("br"));
-     var detail=document.createElement("small");detail.textContent="Qty: "+item.quantity+" × "+money(item.price);info.appendChild(detail);
+     var detail=document.createElement("small");detail.textContent=money(item.price)+" each";info.appendChild(detail);
      info.appendChild(document.createElement("br"));
      var line=document.createElement("b");line.textContent=money(item.price*item.quantity);info.appendChild(line);
-     var remove=document.createElement("button");remove.type="button";remove.textContent="Remove";remove.setAttribute("aria-label","Remove "+item.name);
-     remove.addEventListener("click",function(){items=items.filter(function(x){return x.key!==item.key;});paintCart();});
-     row.appendChild(info);row.appendChild(remove);box.appendChild(row);
+     var controls=document.createElement("div");controls.className="bex-cart-qty";controls.setAttribute("role","group");controls.setAttribute("aria-label","Change quantity for "+item.name);
+     var minus=document.createElement("button");minus.type="button";minus.textContent="−";minus.setAttribute("aria-label","Decrease quantity");minus.addEventListener("click",function(){changeQty(item.key,-1);});
+     var count=document.createElement("span");count.textContent=String(item.quantity);
+     var plus=document.createElement("button");plus.type="button";plus.textContent="+";plus.setAttribute("aria-label","Increase quantity");plus.addEventListener("click",function(){changeQty(item.key,1);});
+     controls.append(minus,count,plus);
+     row.appendChild(info);row.appendChild(controls);box.appendChild(row);
     });
    }else{box.textContent="Your salon cart is empty. Add salon services above.";}
   }
@@ -721,19 +733,15 @@ selectedDepartment="SALON";activeSalonCategory="";document.getElementById("tierE
   if(!add&&!qty)return;
   event.preventDefault();event.stopPropagation();
   if(event.stopImmediatePropagation)event.stopImmediatePropagation();
-  var card=(add||qty).closest(".bex-salon-premium-card");
-  if(!card)return;
+  var card=(add||qty).closest(".bex-salon-premium-card");if(!card)return;
   var title=card.querySelector("h3"),priceNode=card.querySelector(".bex-salon-price b");
   var price=Number((priceNode?priceNode.textContent:"").replace(/[^0-9.]/g,""));
   if(!title||!Number.isFinite(price)||price<=0)return;
   var name=title.textContent.trim()+" ("+(window.selectedCategory||"PRIME")+")";
   var key=serviceKey(name,price),item=findItem(key);
-  if(qty){
-   if(!item)return;
-   if(qty.dataset.action==="increase")item.quantity+=1;
-   else if(qty.dataset.action==="decrease"){item.quantity-=1;if(item.quantity<=0)items=items.filter(function(x){return x.key!==key;});}
-  }else if(item){item.quantity+=1;}
-  else{items.push({key:key,name:name,price:price,quantity:1,type:"salon"});}
+  if(qty){if(!item)return;if(qty.dataset.action==="increase")item.quantity+=1;else changeQty(key,-1);}
+  else if(item)item.quantity+=1;
+  else items.push({key:key,name:name,price:price,quantity:1,type:"salon"});
   paintCart();
  },true);
  paintCart();
