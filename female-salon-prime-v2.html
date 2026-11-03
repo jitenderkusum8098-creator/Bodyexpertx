@@ -830,4 +830,24 @@ selectedDepartment="SALON";activeSalonCategory="";document.getElementById("tierE
 #serviceCards .bex-category-empty{grid-column:1/-1!important;padding:22px 16px!important;border:1px solid #51452d!important;border-radius:15px!important;color:#d9c18d!important;background:#191714!important;text-align:center!important}
 @media(min-width:900px){.salon-category-menu{gap:12px!important}.salon-category-card{flex-basis:82px!important;width:82px!important;min-width:82px!important;max-width:82px!important}.salon-category-card span{max-width:82px!important;font-size:11px!important}.salon-category-card img{width:66px!important;height:66px!important;min-width:66px!important;max-width:66px!important;min-height:66px!important;max-height:66px!important}}
 </style>
-</body></html>
+<script id="bex-ten-category-filter">
+(function(){
+ function applyCategory(category){
+  var box=document.getElementById("serviceCards");if(!box)return;
+  var cards=Array.from(box.querySelectorAll(":scope > article"));
+  var old=box.querySelector(".bex-category-empty");if(old)old.remove();
+  var key=String(category||"All"),matches=0;
+  cards.forEach(function(card){
+   var title=(card.querySelector("h3")?.textContent||"").toLowerCase();
+   var tag=(card.querySelector(".tag")?.textContent||"").toLowerCase();
+   var show=key==="All"||(key==="Facial"&&tag.indexOf("facial")>=0)||(key==="O3+ Facial"&&title.indexOf("o3+")>=0)||(key==="Korean Glow"&&title.indexOf("korean")>=0)||(key==="Waxing"&&tag.indexOf("waxing")>=0)||(key==="Mani-Pedi Care"&&(tag.indexOf("mani-pedi")>=0||title.indexOf("mani")>=0||title.indexOf("pedi")>=0))||(key==="Bleach & D-TAN"&&(tag.indexOf("bleach")>=0||title.indexOf("bleach")>=0||title.indexOf("d-tan")>=0))||(key==="Full Body Services"&&(title.indexOf("full body")>=0||tag.indexOf("full body")>=0))||(key==="Threading"&&(title.indexOf("threading")>=0||tag.indexOf("threading")>=0))||(key==="Clean Up"&&(title.indexOf("clean up")>=0||tag.indexOf("clean up")>=0));
+   card.style.display=show?"":"none";if(show)matches++;
+  });
+  if(matches===0){var note=document.createElement("p");note.className="bex-category-empty";note.textContent="Services coming soon in this category.";note.style.cssText="grid-column:1/-1;padding:18px 14px;border:1px solid #74613b;border-radius:14px;color:#e8c982;background:#191714;text-align:center;font-weight:650";box.appendChild(note);}
+  document.querySelectorAll("#salonCategoryMenu .salon-category-card").forEach(function(btn){btn.setAttribute("aria-pressed",String(btn.getAttribute("data-category")===key));});
+  var heading=document.querySelector(".all-services-heading");if(heading)heading.textContent=key==="All"?"All Salon Services":key+" Services";
+ }
+ window.selectSalonServiceCategory=applyCategory;
+ document.querySelectorAll("#salonCategoryMenu .salon-category-card").forEach(function(btn){btn.addEventListener("click",function(){applyCategory(btn.getAttribute("data-category"));});});
+})();
+</script></body></html>
