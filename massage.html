@@ -1882,7 +1882,7 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
 "🛏️ *LUXE table/bed:* "+(isLuxeInCart()?(document.getElementById("tableOption")?.value||"Not selected"):"Not applicable")+(tableDiscount()?" (₹99 discount applied)":"")+"\n"+
 "🩺 *CUSTOMER ASSESSMENT — QUESTIONS & ANSWERS*\n"+collectIntake()+"\n\n"+
 "🏷️ *CATEGORY:* "+(cart.map(x=>x.category).filter(Boolean).join(", ")||"PRIME OFFER / ADD-ON")+"\n"+
-"🧾 *BOOKING DETAILS*\n"+cart.map(x=>"• "+x.name+" ("+x.duration+" min): "+money(x.price)).join("\n")+"\n\n"+
+"🧾 *BOOKING DETAILS*\n"+cart.map(x=>"• "+x.name+" × "+(x.quantity||1)+" ("+x.duration+" min): "+money(x.price*(x.quantity||1))).join("\n")+"\n\n"+
 "💵 *Subtotal:* "+money(totalPrice())+"\n"+
 "🎟️ *Discount:* "+money(discountPrice())+"\n"+
 "💰 *TOTAL AMOUNT: "+money(total)+"*\n"+
