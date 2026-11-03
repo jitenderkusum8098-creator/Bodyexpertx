@@ -359,6 +359,71 @@ img{max-width:100%}
 .bex-salon-quantity strong{min-width:16px;text-align:center;font-size:17px}
 .bex-salon-line-total{grid-column:1/-1;text-align:right;color:var(--gold2);font-size:18px;font-weight:900}
 </style>
+<style id="bex-mobile-cart-layout-fix">
+/* Mobile salon cart: keep service name readable and controls compact */
+.bex-salon-cart-row{
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr)!important;
+ grid-template-rows:auto auto auto!important;
+ align-items:start!important;
+ justify-content:stretch!important;
+ gap:12px!important;
+ width:100%!important;
+ box-sizing:border-box!important;
+ overflow:hidden!important;
+}
+.bex-salon-cart-row>span{
+ display:block!important;
+ width:100%!important;
+ min-width:0!important;
+ max-width:100%!important;
+ overflow-wrap:anywhere!important;
+ word-break:normal!important;
+ line-height:1.45!important;
+}
+.bex-salon-quantity{
+ display:inline-flex!important;
+ width:max-content!important;
+ max-width:100%!important;
+ min-width:0!important;
+ flex:0 0 auto!important;
+ align-items:center!important;
+ justify-content:flex-start!important;
+ gap:12px!important;
+ box-sizing:border-box!important;
+}
+.bex-salon-quantity button{
+ display:inline-flex!important;
+ width:42px!important;
+ min-width:42px!important;
+ max-width:42px!important;
+ height:42px!important;
+ min-height:42px!important;
+ padding:0!important;
+ flex:0 0 42px!important;
+ align-items:center!important;
+ justify-content:center!important;
+ border-radius:10px!important;
+ font-size:21px!important;
+ line-height:1!important;
+}
+.bex-salon-quantity strong{
+ display:inline-block!important;
+ min-width:22px!important;
+ width:22px!important;
+ text-align:center!important;
+ flex:0 0 22px!important;
+}
+.bex-salon-line-total{
+ grid-column:1!important;
+ justify-self:end!important;
+ width:100%!important;
+ text-align:right!important;
+}
+@media(min-width:700px){
+ .bex-salon-cart-row{grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto!important}
+}
+</style>
 </head>
 <body>
 <div class="topbar">PROFESSIONAL MASSAGE & WELLNESS · HOME SERVICE AVAILABLE · MEHRAULI, NEW DELHI</div>
